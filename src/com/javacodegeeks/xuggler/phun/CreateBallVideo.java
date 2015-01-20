@@ -72,11 +72,9 @@ public class CreateBallVideo {
         final IMediaWriter writer = ToolFactory.makeWriter("myballs.mov");
 
         // add a viewer so we can see the media as it is created
-
         writer.addListener(ToolFactory.makeViewer(
                 IMediaViewer.Mode.AUDIO_VIDEO, true,
                 javax.swing.WindowConstants.EXIT_ON_CLOSE));
-
         // add the video stream
 
         writer.addVideoStream(videoStreamIndex, videoStreamId, width, height);
@@ -87,7 +85,7 @@ public class CreateBallVideo {
 
         // create some balls to show on the screen
 
-        Balls balls = new MovingBalls(ballCount, width, height, sampleCount);
+        ImageCreatorI balls = new ImageCreator(ballCount, width, height, sampleCount);
 
         // loop through clock time, which starts at zero and increases based
         // on the total number of samples created thus far
