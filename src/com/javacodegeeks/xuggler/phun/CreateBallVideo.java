@@ -24,20 +24,17 @@ import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
  * @author aclarke
  */
 
-public class CreateBallVideo
-{
+public class CreateBallVideo {
     // the log
 
-    private static final Logger log = LoggerFactory.getLogger(
-            CreateBallVideo.class);
-    { log.trace("<init>"); }
+    private static final Logger log = LoggerFactory.getLogger(CreateBallVideo.class);
 
     /**
      * Create and display a number of bouncing balls on the
      */
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
+        log.info("<init>");
         // the number of balls to bounce around
 
         final int ballCount = 2;
@@ -82,13 +79,11 @@ public class CreateBallVideo
 
         // add the video stream
 
-        writer.addVideoStream(videoStreamIndex, videoStreamId,
-                width, height);
+        writer.addVideoStream(videoStreamIndex, videoStreamId, width, height);
 
         // add the audio stream
 
-        writer.addAudioStream(audioStreamIndex, audioStreamId,
-                channelCount, sampleRate);
+        writer.addAudioStream(audioStreamIndex, audioStreamId, channelCount, sampleRate);
 
         // create some balls to show on the screen
 
@@ -97,25 +92,20 @@ public class CreateBallVideo
         // loop through clock time, which starts at zero and increases based
         // on the total number of samples created thus far
 
-        for (long clock = 0; clock < duration; clock = IAudioSamples
-                .samplesToDefaultPts(totalSampleCount, sampleRate))
-        {
+        for (long clock = 0; clock < duration; clock = IAudioSamples.samplesToDefaultPts(totalSampleCount, sampleRate)) {
             // while the clock time exceeds the time of the next video frame,
             // get and encode the next video frame
 
-            while (clock >= nextFrameTime)
-            {
+            while (clock >= nextFrameTime) {
                 BufferedImage frame = balls.getVideoFrame(frameRate);
-                writer.encodeVideo(videoStreamIndex, frame, nextFrameTime,
-                        DEFAULT_TIME_UNIT);
+                writer.encodeVideo(videoStreamIndex, frame, nextFrameTime, DEFAULT_TIME_UNIT);
                 nextFrameTime += frameRate;
             }
 
             // compute and encode the audio for the balls
 
             short[] samples = balls.getAudioFrame(sampleRate);
-            writer.encodeAudio(audioStreamIndex, samples, clock,
-                    DEFAULT_TIME_UNIT);
+            writer.encodeAudio(audioStreamIndex, samples, clock, DEFAULT_TIME_UNIT);
             totalSampleCount += sampleCount;
         }
 
