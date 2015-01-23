@@ -48,36 +48,61 @@ public class ModifyMediaExample {
 	
 	private static class StaticImageMediaTool extends MediaToolAdapter {
 		
-		private List<BufferedImage> logoImages = new ArrayList<>();
+		//private List<BufferedImage> logoImages = new ArrayList<>();
+		List<File> files = new ArrayList<>();
+		/*
+		Not used yet!
+		Instruction[] ins = new Instruction[] {
+				new Instruction(0, 0, 4),
+				new Instruction(5, 4, 4),
+				new Instruction(10, 8, 4),
+				new Instruction(15, 12, 4)
+		};
+		*/
 
 		public StaticImageMediaTool(String[] imageFile) {
-			
-			try {
-				for (String image : imageFile) {
-					logoImages.add(ImageIO.read(new File(image)));
+
+			File folder = new File("/tmp/snaps/");
+			for (File file : folder.listFiles()) {
+				if (file.isFile() && file.getName().contains(".png")) {
+						files.add(file);
 				}
 			}
-			catch (IOException e) {
-				e.printStackTrace();
-				throw new RuntimeException("Could not open file");
-			}
-			
 		}
+
+		int i = 0;
+
+		class Cache {
+			int lastPic = -1;
+			BufferedImage cached;
+
+			BufferedImage getImage(int id) {
+				if(id == lastPic) {
+					return cached;
+				}else {
+					try {
+						lastPic = id;
+						cached = ImageIO.read(files.get(id));
+						return cached;
+					} catch (IOException e) {
+						e.printStackTrace();
+						throw new RuntimeException();
+					}
+				}
+			}
+		}
+
+		Cache picCache = new Cache();
 
 		@Override
 		public void onVideoPicture(IVideoPictureEvent event) {
+			writeImage(event, picCache.getImage(i));
 
-            //10 sekunder framerate25 * hertz44,1 * 1000
-
-            if((event.getTimeStamp() > 10000000) && (event.getTimeStamp() < 20000000)) {
-            //if((event.getTimeStamp() > 10 * 25 * 44.1 * 1000) && (event.getTimeStamp() < 20 * 25 * 44.1 * 1000)) {
-				writeImage(event, logoImages.get(0));
+			//Every second - change the pic
+            if((event.getTimeStamp() > 10000 * i) ) {
+				i+=1;
             }
-			if((event.getTimeStamp() > 20000000) && (event.getTimeStamp() < 30000000)) {
-				//if((event.getTimeStamp() > 10 * 25 * 44.1 * 1000) && (event.getTimeStamp() < 20 * 25 * 44.1 * 1000)) {
-				writeImage(event, logoImages.get(1));
-			}
-			
+
 			// call parent which will pass the video onto next tool in chain
 			super.onVideoPicture(event);
 			
@@ -89,7 +114,7 @@ public class ModifyMediaExample {
 			// get the graphics for the image
 			Graphics2D g = image.createGraphics();
 
-			Rectangle2D bounds = new Rectangle2D.Float(20, 20, logoImage.getWidth() / 2, logoImage.getHeight() / 2);
+			Rectangle2D bounds = new Rectangle2D.Float(0, 0, logoImage.getWidth() / 2, logoImage.getHeight() / 2);
 
 			// compute the amount to inset the time stamp and translate the image to that position
 			double inset = bounds.getHeight();
@@ -98,7 +123,7 @@ public class ModifyMediaExample {
 			g.setColor(Color.WHITE);
 			g.fill(bounds);
 			g.setColor(Color.BLACK);
-			g.drawImage(logoImage, 0, 0, null);
+			g.drawImage(logoImage, -1000, -500, null);
 		}
 
 	}
@@ -129,4 +154,28 @@ public class ModifyMediaExample {
 		
 	}
 
+}
+
+class Instruction {
+	final int id;
+	final int from;
+	final int duration;
+
+	public Instruction(int id, int from, int duration) {
+		this.id = id;
+		this.from = from;
+		this.duration = duration;
+	}
+
+	public int fromMillis(int bpm) {
+		return calc(from, bpm);
+	}
+
+	public int durationMillis(int bpm) {
+		return calc(duration, bpm);
+	}
+
+	public int calc(int time, int bpm) {
+		return time / bpm * 60 * 1000;
+	}
 }
