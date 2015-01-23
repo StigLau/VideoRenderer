@@ -2,14 +2,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.xuggle</groupId>
-    <artifactId>xuggle-xuggler-test</artifactId>
-    <version>5.4</version>
+    <groupId>no.lau.vdvil</groupId>
+    <artifactId>video-renderer</artifactId>
+    <version>1.0</version>
     <packaging>jar</packaging>
-
-    <name>xuggle-xuggler-test</name>
-    <description>A project for doing exhaustive integration tests on Xuggle's Xuggler video manipulation library.</description>
-    <url>http://maven.apache.org</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -22,27 +18,18 @@
             <version>5.4</version>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.5</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>xuggle</groupId>
             <artifactId>xuggle-utils</artifactId>
             <version>1.22</version>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
-    <developers>
-        <developer>
-            <id>art.clarke@gmail.com</id>
-            <name>Art Clarke</name>
-            <email>art.clarke@gmail.com</email>
-            <url>http://www.linkedin.com/in/artclarke</url>
-        </developer>
-    </developers>
     <build>
-        <sourceDirectory>src</sourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -53,7 +40,6 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
     <repositories>
@@ -61,21 +47,5 @@
             <id>xuggle repo</id>
             <url>http://xuggle.googlecode.com/svn/trunk/repo/share/java/</url>
         </repository>
-        <repository>
-            <id>local repo</id>
-            <url>file://${user.home}/.m2/repository</url>
-            <releases>
-                <enabled>false</enabled>
-                <updatePolicy>always</updatePolicy>
-                <checksumPolicy>warn</checksumPolicy>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-                <checksumPolicy>fail</checksumPolicy>
-            </snapshots>
-            <layout>default</layout>
-        </repository>
-
     </repositories>
 </project>
