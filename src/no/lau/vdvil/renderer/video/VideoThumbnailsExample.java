@@ -1,4 +1,4 @@
-package com.javacodegeeks.xuggler;
+package no.lau.vdvil.renderer.video;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -14,9 +14,9 @@ import com.xuggle.xuggler.Global;
 
 public class VideoThumbnailsExample {
 	
-	public static final double SECONDS_BETWEEN_FRAMES = 10;
+	public static final double SECONDS_BETWEEN_FRAMES = 1/10;
 
-	private static final String inputFilename = "/private/tmp/Stockholm_Syndrome.mp4";
+	private static final String inputFilename = "/Users/stiglau/Downloads/JavaZone_2014_10.sept.mp4";
 	private static final String outputFilePrefix = "/tmp/snaps/";
 	
 	// The video stream index, used to ensure we display frames from one and

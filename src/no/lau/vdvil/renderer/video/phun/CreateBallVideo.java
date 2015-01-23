@@ -1,7 +1,5 @@
-package com.javacodegeeks.xuggler.phun;
+package no.lau.vdvil.renderer.video.phun;
 
-import com.xuggle.mediatool.demos.Balls;
-import com.xuggle.mediatool.demos.MovingBalls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

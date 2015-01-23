@@ -1,4 +1,4 @@
-package com.javacodegeeks.xuggler;
+package no.lau.vdvil.renderer.video;
 
 import com.xuggle.mediatool.*;
 import com.xuggle.mediatool.event.IAudioSamplesEvent;

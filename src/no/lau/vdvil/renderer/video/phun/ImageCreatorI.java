@@ -1,4 +1,4 @@
-package com.javacodegeeks.xuggler.phun;
+package no.lau.vdvil.renderer.video.phun;
 
 import java.awt.image.BufferedImage;
 

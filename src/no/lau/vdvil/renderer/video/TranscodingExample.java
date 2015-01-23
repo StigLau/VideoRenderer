@@ -1,4 +1,4 @@
-package com.javacodegeeks.xuggler;
+package no.lau.vdvil.renderer.video;
 
 import com.xuggle.mediatool.IMediaReader;
 import com.xuggle.mediatool.IMediaViewer;

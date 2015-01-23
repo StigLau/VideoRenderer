@@ -1,4 +1,4 @@
-package com.javacodegeeks.xuggler;
+package no.lau.vdvil.renderer.video;
 
 import java.awt.AWTException;
 import java.awt.Dimension;

@@ -1,4 +1,4 @@
-package com.javacodegeeks.xuggler.phun;
+package no.lau.vdvil.renderer.video.phun;
 
 import com.xuggle.xuggler.Global;
 import java.awt.Color;
@@ -7,7 +7,6 @@ import java.awt.RenderingHints;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Random;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;

@@ -1,4 +1,4 @@
-package com.javacodegeeks.xuggler;
+package no.lau.vdvil.renderer.video;
 
 import com.xuggle.xuggler.ICodec;
 import com.xuggle.xuggler.IContainer;

@@ -1,7 +1,7 @@
-package com.javacodegeeks.xuggler;
+package no.lau.vdvil.renderer.video;
 
 
-import com.javacodegeeks.xuggler.phun.CreateBallVideo;
+import no.lau.vdvil.renderer.video.phun.CreateBallVideo;
 
 /**
  * Created by stiglau on 18/01/15.
