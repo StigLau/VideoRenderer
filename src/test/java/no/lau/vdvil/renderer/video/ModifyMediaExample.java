@@ -3,8 +3,8 @@ package no.lau.vdvil.renderer.video;
 import com.xuggle.mediatool.*;
 import com.xuggle.mediatool.event.IAudioSamplesEvent;
 import com.xuggle.mediatool.event.IVideoPictureEvent;
-import java.awt.Color;
-import java.awt.Graphics2D;
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -13,8 +13,9 @@ import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.imageio.ImageIO;
-
+/**
+ * Created by stiglau on 08/02/15.
+ */
 public class ModifyMediaExample {
 
 	private static final String outputFilename = "/tmp/rez.flv";
@@ -26,21 +27,21 @@ public class ModifyMediaExample {
 
 		// create a media reader
 		IMediaReader mediaReader = ToolFactory.makeReader(inputFile);
-		
+
 		// configure it to generate BufferImages
 		mediaReader.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
 
 		IMediaWriter mediaWriter = ToolFactory.makeWriter(outputFilename, mediaReader);
-		
+
 		IMediaTool imageMediaTool = new StaticImageMediaTool();
 		IMediaTool audioVolumeMediaTool = new VolumeAdjustMediaTool(0.1);
-		
+
 		// create a tool chain:
 		// reader -> addStaticImage -> reduceVolume -> writer
 		mediaReader.addListener(imageMediaTool);
 		imageMediaTool.addListener(audioVolumeMediaTool);
 		audioVolumeMediaTool.addListener(mediaWriter);
-		
+
 		while (mediaReader.readPacket() == null) ;
 
 	}
@@ -49,7 +50,7 @@ public class ModifyMediaExample {
 	 * Responsible for writing images to the videostream at specific times.
 	 */
 	private static class StaticImageMediaTool extends MediaToolAdapter {
-		
+
 		//private List<BufferedImage> logoImages = new ArrayList<>();
 		List<File> files = new ArrayList<>();
 		Instruction[] ins = new Instruction[] {
@@ -109,7 +110,7 @@ public class ModifyMediaExample {
 
 			// call parent which will pass the video onto next tool in chain
 			super.onVideoPicture(event);
-			
+
 		}
 
 		Instruction lastAfter(long time) {
@@ -147,53 +148,29 @@ public class ModifyMediaExample {
 	}
 
 	private static class VolumeAdjustMediaTool extends MediaToolAdapter {
-		
+
 		// the amount to adjust the volume by
 		private double mVolume;
-		
+
 		public VolumeAdjustMediaTool(double volume) {
 			mVolume = volume;
 		}
 
 		@Override
 		public void onAudioSamples(IAudioSamplesEvent event) {
-			
+
 			// get the raw audio bytes and adjust it's value
 			ShortBuffer buffer = event.getAudioSamples().getByteBuffer().asShortBuffer();
-			
+
 			for (int i = 0; i < buffer.limit(); ++i) {
 				buffer.put(i, (short) (buffer.get(i) * mVolume));
 			}
 
 			// call parent which will pass the audio onto next tool in chain
 			super.onAudioSamples(event);
-			
+
 		}
-		
+
 	}
 
-}
-
-class Instruction {
-	final int id;
-	final int from;
-	final int duration;
-
-	public Instruction(int id, int from, int duration) {
-		this.id = id;
-		this.from = from;
-		this.duration = duration;
-	}
-
-	public long fromMillis(int bpm) {
-		return calc(from, bpm);
-	}
-
-	public long durationMillis(int bpm) {
-		return calc(duration, bpm);
-	}
-
-	public long calc(int time, int bpm) {
-		return (long) (time  * 60 * 1000 * 1000 / bpm);
-	}
 }
