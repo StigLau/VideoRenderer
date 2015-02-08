@@ -3,7 +3,6 @@ package no.lau.vdvil.renderer.video;
 import com.xuggle.mediatool.*;
 import com.xuggle.mediatool.event.IAudioSamplesEvent;
 import com.xuggle.mediatool.event.IVideoPictureEvent;
-
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
@@ -18,22 +17,22 @@ import javax.imageio.ImageIO;
 
 public class ModifyMediaExample {
 
-	private static final String inputFilename = "/private/tmp/SPACESHIP!!!!!!!!!!!.mp4";
 	private static final String outputFilename = "/tmp/rez.flv";
-	private static final String[] imageFilename = new String[] {"/tmp/Uni-Kitty.jpg", "/tmp/business-kitty.jpg"};
 
-
+	//Main functionality
 	public static void main(String[] args) {
 
+		String inputFile = ModifyMediaExample.class.getClassLoader().getResource("video/5sec-test.flv").getFile();
+
 		// create a media reader
-		IMediaReader mediaReader = ToolFactory.makeReader(inputFilename);
+		IMediaReader mediaReader = ToolFactory.makeReader(inputFile);
 		
 		// configure it to generate BufferImages
 		mediaReader.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
 
 		IMediaWriter mediaWriter = ToolFactory.makeWriter(outputFilename, mediaReader);
 		
-		IMediaTool imageMediaTool = new StaticImageMediaTool(imageFilename);
+		IMediaTool imageMediaTool = new StaticImageMediaTool();
 		IMediaTool audioVolumeMediaTool = new VolumeAdjustMediaTool(0.1);
 		
 		// create a tool chain:
@@ -45,32 +44,33 @@ public class ModifyMediaExample {
 		while (mediaReader.readPacket() == null) ;
 
 	}
-	
+
+	/**
+	 * Responsible for writing images to the videostream at specific times.
+	 */
 	private static class StaticImageMediaTool extends MediaToolAdapter {
 		
 		//private List<BufferedImage> logoImages = new ArrayList<>();
 		List<File> files = new ArrayList<>();
-		/*
-		Not used yet!
 		Instruction[] ins = new Instruction[] {
-				new Instruction(0, 0, 4),
+				new Instruction(0, 0, 1),
+				new Instruction(2, 1, 3),
 				new Instruction(5, 4, 4),
 				new Instruction(10, 8, 4),
-				new Instruction(15, 12, 4)
+				new Instruction(15, 12, 4),
+				new Instruction(18, 16, 4),
+				new Instruction(20, 20, 4),
 		};
-		*/
 
-		public StaticImageMediaTool(String[] imageFile) {
-
-			File folder = new File("/tmp/snaps/");
+		public StaticImageMediaTool() {
+			File folder = new File(ModifyMediaExample.class.getClassLoader().getResource("img").getFile());
 			for (File file : folder.listFiles()) {
 				if (file.isFile() && file.getName().contains(".png")) {
-						files.add(file);
+					files.add(file);
 				}
 			}
 		}
 
-		int i = 0;
 
 		class Cache {
 			int lastPic = -1;
@@ -94,19 +94,35 @@ public class ModifyMediaExample {
 
 		Cache picCache = new Cache();
 
-		@Override
-		public void onVideoPicture(IVideoPictureEvent event) {
-			writeImage(event, picCache.getImage(i));
+		Instruction last;
 
-			//Every second - change the pic
-            if((event.getTimeStamp() > 10000 * i) ) {
-				i+=1;
-            }
+		public void onVideoPicture(IVideoPictureEvent event) {
+
+			Instruction found = lastAfter(event.getTimeStamp());
+			if(found == null)
+				found = last;
+			else
+				last = found;
+
+			System.out.println(found.id);
+			writeImage(event, picCache.getImage(found.id));
 
 			// call parent which will pass the video onto next tool in chain
 			super.onVideoPicture(event);
 			
 		}
+
+		Instruction lastAfter(long time) {
+			for (int i = 0; i < ins.length; i++) {
+				Instruction instruction = ins[i];
+				if(instruction != null && instruction.fromMillis(120) >= time ) {
+					ins[i] = null;
+					return instruction;
+				}
+			}
+			return null;
+		}
+
 
 		private void writeImage(IVideoPictureEvent event, BufferedImage logoImage) {
 			BufferedImage image = event.getImage();
@@ -114,16 +130,18 @@ public class ModifyMediaExample {
 			// get the graphics for the image
 			Graphics2D g = image.createGraphics();
 
-			Rectangle2D bounds = new Rectangle2D.Float(0, 0, logoImage.getWidth() / 2, logoImage.getHeight() / 2);
+			if (logoImage != null){
+				Rectangle2D bounds = new Rectangle2D.Float(0, 0, logoImage.getWidth() / 2, logoImage.getHeight() / 2);
 
-			// compute the amount to inset the time stamp and translate the image to that position
-			double inset = bounds.getHeight();
-			g.translate(inset, event.getImage().getHeight() - inset);
+				// compute the amount to inset the time stamp and translate the image to that position
+				double inset = bounds.getHeight();
+				g.translate(inset, event.getImage().getHeight() - inset);
 
-			g.setColor(Color.WHITE);
-			g.fill(bounds);
-			g.setColor(Color.BLACK);
-			g.drawImage(logoImage, -1000, -500, null);
+				g.setColor(Color.WHITE);
+				g.fill(bounds);
+				g.setColor(Color.BLACK);
+				g.drawImage(logoImage, -1000, -500, null);
+			}
 		}
 
 	}
@@ -167,15 +185,15 @@ class Instruction {
 		this.duration = duration;
 	}
 
-	public int fromMillis(int bpm) {
+	public long fromMillis(int bpm) {
 		return calc(from, bpm);
 	}
 
-	public int durationMillis(int bpm) {
+	public long durationMillis(int bpm) {
 		return calc(duration, bpm);
 	}
 
-	public int calc(int time, int bpm) {
-		return time / bpm * 60 * 1000;
+	public long calc(int time, int bpm) {
+		return (long) (time  * 60 * 1000 * 1000 / bpm);
 	}
 }
