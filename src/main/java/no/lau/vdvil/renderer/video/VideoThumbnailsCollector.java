@@ -2,12 +2,8 @@ package no.lau.vdvil.renderer.video;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
-
 import javax.imageio.ImageIO;
-
 import com.xuggle.mediatool.IMediaReader;
 import com.xuggle.mediatool.MediaListenerAdapter;
 import com.xuggle.mediatool.ToolFactory;
@@ -16,28 +12,24 @@ import com.xuggle.xuggler.Global;
 import no.lau.vdvil.renderer.video.stigs.Instruction;
 import no.lau.vdvil.renderer.video.stigs.Composition;
 
-public class VideoThumbnailsExample {
-	
-	public static final double SECONDS_BETWEEN_FRAMES = 1/10;
+public class VideoThumbnailsCollector {
 
-	private static final String inputFilename = "/Users/stiglau/Downloads/JavaZone_2014_10.sept.mp4";
-	private static final String outputFilePrefix = "/tmp/snaps/";
-	
 	// The video stream index, used to ensure we display frames from one and
 	// only one video stream from the media container.
 	private static int mVideoStreamIndex = -1;
 	
 	// Time of last frame write
 	private static long mLastPtsWrite = Global.NO_PTS;
-	
-	public static final long MICRO_SECONDS_BETWEEN_FRAMES = 
-	    (long)(Global.DEFAULT_PTS_PER_SECOND * SECONDS_BETWEEN_FRAMES);
 
-	public static void main(String[] args) {
+    public final long MICRO_SECONDS_BETWEEN_FRAMES;
+
+    public VideoThumbnailsCollector(double seconds_between_frames) {
+        MICRO_SECONDS_BETWEEN_FRAMES = (long) (Global.DEFAULT_PTS_PER_SECOND * seconds_between_frames);
+    }
+
+    public void run(String inputFilename, String outputFilePrefix, Composition composition){
         long start = System.currentTimeMillis();
         new File(outputFilePrefix).mkdirs();
-
-        Composition composition = new Composition(Collections.singletonList(new Instruction("Sometan", 0, 4, 120)));
 
 
         try {
@@ -46,7 +38,7 @@ public class VideoThumbnailsExample {
             // stipulate that we want BufferedImages created in BGR 24bit color space
             mediaReader.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
 
-            mediaReader.addListener(new ImageSnapListener(composition));
+            mediaReader.addListener(new ImageSnapListener(composition, outputFilePrefix));
 
             // read out the contents of the media file and
             // dispatch events to the attached listener
@@ -56,11 +48,13 @@ public class VideoThumbnailsExample {
         }
     }
 
-	private static class ImageSnapListener extends MediaListenerAdapter {
+	private class ImageSnapListener extends MediaListenerAdapter {
         final Composition composition;
+        private final String outputFilePrefix;
 
-        private ImageSnapListener(Composition composition) {
+        private ImageSnapListener(Composition composition, String outputFilePrefix) {
             this.composition = composition;
+            this.outputFilePrefix = outputFilePrefix;
         }
 
         public void onVideoPicture(IVideoPictureEvent event) {
@@ -98,8 +92,8 @@ public class VideoThumbnailsExample {
 
 			// if it's time to write the next frame
 			if (event.getTimeStamp() - mLastPtsWrite >= MICRO_SECONDS_BETWEEN_FRAMES) {
-								
-				String outputFilename = dumpImageToFile(event.getImage());
+                String outputFilename = outputFilePrefix + event.getTimeStamp() + ".png";
+                ImageIO.write(event.getImage(), "png", new File(outputFilename));
 
 				// indicate file written
 				double seconds = ((double) event.getTimeStamp()) / Global.DEFAULT_PTS_PER_SECOND;
@@ -115,17 +109,7 @@ public class VideoThumbnailsExample {
             }
         }
 		
-		private String dumpImageToFile(BufferedImage image) {
-			try {
-				String outputFilename = outputFilePrefix + System.currentTimeMillis() + ".png";
-				ImageIO.write(image, "png", new File(outputFilename));
-				return outputFilename;
-			} 
-			catch (IOException e) {
-				e.printStackTrace();
-				return null;
-			}
-		}
+
 	}
 
 }
