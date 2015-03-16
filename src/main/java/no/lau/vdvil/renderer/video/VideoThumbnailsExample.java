@@ -3,6 +3,8 @@ package no.lau.vdvil.renderer.video;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -11,6 +13,8 @@ import com.xuggle.mediatool.MediaListenerAdapter;
 import com.xuggle.mediatool.ToolFactory;
 import com.xuggle.mediatool.event.IVideoPictureEvent;
 import com.xuggle.xuggler.Global;
+import no.lau.vdvil.renderer.video.stigs.Instruction;
+import no.lau.vdvil.renderer.video.stigs.Composition;
 
 public class VideoThumbnailsExample {
 	
@@ -30,23 +34,53 @@ public class VideoThumbnailsExample {
 	    (long)(Global.DEFAULT_PTS_PER_SECOND * SECONDS_BETWEEN_FRAMES);
 
 	public static void main(String[] args) {
+        long start = System.currentTimeMillis();
+        new File(outputFilePrefix).mkdirs();
 
-		IMediaReader mediaReader = ToolFactory.makeReader(inputFilename);
+        Composition composition = new Composition(Collections.singletonList(new Instruction("Sometan", 0, 4, 120)));
 
-		// stipulate that we want BufferedImages created in BGR 24bit color space
-		mediaReader.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
-		
-		mediaReader.addListener(new ImageSnapListener());
 
-	    // read out the contents of the media file and
-		// dispatch events to the attached listener
-		while (mediaReader.readPacket() == null) ;
+        try {
+            IMediaReader mediaReader = ToolFactory.makeReader(inputFilename);
 
-	}
+            // stipulate that we want BufferedImages created in BGR 24bit color space
+            mediaReader.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
+
+            mediaReader.addListener(new ImageSnapListener(composition));
+
+            // read out the contents of the media file and
+            // dispatch events to the attached listener
+            while (mediaReader.readPacket() == null) ;
+        }catch (Exception e) {
+            System.out.println("Duration: " + (System.currentTimeMillis() - start) / 1000);
+        }
+    }
 
 	private static class ImageSnapListener extends MediaListenerAdapter {
+        final Composition composition;
 
-		public void onVideoPicture(IVideoPictureEvent event) {
+        private ImageSnapListener(Composition composition) {
+            this.composition = composition;
+        }
+
+        public void onVideoPicture(IVideoPictureEvent event) {
+            if(composition.isFinishedProcessing(event.getTimeStamp())) {
+                throw new RuntimeException("End of compilation");
+            }
+
+
+            List<Instruction> result = composition.isInterestedInThisPicture(event.getTimeStamp());
+            for (Instruction instruction : result) {
+                System.out.println("Fetching image " + event.getTimeStamp());
+                try {
+                    instruction.relevantFiles.add(fetchImage(event));
+                }catch (Exception e) {
+                    System.out.println("Nothing exciting happened - could not fetch file" + e);
+                }
+            }
+        }
+
+        public String fetchImage(IVideoPictureEvent event) throws Exception {
 
 			if (event.getStreamIndex() != mVideoStreamIndex) {
 				// if the selected video stream id is not yet set, go ahead an
@@ -55,7 +89,7 @@ public class VideoThumbnailsExample {
 					mVideoStreamIndex = event.getStreamIndex();
 				// no need to show frames from this video stream
 				else
-					return;
+                    return null;
 			}
 
 			// if uninitialized, back date mLastPtsWrite so we get the very first frame
@@ -75,9 +109,11 @@ public class VideoThumbnailsExample {
 
 				// update last write time
 				mLastPtsWrite += MICRO_SECONDS_BETWEEN_FRAMES;
-			}
-
-		}
+                return outputFilename;
+			}else {
+                throw new Exception("couldn't fetch file");
+            }
+        }
 		
 		private String dumpImageToFile(BufferedImage image) {
 			try {
@@ -90,7 +126,6 @@ public class VideoThumbnailsExample {
 				return null;
 			}
 		}
-
 	}
 
 }

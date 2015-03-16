@@ -3,6 +3,7 @@ package no.lau.vdvil.renderer.video;
 import com.xuggle.mediatool.*;
 import com.xuggle.mediatool.event.IAudioSamplesEvent;
 import com.xuggle.mediatool.event.IVideoPictureEvent;
+import no.lau.vdvil.renderer.video.stigs.Instruction;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -10,20 +11,21 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ShortBuffer;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by stiglau on 08/02/15.
  */
 public class ModifyMediaExample {
 
-	private static final String outputFilename = "/tmp/rez.flv";
+	private static final String outputFilename = "/tmp/rez2.mp4";
 
 	//Main functionality
 	public static void main(String[] args) {
 
-		String inputFile = ModifyMediaExample.class.getClassLoader().getResource("video/5sec-test.flv").getFile();
+		//String inputFile = ModifyMediaExample.class.getClassLoader().getResource("video/5sec-test.flv").getFile();
+		String inputFile = "/Users/stiglau/Downloads/CLMD-The_Stockholm_Syndrome.mp4";
 
 		// create a media reader
 		IMediaReader mediaReader = ToolFactory.makeReader(inputFile);
@@ -52,33 +54,33 @@ public class ModifyMediaExample {
 	private static class StaticImageMediaTool extends MediaToolAdapter {
 
 		//private List<BufferedImage> logoImages = new ArrayList<>();
-		List<File> files = new ArrayList<>();
+		Map<String, File> files = new HashMap<>();
 		Instruction[] ins = new Instruction[] {
-				new Instruction(0, 0, 1),
-				new Instruction(2, 1, 3),
-				new Instruction(5, 4, 4),
-				new Instruction(10, 8, 4),
-				new Instruction(15, 12, 4),
-				new Instruction(18, 16, 4),
-				new Instruction(20, 20, 4),
+				new Instruction("0", 0, 1, 120),
+				new Instruction("2", 1, 3, 120),
+				new Instruction("5", 4, 4, 120),
+				new Instruction("10", 8, 4, 120),
+				new Instruction("15", 12, 4, 120),
+				new Instruction("18", 13, 1, 120),
+				new Instruction("20", 24, 1, 120),
 		};
 
 		public StaticImageMediaTool() {
 			File folder = new File(ModifyMediaExample.class.getClassLoader().getResource("img").getFile());
 			for (File file : folder.listFiles()) {
 				if (file.isFile() && file.getName().contains(".png")) {
-					files.add(file);
+					files.put(file.getPath(), file);
 				}
 			}
 		}
 
 
 		class Cache {
-			int lastPic = -1;
+			String lastPic = "-1";
 			BufferedImage cached;
 
-			BufferedImage getImage(int id) {
-				if(id == lastPic) {
+			BufferedImage getImage(String id) {
+				if(id.equals(lastPic)) {
 					return cached;
 				}else {
 					try {
@@ -105,7 +107,7 @@ public class ModifyMediaExample {
 			else
 				last = found;
 
-			System.out.println(found.id);
+			System.out.println(found.id + " at time: " + event.getTimeStamp());
 			writeImage(event, picCache.getImage(found.id));
 
 			// call parent which will pass the video onto next tool in chain
@@ -116,7 +118,11 @@ public class ModifyMediaExample {
 		Instruction lastAfter(long time) {
 			for (int i = 0; i < ins.length; i++) {
 				Instruction instruction = ins[i];
-				if(instruction != null && instruction.fromMillis(120) >= time ) {
+
+                if(instruction != null)
+                    System.out.println("instruction.fromMillis(120) = " + instruction.fromMillis(120));
+
+				if(instruction != null && time >= instruction.fromMillis(120)) {
 					ins[i] = null;
 					return instruction;
 				}
