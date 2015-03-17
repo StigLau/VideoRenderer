@@ -7,25 +7,27 @@ public class Instruction {
     public final String id;
     final int from;
     final int duration;
-    final int bpm;
+    final double bpm;
+    public final double framesPerBeat;
 
     public List<String> relevantFiles = new ArrayList<>();
 
-    public Instruction(String id, int from, int duration, int bpm) {
+    public Instruction(String id, int from, int duration, double bpm, double framesPerBeat) {
         this.id = id;
         this.from = from;
         this.duration = duration;
         this.bpm = bpm;
+        this.framesPerBeat = framesPerBeat;
     }
 
-    public long fromMillis(int bpm) {
+    public long fromMillis(double bpm) {
         return calc(from, bpm);
     }
     public long fromMillis() {
         return calc(from, bpm);
     }
 
-    public long durationMillis(int bpm) {
+    public long durationMillis(double bpm) {
         return calc(duration, bpm);
     }
 
@@ -33,7 +35,7 @@ public class Instruction {
         return calc(duration, bpm);
     }
 
-    public long calc(int time, int bpm) {
+    public long calc(int time, double bpm) {
         return (long) (time  * 60 * 1000 * 1000 / bpm);
     }
 

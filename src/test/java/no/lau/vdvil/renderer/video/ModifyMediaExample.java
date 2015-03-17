@@ -55,14 +55,15 @@ public class ModifyMediaExample {
 
 		//private List<BufferedImage> logoImages = new ArrayList<>();
 		Map<String, File> files = new HashMap<>();
-		Instruction[] ins = new Instruction[] {
-				new Instruction("0", 0, 1, 120),
-				new Instruction("2", 1, 3, 120),
-				new Instruction("5", 4, 4, 120),
-				new Instruction("10", 8, 4, 120),
-				new Instruction("15", 12, 4, 120),
-				new Instruction("18", 13, 1, 120),
-				new Instruction("20", 24, 1, 120),
+        private int framesPerBeat = 5;
+        Instruction[] ins = new Instruction[] {
+				new Instruction("0", 0, 1, 120, framesPerBeat),
+				new Instruction("2", 1, 3, 120, framesPerBeat),
+				new Instruction("5", 4, 4, 120, framesPerBeat),
+				new Instruction("10", 8, 4, 120, framesPerBeat),
+				new Instruction("15", 12, 4, 120, framesPerBeat),
+				new Instruction("18", 13, 1, 120, framesPerBeat),
+				new Instruction("20", 24, 1, 120, framesPerBeat),
 		};
 
 		public StaticImageMediaTool() {

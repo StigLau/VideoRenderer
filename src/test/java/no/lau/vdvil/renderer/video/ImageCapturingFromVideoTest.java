@@ -15,9 +15,9 @@ public class ImageCapturingFromVideoTest {
     public void testCapturing() {
         String inputFilename = "/Users/stiglau/Downloads/JavaZone_2014_10.sept.mp4";
         String outputFilePrefix = "/tmp/snaps/";
-        double SECONDS_BETWEEN_FRAMES = 1/10;
-
-        Composition composition = new Composition(Collections.singletonList(new Instruction("Picture capture sequence", 0, 4, 120)));
-        new VideoThumbnailsCollector(SECONDS_BETWEEN_FRAMES).run(inputFilename, outputFilePrefix, composition);
+        int bpm = 120;
+        double framesPerBeat = 1;
+        Composition composition = new Composition(Collections.singletonList(new Instruction("Picture capture sequence", 0, 4, bpm, framesPerBeat)), bpm);
+        new VideoThumbnailsCollector().capture(inputFilename, outputFilePrefix, composition);
     }
 }

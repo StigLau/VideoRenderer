@@ -9,9 +9,15 @@ import java.util.stream.Collectors;
 public class Composition {
     final List<Instruction> instructions;
     long lastInstruction;
+    public final int bpm;
 
-    public Composition(List<Instruction> instructions) {
+    /**
+     *  @param instructions set of collector instructions to collect images for
+     * @param bpm
+     */
+    public Composition(List<Instruction> instructions, int bpm) {
         this.instructions = instructions;
+        this.bpm = bpm;
         lastInstruction = 0;
         for (Instruction instruction : instructions) {
             long thisLength = instruction.fromMillis() + instruction.durationMillis();

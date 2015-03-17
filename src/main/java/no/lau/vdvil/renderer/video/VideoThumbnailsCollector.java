@@ -11,6 +11,8 @@ import com.xuggle.mediatool.event.IVideoPictureEvent;
 import com.xuggle.xuggler.Global;
 import no.lau.vdvil.renderer.video.stigs.Instruction;
 import no.lau.vdvil.renderer.video.stigs.Composition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class VideoThumbnailsCollector {
 
@@ -19,15 +21,11 @@ public class VideoThumbnailsCollector {
 	private static int mVideoStreamIndex = -1;
 	
 	// Time of last frame write
-	private static long mLastPtsWrite = Global.NO_PTS;
+	private double mLastPtsWrite = Global.NO_PTS;
+    private Logger logger = LoggerFactory.getLogger(VideoThumbnailsCollector.class);
 
-    public final long MICRO_SECONDS_BETWEEN_FRAMES;
 
-    public VideoThumbnailsCollector(double seconds_between_frames) {
-        MICRO_SECONDS_BETWEEN_FRAMES = (long) (Global.DEFAULT_PTS_PER_SECOND * seconds_between_frames);
-    }
-
-    public void run(String inputFilename, String outputFilePrefix, Composition composition){
+    public void capture(String inputFilename, String outputFilePrefix, Composition composition){
         long start = System.currentTimeMillis();
         new File(outputFilePrefix).mkdirs();
 
@@ -44,7 +42,7 @@ public class VideoThumbnailsCollector {
             // dispatch events to the attached listener
             while (mediaReader.readPacket() == null) ;
         }catch (Exception e) {
-            System.out.println("Duration: " + (System.currentTimeMillis() - start) / 1000);
+            logger.debug("Duration: " + (System.currentTimeMillis() - start) / 1000);
         }
     }
 
@@ -65,16 +63,16 @@ public class VideoThumbnailsCollector {
 
             List<Instruction> result = composition.isInterestedInThisPicture(event.getTimeStamp());
             for (Instruction instruction : result) {
-                System.out.println("Fetching image " + event.getTimeStamp());
+                logger.debug("Ping {}", event.getTimeStamp());
                 try {
-                    instruction.relevantFiles.add(fetchImage(event));
+                    instruction.relevantFiles.add(fetchImage(event, instruction));
                 }catch (Exception e) {
-                    System.out.println("Nothing exciting happened - could not fetch file" + e);
+                    logger.error("Nothing exciting happened - could not fetch file: ", e);
                 }
             }
         }
 
-        public String fetchImage(IVideoPictureEvent event) throws Exception {
+        public String fetchImage(IVideoPictureEvent event, Instruction instruction) throws Exception {
 
 			if (event.getStreamIndex() != mVideoStreamIndex) {
 				// if the selected video stream id is not yet set, go ahead an
@@ -85,6 +83,9 @@ public class VideoThumbnailsCollector {
 				else
                     return null;
 			}
+
+            int clockRatio = 250000;
+            double MICRO_SECONDS_BETWEEN_FRAMES = composition.bpm * clockRatio / (instruction.framesPerBeat * 60);
 
 			// if uninitialized, back date mLastPtsWrite so we get the very first frame
 			if (mLastPtsWrite == Global.NO_PTS)
@@ -97,16 +98,16 @@ public class VideoThumbnailsCollector {
 
 				// indicate file written
 				double seconds = ((double) event.getTimeStamp()) / Global.DEFAULT_PTS_PER_SECOND;
-				System.out.printf(
-						"at elapsed time of %6.3f seconds wrote: %s\n",
-						seconds, outputFilename);
+                logger.info(
+                        "at elapsed time of {} seconds wrote: {}",
+                        seconds, outputFilename);
 
-				// update last write time
+
+                // update last write time
 				mLastPtsWrite += MICRO_SECONDS_BETWEEN_FRAMES;
                 return outputFilename;
-			}else {
-                throw new Exception("couldn't fetch file");
-            }
+			}
+            return null;
         }
 		
 

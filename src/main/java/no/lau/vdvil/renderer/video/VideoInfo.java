@@ -7,7 +7,7 @@ import com.xuggle.xuggler.IStreamCoder;
 
 public class VideoInfo {
 	
-	private static final String filename = "c:/myvideo.mp4";
+	private static final String filename = "/Users/stiglau/Downloads/JavaZone_2014_10.sept.mp4";
 	
 	public static void main(String[] args) {
 		
