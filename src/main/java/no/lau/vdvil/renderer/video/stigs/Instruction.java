@@ -5,8 +5,8 @@ import java.util.List;
 
 public class Instruction {
     public final String id;
-    final int from;
-    final int duration;
+    final double from;
+    final double duration;
     final double bpm;
     public final double framesPerBeat;
 
@@ -35,7 +35,7 @@ public class Instruction {
         return calc(duration, bpm);
     }
 
-    public long calc(int time, double bpm) {
+    public long calc(double time, double bpm) {
         return (long) (time  * 60 * 1000 * 1000 / bpm);
     }
 

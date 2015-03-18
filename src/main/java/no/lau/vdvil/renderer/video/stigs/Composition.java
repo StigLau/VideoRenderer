@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
  * Created by stiglau on 14/03/15.
  */
 public class Composition {
-    final List<Instruction> instructions;
+    public final List<Instruction> instructions;
     long lastInstruction;
     public final int bpm;
 
@@ -34,6 +34,5 @@ public class Composition {
     public List<Instruction> isInterestedInThisPicture(long timestamp) {
         return instructions.stream().filter(instruction -> instruction.contains(timestamp))
                 .collect(Collectors.toList());
-
     }
 }

@@ -2,7 +2,6 @@ package no.lau.vdvil.renderer.video;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.List;
 import javax.imageio.ImageIO;
 import com.xuggle.mediatool.IMediaReader;
 import com.xuggle.mediatool.MediaListenerAdapter;
@@ -60,12 +59,13 @@ public class VideoThumbnailsCollector {
                 throw new RuntimeException("End of compilation");
             }
 
-
-            List<Instruction> result = composition.isInterestedInThisPicture(event.getTimeStamp());
-            for (Instruction instruction : result) {
-                logger.debug("Ping {}", event.getTimeStamp());
+            for (Instruction instruction : composition.isInterestedInThisPicture(event.getTimeStamp())) {
+                logger.trace("Ping {}", event.getTimeStamp());
                 try {
-                    instruction.relevantFiles.add(fetchImage(event, instruction));
+                    String imageUrl = fetchImage(event, instruction);
+                    if(imageUrl != null) {
+                        instruction.relevantFiles.add(imageUrl);
+                    }
                 }catch (Exception e) {
                     logger.error("Nothing exciting happened - could not fetch file: ", e);
                 }
@@ -109,8 +109,5 @@ public class VideoThumbnailsCollector {
 			}
             return null;
         }
-		
-
 	}
-
 }

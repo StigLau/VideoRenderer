@@ -3,8 +3,9 @@ package no.lau.vdvil.renderer.video;
 import no.lau.vdvil.renderer.video.stigs.Composition;
 import no.lau.vdvil.renderer.video.stigs.Instruction;
 import org.junit.Test;
-
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by stiglau on 16/03/15.
@@ -16,8 +17,12 @@ public class ImageCapturingFromVideoTest {
         String inputFilename = "/Users/stiglau/Downloads/JavaZone_2014_10.sept.mp4";
         String outputFilePrefix = "/tmp/snaps/";
         int bpm = 120;
-        double framesPerBeat = 1;
-        Composition composition = new Composition(Collections.singletonList(new Instruction("Picture capture sequence", 0, 4, bpm, framesPerBeat)), bpm);
+        List<Instruction> instr = new ArrayList<>();
+        instr.add(new Instruction("First capture sequence", 0, 4, bpm, 2));
+        instr.add(new Instruction("Second capture sequence", 32, 8, bpm, 1));
+        Composition composition = new Composition(instr, bpm);
         new VideoThumbnailsCollector().capture(inputFilename, outputFilePrefix, composition);
+        assertEquals(8, composition.instructions.get(0).relevantFiles.size());
+        assertEquals(36, composition.instructions.get(1).relevantFiles.size());
     }
 }
