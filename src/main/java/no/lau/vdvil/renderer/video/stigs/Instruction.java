@@ -5,9 +5,9 @@ import java.util.List;
 
 public class Instruction {
     public final String id;
-    final double from;
-    final double duration;
-    final double bpm;
+    public final double from;
+    public final double duration;
+    public final double bpm;
     public final double framesPerBeat;
 
     public List<String> relevantFiles = new ArrayList<>();

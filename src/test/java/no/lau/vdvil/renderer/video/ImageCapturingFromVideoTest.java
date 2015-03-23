@@ -3,6 +3,9 @@ package no.lau.vdvil.renderer.video;
 import no.lau.vdvil.renderer.video.stigs.Composition;
 import no.lau.vdvil.renderer.video.stigs.Instruction;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 import static org.junit.Assert.assertEquals;
@@ -11,6 +14,8 @@ import static org.junit.Assert.assertEquals;
  * Created by stiglau on 16/03/15.
  */
 public class ImageCapturingFromVideoTest {
+
+    private Logger logger = LoggerFactory.getLogger(ImageCapturingFromVideoTest.class);
 
     @Test
     public void testCapturing() {
@@ -24,5 +29,13 @@ public class ImageCapturingFromVideoTest {
         new VideoThumbnailsCollector().capture(inputFilename, outputFilePrefix, composition);
         assertEquals(8, composition.instructions.get(0).relevantFiles.size());
         assertEquals(36, composition.instructions.get(1).relevantFiles.size());
+
+        logger.info("Found files:");
+        for (Instruction instruction : instr) {
+            logger.info("From: {} Duration: {}, BPM: {}, FramesPerBeat: {}", instruction.from, instruction.duration, instruction.bpm, instruction.framesPerBeat);
+            for (String file : instruction.relevantFiles) {
+                System.out.println("File: " + file);
+            }
+        }
     }
 }
