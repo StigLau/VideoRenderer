@@ -8,6 +8,7 @@ import com.xuggle.mediatool.MediaListenerAdapter;
 import com.xuggle.mediatool.ToolFactory;
 import com.xuggle.mediatool.event.IVideoPictureEvent;
 import com.xuggle.xuggler.Global;
+import no.lau.vdvil.renderer.video.stigs.ImageSampleInstruction;
 import no.lau.vdvil.renderer.video.stigs.Instruction;
 import no.lau.vdvil.renderer.video.stigs.Composition;
 import org.slf4j.Logger;
@@ -85,7 +86,7 @@ public class VideoThumbnailsCollector {
 			}
 
             int clockRatio = 250000;
-            double MICRO_SECONDS_BETWEEN_FRAMES = composition.bpm * clockRatio / (instruction.framesPerBeat * 60);
+            double MICRO_SECONDS_BETWEEN_FRAMES = composition.bpm * clockRatio / (((ImageSampleInstruction)instruction).framesPerBeat * 60);
 
 			// if uninitialized, back date mLastPtsWrite so we get the very first frame
 			if (mLastPtsWrite == Global.NO_PTS)

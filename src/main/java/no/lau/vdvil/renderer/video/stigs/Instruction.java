@@ -8,16 +8,14 @@ public class Instruction {
     public final double from;
     public final double duration;
     public final double bpm;
-    public final double framesPerBeat;
 
     public List<String> relevantFiles = new ArrayList<>();
 
-    public Instruction(String id, int from, int duration, double bpm, double framesPerBeat) {
+    public Instruction(String id, int from, int duration, double bpm) {
         this.id = id;
         this.from = from;
         this.duration = duration;
         this.bpm = bpm;
-        this.framesPerBeat = framesPerBeat;
     }
 
     public long fromMillis(double bpm) {

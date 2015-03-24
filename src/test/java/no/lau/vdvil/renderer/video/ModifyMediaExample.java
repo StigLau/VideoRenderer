@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by stiglau on 08/02/15.
+ * @author Stig Lau 08/02/15.
  */
 public class ModifyMediaExample {
 
@@ -55,15 +55,14 @@ public class ModifyMediaExample {
 
 		//private List<BufferedImage> logoImages = new ArrayList<>();
 		Map<String, File> files = new HashMap<>();
-        private int framesPerBeat = 5;
         Instruction[] ins = new Instruction[] {
-				new Instruction("0", 0, 1, 120, framesPerBeat),
-				new Instruction("2", 1, 3, 120, framesPerBeat),
-				new Instruction("5", 4, 4, 120, framesPerBeat),
-				new Instruction("10", 8, 4, 120, framesPerBeat),
-				new Instruction("15", 12, 4, 120, framesPerBeat),
-				new Instruction("18", 13, 1, 120, framesPerBeat),
-				new Instruction("20", 24, 1, 120, framesPerBeat),
+				new Instruction("0", 0, 1, 120),
+				new Instruction("2", 1, 3, 120),
+				new Instruction("5", 4, 4, 120),
+				new Instruction("10", 8, 4, 120),
+				new Instruction("15", 12, 4, 120),
+				new Instruction("18", 13, 1, 120),
+				new Instruction("20", 24, 1, 120),
 		};
 
 		public StaticImageMediaTool() {

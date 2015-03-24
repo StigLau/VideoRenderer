@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Created by stiglau on 14/03/15.
+ * @author Stig Lau 14/03/15.
  */
 public class Composition {
     public final List<Instruction> instructions;

@@ -1,6 +1,8 @@
 package no.lau.vdvil.renderer.video.creator;
 
 import no.lau.vdvil.renderer.video.stigs.Instruction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -16,8 +18,7 @@ public class ImageStore {
 
     public List<Instruction> instructions = new ArrayList<>();
 
-    //Just for not printing a file multiple times
-    String lastFile = "";
+    private Logger logger = LoggerFactory.getLogger(ImageStore.class);
 
     public BufferedImage getImageAt(Long timeStamp) throws IOException {
         for (Instruction instruction : instructions) {
@@ -28,15 +29,12 @@ public class ImageStore {
                 int index = (int) Math.round(split);
                 if(instruction.relevantFiles.size() > index) {
                     String file = instruction.relevantFiles.get(index);
-                    if(!lastFile.equals(file)) {
-                        System.out.println("Limer inn " + file + " på " + timeStamp);
-                        lastFile = file;
-                    }
+                    logger.debug("Inserting image {} at timestamp {}", file, timeStamp);
                     return ImageIO.read(new File(file));
                 }
             }
         }
-        System.out.println("Couldn't find file");
+        logger.trace("No image to insert at timestamp {}", timeStamp);
         return null;
     }
 }
