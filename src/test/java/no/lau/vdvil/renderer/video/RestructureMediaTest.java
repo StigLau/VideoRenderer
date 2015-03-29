@@ -59,7 +59,7 @@ public class RestructureMediaTest {
     public void testBuildingVideo() {
         final String outputFilename = "/tmp/rez2.flv";
         //String inputFile = "/Users/stiglau/Downloads/CLMD-The_Stockholm_Syndrome.mp4";
-        String inputFile = "/tmp/Olive-Youre_Not_Alone.webm";
+        String inputFile = "/Users/stiglau/Downloads/Olive-Youre_Not_Alone.webm";
 
         Instruction instruction1 = new Instruction("inst1", 8, 7, 128);
         instruction1.relevantFiles.addAll(fileset2);
