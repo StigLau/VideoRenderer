@@ -27,45 +27,7 @@ import static java.lang.System.exit;
  * IMediaWriter} and {@link IMediaViewer}.
  */
 
-public class ConcatenateAudioAndVideo
-{
-    /**
-     * Concatenate two files.
-     *
-     * @param args 3 strings; an input file 1, input file 2, and an output file.
-     */
-
-    public static void main(String[] args)
-    {
-        if (args.length < 3)
-        {
-            out.println("Concatent two files.  The destination " +
-                    "format will be guessed from the file extention.");
-            out.println("");
-            out.println("   ConcatentateTwoFiles <source-file1> <source-file2> <destination-file>");
-            out.println("");
-            out.println(
-                    "The destination type will be guess from the supplied file extsion.");
-            exit(0);
-        }
-
-        File source1 = new File(args[0]);
-        File source2 = new File(args[1]);
-
-        if (!source1.exists())
-        {
-            out.println("Source file does not exist: " + source1);
-            exit(0);
-        }
-
-        if (!source2.exists())
-        {
-            out.println("Source file does not exist: " + source2);
-            exit(0);
-        }
-
-        concatenate(args[0], args[1], args[2]);
-    }
+public class ConcatenateAudioAndVideo {
 
     /**
      * Concatenate two source files into one destination file.

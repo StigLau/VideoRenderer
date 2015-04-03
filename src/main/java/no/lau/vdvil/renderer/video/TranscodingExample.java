@@ -7,8 +7,8 @@ import com.xuggle.mediatool.ToolFactory;
 
 public class TranscodingExample {
 
-	private static final String inputFilename = "c:/myvideo.mp4";
-	private static final String outputFilename = "c:/myvideo.flv";
+	private static final String inputFilename = "/tmp/simple.flv";
+	private static final String outputFilename = "/tmp/asmp4.mp4";
 
 	public static void main(String[] args) {
 
