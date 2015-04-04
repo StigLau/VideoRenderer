@@ -3,6 +3,9 @@ package no.lau.vdvil.renderer.video.concatenator;
 import com.xuggle.mediatool.IMediaWriter;
 import com.xuggle.mediatool.ToolFactory;
 import com.xuggle.xuggler.*;
+import no.lau.vdvil.renderer.video.stigs.Composition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * http://stackoverflow.com/questions/19812480/java-xuggler-combine-an-mp3-audio-file-and-a-mp4-movie
@@ -10,8 +13,10 @@ import com.xuggle.xuggler.*;
  */
 public class AudioVideoConcatenator {
 
-    public static void concatenateAudioAndVideo(String inputAudioFilePath, String inputVideoFilePath, String outputVideoFilePath) {
-        IMediaWriter mWriter = ToolFactory.makeWriter(outputVideoFilePath);
+    private static Logger log = LoggerFactory.getLogger(AudioVideoConcatenator.class);
+
+    public static void concatenateAudioAndVideo(String inputAudioFilePath, String inputVideoFilePath, Composition komposition) {
+        IMediaWriter mWriter = ToolFactory.makeWriter(komposition.storageLocation);
         IContainer containerVideo = IContainer.make();
         IContainer containerAudio = IContainer.make();
         IPacket packetvideo = IPacket.make();
@@ -21,8 +26,7 @@ public class AudioVideoConcatenator {
 
         // read video file and create stream
         IStreamCoder coderVideo = containerVideo.getStream(0).getStreamCoder();
-        int width = coderVideo.getWidth();
-        int height = coderVideo.getHeight();
+        log.info("Container width: {} height: {}", coderVideo.getWidth(), coderVideo.getHeight());
 
         // read audio file and create stream
         IStreamCoder coderAudio = containerAudio.getStream(0).getStreamCoder();
@@ -31,12 +35,12 @@ public class AudioVideoConcatenator {
 
         try {
             mWriter.addAudioStream(1, 0, coderAudio.getChannels(), coderAudio.getSampleRate());
-            mWriter.addVideoStream(0, 0, width, height);
+            mWriter.addVideoStream(0, 0, komposition.width, komposition.height);
 
             while (containerVideo.readNextPacket(packetvideo) >= 0) {
                 containerAudio.readNextPacket(packetaudio);
                 // video packet
-                IVideoPicture picture = IVideoPicture.make(coderVideo.getPixelType(), width, height);
+                IVideoPicture picture = IVideoPicture.make(coderVideo.getPixelType(), komposition.width, komposition.height);
                 coderVideo.decodeVideo(picture, packetvideo, 0);
                 if (picture.isComplete())
                     mWriter.encodeVideo(0, picture);

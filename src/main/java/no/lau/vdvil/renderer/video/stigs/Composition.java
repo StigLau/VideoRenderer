@@ -11,6 +11,12 @@ public class Composition {
     long lastInstruction;
     public final int bpm;
 
+    //Width and height of the final Kompost to be produced
+    public int height;
+    public int width;
+    //Where the final komposition is to be stored
+    public String storageLocation;
+
     /**
      *  @param instructions set of collector instructions to collect images for
      * @param bpm
