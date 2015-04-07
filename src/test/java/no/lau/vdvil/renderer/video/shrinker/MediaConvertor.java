@@ -2,29 +2,38 @@ package no.lau.vdvil.renderer.video.shrinker;
 
 import com.xuggle.mediatool.IMediaReader;
 import com.xuggle.mediatool.IMediaWriter;
+import com.xuggle.mediatool.MediaToolAdapter;
 import com.xuggle.mediatool.ToolFactory;
+import com.xuggle.mediatool.event.IAddStreamEvent;
+import com.xuggle.mediatool.event.IVideoPictureEvent;
+import com.xuggle.mediatool.event.VideoPictureEvent;
+import com.xuggle.xuggler.*;
+import no.lau.vdvil.renderer.video.VideoInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * http://www.jochus.be/site/2010-10-12/java/converting-resizing-videos-in-java-xuggler
  */
 public class MediaConvertor {
-    private static final Integer WIDTH = 640;
-    private static final Integer HEIGHT = 360;
+    static Logger log = LoggerFactory.getLogger(MediaConvertor.class);
 
-    private static final String INPUT_FILE = "/Users/stiglau/Downloads/CLMD-The_Stockholm_Syndrome.mp4";
-    private static final String OUTPUT_FILE = "/tmp/output.mpg";
-
-    public static void main(String[] args) {
-        // create custom listeners
-        MyVideoListener myVideoListener = new MyVideoListener(WIDTH, HEIGHT);
-        Resizer resizer = new Resizer(WIDTH, HEIGHT);
+    public static void convert(String input, String output, int width, int height) {
+        long startTime = System.currentTimeMillis();
+        printWidthAndHeight(input);
 
         // reader
-        IMediaReader reader = ToolFactory.makeReader(INPUT_FILE);
-        reader.addListener(resizer);
+        IMediaReader reader = ToolFactory.makeReader(input);
 
         // writer
-        IMediaWriter writer = ToolFactory.makeWriter(OUTPUT_FILE, reader);
+        IMediaWriter writer = ToolFactory.makeWriter(output, reader);
+
+        // create custom listeners
+        MyVideoListener myVideoListener = new MyVideoListener(width, height);
+        Resizer resizer = new Resizer(width, height);
+
+
+        reader.addListener(resizer);
         resizer.addListener(writer);
         writer.addListener(myVideoListener);
 
@@ -34,5 +43,64 @@ public class MediaConvertor {
         while (reader.readPacket() == null) {
             // continue coding
         }
+        log.info("Time used: " + (System.currentTimeMillis() - startTime)/1000 + " seconds" );
+    }
+
+    private static void printWidthAndHeight(String input) {
+        IContainer container = VideoInfo.getVideoProperties(input);
+        IStreamCoder stream = container.getStream(0).getStreamCoder();
+        log.info("Width: " + stream.getWidth());
+        log.info("Height: " + stream.getHeight());
+        stream.close();
+        container.close();
+    }
+}
+
+class MyVideoListener extends MediaToolAdapter {
+    private Integer width;
+    private Integer height;
+
+    public MyVideoListener(Integer aWidth, Integer aHeight) {
+        this.width = aWidth;
+        this.height = aHeight;
+    }
+
+    @Override
+    public void onAddStream(IAddStreamEvent event) {
+        int streamIndex = event.getStreamIndex();
+        IStreamCoder streamCoder = event.getSource().getContainer().getStream(streamIndex).getStreamCoder();
+        if (streamCoder.getCodecType() == ICodec.Type.CODEC_TYPE_AUDIO) {
+
+        } else if (streamCoder.getCodecType() == ICodec.Type.CODEC_TYPE_VIDEO) {
+            streamCoder.setWidth(width);
+            streamCoder.setHeight(height);
+        }
+        super.onAddStream(event);
+    }
+}
+
+class Resizer extends MediaToolAdapter {
+    private Integer width;
+    private Integer height;
+
+    private IVideoResampler videoResampler = null;
+
+    public Resizer(Integer aWidth, Integer aHeight) {
+        this.width = aWidth;
+        this.height = aHeight;
+    }
+
+    @Override
+    public void onVideoPicture(IVideoPictureEvent event) {
+        IVideoPicture pic = event.getPicture();
+        if (videoResampler == null) {
+            videoResampler = IVideoResampler.make(width, height, pic.getPixelType(), pic.getWidth(), pic.getHeight(), pic.getPixelType());
+        }
+        IVideoPicture out = IVideoPicture.make(pic.getPixelType(), width, height);
+        videoResampler.resample(out, pic);
+
+        IVideoPictureEvent asc = new VideoPictureEvent(event.getSource(), out, event.getStreamIndex());
+        super.onVideoPicture(asc);
+        out.delete();
     }
 }
