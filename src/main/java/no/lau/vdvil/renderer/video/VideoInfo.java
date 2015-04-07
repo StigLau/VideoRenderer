@@ -10,7 +10,7 @@ public class VideoInfo {
 	//private static final String filename = "/Users/stiglau/Downloads/JavaZone_2014_10.sept.mp4";
 
 
-	public IContainer getVideoProperties(String filename) {
+	public static IContainer getVideoProperties(String filename) {
 		
 		// first we create a Xuggler container object
 		IContainer container = IContainer.make();
@@ -24,7 +24,7 @@ public class VideoInfo {
         return container;
 	}
 
-    public void printProperties(IContainer container) {
+    public static void printProperties(IContainer container) {
         // query how many streams the call to open found
         int numStreams = container.getNumStreams();
         // query for the total duration
