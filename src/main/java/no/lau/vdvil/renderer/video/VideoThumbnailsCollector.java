@@ -2,17 +2,21 @@ package no.lau.vdvil.renderer.video;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import javax.imageio.ImageIO;
 import com.xuggle.mediatool.IMediaReader;
 import com.xuggle.mediatool.MediaListenerAdapter;
 import com.xuggle.mediatool.ToolFactory;
 import com.xuggle.mediatool.event.IVideoPictureEvent;
 import com.xuggle.xuggler.Global;
+import no.lau.vdvil.domain.out.Instruction;
+import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.renderer.video.stigs.ImageSampleInstruction;
-import no.lau.vdvil.renderer.video.stigs.Instruction;
-import no.lau.vdvil.renderer.video.stigs.Composition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static no.lau.vdvil.domain.utils.KompositionUtils.isFinishedProcessing;
+import static no.lau.vdvil.domain.utils.KompositionUtils.isInterestedInThisPicture;
 
 public class VideoThumbnailsCollector {
 
@@ -25,7 +29,7 @@ public class VideoThumbnailsCollector {
     private Logger logger = LoggerFactory.getLogger(VideoThumbnailsCollector.class);
 
 
-    public void capture(String inputFilename, String outputFilePrefix, Composition composition){
+    public void capture(String inputFilename, String outputFilePrefix, Komposition komposition){
         long start = System.currentTimeMillis();
         new File(outputFilePrefix).mkdirs();
 
@@ -36,7 +40,7 @@ public class VideoThumbnailsCollector {
             // stipulate that we want BufferedImages created in BGR 24bit color space
             mediaReader.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
 
-            mediaReader.addListener(new ImageSnapListener(composition, outputFilePrefix));
+            mediaReader.addListener(new ImageSnapListener(komposition, outputFilePrefix));
 
             // read out the contents of the media file and
             // dispatch events to the attached listener
@@ -47,33 +51,40 @@ public class VideoThumbnailsCollector {
     }
 
 	private class ImageSnapListener extends MediaListenerAdapter {
-        final Composition composition;
+        final Komposition komposition;
+        List<String> imageUrls = new ArrayList<>();
         private final String outputFilePrefix;
 
-        private ImageSnapListener(Composition composition, String outputFilePrefix) {
-            this.composition = composition;
+        private ImageSnapListener(Komposition komposition, String outputFilePrefix) {
+            this.komposition = komposition;
             this.outputFilePrefix = outputFilePrefix;
         }
 
         public void onVideoPicture(IVideoPictureEvent event) {
-            if(composition.isFinishedProcessing(event.getTimeStamp())) {
+            if(isFinishedProcessing(komposition, event.getTimeStamp())) {
                 throw new RuntimeException("End of compilation");
             }
 
-            for (Instruction instruction : composition.isInterestedInThisPicture(event.getTimeStamp())) {
+
+            for (Instruction instruction : isInterestedInThisPicture(komposition, event.getTimeStamp())) {
                 logger.trace("Ping {}", event.getTimeStamp());
                 try {
-                    String imageUrl = fetchImage(event, instruction);
-                    if(imageUrl != null) {
-                        instruction.relevantFiles.add(imageUrl);
+                    if (instruction.segment instanceof ImageSampleInstruction) {
+                        ImageSampleInstruction sampleInstruction = (ImageSampleInstruction) instruction.segment;
+                        String imageUrl = fetchImage(event, sampleInstruction);
+                        if(imageUrl != null) {
+                            imageUrls.add(imageUrl);
+                        }
                     }
+
+
                 }catch (Exception e) {
                     logger.error("Nothing exciting happened - could not fetch file: ", e);
                 }
             }
         }
 
-        public String fetchImage(IVideoPictureEvent event, Instruction instruction) throws Exception {
+        public String fetchImage(IVideoPictureEvent event, ImageSampleInstruction instruction) throws Exception {
 
 			if (event.getStreamIndex() != mVideoStreamIndex) {
 				// if the selected video stream id is not yet set, go ahead an
@@ -86,7 +97,7 @@ public class VideoThumbnailsCollector {
 			}
 
             int clockRatio = 250000;
-            double MICRO_SECONDS_BETWEEN_FRAMES = composition.bpm * clockRatio / (((ImageSampleInstruction)instruction).framesPerBeat * 60);
+            double MICRO_SECONDS_BETWEEN_FRAMES = komposition.bpm * clockRatio / (((ImageSampleInstruction)instruction).framesPerBeat * 60);
 
 			// if uninitialized, back date mLastPtsWrite so we get the very first frame
 			if (mLastPtsWrite == Global.NO_PTS)

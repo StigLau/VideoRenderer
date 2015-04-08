@@ -3,7 +3,8 @@ package no.lau.vdvil.renderer.video;
 import com.xuggle.mediatool.*;
 import com.xuggle.mediatool.event.IAudioSamplesEvent;
 import com.xuggle.mediatool.event.IVideoPictureEvent;
-import no.lau.vdvil.renderer.video.stigs.Instruction;
+import no.lau.vdvil.domain.out.Instruction;
+import no.lau.vdvil.domain.out.Komposition;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.nio.ShortBuffer;
 import java.util.HashMap;
 import java.util.Map;
+import static no.lau.vdvil.domain.utils.KompositionUtils.fromMillis;
 
 /**
  * @author Stig Lau 08/02/15.
@@ -27,6 +29,17 @@ public class ModifyMediaExample {
 		//String inputFile = ModifyMediaExample.class.getClassLoader().getResource("video/5sec-test.flv").getFile();
 		String inputFile = "/Users/stiglau/Downloads/CLMD-The_Stockholm_Syndrome.mp4";
 
+        Komposition komposition = new Komposition(128,
+                new Instruction("0", 0, 1, null),
+                new Instruction("2", 1, 3, null),
+                new Instruction("5", 4, 4, null),
+                new Instruction("10", 8, 4, null),
+                new Instruction("15", 12, 4, null),
+                new Instruction("18", 13, 1, null),
+                new Instruction("20", 24, 1, null)
+        );
+
+
 		// create a media reader
 		IMediaReader mediaReader = ToolFactory.makeReader(inputFile);
 
@@ -35,7 +48,7 @@ public class ModifyMediaExample {
 
 		IMediaWriter mediaWriter = ToolFactory.makeWriter(outputFilename, mediaReader);
 
-		IMediaTool imageMediaTool = new StaticImageMediaTool();
+		IMediaTool imageMediaTool = new StaticImageMediaTool(komposition);
 		IMediaTool audioVolumeMediaTool = new VolumeAdjustMediaTool(0.1);
 
 		// create a tool chain:
@@ -55,18 +68,11 @@ public class ModifyMediaExample {
 
 		//private List<BufferedImage> logoImages = new ArrayList<>();
 		Map<String, File> files = new HashMap<>();
-        Instruction[] ins = new Instruction[] {
-				new Instruction("0", 0, 1, 120),
-				new Instruction("2", 1, 3, 120),
-				new Instruction("5", 4, 4, 120),
-				new Instruction("10", 8, 4, 120),
-				new Instruction("15", 12, 4, 120),
-				new Instruction("18", 13, 1, 120),
-				new Instruction("20", 24, 1, 120),
-		};
+        Komposition komposition;
 
-		public StaticImageMediaTool() {
-			File folder = new File(ModifyMediaExample.class.getClassLoader().getResource("img").getFile());
+		public StaticImageMediaTool(Komposition komposition) {
+            this.komposition = komposition;
+            File folder = new File(ModifyMediaExample.class.getClassLoader().getResource("img").getFile());
 			for (File file : folder.listFiles()) {
 				if (file.isFile() && file.getName().contains(".png")) {
 					files.put(file.getPath(), file);
@@ -116,14 +122,11 @@ public class ModifyMediaExample {
 		}
 
 		Instruction lastAfter(long time) {
-			for (int i = 0; i < ins.length; i++) {
-				Instruction instruction = ins[i];
-
-                if(instruction != null)
-                    System.out.println("instruction.fromMillis(120) = " + instruction.fromMillis(120));
-
-				if(instruction != null && time >= instruction.fromMillis(120)) {
-					ins[i] = null;
+            for (Instruction instruction : komposition.instructions) {
+                if(instruction != null) {
+                    System.out.println("instruction.fromMillis(120) = " + fromMillis(instruction, komposition));
+                }
+				if(instruction != null && time >= fromMillis(instruction, komposition)) {
 					return instruction;
 				}
 			}
