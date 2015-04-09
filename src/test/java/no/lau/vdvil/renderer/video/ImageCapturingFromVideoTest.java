@@ -1,7 +1,5 @@
 package no.lau.vdvil.renderer.video;
 
-import no.lau.vdvil.domain.Segment;
-import no.lau.vdvil.domain.VideoStillImageSegment;
 import no.lau.vdvil.domain.out.Instruction;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.renderer.video.stigs.ImageSampleInstruction;
@@ -19,23 +17,19 @@ public class ImageCapturingFromVideoTest {
 
     @Test
     public void testCapturing() {
-        String inputFilename = "/Users/stiglau/Downloads/JavaZone_2014_10.sept.mp4";
-        String outputFilePrefix = "/tmp/snaps/";
+        String inputFilename = "/tmp/CLMD-The_Stockholm_Syndrome_320.mp4";
+        String outputFilePrefix = "/tmp/snaps/CLMD-The_Stockholm_Syndrome_320/";
         Komposition komposition = new Komposition(128,
-                new Instruction("Capture some pics", 0, 40, new ImageSampleInstruction("First capture sequence", 0, 4, 2)),
-                new Instruction("Capture some pics 2", 0, 40, new ImageSampleInstruction("Second capture sequence", 32, 8, 1))
+                new Instruction("Capture some pics", 64, 64, new ImageSampleInstruction("First capture sequence", 64, 64, 2)),
+                new Instruction("Capture some pics 2", 256, 32, new ImageSampleInstruction("Second capture sequence", 256, 32, 1))
         );
         new VideoThumbnailsCollector().capture(inputFilename, outputFilePrefix, komposition);
-        assertEquals(8, ((VideoStillImageSegment) komposition.instructions.get(0).segment).getStillImages().length);
-        assertEquals(36, ((VideoStillImageSegment) komposition.instructions.get(1).segment).getStillImages().length);
+        assertEquals(719, ((ImageSampleInstruction) komposition.instructions.get(0).segment).collectedImages().size());
+        assertEquals(359, ((ImageSampleInstruction) komposition.instructions.get(1).segment).collectedImages().size());
 
         logger.info("Found files:");
         for (Instruction instruction : komposition.instructions) {
             logger.info("From: {} Duration: {}, BPM: {}, FramesPerBeat: {}", instruction.from, instruction.duration, komposition.bpm, ((ImageSampleInstruction)instruction.segment).framesPerBeat);
-            //TODO Check this out
-            //for (String file : instruction.segment.relevantFiles) {
-            //    System.out.println("File: " + file);
-            //}
         }
     }
 }

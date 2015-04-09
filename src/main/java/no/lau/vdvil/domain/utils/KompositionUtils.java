@@ -43,12 +43,7 @@ public class KompositionUtils {
     }
 
     public static List<Instruction> isInterestedInThisPicture(Komposition komposition, long timestamp) {
-        return komposition.instructions.stream().filter(instruction -> contains(instruction, timestamp))
+        return komposition.instructions.stream().filter(instruction -> contains(instruction, komposition, timestamp))
                 .collect(Collectors.toList());
-    }
-
-    private static boolean contains(Instruction instruction, long timestamp) {
-        return instruction.from <= timestamp &&
-                timestamp <= (instruction.from + instruction.duration);
     }
 }

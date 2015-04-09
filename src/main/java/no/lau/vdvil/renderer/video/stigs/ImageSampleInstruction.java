@@ -1,7 +1,8 @@
 package no.lau.vdvil.renderer.video.stigs;
 
 import no.lau.vdvil.domain.Segment;
-import no.lau.vdvil.domain.out.Instruction;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple version of Instruction used by video sampler for extracting images.
@@ -13,6 +14,7 @@ public class ImageSampleInstruction implements Segment {
     private final long start;
     private final long duration;
     public final double framesPerBeat;
+    List<String> collectedImages = new ArrayList<>();
 
     public ImageSampleInstruction(String id, long start, long duration, double framesPerBeat) {
         this.id = id;
@@ -31,5 +33,12 @@ public class ImageSampleInstruction implements Segment {
 
     public long duration() {
         return duration;
+    }
+
+    public void addImage(String imageUrl) {
+        collectedImages.add(imageUrl);
+    }
+    public List<String> collectedImages() {
+        return collectedImages;
     }
 }

@@ -11,8 +11,8 @@ public class MediaConvertorTest {
         Integer WIDTH = 320;
         Integer HEIGHT = 240;
 
-        String INPUT_FILE = "/Users/stiglau/Downloads/CLMD-The_Stockholm_Syndrome.mp4";
-        String OUTPUT_FILE = "/tmp/output320.mp4";
+        String INPUT_FILE = "/tmp/CLMD-The_Stockholm_Syndrome.mp4";
+        String OUTPUT_FILE = "/tmp/CLMD-The_Stockholm_Syndrome_320.mp4";
 
         MediaConvertor.convert(INPUT_FILE, OUTPUT_FILE, WIDTH, HEIGHT);
     }
