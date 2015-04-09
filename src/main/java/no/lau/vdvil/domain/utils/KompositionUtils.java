@@ -2,8 +2,13 @@ package no.lau.vdvil.domain.utils;
 
 import no.lau.vdvil.domain.out.Instruction;
 import no.lau.vdvil.domain.out.Komposition;
+import no.lau.vdvil.renderer.video.creator.ImageStore;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Stig@Lau.no 08/04/15.
@@ -45,5 +50,31 @@ public class KompositionUtils {
     public static List<Instruction> isInterestedInThisPicture(Komposition komposition, long timestamp) {
         return komposition.instructions.stream().filter(instruction -> contains(instruction, komposition, timestamp))
                 .collect(Collectors.toList());
+    }
+
+    public static Stream<BufferedImage> streamImages(Komposition komposition, int frameRate) {
+        ImageStore imageStore = new ImageStore(komposition);
+        List<BufferedImage> buff = new ArrayList<>();
+        for (int frame = 0; ; frame++) {
+            long timestamp = findTimeStamp(frame, frameRate, komposition);
+            System.out.println("Timestamp: " + timestamp);
+            try {
+                List<BufferedImage> images = imageStore.getImageAt(timestamp);
+                if(!images.isEmpty()) {
+                    System.out.println("Found images: " + images.size());
+                    buff.addAll(images);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            if(isFinishedProcessing(komposition, findTimeStamp(frame, frameRate, komposition))) {
+                break;
+            }
+        }
+        return buff.stream();
+    }
+
+    public static long findTimeStamp(int frame, int frameRate, Komposition komposition) {
+        return calc(frame, komposition.bpm * frameRate);
     }
 }

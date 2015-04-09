@@ -1,5 +1,7 @@
 package no.lau.vdvil.renderer.video.testout.deprecated;
 
+import no.lau.vdvil.domain.out.Komposition;
+import no.lau.vdvil.domain.utils.KompositionUtils;
 import org.jcodec.codecs.h264.H264Encoder;
 import org.jcodec.codecs.h264.H264Utils;
 import org.jcodec.common.NIOUtils;
@@ -98,6 +100,7 @@ public class Mp4FromPicsCreator {
             NIOUtils.closeQuietly(ch);
         }
 
+        @Deprecated
         public static void main(String[] args) throws Exception {
             SequenceEncoder encoder = new SequenceEncoder(new File("/tmp/video.mp4"));
             try {
@@ -108,6 +111,26 @@ public class Mp4FromPicsCreator {
                 }
             }finally {
                 encoder.finish();
+            }
+        }
+
+        public static void createVideo(Komposition komposition, int frameRate) throws Exception {
+            SequenceEncoder encoder = new SequenceEncoder(new File(komposition.storageLocation.fileName.getFile()));
+            try {
+                KompositionUtils.streamImages(komposition, frameRate)
+                        .forEach(image -> encodeImage(image, encoder));
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+            finally {
+                encoder.finish();
+            }
+        }
+        static void encodeImage(BufferedImage image, SequenceEncoder encoder) {
+            try {
+                encoder.encodeImage(image);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
     }

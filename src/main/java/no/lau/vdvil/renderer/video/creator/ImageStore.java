@@ -1,9 +1,8 @@
 package no.lau.vdvil.renderer.video.creator;
 
-import no.lau.vdvil.domain.VideoStillImageRepresentation;
-import no.lau.vdvil.domain.VideoStillImageSegment;
 import no.lau.vdvil.domain.out.Instruction;
 import no.lau.vdvil.domain.out.Komposition;
+import no.lau.vdvil.renderer.video.stigs.ImageSampleInstruction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.imageio.ImageIO;
@@ -20,9 +19,13 @@ import static no.lau.vdvil.domain.utils.KompositionUtils.fromMillis;
  */
 public class ImageStore {
 
-    Komposition komposition;
+    private final Komposition komposition;
 
     private Logger logger = LoggerFactory.getLogger(ImageStore.class);
+
+    public ImageStore(Komposition komposition) {
+        this.komposition = komposition;
+    }
 
     public List<BufferedImage> getImageAt(Long timeStamp) throws IOException {
         return komposition.instructions.stream()
@@ -37,17 +40,23 @@ public class ImageStore {
     }
 
     BufferedImage extractImage(long timeStamp, Instruction instruction) {
-        VideoStillImageRepresentation[] stillImages = ((VideoStillImageSegment) instruction.segment).getStillImages();
-        long start = fromMillis(instruction, komposition);
-        double split = stillImages.length * (timeStamp - start) / durationMillis(instruction, komposition);
-        int index = (int) Math.round(split);
-        if (stillImages.length > index) {
-            String file = stillImages[index].fileLocation;
-            logger.debug("Inserting image {} at timestamp {}", file, timeStamp);
-            try {
-                return ImageIO.read(new File(file));
-            } catch (IOException e) {
-                logger.error("Did not find file " + file, e);
+        if (instruction.segment instanceof ImageSampleInstruction) {
+            ImageSampleInstruction segment = (ImageSampleInstruction) instruction.segment;
+
+            List<String> stillImages = segment.collectedImages();
+            long start = fromMillis(instruction, komposition);
+            double split = stillImages.size() * (timeStamp - start) / durationMillis(instruction, komposition);
+            int index = (int) Math.round(split);
+            if (stillImages.size() > index) {
+                String file = stillImages.get(index);
+                if(file != null) {
+                    logger.debug("Inserting image {} at timestamp {}", file, timeStamp);
+                    try {
+                        return ImageIO.read(new File(file));
+                    } catch (IOException e) {
+                        logger.error("Did not find file " + file, e);
+                    }
+                }
             }
         }
         logger.debug("Did not find image at timestamp {}", timeStamp);

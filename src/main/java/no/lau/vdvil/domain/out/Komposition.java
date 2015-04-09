@@ -11,7 +11,7 @@ import java.util.List;
 public class Komposition {
     public final List<Instruction> instructions;
     long lastInstruction;
-    public final int bpm;
+    public final float bpm;
 
     //Width and height of the final Kompost to be produced
     public int height;
