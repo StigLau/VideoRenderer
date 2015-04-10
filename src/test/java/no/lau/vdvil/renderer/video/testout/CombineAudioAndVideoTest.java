@@ -16,8 +16,8 @@ public class CombineAudioAndVideoTest {
     public void videoAudioCombinationTest() throws MalformedURLException {
         //String inputVideoFilePath = "/Users/stiglau/Downloads/NORWAY-A_Time-Lapse_Adventure.mp4"; Does not works
         //String inputVideoFilePath = "/Users/stiglau/Downloads/JavaZone_2014_10.sept.mp4";
-        String inputVideoFilePath = "/Users/stiglau/Downloads/Olive-Youre_Not_Alone.webm";
-        String inputAudioFilePath = "/Users/stiglau/Downloads/The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix.mp3";
+        String inputVideoFilePath = "/tmp/Olive-Youre_Not_Alone.webm";
+        String inputAudioFilePath = "/tmp/The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix.mp3";
 
         Komposition komposition = new Komposition(128);
         komposition.height = 360;
