@@ -3,6 +3,10 @@ package no.lau.vdvil.renderer.video.creator;
 import com.xuggle.mediatool.*;
 import com.xuggle.mediatool.event.IVideoPictureEvent;
 import no.lau.vdvil.domain.out.Komposition;
+import no.lau.vdvil.domain.utils.KompositionUtils;
+import no.lau.vdvil.renderer.video.VideoExtractionFinished;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -13,9 +17,12 @@ import java.io.IOException;
  * Much copy paste from Xuggler project
  */
 public class VideoImageStitcher {
+    private Logger log = LoggerFactory.getLogger(VideoImageStitcher.class);
+
     public void createVideo(String inputFile, Komposition komposition) {
         IMediaReader mediaReader = ToolFactory.makeReader(inputFile);
-        IMediaWriter mediaWriter = ToolFactory.makeWriter(komposition.storageLocation.fileName.getFile(), mediaReader);
+        String outFile = komposition.storageLocation.fileName.getFile();
+        IMediaWriter mediaWriter = ToolFactory.makeWriter(outFile, mediaReader);
         try {
             // configure it to generate BufferImages
             mediaReader.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
@@ -25,15 +32,36 @@ public class VideoImageStitcher {
 
             // create a tool chain:
             // reader -> addStaticImage -> reduceVolume -> writer
+            mediaReader.addListener(new StartAndStopMediaTool(komposition));
             mediaReader.addListener(imageMediaTool);
             imageMediaTool.addListener(audioVolumeMediaTool);
             audioVolumeMediaTool.addListener(mediaWriter);
 
             while (mediaReader.readPacket() == null) ;
+        }catch(VideoExtractionFinished finished) {
+            log.info("Video processing finished {}", finished.getMessage());
         }finally {
             mediaReader.close();
-            mediaWriter.close();
+            //mediaWriter.close();
         }
+    }
+
+    private static class StartAndStopMediaTool extends MediaToolAdapter {
+
+        private final Komposition komposition;
+
+        private StartAndStopMediaTool(Komposition komposition) {
+            this.komposition = komposition;
+        }
+
+        public void onVideoPicture(IVideoPictureEvent event) {
+            if (KompositionUtils.isFinishedProcessing(komposition, event.getTimeStamp())) {
+                throw new VideoExtractionFinished("End of compilation");
+            }
+            super.onVideoPicture(event);
+        }
+
+
     }
 
     /**
@@ -41,10 +69,10 @@ public class VideoImageStitcher {
      */
     private static class StaticImageMediaTool extends MediaToolAdapter {
 
-        final ImageStore imageStore = new ImageStore();
+        final ImageStore imageStore;
 
         private StaticImageMediaTool(Komposition komposition) {
-            System.out.println("NOT USING KOMPOSITION!");
+            imageStore = new ImageStore(komposition);
         }
 
         public void onVideoPicture(IVideoPictureEvent event) {

@@ -18,7 +18,14 @@ public class KompositionUtils {
         return calc(instruction.from, komposition.bpm);
     }
 
+    public static long fromMillis(Instruction instruction, float bpm) {
+        return calc(instruction.from, bpm);
+    }
 
+
+    public static long durationMillis(Instruction instruction, float bpm) {
+        return calc(instruction.duration, bpm);
+    }
     public static long durationMillis(Instruction instruction, Komposition komposition) {
         return calc(instruction.duration, komposition.bpm);
     }
@@ -28,19 +35,23 @@ public class KompositionUtils {
     }
 
     public static boolean contains(Instruction instruction, Komposition komposition, long timestamp) {
-        return (timestamp > fromMillis(instruction, komposition) &&
-                timestamp < (fromMillis(instruction, komposition) + durationMillis(instruction, komposition)));
+        return contains(instruction, komposition.bpm, timestamp);
+    }
+
+    public static boolean contains(Instruction instruction, float bpm, long timestamp) {
+        return (timestamp > fromMillis(instruction, bpm) &&
+                timestamp < (fromMillis(instruction, bpm) + durationMillis(instruction, bpm)));
     }
 
     public static long lastInstruction(Komposition komposition) {
-        long lastInstruction = 0;
+        long endTimeStamp = 0;
         for (Instruction instruction : komposition.instructions) {
             long thisLength = fromMillis(instruction, komposition) + durationMillis(instruction, komposition);
-            if(thisLength > lastInstruction) {
-                lastInstruction = thisLength;
+            if(thisLength > endTimeStamp) {
+                endTimeStamp = thisLength;
             }
         }
-        return lastInstruction;
+        return endTimeStamp;
     }
 
     public static boolean isFinishedProcessing(Komposition komposition, Long timeStamp) {
