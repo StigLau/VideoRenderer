@@ -1,4 +1,4 @@
-package no.lau.vdvil.renderer.video.phun;
+package no.lau.vdvil.renderer.video.deprecated.phun;
 
 import com.xuggle.xuggler.Global;
 import java.awt.Color;

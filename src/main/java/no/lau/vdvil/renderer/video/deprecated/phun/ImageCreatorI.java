@@ -1,4 +1,4 @@
-package no.lau.vdvil.renderer.video.phun;
+package no.lau.vdvil.renderer.video.deprecated.phun;
 
 import java.awt.image.BufferedImage;
 

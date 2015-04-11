@@ -1,4 +1,4 @@
-package no.lau.vdvil.renderer.video.phun;
+package no.lau.vdvil.renderer.video.deprecated.phun;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
