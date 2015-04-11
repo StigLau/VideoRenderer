@@ -13,7 +13,8 @@ import org.junit.Test;
 public class AudioExtractionTest {
     //May need multiplexing first
     String inFile = "/tmp/CLMD-The_Stockholm_Syndrome_320.mp4";
-    //String inFile = "/tmp/Onewheel_The_World_is_Your_Playground.mp4";
+    //String inFile = "/tmp/320_Onewheel_The_World_is_Your_Playground.mp4";
+    String outfile = "/tmp/an4.mp3";
 
     @Test
     public void testExtractingAudion() {
@@ -22,7 +23,7 @@ public class AudioExtractionTest {
         videoInfo.printProperties(container);
 
         IMediaReader reader = ToolFactory.makeReader(inFile);
-        IMediaWriter writer = ToolFactory.makeWriter("/tmp/an4.mp3", reader);
+        IMediaWriter writer = ToolFactory.makeWriter(outfile, reader);
         int sampleRate = 44100;
         int channels = 2;
         try {
@@ -36,6 +37,7 @@ public class AudioExtractionTest {
     }
 
     /**
+     * Example:
      Number of streams: 2
      Duration (ms): 165140000
      File Size (bytes): 44647898

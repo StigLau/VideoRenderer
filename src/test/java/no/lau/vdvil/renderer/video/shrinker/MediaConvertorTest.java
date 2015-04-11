@@ -10,11 +10,8 @@ public class MediaConvertorTest {
     public void testConverting() {
         Integer WIDTH = 320;
         Integer HEIGHT = 240;
-
-        String INPUT_FILE = "/tmp/CLMD-The_Stockholm_Syndrome.mp4";
-        String OUTPUT_FILE = "/tmp/CLMD-The_Stockholm_Syndrome_320.mp4";
-
-        MediaConvertor.convert(INPUT_FILE, OUTPUT_FILE, WIDTH, HEIGHT);
+        String filename = "Onewheel_The_World_is_Your_Playground.mp4";
+        MediaConvertor.convert("/tmp/originals/" + filename, "/tmp/" + WIDTH + "_" + filename, WIDTH, HEIGHT);
     }
 }
 
