@@ -31,7 +31,7 @@ public class CreateBallVideo {
      * Create and display a number of bouncing balls on the
      */
 
-    public static void main(String[] args) {
+    public static void createBallsVideo(String outFile) {
         log.info("<init>");
         // the number of balls to bounce around
 
@@ -67,27 +67,32 @@ public class CreateBallVideo {
 
         // create a media writer and specify the output file
 
-        final IMediaWriter writer = ToolFactory.makeWriter("myballs.mov");
+        final IMediaWriter writer = ToolFactory.makeWriter(outFile);
 
         // add a viewer so we can see the media as it is created
         writer.addListener(ToolFactory.makeViewer(
                 IMediaViewer.Mode.AUDIO_VIDEO, true,
                 javax.swing.WindowConstants.EXIT_ON_CLOSE));
-        // add the video stream
 
+        // add audio and video streams
         writer.addVideoStream(videoStreamIndex, videoStreamId, width, height);
-
-        // add the audio stream
-
         writer.addAudioStream(audioStreamIndex, audioStreamId, channelCount, sampleRate);
 
         // create some balls to show on the screen
-
         ImageCreatorI balls = new ImageCreator(ballCount, width, height, sampleCount);
 
+
+        try {
+            drawSomeBalls(duration, videoStreamIndex, frameRate, audioStreamIndex, sampleRate, sampleCount, nextFrameTime, totalSampleCount, writer, balls);
+        }finally {
+            // manually close the writer
+            writer.close();
+        }
+    }
+
+    private static void drawSomeBalls(long duration, int videoStreamIndex, long frameRate, int audioStreamIndex, int sampleRate, int sampleCount, long nextFrameTime, long totalSampleCount, IMediaWriter writer, ImageCreatorI balls) {
         // loop through clock time, which starts at zero and increases based
         // on the total number of samples created thus far
-
         for (long clock = 0; clock < duration; clock = IAudioSamples.samplesToDefaultPts(totalSampleCount, sampleRate)) {
             // while the clock time exceeds the time of the next video frame,
             // get and encode the next video frame
@@ -104,9 +109,5 @@ public class CreateBallVideo {
             writer.encodeAudio(audioStreamIndex, samples, clock, DEFAULT_TIME_UNIT);
             totalSampleCount += sampleCount;
         }
-
-        // manually close the writer
-
-        writer.close();
     }
 }

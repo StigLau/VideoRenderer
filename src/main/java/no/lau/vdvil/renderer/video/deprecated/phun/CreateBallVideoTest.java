@@ -9,6 +9,6 @@ import no.lau.vdvil.renderer.video.deprecated.phun.CreateBallVideo;
 public class CreateBallVideoTest {
     public static void main(String[] args) {
         //ConcatenateAudioAndVideo.main(new String[] {""});
-        CreateBallVideo.main(null);
+        CreateBallVideo.createBallsVideo("/tmp/myballs.mov");
     }
 }
