@@ -87,24 +87,18 @@ public class CreateVideoFromScratchImages {
 
 
         try {
-            drawSomeBalls(duration, videoStreamIndex, frameRate, audioStreamIndex, sampleRate, sampleCount, writer, balls, imageStore, containerAudio, packetaudio);
+            drawSomeBalls(duration, videoStreamIndex, frameRate, audioStreamIndex, sampleRate, sampleCount, writer, balls, imageStore, containerAudio, packetaudio, coderAudio);
+            log.info("Finished writing video");
         }catch(Exception e) {
-            log.error("Sometin happened", e);
+            log.error("Sometin happened :´(", e);
         }
         finally {
-            // manually close the writer
+            log.debug("Closing writer");
             writer.close();
         }
     }
 
-    private static void drawSomeBalls(long duration, int videoStreamIndex, long frameRate, int audioStreamIndex, int sampleRate, int sampleCount, IMediaWriter writer, ImageCreatorI balls, ImageStore imageStore, IContainer containerAudio, IPacket packetaudio) throws IOException {
-
-
-
-
-
-        // read audio file and create stream
-        IStreamCoder coderAudio = containerAudio.getStream(0).getStreamCoder();
+    private static void drawSomeBalls(long duration, int videoStreamIndex, long frameRate, int audioStreamIndex, int sampleRate, int sampleCount, IMediaWriter writer, ImageCreatorI balls, ImageStore imageStore, IContainer containerAudio, IPacket packetaudio, IStreamCoder coderAudio) throws IOException {
 
         // loop through clock time, which starts at zero and increases based
         // on the total number of samples created thus far
@@ -119,24 +113,21 @@ public class CreateVideoFromScratchImages {
         for (long clock = 0; clock < duration; clock = IAudioSamples.samplesToDefaultPts(totalSampleCount, sampleRate)) {
             // while the clock time exceeds the time of the next video frame,
             // get and encode the next video frame
-
-            containerAudio.readNextPacket(packetaudio);
-
             while (clock >= nextFrameTime) {
-
                 for (BufferedImage frame : imageStore.getImageAt(clock)) {
                     writer.encodeVideo(videoStreamIndex, frame, nextFrameTime, DEFAULT_TIME_UNIT);
                 }
-                //writer.encodeVideo(videoStreamIndex, frame, nextFrameTime, DEFAULT_TIME_UNIT);
                 nextFrameTime += frameRate;
             }
 
+            // Audio
+            containerAudio.readNextPacket(packetaudio);
             // compute and encode the audio for the balls
             IAudioSamples samples = IAudioSamples.make(512, coderAudio.getChannels(), IAudioSamples.Format.FMT_S32);
             coderAudio.decodeAudio(samples, packetaudio, 0);
-            if (samples.isComplete())
+            if (samples.isComplete()){
                 writer.encodeAudio(1, samples);
-
+            }
 
             //short[] samples = balls.getAudioFrame(sampleRate);
             //writer.encodeAudio(audioStreamIndex, samples, clock, DEFAULT_TIME_UNIT);
