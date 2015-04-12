@@ -1,9 +1,11 @@
 package no.lau.vdvil.renderer.video;
 
-import com.xuggle.mediatool.IMediaViewer;
 import com.xuggle.mediatool.IMediaWriter;
 import com.xuggle.mediatool.ToolFactory;
 import com.xuggle.xuggler.IAudioSamples;
+import com.xuggle.xuggler.IContainer;
+import com.xuggle.xuggler.IPacket;
+import com.xuggle.xuggler.IStreamCoder;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
 import no.lau.vdvil.renderer.video.deprecated.phun.ImageCreator;
@@ -30,7 +32,7 @@ public class CreateVideoFromScratchImages {
 
     private static final Logger log = LoggerFactory.getLogger(CreateVideoFromScratchImages.class);
 
-    public static void createVideo(Komposition komposition) {
+    public static void createVideo(Komposition komposition, String inputAudioFilePath) {
         log.info("Init");
         // the number of balls to bounce around
 
@@ -65,16 +67,27 @@ public class CreateVideoFromScratchImages {
 
         final IMediaWriter writer = ToolFactory.makeWriter(komposition.storageLocation.fileName.getFile());
 
+        //Audio
+        IContainer containerAudio = IContainer.make();
+        IPacket packetaudio = IPacket.make();
+        if (containerAudio.open(inputAudioFilePath, IContainer.Type.READ, null) < 0)
+            throw new IllegalArgumentException("Cant find " + inputAudioFilePath);
+
+        IStreamCoder coderAudio = containerAudio.getStream(0).getStreamCoder();
+        if (coderAudio.open(null, null) < 0)
+            throw new RuntimeException("Cant open audio coder");
+
         // add audio and video streams
         writer.addVideoStream(videoStreamIndex, videoStreamId, width, height);
-        writer.addAudioStream(audioStreamIndex, audioStreamId, channelCount, sampleRate);
+        //writer.addAudioStream(audioStreamIndex, audioStreamId, channelCount, sampleRate);
+        writer.addAudioStream(audioStreamIndex, audioStreamId, coderAudio.getChannels(), coderAudio.getSampleRate());
 
         // create some balls to show on the screen
         ImageCreatorI balls = new ImageCreator(ballCount, width, height, sampleCount);
 
 
         try {
-            drawSomeBalls(duration, videoStreamIndex, frameRate, audioStreamIndex, sampleRate, sampleCount, writer, balls, imageStore);
+            drawSomeBalls(duration, videoStreamIndex, frameRate, audioStreamIndex, sampleRate, sampleCount, writer, balls, imageStore, containerAudio, packetaudio);
         }catch(Exception e) {
             log.error("Sometin happened", e);
         }
@@ -84,7 +97,15 @@ public class CreateVideoFromScratchImages {
         }
     }
 
-    private static void drawSomeBalls(long duration, int videoStreamIndex, long frameRate, int audioStreamIndex, int sampleRate, int sampleCount, IMediaWriter writer, ImageCreatorI balls, ImageStore imageStore) throws IOException {
+    private static void drawSomeBalls(long duration, int videoStreamIndex, long frameRate, int audioStreamIndex, int sampleRate, int sampleCount, IMediaWriter writer, ImageCreatorI balls, ImageStore imageStore, IContainer containerAudio, IPacket packetaudio) throws IOException {
+
+
+
+
+
+        // read audio file and create stream
+        IStreamCoder coderAudio = containerAudio.getStream(0).getStreamCoder();
+
         // loop through clock time, which starts at zero and increases based
         // on the total number of samples created thus far
 // the clock time of the next frame
@@ -99,6 +120,8 @@ public class CreateVideoFromScratchImages {
             // while the clock time exceeds the time of the next video frame,
             // get and encode the next video frame
 
+            containerAudio.readNextPacket(packetaudio);
+
             while (clock >= nextFrameTime) {
 
                 for (BufferedImage frame : imageStore.getImageAt(clock)) {
@@ -109,9 +132,14 @@ public class CreateVideoFromScratchImages {
             }
 
             // compute and encode the audio for the balls
+            IAudioSamples samples = IAudioSamples.make(512, coderAudio.getChannels(), IAudioSamples.Format.FMT_S32);
+            coderAudio.decodeAudio(samples, packetaudio, 0);
+            if (samples.isComplete())
+                writer.encodeAudio(1, samples);
 
-            short[] samples = balls.getAudioFrame(sampleRate);
-            writer.encodeAudio(audioStreamIndex, samples, clock, DEFAULT_TIME_UNIT);
+
+            //short[] samples = balls.getAudioFrame(sampleRate);
+            //writer.encodeAudio(audioStreamIndex, samples, clock, DEFAULT_TIME_UNIT);
             totalSampleCount += sampleCount;
         }
     }
