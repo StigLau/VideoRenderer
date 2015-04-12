@@ -69,14 +69,11 @@ public class KompositionUtils {
         for (int frame = 0; ; frame++) {
             long timestamp = findTimeStamp(frame, frameRate, komposition);
             System.out.println("Timestamp: " + timestamp);
-            try {
-                List<BufferedImage> images = imageStore.getImageAt(timestamp);
-                if(!images.isEmpty()) {
-                    System.out.println("Found images: " + images.size());
-                    buff.addAll(images);
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+
+            List<BufferedImage> images = imageStore.getImageAt(timestamp);
+            if(!images.isEmpty()) {
+                System.out.println("Found images: " + images.size());
+                buff.addAll(images);
             }
             if(isFinishedProcessing(komposition, findTimeStamp(frame, frameRate, komposition))) {
                 break;

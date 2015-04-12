@@ -27,7 +27,7 @@ public class ImageStore {
         this.komposition = komposition;
     }
 
-    public List<BufferedImage> getImageAt(Long timeStamp) throws IOException {
+    public List<BufferedImage> getImageAt(Long timeStamp) {
         return komposition.instructions.stream()
                 .filter(instruction -> {
                     long start = fromMillis(instruction, komposition);

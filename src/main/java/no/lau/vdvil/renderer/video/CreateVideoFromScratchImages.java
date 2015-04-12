@@ -11,16 +11,12 @@ import no.lau.vdvil.renderer.video.creator.ImageStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * @author Stig@Lau.no
- *
- * @author trebor
- * @author aclarke
  */
 
 public class CreateVideoFromScratchImages {
@@ -32,32 +28,29 @@ public class CreateVideoFromScratchImages {
 
     public static void createVideo(Komposition komposition, String inputAudioFilePath) {
         log.info("Init");
-        // the number of balls to bounce around
-
-
-        ImageStore imageStore = new ImageStore(komposition);
 
         // total duration of the media
         final long duration = DEFAULT_TIME_UNIT.convert(60, SECONDS);
 
-        // video parameters
-        final int videoStreamIndex = 0;
-        final int videoStreamId = 0;
-        final long frameRate = DEFAULT_TIME_UNIT.convert(15, MILLISECONDS);
-        final int width = 320;
-        final int height = 200;
-
-        // create a media writer and specify the output file
         final IMediaWriter writer = ToolFactory.makeWriter(komposition.storageLocation.fileName.getFile());
 
-        // add audio and video streams
-        writer.addVideoStream(videoStreamIndex, videoStreamId, width, height);
-
+        VideoAdapter videoAdapter = new VideoAdapter(komposition, writer);
         //AudioStream must be added after videostream!
         AudioAdapter audioAdapter = new AudioAdapter(inputAudioFilePath, writer);
 
         try {
-            process(duration, videoStreamIndex, frameRate, writer, imageStore, audioAdapter);
+            // the total number of audio samples
+            long totalSampleCount = 0;
+
+            // loop through clock time, which starts at zero and increases based
+            // on the total number of samples created thus far the clock time of the next frame
+            for (long clock = 0; clock < duration; clock = IAudioSamples.samplesToDefaultPts(totalSampleCount, audioAdapter.sampleRate)) {
+                // while the clock time exceeds the time of the next video frame,
+                // get and encode the next video frame
+                videoAdapter.writeNextPacket(clock);
+                audioAdapter.writeNextPacket(clock);
+                totalSampleCount += sampleCount;
+            }
             log.info("Finished writing video");
         }catch(Exception e) {
             log.error("Sometin happened :´(", e);
@@ -67,32 +60,37 @@ public class CreateVideoFromScratchImages {
             writer.close();
         }
     }
+}
 
-    private static void process(long duration, int videoStreamIndex, long frameRate, IMediaWriter writer, ImageStore imageStore, AudioAdapter audioStream) throws IOException {
+class VideoAdapter {
 
-        // loop through clock time, which starts at zero and increases based
-        // on the total number of samples created thus far
-// the clock time of the next frame
+    final int videoStreamIndex = 0;
+    final int videoStreamId = 0;
+    final long frameRate = DEFAULT_TIME_UNIT.convert(15, MILLISECONDS);
+    final int width = 320;
+    final int height = 200;
+    private final IMediaWriter writer;
 
-        long nextFrameTime = 0;
+    long nextFrameTime = 0;
 
-        // the total number of audio samples
+    ImageStore imageStore;
 
-        long totalSampleCount = 0;
 
-        for (long clock = 0; clock < duration; clock = IAudioSamples.samplesToDefaultPts(totalSampleCount, audioStream.sampleRate)) {
-            // while the clock time exceeds the time of the next video frame,
-            // get and encode the next video frame
-            while (clock >= nextFrameTime) {
-                for (BufferedImage frame : imageStore.getImageAt(clock)) {
-                    writer.encodeVideo(videoStreamIndex, frame, nextFrameTime, DEFAULT_TIME_UNIT);
-                }
-                nextFrameTime += frameRate;
+    public VideoAdapter(Komposition komposition, IMediaWriter writer) {
+        this.writer = writer;
+        imageStore = new ImageStore(komposition);
+
+        // add audio and video streams
+        writer.addVideoStream(videoStreamIndex, videoStreamId, width, height);
+
+    }
+
+    public void writeNextPacket(long clock) {
+        while (clock >= nextFrameTime) {
+            for (BufferedImage frame : imageStore.getImageAt(clock)) {
+                writer.encodeVideo(videoStreamIndex, frame, nextFrameTime, DEFAULT_TIME_UNIT);
             }
-            audioStream.writeNextPacket();
-
-            //writer.encodeAudio(audioStreamIndex, samples, clock, DEFAULT_TIME_UNIT);
-            totalSampleCount += sampleCount;
+            nextFrameTime += frameRate;
         }
     }
 }
@@ -114,17 +112,18 @@ class AudioAdapter {
         //Audio
         containerAudio = IContainer.make();
         packetaudio = IPacket.make();
-        if (containerAudio.open(inputAudioFilePath, IContainer.Type.READ, null) < 0)
+        if (containerAudio.open(inputAudioFilePath, IContainer.Type.READ, null) < 0) {
             throw new IllegalArgumentException("Cant find " + inputAudioFilePath);
-
+        }
         coderAudio = containerAudio.getStream(0).getStreamCoder();
-        if (coderAudio.open(null, null) < 0)
+        if (coderAudio.open(null, null) < 0) {
             throw new RuntimeException("Cant open audio coder");
-
+        }
         writer.addAudioStream(audioStreamIndex, audioStreamId, coderAudio.getChannels(), coderAudio.getSampleRate());
     }
 
-    public void writeNextPacket() {
+    public void writeNextPacket(long clock) {
+        //Clock not required by current implemenetation
         // Audio
         containerAudio.readNextPacket(packetaudio);
         // compute and encode the audio for the balls
