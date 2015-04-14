@@ -70,7 +70,7 @@ public class KompositionUtils {
             long timestamp = findTimeStamp(frame, frameRate, komposition);
             System.out.println("Timestamp: " + timestamp);
 
-            List<BufferedImage> images = imageStore.getImageAt(timestamp, komposition.bpm);
+            List<BufferedImage> images = imageStore.getImageAt(timestamp, komposition);
             if(!images.isEmpty()) {
                 System.out.println("Found images: " + images.size());
                 buff.addAll(images);

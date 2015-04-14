@@ -77,7 +77,7 @@ public class VideoImageStitcher {
         }
 
         public void onVideoPicture(IVideoPictureEvent event) {
-            for (BufferedImage foundImage : imageStore.getImageAt(event.getTimeStamp(), komposition.bpm)) {
+            for (BufferedImage foundImage : imageStore.getImageAt(event.getTimeStamp(), komposition)) {
                 writeImage(event, foundImage);
             }
             // call parent which will pass the video onto next tool in chain

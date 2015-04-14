@@ -47,8 +47,8 @@ public class CreateVideoFromScratchImages {
             for (long clock = 0; clock < duration; clock = IAudioSamples.samplesToDefaultPts(totalSampleCount, audioAdapter.sampleRate)) {
                 // while the clock time exceeds the time of the next video frame,
                 // get and encode the next video frame
-                videoAdapter.writeNextPacket(clock, komposition.bpm);
-                audioAdapter.writeNextPacket(clock, komposition.bpm);
+                videoAdapter.writeNextPacket(clock, komposition);
+                audioAdapter.writeNextPacket(clock, komposition);
                 totalSampleCount += sampleCount;
             }
             log.info("Finished writing video");
@@ -85,9 +85,9 @@ class VideoAdapter {
 
     }
 
-    public void writeNextPacket(long clock, float bpm) {
+    public void writeNextPacket(long clock, Komposition komposition) {
         while (clock >= nextFrameTime) {
-            for (BufferedImage frame : imageStore.getImageAt(clock, bpm)) {
+            for (BufferedImage frame : imageStore.getImageAt(clock, komposition)) {
                 writer.encodeVideo(videoStreamIndex, frame, nextFrameTime, DEFAULT_TIME_UNIT);
             }
             nextFrameTime += frameRate;
@@ -122,7 +122,7 @@ class AudioAdapter {
         writer.addAudioStream(audioStreamIndex, audioStreamId, coderAudio.getChannels(), coderAudio.getSampleRate());
     }
 
-    public void writeNextPacket(long clock, float bpm) {
+    public void writeNextPacket(long clock, Komposition komposition) {
         //Clock not required by current implemenetation
         // Audio
         containerAudio.readNextPacket(packetaudio);

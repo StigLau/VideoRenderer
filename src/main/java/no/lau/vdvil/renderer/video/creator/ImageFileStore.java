@@ -1,5 +1,6 @@
 package no.lau.vdvil.renderer.video.creator;
 
+import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.domain.out.Instruction;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.renderer.video.stigs.ImageSampleInstruction;
@@ -25,7 +26,7 @@ public class ImageFileStore implements ImageStore {
 
     private final Komposition komposition;
     private String outputFilePrefix;
-    public final Map<ImageSampleInstruction, List<String>> instructionListMap = new HashMap<>();
+    public final Map<Segment, List<String>> segmentImageList = new HashMap<>();
 
     private Logger logger = LoggerFactory.getLogger(ImageFileStore.class);
 
@@ -37,10 +38,9 @@ public class ImageFileStore implements ImageStore {
         if(!destinationFolder.exists() && !destinationFolder.mkdirs()) {
             throw new RuntimeException("Could not create " + outputFilePrefix);
         };
-
     }
 
-    public List<BufferedImage> getImageAt(Long timeStamp, float bpm) {
+    public List<BufferedImage> getImageAt(Long timeStamp, Komposition komposition) {
         return komposition.instructions.stream()
                 .filter(instruction -> {
                     long start = fromMillis(instruction, komposition);
@@ -53,7 +53,7 @@ public class ImageFileStore implements ImageStore {
                 .collect(Collectors.toList());
     }
 
-    public void store(BufferedImage image, Long timeStamp, ImageSampleInstruction instruction) {
+    public void store(BufferedImage image, Long timeStamp, Segment instruction) {
         String outputFilename = outputFilePrefix + timeStamp + ".png";
         if(image == null) {
             logger.debug("No image to write at {}", timeStamp);
@@ -67,18 +67,17 @@ public class ImageFileStore implements ImageStore {
             }
         }
 
-        if(instructionListMap.containsKey(instruction)) {
-            instructionListMap.get(instruction).add(outputFilename);
+        if(segmentImageList.containsKey(instruction)) {
+            segmentImageList.get(instruction).add(outputFilename);
         } else {
             List<String> newImageList = new ArrayList<>();
             newImageList.add(outputFilename);
-            instructionListMap.put(instruction, newImageList);
+            segmentImageList.put(instruction, newImageList);
         }
     }
 
-    @Override
     public Stream<BufferedImage> findImagesByInstructionId(String instructionId) {
-        return instructionListMap.entrySet().stream()
+        return segmentImageList.entrySet().stream()
                 .filter(entry -> entry.getKey().id().equals(instructionId))
                 .flatMap(entry -> entry.getValue().stream())
                 .map(this::getAsFile);

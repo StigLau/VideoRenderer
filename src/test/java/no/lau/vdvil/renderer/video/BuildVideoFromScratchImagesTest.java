@@ -1,6 +1,7 @@
 package no.lau.vdvil.renderer.video;
 
 import no.lau.vdvil.domain.MediaFile;
+import no.lau.vdvil.domain.VideoStillImageSegment;
 import no.lau.vdvil.domain.out.Instruction;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.renderer.video.creator.ImageBufferStore;
@@ -15,10 +16,10 @@ import static org.junit.Assert.assertEquals;
  */
 public class BuildVideoFromScratchImagesTest {
 
-    String downmixedOriginalVideo = "/tmp/CLMD-The_Stockholm_Syndrome_320.mp4";
+    String downmixedOriginalVideo = "/tmp/320_NORWAY-A_Time-Lapse_Adventure.mp4";
     String snapshotFileStorage = "/tmp/snaps/CLMD-The_Stockholm_Syndrome_320/";
 
-    String sobotaMp3 = "/tmp/originals/The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix.mp3";
+    String sobotaMp3 = "/Users/stiglau/vids/The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix.mp3";
 
     private String result = "file:///tmp/from_scratch_images_test.mp4";
 
@@ -34,19 +35,18 @@ public class BuildVideoFromScratchImagesTest {
 
         new VideoThumbnailsCollector(imageStore).capture(downmixedOriginalVideo, fetchKomposition);
 
-        assertEquals(225, imageStore.findImagesByInstructionId("First capture sequence").count());
-        assertEquals(140, imageStore.findImagesByInstructionId("Second capture sequence").count());
+        assertEquals(221, imageStore.findImagesByInstructionId("First capture sequence").count());
+        assertEquals(141, imageStore.findImagesByInstructionId("Second capture sequence").count());
         //140
 
         Komposition buildKomposition =  new Komposition(128,
-                new Instruction("inst1", 0, 32, fetchKomposition.instructions.get(0).segment),
-                new Instruction("inst2", 32, 30, fetchKomposition.instructions.get(1).segment),
-                new Instruction("inst2", 64, 32, fetchKomposition.instructions.get(0).segment)
+                new Instruction("inst1", 0, 32, new VideoStillImageSegment("First capture sequence", 0, 32)),
+                new Instruction("inst2", 32, 30, new VideoStillImageSegment("Second capture sequence", 32, 30)),
+                new Instruction("inst3", 64, 30, new VideoStillImageSegment("First capture sequence", 64, 30))
                 );
 
         buildKomposition.storageLocation = new MediaFile(new URL(result), 0f, 128f, "dunno yet");
 
         CreateVideoFromScratchImages.createVideo(buildKomposition, sobotaMp3, imageStore);
     }
-
 }
