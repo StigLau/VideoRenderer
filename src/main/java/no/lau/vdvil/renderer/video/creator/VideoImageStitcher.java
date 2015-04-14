@@ -82,10 +82,7 @@ public class VideoImageStitcher {
             }
             // call parent which will pass the video onto next tool in chain
             super.onVideoPicture(event);
-
         }
-
-
 
         private void writeImage(IVideoPictureEvent event, BufferedImage logoImage) {
             BufferedImage image = event.getImage();

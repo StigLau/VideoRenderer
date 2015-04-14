@@ -11,11 +11,12 @@ import java.util.stream.Stream;
 import static no.lau.vdvil.domain.utils.KompositionUtils.calc;
 
 /**
+ * Storage for images in memory between extractor and video creator
  * @author Stig@Lau.no 12/04/15.
  */
 public class ImageBufferStore implements ImageStore {
 
-    public final Map<Segment, List<BufferedImage>> instructionListMap = new HashMap<>();
+    public final Map<Segment, List<BufferedImage>> segmentImageList = new HashMap<>();
     private Logger logger = LoggerFactory.getLogger(ImageBufferStore.class);
 
     public List<BufferedImage> getImageAt(Long timeStamp, Komposition komposition) {
@@ -33,35 +34,30 @@ public class ImageBufferStore implements ImageStore {
 
     /**
      * Calculate which image among a list to show from a imageSample series
-     * May return null if no relevant images were found
+     * Returns a singleton list or empty list
      */
     List<BufferedImage> extractImage(long timeStamp, float bpm, Segment segment) {
-        //Todo Goldplate this fuxer
-        List<BufferedImage> images = findImagesByInstructionId(segment.id()).collect(Collectors.toList());
-
+        List<BufferedImage> images = findImagesByInstructionId(segment.id())
+                .collect(Collectors.toList());
         long start = calc(segment.start(), bpm);
         double split = images.size() * (timeStamp - start) / calc(segment.duration(), bpm);
         int index = (int) Math.round(split);
-        if (images.size() > index && images.get(index) != null) {
-            logger.debug("@{} - {} - {}/{}", timeStamp, segment.id(), index+1, images.size());
-            return Collections.singletonList(images.get(index));
-        }
-        logger.error("Did not find image at timestamp {}", timeStamp);
-        return Collections.emptyList();
+        logger.debug("@{} - {} - {}/{}", timeStamp, segment.id(), index+1, images.size());
+        return Collections.singletonList(images.get(index));
     }
 
     public void store(BufferedImage image, Long timeStamp, Segment instruction) {
-        if(instructionListMap.containsKey(instruction)) {
-            instructionListMap.get(instruction).add(image);
+        if(segmentImageList.containsKey(instruction)) {
+            segmentImageList.get(instruction).add(image);
         } else {
             List<BufferedImage> newImageList = new ArrayList<>();
             newImageList.add(image);
-            instructionListMap.put(instruction, newImageList);
+            segmentImageList.put(instruction, newImageList);
         }
     }
 
     public Stream<BufferedImage> findImagesByInstructionId(String instructionId) {
-        return instructionListMap.entrySet().stream()
+        return segmentImageList.entrySet().stream()
                 .filter(entry -> entry.getKey().id().equals(instructionId))
                 .flatMap(entry -> entry.getValue().stream())
                 .filter(asd -> asd != null);
