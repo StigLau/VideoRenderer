@@ -26,7 +26,7 @@ public class CreateVideoFromScratchImages {
 
     final static int sampleCount = 1000;
 
-    public static void createVideo(Komposition komposition, String inputAudioFilePath) {
+    public static void createVideo(Komposition komposition, String inputAudioFilePath, ImageStore imageStore) {
         log.info("Init");
 
         // total duration of the media
@@ -34,7 +34,7 @@ public class CreateVideoFromScratchImages {
 
         final IMediaWriter writer = ToolFactory.makeWriter(komposition.storageLocation.fileName.getFile());
 
-        VideoAdapter videoAdapter = new VideoAdapter(komposition, writer);
+        VideoAdapter videoAdapter = new VideoAdapter(komposition, writer, imageStore);
         //AudioStream must be added after videostream!
         AudioAdapter audioAdapter = new AudioAdapter(inputAudioFilePath, writer);
 
@@ -47,8 +47,8 @@ public class CreateVideoFromScratchImages {
             for (long clock = 0; clock < duration; clock = IAudioSamples.samplesToDefaultPts(totalSampleCount, audioAdapter.sampleRate)) {
                 // while the clock time exceeds the time of the next video frame,
                 // get and encode the next video frame
-                videoAdapter.writeNextPacket(clock);
-                audioAdapter.writeNextPacket(clock);
+                videoAdapter.writeNextPacket(clock, komposition.bpm);
+                audioAdapter.writeNextPacket(clock, komposition.bpm);
                 totalSampleCount += sampleCount;
             }
             log.info("Finished writing video");
@@ -73,21 +73,21 @@ class VideoAdapter {
 
     long nextFrameTime = 0;
 
-    ImageStore imageStore;
+    final ImageStore imageStore;
 
 
-    public VideoAdapter(Komposition komposition, IMediaWriter writer) {
+    public VideoAdapter(Komposition komposition, IMediaWriter writer, ImageStore imageStore) {
         this.writer = writer;
-        imageStore = new ImageStore(komposition);
+        this.imageStore = imageStore;
 
         // add audio and video streams
         writer.addVideoStream(videoStreamIndex, videoStreamId, width, height);
 
     }
 
-    public void writeNextPacket(long clock) {
+    public void writeNextPacket(long clock, float bpm) {
         while (clock >= nextFrameTime) {
-            for (BufferedImage frame : imageStore.getImageAt(clock)) {
+            for (BufferedImage frame : imageStore.getImageAt(clock, bpm)) {
                 writer.encodeVideo(videoStreamIndex, frame, nextFrameTime, DEFAULT_TIME_UNIT);
             }
             nextFrameTime += frameRate;
@@ -122,7 +122,7 @@ class AudioAdapter {
         writer.addAudioStream(audioStreamIndex, audioStreamId, coderAudio.getChannels(), coderAudio.getSampleRate());
     }
 
-    public void writeNextPacket(long clock) {
+    public void writeNextPacket(long clock, float bpm) {
         //Clock not required by current implemenetation
         // Audio
         containerAudio.readNextPacket(packetaudio);

@@ -2,9 +2,9 @@ package no.lau.vdvil.domain.utils;
 
 import no.lau.vdvil.domain.out.Instruction;
 import no.lau.vdvil.domain.out.Komposition;
+import no.lau.vdvil.renderer.video.creator.ImageFileStore;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -64,13 +64,13 @@ public class KompositionUtils {
     }
 
     public static Stream<BufferedImage> streamImages(Komposition komposition, int frameRate) {
-        ImageStore imageStore = new ImageStore(komposition);
+        ImageStore imageStore = new ImageFileStore(komposition, "/tmp/snaps/");
         List<BufferedImage> buff = new ArrayList<>();
         for (int frame = 0; ; frame++) {
             long timestamp = findTimeStamp(frame, frameRate, komposition);
             System.out.println("Timestamp: " + timestamp);
 
-            List<BufferedImage> images = imageStore.getImageAt(timestamp);
+            List<BufferedImage> images = imageStore.getImageAt(timestamp, komposition.bpm);
             if(!images.isEmpty()) {
                 System.out.println("Found images: " + images.size());
                 buff.addAll(images);

@@ -3,6 +3,7 @@ package no.lau.vdvil.renderer.video;
 import no.lau.vdvil.domain.MediaFile;
 import no.lau.vdvil.domain.out.Instruction;
 import no.lau.vdvil.domain.out.Komposition;
+import no.lau.vdvil.renderer.video.creator.ImageBufferStore;
 import no.lau.vdvil.renderer.video.stigs.ImageSampleInstruction;
 import org.junit.Test;
 import java.net.MalformedURLException;
@@ -28,19 +29,24 @@ public class BuildVideoFromScratchImagesTest {
                 new Instruction("Capture some pics", 64, 64, new ImageSampleInstruction("First capture sequence", 64, 64, 4)),
                 new Instruction("Capture some pics 2", 256, 32, new ImageSampleInstruction("Second capture sequence", 256, 32, 1))
         );
-        new VideoThumbnailsCollector().capture(downmixedOriginalVideo, snapshotFileStorage, fetchKomposition);
-        assertEquals(719, ((ImageSampleInstruction) fetchKomposition.instructions.get(0).segment).collectedImages().size());
-        assertEquals(359, ((ImageSampleInstruction) fetchKomposition.instructions.get(1).segment).collectedImages().size());
+        ImageBufferStore imageStore = new ImageBufferStore();
+        //ImageStore imageStore = new ImageFileStore(fetchKomposition, "/tmp/snaps/");
+
+        new VideoThumbnailsCollector(imageStore).capture(downmixedOriginalVideo, fetchKomposition);
+
+        assertEquals(225, imageStore.findImagesByInstructionId("First capture sequence").count());
+        assertEquals(140, imageStore.findImagesByInstructionId("Second capture sequence").count());
+        //140
 
         Komposition buildKomposition =  new Komposition(128,
-                new Instruction("inst1", 4, 28, fetchKomposition.instructions.get(0).segment),
+                new Instruction("inst1", 0, 32, fetchKomposition.instructions.get(0).segment),
                 new Instruction("inst2", 32, 30, fetchKomposition.instructions.get(1).segment),
                 new Instruction("inst2", 64, 32, fetchKomposition.instructions.get(0).segment)
                 );
 
         buildKomposition.storageLocation = new MediaFile(new URL(result), 0f, 128f, "dunno yet");
 
-        CreateVideoFromScratchImages.createVideo(buildKomposition, sobotaMp3);
+        CreateVideoFromScratchImages.createVideo(buildKomposition, sobotaMp3, imageStore);
     }
 
 }

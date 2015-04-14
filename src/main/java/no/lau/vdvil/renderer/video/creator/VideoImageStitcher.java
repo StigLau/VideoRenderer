@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 /**
  * @author Stig@Lau.no 23/03/15
@@ -19,7 +18,7 @@ import java.io.IOException;
 public class VideoImageStitcher {
     private Logger log = LoggerFactory.getLogger(VideoImageStitcher.class);
 
-    public void createVideo(String inputFile, Komposition komposition) {
+    public void createVideo(String inputFile, Komposition komposition, String outputFilePrefix) {
         IMediaReader mediaReader = ToolFactory.makeReader(inputFile);
         String outFile = komposition.storageLocation.fileName.getFile();
         IMediaWriter mediaWriter = ToolFactory.makeWriter(outFile, mediaReader);
@@ -27,7 +26,7 @@ public class VideoImageStitcher {
             // configure it to generate BufferImages
             mediaReader.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
 
-            IMediaTool imageMediaTool = new StaticImageMediaTool(komposition);
+            IMediaTool imageMediaTool = new StaticImageMediaTool(komposition, outputFilePrefix);
             IMediaTool audioVolumeMediaTool = new VolumeAdjustMediaTool(0.1);
 
             // create a tool chain:
@@ -70,13 +69,15 @@ public class VideoImageStitcher {
     private static class StaticImageMediaTool extends MediaToolAdapter {
 
         final ImageStore imageStore;
+        private final Komposition komposition;
 
-        private StaticImageMediaTool(Komposition komposition) {
-            imageStore = new ImageStore(komposition);
+        private StaticImageMediaTool(Komposition komposition, String outputFilePrefix) {
+            this.komposition = komposition;
+            imageStore = new ImageFileStore(komposition, outputFilePrefix);
         }
 
         public void onVideoPicture(IVideoPictureEvent event) {
-            for (BufferedImage foundImage : imageStore.getImageAt(event.getTimeStamp())) {
+            for (BufferedImage foundImage : imageStore.getImageAt(event.getTimeStamp(), komposition.bpm)) {
                 writeImage(event, foundImage);
             }
             // call parent which will pass the video onto next tool in chain

@@ -4,6 +4,8 @@ import no.lau.vdvil.domain.*;
 import no.lau.vdvil.domain.out.Instruction;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.domain.utils.KompositionUtils;
+import no.lau.vdvil.renderer.video.creator.ImageBufferStore;
+import no.lau.vdvil.renderer.video.creator.ImageStore;
 import no.lau.vdvil.renderer.video.creator.VideoImageStitcher;
 import no.lau.vdvil.renderer.video.stigs.ImageSampleInstruction;
 import no.lau.vdvil.renderer.video.testout.deprecated.Mp4FromPicsCreator;
@@ -25,7 +27,7 @@ public class RestructureMediaTest {
 
     String downmixedOriginalVideo = "/tmp/CLMD-The_Stockholm_Syndrome_320.mp4";
     String snapshotFileStorage = "/tmp/snaps/CLMD-The_Stockholm_Syndrome_320/";
-    String collectPicsFromVideo = "/tmp/Onewheel_The_World_is_Your_Playground.mp4";
+    String collectPicsFromVideo = "/tmp/320_Onewheel_The_World_is_Your_Playground.mp4";
 
     @Test
     public void testTimestampCalculation() throws Exception {
@@ -43,8 +45,9 @@ public class RestructureMediaTest {
                 new Instruction("Capture some pics", 64, 64, new ImageSampleInstruction("First capture sequence", 64, 64, 2)),
                 new Instruction("Capture some pics 2", 256, 32, new ImageSampleInstruction("Second capture sequence", 256, 32, 1))
         );
-        new VideoThumbnailsCollector().capture(collectPicsFromVideo, snapshotFileStorage, fetchKomposition);
-        assertEquals(719, ((ImageSampleInstruction) fetchKomposition.instructions.get(0).segment).collectedImages().size());
+        ImageStore ibs = new ImageBufferStore();
+        new VideoThumbnailsCollector(ibs).capture(collectPicsFromVideo, fetchKomposition);
+        assertEquals(719, ibs.findImagesByInstructionId("Capture some pics").count());
         assertEquals(359, ((ImageSampleInstruction) fetchKomposition.instructions.get(1).segment).collectedImages().size());
 
         Komposition buildKomposition =  new Komposition(128,
@@ -52,7 +55,7 @@ public class RestructureMediaTest {
         buildKomposition.storageLocation = new MediaFile(new URL("file:///tmp/from_pix_with_xuggle.mp4"), 0f, 128f, "dunno yet");
 
 
-        new VideoImageStitcher().createVideo(downmixedOriginalVideo,  buildKomposition);
+        new VideoImageStitcher().createVideo(downmixedOriginalVideo,  buildKomposition, snapshotFileStorage);
     }
 
     @Test
@@ -66,7 +69,7 @@ public class RestructureMediaTest {
 
         Komposition composition = new Komposition(120, instruction201);
         composition.storageLocation = new MediaFile(new URL("file:///tmp/from_pix_with_xuggler_old.mp4"), 0f, 128f, "dunno yet");
-        new VideoImageStitcher().createVideo(downmixedOriginalVideo, composition);
+        new VideoImageStitcher().createVideo(downmixedOriginalVideo, composition, snapshotFileStorage);
     }
 
     @Test
@@ -75,7 +78,7 @@ public class RestructureMediaTest {
                 new Instruction("Capture some pics", 64, 64, new ImageSampleInstruction("First capture sequence", 64, 64, 2)),
                 new Instruction("Capture some pics 2", 256, 32, new ImageSampleInstruction("Second capture sequence", 256, 32, 1))
         );
-        new VideoThumbnailsCollector().capture(collectPicsFromVideo, snapshotFileStorage, fetchKomposition);
+        new VideoThumbnailsCollector(new ImageBufferStore()).capture(collectPicsFromVideo, fetchKomposition);
         assertEquals(719, ((ImageSampleInstruction) fetchKomposition.instructions.get(0).segment).collectedImages().size());
         assertEquals(359, ((ImageSampleInstruction) fetchKomposition.instructions.get(1).segment).collectedImages().size());
 
