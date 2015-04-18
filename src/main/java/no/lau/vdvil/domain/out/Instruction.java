@@ -1,7 +1,7 @@
 package no.lau.vdvil.domain.out;
 
 import no.lau.vdvil.domain.Segment;
-
+import java.util.Random;
 
 /**
  * @author Stig@Lau.no 07/04/15.
@@ -12,6 +12,12 @@ public class Instruction {
     public final double duration;
     public final Segment segment;
 
+    /**
+     * Shorthand instatiation
+     */
+    public Instruction(long from, long duration, Segment segment) {
+        this(from + " - " + duration + " Rand:" + new Random().nextLong(), from, duration, segment);
+    }
     public Instruction(String id, long from, long duration, Segment segment) {
         this.id = id;
         this.from = from;
