@@ -4,6 +4,7 @@ import no.lau.vdvil.domain.out.Instruction;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.renderer.video.creator.ImageFileStore;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
+import no.lau.vdvil.renderer.video.stigs.TimeStampFixedImageSampleSegment;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,10 @@ public class KompositionUtils {
     }
 
     public static boolean contains(Instruction instruction, Komposition komposition, long timestamp) {
-        return contains(instruction, komposition.bpm, timestamp);
+        if (instruction instanceof TimeStampFixedImageSampleSegment) {
+            return (timestamp > instruction.from && timestamp < instruction.from + instruction.duration);
+        } else
+            return contains(instruction, komposition.bpm, timestamp);
     }
 
     public static boolean contains(Instruction instruction, float bpm, long timestamp) {

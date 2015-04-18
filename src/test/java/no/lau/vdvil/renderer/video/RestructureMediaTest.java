@@ -47,7 +47,7 @@ public class RestructureMediaTest {
         );
         ImageStore ibs = new ImageBufferStore();
         new VideoThumbnailsCollector(ibs).capture(collectPicsFromVideo, fetchKomposition);
-        assertEquals(719, ibs.findImagesByInstructionId("Capture some pics").count());
+        assertEquals(719, ibs.findImagesByInstructionId("Capture some pics").size());
         assertEquals(359, ((ImageSampleInstruction) fetchKomposition.instructions.get(1).segment).collectedImages().size());
 
         Komposition buildKomposition =  new Komposition(128,

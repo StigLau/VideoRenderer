@@ -30,7 +30,7 @@ public class CreateVideoFromScratchImages {
         log.info("Init");
 
         // total duration of the media
-        final long duration = DEFAULT_TIME_UNIT.convert(60, SECONDS);
+        final long duration = DEFAULT_TIME_UNIT.convert(120, SECONDS);
 
         final IMediaWriter writer = ToolFactory.makeWriter(komposition.storageLocation.fileName.getFile());
 

@@ -10,6 +10,7 @@ import no.lau.vdvil.domain.out.Instruction;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
 import no.lau.vdvil.renderer.video.stigs.ImageSampleInstruction;
+import no.lau.vdvil.renderer.video.stigs.TimeStampFixedImageSampleSegment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static no.lau.vdvil.domain.utils.KompositionUtils.isFinishedProcessing;
@@ -62,17 +63,23 @@ public class VideoThumbnailsCollector {
         }
 
         public void onVideoPicture(IVideoPictureEvent event) {
-            if(isFinishedProcessing(komposition, event.getTimeStamp())) {
+            long timestamp = event.getTimeStamp();
+            if(isFinishedProcessing(komposition, timestamp)) {
                 throw new VideoExtractionFinished("End of compilation");
             }
 
-            for (Instruction instruction : isInterestedInThisPicture(komposition, event.getTimeStamp())) {
-                logger.trace("Ping {}", event.getTimeStamp());
+            for (Instruction instruction : isInterestedInThisPicture(komposition, timestamp)) {
+                logger.trace("Ping {}", timestamp);
                 try {
                     if (instruction.segment instanceof ImageSampleInstruction) {
                         ImageSampleInstruction sampleInstruction = (ImageSampleInstruction) instruction.segment ;
                         BufferedImage image = fetchImage(event, sampleInstruction);
-                        imageStore.store(image, event.getTimeStamp(), sampleInstruction);
+                        imageStore.store(image, timestamp, sampleInstruction.id());
+                    } else if(instruction instanceof TimeStampFixedImageSampleSegment) {
+                        BufferedImage image = event.getImage();
+                        if(image != null) {
+                            imageStore.store(event.getImage(), timestamp, instruction.id);
+                        }
                     }
                 }catch (Exception e) {
                     logger.error("Nothing exciting happened - could not fetch file: ", e);
@@ -80,7 +87,7 @@ public class VideoThumbnailsCollector {
             }
         }
 
-        public BufferedImage fetchImage(IVideoPictureEvent event, ImageSampleInstruction instruction) throws Exception {
+        public BufferedImage fetchImage(IVideoPictureEvent event, ImageSampleInstruction segment) throws Exception {
 
 			if (event.getStreamIndex() != mVideoStreamIndex) {
 				// if the selected video stream id is not yet set, go ahead an
@@ -93,7 +100,7 @@ public class VideoThumbnailsCollector {
 			}
 
             int clockRatio = 250000;
-            double MICRO_SECONDS_BETWEEN_FRAMES = komposition.bpm * clockRatio / (instruction.framesPerBeat * 60);
+            double MICRO_SECONDS_BETWEEN_FRAMES = komposition.bpm * clockRatio / (segment.framesPerBeat * 60);
 
 			// if uninitialized, back date mLastPtsWrite so we get the very first frame
 			if (mLastPtsWrite == Global.NO_PTS)

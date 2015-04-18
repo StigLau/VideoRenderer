@@ -26,7 +26,7 @@ public class ImageFileStore implements ImageStore {
 
     private final Komposition komposition;
     private String outputFilePrefix;
-    public final Map<Segment, List<String>> segmentImageList = new HashMap<>();
+    public final Map<String, List<String>> segmentImageList = new HashMap<>();
 
     private Logger logger = LoggerFactory.getLogger(ImageFileStore.class);
 
@@ -52,8 +52,7 @@ public class ImageFileStore implements ImageStore {
                 .filter(instance -> instance != null)
                 .collect(Collectors.toList());
     }
-
-    public void store(BufferedImage image, Long timeStamp, Segment instruction) {
+    public void store(BufferedImage image, Long timeStamp, String segmentId) {
         String outputFilename = outputFilePrefix + timeStamp + ".png";
         if(image == null) {
             logger.debug("No image to write at {}", timeStamp);
@@ -67,20 +66,19 @@ public class ImageFileStore implements ImageStore {
             }
         }
 
-        if(segmentImageList.containsKey(instruction)) {
-            segmentImageList.get(instruction).add(outputFilename);
+        if(segmentImageList.containsKey(segmentId)) {
+            segmentImageList.get(segmentId).add(outputFilename);
         } else {
             List<String> newImageList = new ArrayList<>();
             newImageList.add(outputFilename);
-            segmentImageList.put(instruction, newImageList);
+            segmentImageList.put(segmentId, newImageList);
         }
     }
 
-    public Stream<BufferedImage> findImagesByInstructionId(String instructionId) {
-        return segmentImageList.entrySet().stream()
-                .filter(entry -> entry.getKey().id().equals(instructionId))
-                .flatMap(entry -> entry.getValue().stream())
-                .map(this::getAsFile);
+    public List<BufferedImage> findImagesByInstructionId(String instructionId) {
+        return segmentImageList.get(instructionId).stream()
+                .map(this::getAsFile)
+                .collect(Collectors.toList());
     }
 
     BufferedImage getAsFile(String filename) {
