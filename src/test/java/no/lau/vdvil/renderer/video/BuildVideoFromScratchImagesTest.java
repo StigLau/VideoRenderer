@@ -7,8 +7,9 @@ import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.renderer.video.creator.ImageBufferStore;
 import no.lau.vdvil.renderer.video.stigs.ImageSampleInstruction;
 import no.lau.vdvil.renderer.video.stigs.TimeStampFixedImageSampleSegment;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Test;
-import java.net.MalformedURLException;
+import java.io.IOException;
 import java.net.URL;
 import static org.junit.Assert.assertEquals;
 
@@ -26,7 +27,7 @@ public class BuildVideoFromScratchImagesTest {
 
 
     @Test
-    public void buildWithXuggle() throws MalformedURLException {
+    public void buildWithXuggle() throws IOException {
         Komposition fetchKomposition = new Komposition(128,
                 new Instruction("Capture some pics", 64, 64, new ImageSampleInstruction("First capture sequence", 64, 64, 4)),
                 new Instruction("Capture some pics 2", 256, 32, new ImageSampleInstruction("Second capture sequence", 256, 32, 1))
@@ -36,8 +37,8 @@ public class BuildVideoFromScratchImagesTest {
 
         new VideoThumbnailsCollector(imageStore).capture(downmixedOriginalVideo, fetchKomposition);
 
-        assertEquals(221, imageStore.findImagesByInstructionId("First capture sequence").size());
-        assertEquals(141, imageStore.findImagesByInstructionId("Second capture sequence").size());
+        assertEquals(460, imageStore.findImagesByInstructionId("First capture sequence").size());
+        assertEquals(162, imageStore.findImagesByInstructionId("Second capture sequence").size());
         //140
 
         Komposition buildKomposition =  new Komposition(124,
@@ -46,13 +47,15 @@ public class BuildVideoFromScratchImagesTest {
                 new Instruction(64, 30, new VideoStillImageSegment("First capture sequence", 64, 30))
                 );
 
-        buildKomposition.storageLocation = new MediaFile(new URL(result), 0f, 128f, "dunno yet");
+        MediaFile mf = new MediaFile(new URL(result), 0f, 128f, "dunno yet");
+        buildKomposition.storageLocation = mf;
 
         CreateVideoFromScratchImages.createVideo(buildKomposition, sobotaMp3, imageStore);
+        assertEquals(mf.checksum, md5Checksum(mf.fileName));
     }
 
     @Test
-    public void extractImagesFromNorwayVideo() throws MalformedURLException {
+    public void extractImagesFromNorwayVideo() throws IOException {
         Komposition fetchKomposition = new Komposition(128,
                 new TimeStampFixedImageSampleSegment("Purple Mountains Clouds", 7541667, 21125000, 8),
                 new TimeStampFixedImageSampleSegment("Besseggen", 21250000, 27625000, 8),
@@ -109,8 +112,14 @@ public class BuildVideoFromScratchImagesTest {
 
         );
 
-        buildKomposition.storageLocation = new MediaFile(new URL(result), 0f, 128f, "dunno yet");
+        MediaFile mf = new MediaFile(new URL(result), 0f, 128f, "128e4c7ccfd695bebed3ced6774290ca");
+        buildKomposition.storageLocation = mf;
 
         CreateVideoFromScratchImages.createVideo(buildKomposition, sobotaMp3, imageStore);
+        assertEquals(mf.checksum, md5Checksum(mf.fileName));
+    }
+
+    public String md5Checksum(URL url) throws IOException {
+        return DigestUtils.md5Hex(url.openStream());
     }
 }

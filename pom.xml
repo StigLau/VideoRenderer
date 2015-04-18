@@ -45,6 +45,12 @@
         </dependency>
 
         <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.9</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.jcodec</groupId>
             <artifactId>jcodec</artifactId>
             <version>0.1.5</version>
