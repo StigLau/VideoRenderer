@@ -1,6 +1,6 @@
 package no.lau.vdvil.domain.utils;
 
-import no.lau.vdvil.domain.out.Instruction;
+import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.renderer.video.creator.ImageFileStore;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
@@ -15,42 +15,42 @@ import java.util.stream.Stream;
  * @author Stig@Lau.no 08/04/15.
  */
 public class KompositionUtils {
-    public static long fromMillis(Instruction instruction, Komposition komposition) {
-        return calc(instruction.from, komposition.bpm);
+    public static long fromMillis(Segment segment, Komposition komposition) {
+        return calc(segment.start(), komposition.bpm);
     }
 
-    public static long fromMillis(Instruction instruction, float bpm) {
-        return calc(instruction.from, bpm);
+    public static long fromMillis(Segment segment, float bpm) {
+        return calc(segment.start(), bpm);
     }
 
 
-    public static long durationMillis(Instruction instruction, float bpm) {
-        return calc(instruction.duration, bpm);
+    public static long durationMillis(Segment segment, float bpm) {
+        return calc(segment.duration(), bpm);
     }
-    public static long durationMillis(Instruction instruction, Komposition komposition) {
-        return calc(instruction.duration, komposition.bpm);
+    public static long durationMillis(Segment segment, Komposition komposition) {
+        return calc(segment.duration(), komposition.bpm);
     }
 
     public static long calc(double time, double bpm) {
         return (long) (time * 60 * 1000 * 1000 / bpm);
     }
 
-    public static boolean contains(Instruction instruction, Komposition komposition, long timestamp) {
-        if (instruction instanceof TimeStampFixedImageSampleSegment) {
-            return (timestamp > instruction.from && timestamp < instruction.from + instruction.duration);
+    public static boolean contains(Segment segment, Komposition komposition, long timestamp) {
+        if (segment instanceof TimeStampFixedImageSampleSegment) {
+            return (timestamp > segment.start() && timestamp < segment.start() + segment.duration());
         } else
-            return contains(instruction, komposition.bpm, timestamp);
+            return contains(segment, komposition.bpm, timestamp);
     }
 
-    public static boolean contains(Instruction instruction, float bpm, long timestamp) {
-        return (timestamp > fromMillis(instruction, bpm) &&
-                timestamp < (fromMillis(instruction, bpm) + durationMillis(instruction, bpm)));
+    public static boolean contains(Segment segment, float bpm, long timestamp) {
+        return (timestamp > fromMillis(segment, bpm) &&
+                timestamp < (fromMillis(segment, bpm) + durationMillis(segment, bpm)));
     }
 
-    public static long lastInstruction(Komposition komposition) {
+    public static long lastSegment(Komposition komposition) {
         long endTimeStamp = 0;
-        for (Instruction instruction : komposition.instructions) {
-            long thisLength = fromMillis(instruction, komposition) + durationMillis(instruction, komposition);
+        for (Segment segment : komposition.segments) {
+            long thisLength = fromMillis(segment, komposition) + durationMillis(segment, komposition);
             if(thisLength > endTimeStamp) {
                 endTimeStamp = thisLength;
             }
@@ -59,11 +59,11 @@ public class KompositionUtils {
     }
 
     public static boolean isFinishedProcessing(Komposition komposition, Long timeStamp) {
-        return timeStamp > lastInstruction(komposition);
+        return timeStamp > lastSegment(komposition);
     }
 
-    public static List<Instruction> isInterestedInThisPicture(Komposition komposition, long timestamp) {
-        return komposition.instructions.stream().filter(instruction -> contains(instruction, komposition, timestamp))
+    public static List<Segment> isInterestedInThisPicture(Komposition komposition, long timestamp) {
+        return komposition.segments.stream().filter(segment -> contains(segment, komposition, timestamp))
                 .collect(Collectors.toList());
     }
 

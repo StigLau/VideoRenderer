@@ -1,7 +1,6 @@
 package no.lau.vdvil.renderer.video.creator;
 
 import no.lau.vdvil.domain.Segment;
-import no.lau.vdvil.domain.out.Instruction;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.renderer.video.stigs.ImageSampleInstruction;
 import org.slf4j.Logger;
@@ -15,7 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import static no.lau.vdvil.domain.utils.KompositionUtils.durationMillis;
 import static no.lau.vdvil.domain.utils.KompositionUtils.fromMillis;
 
@@ -37,11 +35,11 @@ public class ImageFileStore implements ImageStore {
         File destinationFolder = new File(outputFilePrefix);
         if(!destinationFolder.exists() && !destinationFolder.mkdirs()) {
             throw new RuntimeException("Could not create " + outputFilePrefix);
-        };
+        }
     }
 
     public List<BufferedImage> getImageAt(Long timeStamp, Komposition komposition) {
-        return komposition.instructions.stream()
+        return komposition.segments.stream()
                 .filter(instruction -> {
                     long start = fromMillis(instruction, komposition);
                     long end = fromMillis(instruction, komposition) + durationMillis(instruction, komposition);
@@ -90,13 +88,13 @@ public class ImageFileStore implements ImageStore {
         }
     }
 
-    BufferedImage extractImage(long timeStamp, Instruction instruction) {
-        if (instruction.segment instanceof ImageSampleInstruction) {
-            ImageSampleInstruction segment = (ImageSampleInstruction) instruction.segment;
+    BufferedImage extractImage(long timeStamp, Segment segment) {
+        if (segment instanceof ImageSampleInstruction) {
+            ImageSampleInstruction imageSampleSegment = (ImageSampleInstruction) segment;
 
-            List<String> stillImages = segment.collectedImages();
-            long start = fromMillis(instruction, komposition);
-            double split = stillImages.size() * (timeStamp - start) / durationMillis(instruction, komposition);
+            List<String> stillImages = imageSampleSegment.collectedImages();
+            long start = fromMillis(segment, komposition);
+            double split = stillImages.size() * (timeStamp - start) / durationMillis(segment, komposition);
             int index = (int) Math.round(split);
             if (stillImages.size() > index) {
                 String file = stillImages.get(index);

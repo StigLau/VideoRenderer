@@ -22,8 +22,7 @@ public class ImageBufferStore implements ImageStore {
 
     public List<BufferedImage> getImageAt(Long timeStamp, Komposition komposition) {
         float bpm = komposition.bpm;
-        Stream<BufferedImage> images = komposition.instructions.stream()
-                .map(instruction -> instruction.segment)
+        Stream<BufferedImage> images = komposition.segments.stream()
                 .filter(segment -> {
                     long start = calc(segment.start(), bpm);
                     long end = calc(segment.start(), bpm) + calc(segment.duration(), bpm);

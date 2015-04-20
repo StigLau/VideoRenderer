@@ -6,7 +6,7 @@ import com.xuggle.mediatool.MediaListenerAdapter;
 import com.xuggle.mediatool.ToolFactory;
 import com.xuggle.mediatool.event.IVideoPictureEvent;
 import com.xuggle.xuggler.Global;
-import no.lau.vdvil.domain.out.Instruction;
+import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
 import no.lau.vdvil.renderer.video.stigs.ImageSampleInstruction;
@@ -68,17 +68,17 @@ public class VideoThumbnailsCollector {
                 throw new VideoExtractionFinished("End of compilation");
             }
 
-            for (Instruction instruction : isInterestedInThisPicture(komposition, timestamp)) {
+            for (Segment segment : isInterestedInThisPicture(komposition, timestamp)) {
                 logger.trace("Ping {}", timestamp);
                 try {
-                    if (instruction.segment instanceof ImageSampleInstruction) {
-                        ImageSampleInstruction sampleInstruction = (ImageSampleInstruction) instruction.segment ;
+                    if (segment instanceof ImageSampleInstruction) {
+                        ImageSampleInstruction sampleInstruction = (ImageSampleInstruction) segment;
                         BufferedImage image = fetchImage(event, sampleInstruction);
                         imageStore.store(image, timestamp, sampleInstruction.id());
-                    } else if(instruction instanceof TimeStampFixedImageSampleSegment) {
+                    } else if(segment instanceof TimeStampFixedImageSampleSegment) {
                         BufferedImage image = event.getImage();
                         if(image != null) {
-                            imageStore.store(event.getImage(), timestamp, instruction.id);
+                            imageStore.store(event.getImage(), timestamp, segment.id());
                         }
                     }
                 }catch (Exception e) {

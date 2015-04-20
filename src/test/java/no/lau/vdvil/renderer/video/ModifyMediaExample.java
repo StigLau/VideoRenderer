@@ -3,8 +3,9 @@ package no.lau.vdvil.renderer.video;
 import com.xuggle.mediatool.*;
 import com.xuggle.mediatool.event.IAudioSamplesEvent;
 import com.xuggle.mediatool.event.IVideoPictureEvent;
-import no.lau.vdvil.domain.out.Instruction;
+import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.domain.out.Komposition;
+import no.lau.vdvil.renderer.video.stigs.ImageSampleInstruction;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -27,16 +28,16 @@ public class ModifyMediaExample {
 	public static void main(String[] args) {
 
 		//String inputFile = ModifyMediaExample.class.getClassLoader().getResource("video/5sec-test.flv").getFile();
-		String inputFile = "/Users/stiglau/Downloads/CLMD-The_Stockholm_Syndrome.mp4";
+		String inputFile = "/tmp/CLMD-The_Stockholm_Syndrome.mp4";
 
         Komposition komposition = new Komposition(128,
-                new Instruction("0", 0, 1, null),
-                new Instruction("2", 1, 3, null),
-                new Instruction("5", 4, 4, null),
-                new Instruction("10", 8, 4, null),
-                new Instruction("15", 12, 4, null),
-                new Instruction("18", 13, 1, null),
-                new Instruction("20", 24, 1, null)
+                new ImageSampleInstruction("0", 0, 1, 1),
+                new ImageSampleInstruction("2", 1, 3, 1),
+                new ImageSampleInstruction("5", 4, 4, 1),
+                new ImageSampleInstruction("10", 8, 4, 1),
+                new ImageSampleInstruction("15", 12, 4, 1),
+                new ImageSampleInstruction("18", 13, 1, 1),
+                new ImageSampleInstruction("20", 24, 1, 1)
         );
 
 
@@ -103,31 +104,31 @@ public class ModifyMediaExample {
 
 		Cache picCache = new Cache();
 
-		Instruction last;
+		Segment last;
 
 		public void onVideoPicture(IVideoPictureEvent event) {
 
-			Instruction found = lastAfter(event.getTimeStamp());
+			Segment found = lastAfter(event.getTimeStamp());
 			if(found == null)
 				found = last;
 			else
 				last = found;
 
-			System.out.println(found.id + " at time: " + event.getTimeStamp());
-			writeImage(event, picCache.getImage(found.id));
+			System.out.println(found.id() + " at time: " + event.getTimeStamp());
+			writeImage(event, picCache.getImage(found.id()));
 
 			// call parent which will pass the video onto next tool in chain
 			super.onVideoPicture(event);
 
 		}
 
-		Instruction lastAfter(long time) {
-            for (Instruction instruction : komposition.instructions) {
-                if(instruction != null) {
-                    System.out.println("instruction.fromMillis(120) = " + fromMillis(instruction, komposition));
+		Segment lastAfter(long time) {
+            for (Segment segment : komposition.segments) {
+                if(segment != null) {
+                    System.out.println("instruction.fromMillis(120) = " + fromMillis(segment, komposition));
                 }
-				if(instruction != null && time >= fromMillis(instruction, komposition)) {
-					return instruction;
+				if(segment != null && time >= fromMillis(segment, komposition)) {
+					return segment;
 				}
 			}
 			return null;

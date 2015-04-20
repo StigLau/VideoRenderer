@@ -1,6 +1,7 @@
 package no.lau.vdvil.domain.out;
 
 import no.lau.vdvil.domain.MediaFile;
+import no.lau.vdvil.domain.Segment;
 
 import java.util.Arrays;
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.List;
  * @author Stig@Lau.no 07/04/15.
  */
 public class Komposition {
-    public final List<Instruction> instructions;
+    public final List<Segment> segments;
     long lastInstruction;
     public final float bpm;
 
@@ -19,8 +20,8 @@ public class Komposition {
     //Where the final komposition is to be stored
     public MediaFile storageLocation;
 
-    public Komposition(int bpm, Instruction... instructions) {
-        this.instructions = Arrays.asList(instructions);
+    public Komposition(int bpm, Segment... segments) {
+        this.segments = Arrays.asList(segments);
         this.bpm = bpm;
         lastInstruction = 0;
     }
