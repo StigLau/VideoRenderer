@@ -8,13 +8,11 @@ public class VideoStillImageSegment implements Segment {
     private final String id;
     private final int start;
     private final int duration;
-    private final VideoStillImageRepresentation[] stillImages;
 
-    public VideoStillImageSegment(String id, int start, int duration, VideoStillImageRepresentation... stillImages) {
+    public VideoStillImageSegment(String id, int start, int duration) {
         this.id = id;
         this.start = start;
         this.duration = duration;
-        this.stillImages = stillImages;
     }
 
     public String id() {
@@ -27,9 +25,5 @@ public class VideoStillImageSegment implements Segment {
 
     public long duration() {
         return duration;
-    }
-
-    public VideoStillImageRepresentation[] getStillImages() {
-        return stillImages;
     }
 }

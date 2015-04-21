@@ -9,11 +9,8 @@ import no.lau.vdvil.renderer.video.creator.VideoImageStitcher;
 import no.lau.vdvil.renderer.video.stigs.ImageSampleInstruction;
 import no.lau.vdvil.renderer.video.testout.deprecated.Mp4FromPicsCreator;
 import org.junit.Test;
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -55,18 +52,6 @@ public class RestructureMediaTest {
 
 
         new VideoImageStitcher().createVideo(downmixedOriginalVideo,  buildKomposition, snapshotFileStorage);
-    }
-
-    @Test
-    public void testBuildingVideoXugglerOld() throws MalformedURLException {
-        List<File> fileset3 = Arrays.asList(new File(snapshotFileStorage).listFiles());
-        VideoStillImageRepresentation[] asd = new VideoStillImageRepresentation[fileset3.size()];
-        for (int i = 0; i < asd.length; i++) {
-            asd[i] = new VideoStillImageRepresentation(fileset3.get(i).getAbsolutePath());
-        }
-        Komposition composition = new Komposition(120, new VideoStillImageSegment("asd", 0, 64, asd));
-        composition.storageLocation = new MediaFile(new URL("file:///tmp/from_pix_with_xuggler_old.mp4"), 0f, 128f, "dunno yet");
-        new VideoImageStitcher().createVideo(downmixedOriginalVideo, composition, snapshotFileStorage);
     }
 
     @Test

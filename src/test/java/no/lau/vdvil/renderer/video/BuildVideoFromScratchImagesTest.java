@@ -58,8 +58,8 @@ public class BuildVideoFromScratchImagesTest {
     public void extractImagesFromNorwayVideo() throws IOException {
         Komposition fetchKomposition = new Komposition(128,
                 new TimeStampFixedImageSampleSegment("Purple Mountains Clouds", 7541667, 21125000, 8),
-                new TimeStampFixedImageSampleSegment("Besseggen", 21250000, 27625000, 8),
-                new TimeStampFixedImageSampleSegment("Norway showing", 30166667, 34541667, 8),
+                new TimeStampFixedImageSampleSegment("Besseggen", 21250000, 27625000, 2),
+                new TimeStampFixedImageSampleSegment("Norway showing", 30166667, 34541667, 4),
                 new TimeStampFixedImageSampleSegment("Flower fjord", 35916667, 47000000, 8),
                 new TimeStampFixedImageSampleSegment("Slide Blue mountain top lake", 47083333, 58416667, 8),
                 new TimeStampFixedImageSampleSegment("Fjord foss", 58541667, 64041667, 8),
