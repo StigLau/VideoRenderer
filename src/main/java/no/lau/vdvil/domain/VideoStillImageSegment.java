@@ -8,6 +8,8 @@ public class VideoStillImageSegment implements Segment {
     private final String id;
     private final int start;
     private final int duration;
+    //Whether the list is to be reverted
+    public boolean reverted = false;
 
     public VideoStillImageSegment(String id, int start, int duration) {
         this.id = id;
@@ -25,5 +27,14 @@ public class VideoStillImageSegment implements Segment {
 
     public long duration() {
         return duration;
+    }
+
+    public Segment revert() {
+        reverted = !reverted;
+        return this;
+    }
+
+    public boolean isReverted() {
+        return reverted;
     }
 }

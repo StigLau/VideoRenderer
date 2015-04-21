@@ -1,6 +1,7 @@
 package no.lau.vdvil.renderer.video.creator;
 
 import no.lau.vdvil.domain.Segment;
+import no.lau.vdvil.domain.VideoStillImageSegment;
 import no.lau.vdvil.domain.out.Komposition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,12 +38,24 @@ public class ImageBufferStore implements ImageStore {
      * Returns a singleton list or empty list
      */
     List<BufferedImage> extractImage(long timeStamp, float bpm, Segment segment) {
-        List<BufferedImage> images = findImagesByInstructionId(segment.id());
+        List<BufferedImage> images = applyModifications(segment, findImagesByInstructionId(segment.id()));
         long start = calc(segment.start(), bpm);
         double split = images.size() * (timeStamp - start) / calc(segment.duration(), bpm);
         int index = (int) Math.round(split);
         logger.debug("@{} - {} - {}/{}", timeStamp, segment.id(), index+1, images.size());
         return Collections.singletonList(images.get(index));
+    }
+
+    private List<BufferedImage> applyModifications(Segment segment, List<BufferedImage> images) {
+        if (segment instanceof VideoStillImageSegment) {
+            VideoStillImageSegment imageSegment = (VideoStillImageSegment) segment;
+            if(imageSegment.isReverted()) {
+                //TODO Very ugly way of reversing the imagelist!!!!
+                Collections.reverse(images);
+                ((VideoStillImageSegment) segment).revert();
+            }
+        }
+        return images;
     }
 
     public void store(BufferedImage image, Long timeStamp, String segmentId) {

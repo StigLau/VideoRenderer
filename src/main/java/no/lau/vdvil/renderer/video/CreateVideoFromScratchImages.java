@@ -12,8 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.awt.image.BufferedImage;
 import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * @author Stig@Lau.no
@@ -30,7 +28,7 @@ public class CreateVideoFromScratchImages {
         log.info("Init");
 
         // total duration of the media
-        final long duration = DEFAULT_TIME_UNIT.convert(120, SECONDS);
+        long duration = komposition.lastInstruction;
 
         final IMediaWriter writer = ToolFactory.makeWriter(komposition.storageLocation.fileName.getFile());
 
@@ -66,9 +64,9 @@ class VideoAdapter {
 
     final int videoStreamIndex = 0;
     final int videoStreamId = 0;
-    final long frameRate = DEFAULT_TIME_UNIT.convert(15, MILLISECONDS);
-    final int width = 320;
-    final int height = 200;
+    final long frameRate;
+    final int width;
+    final int height;
     private final IMediaWriter writer;
 
     long nextFrameTime = 0;
@@ -79,6 +77,9 @@ class VideoAdapter {
     public VideoAdapter(Komposition komposition, IMediaWriter writer, ImageStore imageStore) {
         this.writer = writer;
         this.imageStore = imageStore;
+        this.width = komposition.width;
+        this.height = komposition.height;
+        this.frameRate = komposition.framerate;
 
         // add audio and video streams
         writer.addVideoStream(videoStreamIndex, videoStreamId, width, height);

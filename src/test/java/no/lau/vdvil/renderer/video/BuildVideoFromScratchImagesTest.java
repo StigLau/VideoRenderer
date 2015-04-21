@@ -10,6 +10,8 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Test;
 import java.io.IOException;
 import java.net.URL;
+import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -93,26 +95,35 @@ public class BuildVideoFromScratchImagesTest {
         assertEquals(48, imageStore.findImagesByInstructionId("Bergen movement").size());
 
         Komposition buildKomposition =  new Komposition(124,
-                new VideoStillImageSegment("Dark lake", 0, 32),
-                new VideoStillImageSegment("Purple Mountains Clouds", 32, 32),
-                new VideoStillImageSegment("Slide Blue mountain top lake", 64, 32),
-                new VideoStillImageSegment("Slide Blue mountain top lake", 64+32, 16),
-                new VideoStillImageSegment("Norway showing", 64+48, 16),
-                new VideoStillImageSegment("Fjord like river", 128, 16),
-                new VideoStillImageSegment("Fjord foss", 128+16, 16),
-                new VideoStillImageSegment("Besseggen", 128+32, 16),
-                new VideoStillImageSegment("Omnious fjord Lightbrake", 128+48, 16),
-                new VideoStillImageSegment("Seaside houses Panorama", 128+64, 32),
-                new VideoStillImageSegment("Boat village panorama", 128+96, 16),
+                new VideoStillImageSegment("Dark lake", 0, 4),
+                new VideoStillImageSegment("Dark lake", 4, 4).revert(),
+                new VideoStillImageSegment("Dark lake", 8, 8).revert(),
+                new VideoStillImageSegment("Purple Mountains Clouds", 16, 8),
+                new VideoStillImageSegment("Purple Mountains Clouds", 24, 7).revert(),
+                new VideoStillImageSegment("Norway showing", 31, 1),
+                new VideoStillImageSegment("Slide Blue mountain top lake", 32, 8),
+                new VideoStillImageSegment("Flower fjord", 40, 4),
+                new VideoStillImageSegment("Slide Blue mountain top lake", 44, 8).revert(),
+                new VideoStillImageSegment("Fjord like river", 52, 11),
+                //new VideoStillImageSegment("Fjord foss", 52, 11),//Has parts of Slide Blue!!
 
-                new VideoStillImageSegment("Bergen movement", 256, 32)
+                //new VideoStillImageSegment("Besseggen", 60, 3),
+                new VideoStillImageSegment("Norway showing", 63, 1).revert(),
+                new VideoStillImageSegment("Omnious fjord Lightbrake", 64, 8)
+                /*
+                new VideoStillImageSegment("Seaside houses Panorama", 72, 4),
+                new VideoStillImageSegment("Boat village panorama", 76, 8),
+                new VideoStillImageSegment("Bergen movement", 84, 4)
+                */
                 //new Instruction("inst2", 64, 8, new VideoStillImageSegment("Norway showing", 32, 8),
                 //new Instruction("inst4", 56, 16, new VideoStillImageSegment("Flower fjord", 56, 16),
                 //new Instruction("inst2", 72, 8, new VideoStillImageSegment("Norway showing", 72, 8))
 
         );
-
-        MediaFile mf = new MediaFile(new URL(result2), 0f, 128f, "128e4c7ccfd695bebed3ced6774290ca");
+        buildKomposition.framerate = DEFAULT_TIME_UNIT.convert(15, MILLISECONDS);
+        buildKomposition.width = 320;
+        buildKomposition.height = 200;
+        MediaFile mf = new MediaFile(new URL(result2), 0f, 128f, "cf421566614f958459eb6da008057c83");
         buildKomposition.storageLocation = mf;
 
         CreateVideoFromScratchImages.createVideo(buildKomposition, sobotaMp3, imageStore);
