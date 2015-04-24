@@ -1,8 +1,8 @@
 package no.lau.vdvil.renderer.video.creator;
 
-import no.lau.vdvil.renderer.video.creator.modifyer.PercentageSplitter;
-import no.lau.vdvil.renderer.video.creator.modifyer.Reverter;
-import no.lau.vdvil.renderer.video.creator.modifyer.TaktSplitter;
+import no.lau.vdvil.renderer.video.creator.filter.PercentageSplitter;
+import no.lau.vdvil.renderer.video.creator.filter.Reverter;
+import no.lau.vdvil.renderer.video.creator.filter.TaktSplitter;
 import org.junit.Before;
 import org.junit.Test;
 import java.util.ArrayList;

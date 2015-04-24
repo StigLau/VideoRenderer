@@ -2,6 +2,7 @@ package no.lau.vdvil.renderer.video.creator;
 
 import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.domain.out.Komposition;
+import no.lau.vdvil.renderer.video.creator.filter.FilterableSegment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.awt.image.BufferedImage;
@@ -36,8 +37,10 @@ public class ImageBufferStore implements ImageStore {
      * Calculate which image among a list to show from a imageSample series
      * Returns a singleton list or empty list
      */
-    List<BufferedImage> extractImage(long timeStamp, float bpm, Segment segment) {
-        List<BufferedImage> images = new ListModificator<BufferedImage>().applyModifications(segment, findImagesByInstructionId(segment.id()));
+    List<BufferedImage> extractImage(long timeStamp, float bpm, Segment segmentA) {
+        //TODO find a better way to pass inn filter configuration
+        FilterableSegment segment = (FilterableSegment) segmentA;
+        List<BufferedImage> images = segment.applyModifications(findImagesByInstructionId(segment.id()));
         long start = calc(segment.start(), bpm);
         double split = images.size() * (timeStamp - start) / calc(segment.duration(), bpm);
         int index = (int) Math.round(split);

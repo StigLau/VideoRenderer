@@ -1,4 +1,4 @@
-package no.lau.vdvil.renderer.video.creator.modifyer;
+package no.lau.vdvil.renderer.video.creator.filter;
 
 import java.util.ArrayList;
 import java.util.List;

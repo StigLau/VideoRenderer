@@ -1,9 +1,14 @@
 package no.lau.vdvil.domain;
 
+import no.lau.vdvil.renderer.video.creator.filter.FilterableSegment;
+import no.lau.vdvil.renderer.video.creator.filter.ListFilter;
+import no.lau.vdvil.renderer.video.creator.filter.ListModificator;
+import java.util.List;
+
 /**
  * @author Stig@Lau.no 07/04/15.
  */
-public class VideoStillImageSegment implements Segment {
+public class VideoStillImageSegment<TYPE> implements FilterableSegment<TYPE> {
 
     private final String id;
     private final int start;
@@ -70,5 +75,16 @@ public class VideoStillImageSegment implements Segment {
 
         30 / 30 = vis hvert bilde
         */
+    }
+
+    ListModificator modificator = new ListModificator();
+
+    public VideoStillImageSegment filter(ListFilter... filters) {
+        this.modificator = new ListModificator(filters);
+        return this;
+    }
+
+    public List applyModifications(List<TYPE> inList) {
+        return modificator.applyModifications(inList);
     }
 }
