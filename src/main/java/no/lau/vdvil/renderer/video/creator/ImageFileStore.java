@@ -6,7 +6,7 @@ import no.lau.vdvil.renderer.video.stigs.ImageSampleInstruction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ import static no.lau.vdvil.domain.utils.KompositionUtils.fromMillis;
 /**
  * @author Stig@Lau.no 23/03/15.
  */
-public class ImageFileStore implements ImageStore {
+public class ImageFileStore<TYPE> implements ImageStore<TYPE> {
 
     private final Komposition komposition;
     private String outputFilePrefix;
@@ -38,7 +38,7 @@ public class ImageFileStore implements ImageStore {
         }
     }
 
-    public List<BufferedImage> getImageAt(Long timeStamp, Komposition komposition) {
+    public List<TYPE> getImageAt(Long timeStamp, Komposition komposition) {
         return komposition.segments.stream()
                 .filter(instruction -> {
                     long start = fromMillis(instruction, komposition);
@@ -50,7 +50,7 @@ public class ImageFileStore implements ImageStore {
                 .filter(instance -> instance != null)
                 .collect(Collectors.toList());
     }
-    public void store(BufferedImage image, Long timeStamp, String segmentId) {
+    public void store(TYPE image, Long timeStamp, String segmentId) {
         String outputFilename = outputFilePrefix + timeStamp + ".png";
         if(image == null) {
             logger.debug("No image to write at {}", timeStamp);
@@ -58,7 +58,7 @@ public class ImageFileStore implements ImageStore {
         }
         else {
             try {
-                ImageIO.write(image, "png", new File(outputFilename));
+                ImageIO.write((RenderedImage) image, "png", new File(outputFilename));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -73,22 +73,22 @@ public class ImageFileStore implements ImageStore {
         }
     }
 
-    public List<BufferedImage> findImagesByInstructionId(String instructionId) {
+    public List<TYPE> findImagesByInstructionId(String instructionId) {
         return segmentImageList.get(instructionId).stream()
                 .map(this::getAsFile)
                 .collect(Collectors.toList());
     }
 
-    BufferedImage getAsFile(String filename) {
+    TYPE getAsFile(String filename) {
         try {
-            return ImageIO.read(new File(filename));
+            return (TYPE) ImageIO.read(new File(filename));
         } catch (IOException e) {
             logger.error("Did not find image {}", filename);
             return null;
         }
     }
 
-    BufferedImage extractImage(long timeStamp, Segment segment) {
+    TYPE extractImage(long timeStamp, Segment segment) {
         if (segment instanceof ImageSampleInstruction) {
             ImageSampleInstruction imageSampleSegment = (ImageSampleInstruction) segment;
 
@@ -101,7 +101,7 @@ public class ImageFileStore implements ImageStore {
                 if(file != null) {
                     logger.debug("Inserting image {} at timestamp {}", file, timeStamp);
                     try {
-                        return ImageIO.read(new File(file));
+                        return (TYPE) ImageIO.read(new File(file));
                     } catch (IOException e) {
                         logger.error("Did not find file " + file, e);
                     }

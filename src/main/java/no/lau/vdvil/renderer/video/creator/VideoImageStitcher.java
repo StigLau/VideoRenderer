@@ -68,7 +68,7 @@ public class VideoImageStitcher {
      */
     private static class StaticImageMediaTool extends MediaToolAdapter {
 
-        final ImageStore imageStore;
+        final ImageStore<BufferedImage> imageStore;
         private final Komposition komposition;
 
         private StaticImageMediaTool(Komposition komposition, String outputFilePrefix) {

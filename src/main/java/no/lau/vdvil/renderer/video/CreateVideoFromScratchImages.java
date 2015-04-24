@@ -71,7 +71,7 @@ class VideoAdapter {
 
     long nextFrameTime = 0;
 
-    final ImageStore imageStore;
+    final ImageStore<BufferedImage> imageStore;
 
 
     public VideoAdapter(Komposition komposition, IMediaWriter writer, ImageStore imageStore) {
