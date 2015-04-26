@@ -54,7 +54,7 @@ public class VideoImageStitcher {
         }
 
         public void onVideoPicture(IVideoPictureEvent event) {
-            if (KompositionUtils.isFinishedProcessing(komposition, event.getTimeStamp())) {
+            if (KompositionUtils.isFinishedProcessing(komposition.segments, event.getTimeStamp(), komposition.bpm)) {
                 throw new VideoExtractionFinished("End of compilation");
             }
             super.onVideoPicture(event);

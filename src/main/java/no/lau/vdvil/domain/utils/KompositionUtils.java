@@ -47,10 +47,10 @@ public class KompositionUtils {
                 timestamp < (fromMillis(segment, bpm) + durationMillis(segment, bpm)));
     }
 
-    public static long lastSegment(Komposition komposition) {
+    public static long lastSegment(List<Segment> segments, float bpm) {
         long endTimeStamp = 0;
-        for (Segment segment : komposition.segments) {
-            long thisLength = fromMillis(segment, komposition) + durationMillis(segment, komposition);
+        for (Segment segment : segments) {
+            long thisLength = fromMillis(segment, bpm) + durationMillis(segment, bpm);
             if(thisLength > endTimeStamp) {
                 endTimeStamp = thisLength;
             }
@@ -58,12 +58,13 @@ public class KompositionUtils {
         return endTimeStamp;
     }
 
-    public static boolean isFinishedProcessing(Komposition komposition, Long timeStamp) {
-        return timeStamp > lastSegment(komposition);
+    public static boolean isFinishedProcessing(List<Segment> segments, Long timeStamp, float bpm) {
+        return timeStamp > lastSegment(segments, bpm);
     }
 
-    public static List<Segment> isInterestedInThisPicture(Komposition komposition, long timestamp) {
-        return komposition.segments.stream().filter(segment -> contains(segment, komposition, timestamp))
+    public static List<Segment> isInterestedInThisPicture(List<Segment> segments, float bpm, long timestamp) {
+        return segments.stream().filter(segment -> timestamp > segment.start() &&
+                timestamp < (segment.start() + segment.duration()))
                 .collect(Collectors.toList());
     }
 
@@ -79,7 +80,7 @@ public class KompositionUtils {
                 System.out.println("Found images: " + images.size());
                 buff.addAll(images);
             }
-            if(isFinishedProcessing(komposition, findTimeStamp(frame, frameRate, komposition))) {
+            if(isFinishedProcessing(komposition.segments, findTimeStamp(frame, frameRate, komposition), komposition.bpm)) {
                 break;
             }
         }

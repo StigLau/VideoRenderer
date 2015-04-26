@@ -1,37 +1,37 @@
 package no.lau.vdvil.renderer.video;
 
-import java.awt.image.BufferedImage;
 import com.xuggle.mediatool.IMediaReader;
 import com.xuggle.mediatool.MediaListenerAdapter;
 import com.xuggle.mediatool.ToolFactory;
 import com.xuggle.mediatool.event.IVideoPictureEvent;
 import com.xuggle.xuggler.Global;
 import no.lau.vdvil.domain.Segment;
-import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
 import no.lau.vdvil.renderer.video.stigs.ImageSampleInstruction;
 import no.lau.vdvil.renderer.video.stigs.TimeStampFixedImageSampleSegment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.awt.image.BufferedImage;
+import java.util.List;
 import static no.lau.vdvil.domain.utils.KompositionUtils.isFinishedProcessing;
 import static no.lau.vdvil.domain.utils.KompositionUtils.isInterestedInThisPicture;
 
-public class VideoThumbnailsCollector {
+public class WaitingVideoThumbnailsCollector {
 
 	// The video stream index, used to ensure we display frames from one and
 	// only one video stream from the media container.
 	private static int mVideoStreamIndex = -1;
-	
+
 	// Time of last frame write
 	private double mLastPtsWrite = Global.NO_PTS;
-    private Logger logger = LoggerFactory.getLogger(VideoThumbnailsCollector.class);
+    private Logger logger = LoggerFactory.getLogger(WaitingVideoThumbnailsCollector.class);
     private final ImageStore imageStore;
 
-    public VideoThumbnailsCollector(ImageStore imageStore) {
+    public WaitingVideoThumbnailsCollector(ImageStore imageStore) {
         this.imageStore = imageStore;
     }
 
-    public void capture(String inputFilename, Komposition komposition){
+    public void capture(String inputFilename, List<Segment> segment, float bpm){
         long start = System.currentTimeMillis();
 
 
@@ -40,11 +40,11 @@ public class VideoThumbnailsCollector {
             // stipulate that we want BufferedImages created in BGR 24bit color space
             mediaReader.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
 
-            mediaReader.addListener(new ImageSnapListener(komposition, imageStore));
+            mediaReader.addListener(new ImageSnapListener(segment, imageStore, bpm));
 
             // read out the contents of the media file and
             // dispatch events to the attached listener
-            while (mediaReader.readPacket() == null) ;
+            while (mediaReader.readPacket() == null)  ;
         } catch(VideoExtractionFinished finished) {
             logger.info("Work completed {}", finished.getMessage());
         } finally {
@@ -54,22 +54,23 @@ public class VideoThumbnailsCollector {
     }
 
 	private class ImageSnapListener extends MediaListenerAdapter {
-        final Komposition komposition;
-        ImageStore imageStore;
+        final List<Segment> segments;
+        final ImageStore imageStore;
+        final float bpm;
 
-        private ImageSnapListener(Komposition komposition, ImageStore imageStore) {
-            this.komposition = komposition;
+        private ImageSnapListener(List<Segment> segments, ImageStore imageStore, float bpm) {
+            this.segments = segments;
             this.imageStore = imageStore;
+            this.bpm = bpm;
         }
 
         public void onVideoPicture(IVideoPictureEvent event) {
             long timestamp = event.getTimeStamp();
-            if(isFinishedProcessing(komposition.segments, timestamp, komposition.bpm)) {
+            if(isFinishedProcessing(segments, timestamp, bpm)) {
                 throw new VideoExtractionFinished("End of compilation");
             }
 
-            for (Segment segment : isInterestedInThisPicture(komposition.segments, komposition.bpm, timestamp)) {
-                logger.trace("Ping {}", timestamp);
+            for (Segment segment : isInterestedInThisPicture(segments, bpm, timestamp)) {
                 try {
                     if (segment instanceof ImageSampleInstruction) {
                         ImageSampleInstruction sampleInstruction = (ImageSampleInstruction) segment;
@@ -100,7 +101,7 @@ public class VideoThumbnailsCollector {
 			}
 
             int clockRatio = 250000;
-            double MICRO_SECONDS_BETWEEN_FRAMES = komposition.bpm * clockRatio / (segment.framesPerBeat * 60);
+            double MICRO_SECONDS_BETWEEN_FRAMES = bpm * clockRatio / (segment.framesPerBeat * 60);
 
 			// if uninitialized, back date mLastPtsWrite so we get the very first frame
 			if (mLastPtsWrite == Global.NO_PTS)
