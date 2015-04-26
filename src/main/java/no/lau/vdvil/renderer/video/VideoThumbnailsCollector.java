@@ -55,7 +55,7 @@ public class VideoThumbnailsCollector {
 
 	private class ImageSnapListener extends MediaListenerAdapter {
         final Komposition komposition;
-        ImageStore imageStore;
+        ImageStore<BufferedImage> imageStore;
 
         private ImageSnapListener(Komposition komposition, ImageStore imageStore) {
             this.komposition = komposition;
@@ -73,8 +73,7 @@ public class VideoThumbnailsCollector {
                 try {
                     if (segment instanceof ImageSampleInstruction) {
                         ImageSampleInstruction sampleInstruction = (ImageSampleInstruction) segment;
-                        BufferedImage image = fetchImage(event, sampleInstruction);
-                        imageStore.store(image, timestamp, sampleInstruction.id());
+                        imageStore.store(fetchImage(event, sampleInstruction), timestamp, sampleInstruction.id());
                     } else if(segment instanceof TimeStampFixedImageSampleSegment) {
                         BufferedImage image = event.getImage();
                         if(image != null) {

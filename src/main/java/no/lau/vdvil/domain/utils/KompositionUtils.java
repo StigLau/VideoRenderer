@@ -68,8 +68,9 @@ public class KompositionUtils {
                 .collect(Collectors.toList());
     }
 
+    @Deprecated
     public static Stream<BufferedImage> streamImages(Komposition komposition, int frameRate) {
-        ImageStore imageStore = new ImageFileStore(komposition, "/tmp/snaps/");
+        ImageStore<BufferedImage> imageStore = new ImageFileStore<>(komposition, "/tmp/snaps/");
         List<BufferedImage> buff = new ArrayList<>();
         for (int frame = 0; ; frame++) {
             long timestamp = findTimeStamp(frame, frameRate, komposition);

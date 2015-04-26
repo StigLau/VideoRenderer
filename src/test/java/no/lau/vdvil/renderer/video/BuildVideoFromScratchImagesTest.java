@@ -43,8 +43,8 @@ public class BuildVideoFromScratchImagesTest {
 
         new VideoThumbnailsCollector(imageStore).capture(downmixedOriginalVideo, fetchKomposition);
 
-        assertEquals(460, imageStore.findImagesByInstructionId("First capture sequence").size());
-        assertEquals(162, imageStore.findImagesByInstructionId("Second capture sequence").size());
+        assertEquals(460, imageStore.findImagesBySegmentId("First capture sequence").size());
+        assertEquals(162, imageStore.findImagesBySegmentId("Second capture sequence").size());
         //140
 
         Komposition buildKomposition =  new Komposition(124,
@@ -83,20 +83,20 @@ public class BuildVideoFromScratchImagesTest {
 
         new VideoThumbnailsCollector(imageStore).capture(downmixedOriginalVideo, fetchKomposition);
 
-        assertEquals(232, imageStore.findImagesByInstructionId("Purple Mountains Clouds").size());
-        assertEquals(57, imageStore.findImagesByInstructionId("Besseggen").size());
-        assertEquals(38, imageStore.findImagesByInstructionId("Norway showing").size());
-        assertEquals(191, imageStore.findImagesByInstructionId("Flower fjord").size());
-        assertEquals(188, imageStore.findImagesByInstructionId("Slide Blue mountain top lake").size());
-        assertEquals(53, imageStore.findImagesByInstructionId("Fjord foss").size());
-        assertEquals(58, imageStore.findImagesByInstructionId("Fjord like river").size());
-        assertEquals(95, imageStore.findImagesByInstructionId("Dark lake").size());
-        assertEquals(88, imageStore.findImagesByInstructionId("Mountain range").size());
-        assertEquals(132, imageStore.findImagesByInstructionId("Omnious fjord Lightbrake").size());
-        assertEquals(132, imageStore.findImagesByInstructionId("Boat village panorama").size());
-        assertEquals(87, imageStore.findImagesByInstructionId("Village street").size());
-        assertEquals(85, imageStore.findImagesByInstructionId("Seaside houses Panorama").size());
-        assertEquals(48, imageStore.findImagesByInstructionId("Bergen movement").size());
+        assertEquals(232, imageStore.findImagesBySegmentId("Purple Mountains Clouds").size());
+        assertEquals(57, imageStore.findImagesBySegmentId("Besseggen").size());
+        assertEquals(38, imageStore.findImagesBySegmentId("Norway showing").size());
+        assertEquals(191, imageStore.findImagesBySegmentId("Flower fjord").size());
+        assertEquals(188, imageStore.findImagesBySegmentId("Slide Blue mountain top lake").size());
+        assertEquals(53, imageStore.findImagesBySegmentId("Fjord foss").size());
+        assertEquals(58, imageStore.findImagesBySegmentId("Fjord like river").size());
+        assertEquals(95, imageStore.findImagesBySegmentId("Dark lake").size());
+        assertEquals(88, imageStore.findImagesBySegmentId("Mountain range").size());
+        assertEquals(132, imageStore.findImagesBySegmentId("Omnious fjord Lightbrake").size());
+        assertEquals(132, imageStore.findImagesBySegmentId("Boat village panorama").size());
+        assertEquals(87, imageStore.findImagesBySegmentId("Village street").size());
+        assertEquals(85, imageStore.findImagesBySegmentId("Seaside houses Panorama").size());
+        assertEquals(48, imageStore.findImagesBySegmentId("Bergen movement").size());
 
         Komposition buildKomposition =  new Komposition(124,
                 new VideoStillImageSegment("Dark lake", 0, 4),

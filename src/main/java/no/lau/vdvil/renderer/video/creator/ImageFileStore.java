@@ -73,10 +73,21 @@ public class ImageFileStore<TYPE> implements ImageStore<TYPE> {
         }
     }
 
-    public List<TYPE> findImagesByInstructionId(String instructionId) {
+    public List<TYPE> findImagesBySegmentId(String instructionId) {
         return segmentImageList.get(instructionId).stream()
                 .map(this::getAsFile)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * The fileStore doesn't need to monitor number of files in cache at this stage
+     */
+    public boolean readyForNewImage(String segmentId) {
+        return true;
+    }
+
+    public void prune(TYPE instance) {
+        logger.info("Not implemented");
     }
 
     TYPE getAsFile(String filename) {

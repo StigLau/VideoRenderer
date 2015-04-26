@@ -18,11 +18,11 @@ import static org.junit.Assert.assertEquals;
  */
 public class RestructureMediaTest {
     //First run ImageCapturingFromVideoTest with
-    //String inputFilename = "/tmp/CLMD-The_Stockholm_Syndrome_320.mp4";
+    //String inputFilename = "/tmp/320_CLMD-The_Stockholm_Syndrome.mp4";
     //String outputFilePrefix = "/tmp/snaps/CLMD-The_Stockholm_Syndrome_320/";
 
-    String downmixedOriginalVideo = "/tmp/CLMD-The_Stockholm_Syndrome_320.mp4";
-    String snapshotFileStorage = "/tmp/snaps/CLMD-The_Stockholm_Syndrome_320/";
+    String downmixedOriginalVideo = "/tmp/320_CLMD-The_Stockholm_Syndrome.mp4";
+    String snapshotFileStorage = "/tmp/snaps/320_CLMD-The_Stockholm_Syndrome/";
     String collectPicsFromVideo = "/tmp/320_Onewheel_The_World_is_Your_Playground.mp4";
 
     @Test
@@ -43,7 +43,7 @@ public class RestructureMediaTest {
         );
         ImageStore ibs = new ImageBufferStore();
         new VideoThumbnailsCollector(ibs).capture(collectPicsFromVideo, fetchKomposition);
-        assertEquals(719, ibs.findImagesByInstructionId("Capture some pics").size());
+        assertEquals(719, ibs.findImagesBySegmentId("Capture some pics").size());
         assertEquals(359, ((ImageSampleInstruction) fetchKomposition.segments.get(1)).collectedImages().size());
 
         Komposition buildKomposition =  new Komposition(128,null);

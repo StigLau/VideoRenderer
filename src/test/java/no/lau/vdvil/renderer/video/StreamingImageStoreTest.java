@@ -1,5 +1,6 @@
 package no.lau.vdvil.renderer.video;
 
+import no.lau.vdvil.domain.MediaFile;
 import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.domain.VideoStillImageSegment;
 import no.lau.vdvil.domain.out.Komposition;
@@ -9,10 +10,12 @@ import no.lau.vdvil.renderer.video.creator.filter.PercentageSplitter;
 import no.lau.vdvil.renderer.video.creator.filter.Reverter;
 import no.lau.vdvil.renderer.video.creator.filter.TaktSplitter;
 import no.lau.vdvil.renderer.video.stigs.TimeStampFixedImageSampleSegment;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,15 +29,18 @@ import static org.junit.Assert.assertEquals;
 public class StreamingImageStoreTest {
 
     String downmixedOriginalVideo = "/tmp/320_NORWAY-A_Time-Lapse_Adventure.mp4";
+    private String result4 = "file:///tmp/from_scratch_images_test_4.mp4";
+    String sobotaMp3 = "/Users/stiglau/vids/The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix.mp3";
 
     @Test
-    public void testStreamingFromInVideoSource() throws InterruptedException {
+    public void testStreamingFromInVideoSource() throws InterruptedException, IOException {
         Komposition fetchKomposition = new Komposition(128,
                 new TimeStampFixedImageSampleSegment("Purple Mountains Clouds", 7541667, 21125000, 8),
                 new TimeStampFixedImageSampleSegment("Besseggen", 21250000, 27625000, 2),
                 new TimeStampFixedImageSampleSegment("Dark lake", 69375000, 74583333, 8)
         );
         ImageBufferStore imageStore = new ImageBufferStore();
+        imageStore.setBufferSize(200);
 
         new StreamingImageCapturer(fetchKomposition, imageStore, downmixedOriginalVideo).startUpThreads();
         //new VideoThumbnailsCollector(imageStore).capture(downmixedOriginalVideo, fetchKomposition);
@@ -60,21 +66,22 @@ public class StreamingImageStoreTest {
         buildKomposition.framerate = DEFAULT_TIME_UNIT.convert(15, MILLISECONDS);
         buildKomposition.width = 320;
         buildKomposition.height = 200;
-        //MediaFile mf = new MediaFile(new URL(result3), 0f, 128f, "9bf2c55d6ef8bc7c384ba21f2920e9d1");
-        //buildKomposition.storageLocation = mf;
+        MediaFile mf = new MediaFile(new URL(result4), 0f, 128f, "ced7f43f28520ca59ad3ae80356862bd");
+        buildKomposition.storageLocation = mf;
 
-        //CreateVideoFromScratchImages.createVideo(buildKomposition, sobotaMp3, imageStore);
-        //assertEquals(mf.checksum, md5Checksum(mf.fileName));
         Thread.sleep(10000);
+        CreateVideoFromScratchImages.createVideo(buildKomposition, sobotaMp3, imageStore);
+        assertEquals(mf.checksum, md5Checksum(mf.fileName));
 
-        assertEquals(232, imageStore.findImagesByInstructionId("Purple Mountains Clouds").size());
-        assertEquals(57, imageStore.findImagesByInstructionId("Besseggen").size());
-        assertEquals(95, imageStore.findImagesByInstructionId("Dark lake").size());
-
+        assertEquals(232, imageStore.findImagesBySegmentId("Purple Mountains Clouds").size());
+        assertEquals(57, imageStore.findImagesBySegmentId("Besseggen").size());
+        assertEquals(95, imageStore.findImagesBySegmentId("Dark lake").size());
     }
 
+    public String md5Checksum(URL url) throws IOException {
+        return DigestUtils.md5Hex(url.openStream());
+    }
 }
-
 
 class StreamingImageCapturer {
 
@@ -122,24 +129,3 @@ class ImageCapturer implements Runnable {
         new WaitingVideoThumbnailsCollector(imageStoreCapturer).capture(videoFile, Collections.singletonList(segment), bpm);
     }
 }
-
-
-//Responsible for gathering images, but also knowing when to acquire the next set og images
-/*
-class ImageStoreCapturer<TYPE> implements ImageStore<TYPE>{
-
-    @Override
-    public List<TYPE> getImageAt(Long timeStamp, Komposition komposition) {
-        return null;
-    }
-
-    @Override
-    public void store(TYPE image, Long timeStamp, String segmentId) {
-
-    }
-
-    @Override
-    public List<TYPE> findImagesByInstructionId(String instructionId) {
-        return null;
-    }
-}*/

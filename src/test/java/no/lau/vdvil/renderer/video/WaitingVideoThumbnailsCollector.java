@@ -55,7 +55,7 @@ public class WaitingVideoThumbnailsCollector {
 
 	private class ImageSnapListener extends MediaListenerAdapter {
         final List<Segment> segments;
-        final ImageStore imageStore;
+        final ImageStore<BufferedImage> imageStore;
         final float bpm;
 
         private ImageSnapListener(List<Segment> segments, ImageStore imageStore, float bpm) {
@@ -79,6 +79,11 @@ public class WaitingVideoThumbnailsCollector {
                     } else if(segment instanceof TimeStampFixedImageSampleSegment) {
                         BufferedImage image = event.getImage();
                         if(image != null) {
+                            //Wait until imageStore is ready to accept images
+                            while(!imageStore.readyForNewImage(segment.id())) {
+                                logger.trace("Buffer full - Waiting to write image to store");
+                                Thread.sleep(100);
+                            }
                             imageStore.store(event.getImage(), timestamp, segment.id());
                         }
                     }

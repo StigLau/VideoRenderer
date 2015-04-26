@@ -3,6 +3,7 @@ package no.lau.vdvil.renderer.video.creator;
 import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.renderer.video.creator.filter.FilterableSegment;
+import no.lau.vdvil.renderer.video.store.ImageRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.*;
@@ -17,8 +18,9 @@ import static no.lau.vdvil.domain.utils.KompositionUtils.calc;
 public class ImageBufferStore<TYPE> implements ImageStore<TYPE> {
 
     //Segment Identifier, List of buffered images
-    public final Map<String, List<TYPE>> segmentImageList = new HashMap<>();
+    public final Map<String, List<ImageRepresentation>> segmentImageList = new HashMap<>();
     private Logger logger = LoggerFactory.getLogger(ImageBufferStore.class);
+    private int bufferSize = 1000;
 
     public List<TYPE> getImageAt(Long timeStamp, Komposition komposition) {
         float bpm = komposition.bpm;
@@ -39,7 +41,7 @@ public class ImageBufferStore<TYPE> implements ImageStore<TYPE> {
     List<TYPE> extractImage(long timeStamp, float bpm, Segment segmentA) {
         //TODO find a better way to pass inn filter configuration
         FilterableSegment segment = (FilterableSegment) segmentA;
-        List<TYPE> images = segment.applyModifications(findImagesByInstructionId(segment.id()));
+        List<TYPE> images = segment.applyModifications(findImagesBySegmentId(segment.id()));
         long start = calc(segment.start(), bpm);
         double split = images.size() * (timeStamp - start) / calc(segment.duration(), bpm);
         int index = (int) Math.round(split);
@@ -49,17 +51,53 @@ public class ImageBufferStore<TYPE> implements ImageStore<TYPE> {
 
 
 
-    public void store(TYPE image, Long timeStamp, String segmentId) {
+    public void store(TYPE instance, Long timeStamp, String segmentId) {
+        ImageRepresentation imageRepresentation = new ImageRepresentation(Long.toString(timeStamp), segmentId);
+        imageRepresentation.image = instance;
         if(segmentImageList.containsKey(segmentId)) {
-            segmentImageList.get(segmentId).add(image);
+            segmentImageList.get(segmentId).add(imageRepresentation);
         } else {
-            List<TYPE> newImageList = new ArrayList<>();
-            newImageList.add(image);
+            List<ImageRepresentation> newImageList = new ArrayList<>();
+            newImageList.add(imageRepresentation);
             segmentImageList.put(segmentId, newImageList);
         }
     }
 
-    public List<TYPE> findImagesByInstructionId(String instructionId) {
-        return segmentImageList.get(instructionId);
+    public synchronized void prune(TYPE instance) {
+        for (List<ImageRepresentation> imageRepresentations : segmentImageList.values()) {
+            for (ImageRepresentation imageRepresentation : imageRepresentations) {
+                if(imageRepresentation.image == instance) {
+                    logger.info("Pruning {} of segment: ", imageRepresentation.imageId, imageRepresentation.segmentId);
+                    imageRepresentations.remove(instance);
+                }
+            }
+        }
+    }
+
+    public synchronized List<TYPE> findImagesBySegmentId(String segmentId) {
+        if(!segmentImageList.containsKey(segmentId)) {
+            return Collections.emptyList();
+        }else {
+            return segmentImageList.get(segmentId).stream()
+                    .map(imgRep -> {
+                        //ImageRepresentation type = (ImageRepresentation) imgRep.image;
+                        //return (TYPE)type.image;
+                        return (TYPE)imgRep.image;
+                    })
+                    .collect(Collectors.toList());
+        }
+    }
+
+    public boolean readyForNewImage(String segmentId) {
+        if(!segmentImageList.containsKey(segmentId))
+            return true;
+        else {
+            List<TYPE> images = findImagesBySegmentId(segmentId);
+            return images == null || images.size() < bufferSize;
+        }
+    }
+
+    public void setBufferSize(int imagesBufferSize) {
+        this.bufferSize = imagesBufferSize;
     }
 }
