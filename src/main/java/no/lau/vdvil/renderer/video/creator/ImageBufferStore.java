@@ -41,11 +41,11 @@ public class ImageBufferStore<TYPE> implements ImageStore<TYPE> {
     List<TYPE> extractImage(long timeStamp, float bpm, Segment segmentA) {
         //TODO find a better way to pass inn filter configuration
         FilterableSegment segment = (FilterableSegment) segmentA;
-        List<TYPE> images = segment.applyModifications(findImagesBySegmentId(segment.id()));
+        List<TYPE> images = segment.applyModifications(findImagesBySegmentId(segment.id(), 0, 20));
         long start = calc(segment.start(), bpm);
         double split = images.size() * (timeStamp - start) / calc(segment.duration(), bpm);
         int index = (int) Math.round(split);
-        logger.debug("@{} - {} - {}/{}", timeStamp, segment.id(), index+1, images.size());
+        logger.debug("@{} - {} - {}/{}", timeStamp, segment.id(), index + 1, images.size());
         return Collections.singletonList(images.get(index));
     }
 
@@ -78,14 +78,35 @@ public class ImageBufferStore<TYPE> implements ImageStore<TYPE> {
         if(!segmentImageList.containsKey(segmentId)) {
             return Collections.emptyList();
         }else {
-            return segmentImageList.get(segmentId).stream()
-                    .map(imgRep -> {
-                        //ImageRepresentation type = (ImageRepresentation) imgRep.image;
-                        //return (TYPE)type.image;
-                        return (TYPE)imgRep.image;
-                    })
-                    .collect(Collectors.toList());
+            return findImagesCore(segmentId);
         }
+    }
+
+    /**
+     * With retries
+     */
+    public synchronized List<TYPE> findImagesBySegmentId(String segmentId, int retries, int maxNrOfRetries) {
+        if(retries >= maxNrOfRetries) {
+            throw new RuntimeException("Could not find " + segmentId + " in ImageStore");
+        }
+        if(!segmentImageList.containsKey(segmentId)) {
+            try {
+                logger.info("Fetching {} retry {}", segmentId, retries);
+                Thread.sleep(1000 * ++retries);
+                return findImagesBySegmentId(segmentId, retries, maxNrOfRetries);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }else {
+            return findImagesCore(segmentId);
+        }
+    }
+
+    List<TYPE> findImagesCore(String segmentId) {
+        return segmentImageList.get(segmentId).stream()
+                .map(imgRep -> (TYPE)imgRep.image)
+                .collect(Collectors.toList());
+
     }
 
     public boolean readyForNewImage(String segmentId) {

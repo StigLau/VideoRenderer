@@ -31,7 +31,8 @@ public class WaitingVideoThumbnailsCollector {
         this.imageStore = imageStore;
     }
 
-    public void capture(String inputFilename, List<Segment> segment, float bpm){
+    public void capture(String inputFilename, List<Segment> segments, float bpm){
+        System.out.println("Starting capture ");
         long start = System.currentTimeMillis();
 
 
@@ -40,7 +41,7 @@ public class WaitingVideoThumbnailsCollector {
             // stipulate that we want BufferedImages created in BGR 24bit color space
             mediaReader.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
 
-            mediaReader.addListener(new ImageSnapListener(segment, imageStore, bpm));
+            mediaReader.addListener(new ImageSnapListener(segments, imageStore, bpm));
 
             // read out the contents of the media file and
             // dispatch events to the attached listener
@@ -70,7 +71,14 @@ public class WaitingVideoThumbnailsCollector {
                 throw new VideoExtractionFinished("End of compilation");
             }
 
-            for (Segment segment : isInterestedInThisPicture(segments, bpm, timestamp)) {
+            if(timestamp >= 7541667) {
+                System.out.println("timestamp = " + timestamp);
+            }
+
+            List<Segment> asd = isInterestedInThisPicture(segments, bpm, timestamp);
+            System.out.println("asd.size() = " + asd.size());
+            for (Segment segment : asd) {
+                System.out.println("Fetching for " + segment.id());
                 try {
                     if (segment instanceof ImageSampleInstruction) {
                         ImageSampleInstruction sampleInstruction = (ImageSampleInstruction) segment;

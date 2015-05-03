@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -98,11 +97,36 @@ class StreamingImageCapturer {
     }
 
     public void startUpThreads() {
-        for (Segment segment : komposition.segments) {
-            log.info("Starting segment {}", segment.id());
-            ImageCapturer imageCapturer = new ImageCapturer(segment, capturer, videoFile, komposition.bpm);
+        List<List<Segment>> alignedSegmentList = alignSegments(komposition.segments, new ArrayList<>());
+        for (List<Segment> alignedSegment : alignedSegmentList) {
+            log.info("Starting segments {}", alignedSegment.get(0).id());
+            ImageCapturer imageCapturer = new ImageCapturer(alignedSegment, capturer, videoFile, komposition.bpm);
             imageCapturers.add(imageCapturer);
             new Thread(imageCapturer).start();
+        }
+    }
+
+    /**
+     * Used for structuring the segments into  multiple lists of segments that are neatly following each other.
+     */
+    private synchronized List<List<Segment>> alignSegments(List<Segment> inSegments, List<List<Segment>> finalList) {
+        System.out.println("Segment list is " + inSegments.size());
+        long current = 0;
+        List<Segment> foundSegments = new ArrayList<>();
+        List<Segment> segmentRests = new ArrayList<>();
+        for (Segment segment : inSegments) {
+            if(segment.start() >= current) {
+                foundSegments.add(segment);
+                current = segment.start() + segment.duration();
+            } else {
+                segmentRests.add(segment);
+            }
+        }
+        finalList.add(foundSegments);
+        if(!segmentRests.isEmpty()) {
+            return alignSegments(segmentRests, finalList);
+        } else {
+            return finalList;
         }
     }
 
@@ -112,13 +136,13 @@ class StreamingImageCapturer {
 //Responsible for extracting the images. Will wait for more work to do
 class ImageCapturer implements Runnable {
 
-    private final Segment segment;
+    private final List<Segment> segments;
     private final ImageStore imageStoreCapturer;
     private final String videoFile;
     final float bpm;
 
-    public ImageCapturer(Segment segment, ImageStore imageStoreCapturer, String videoFile, float bpm) {
-        this.segment = segment;
+    public ImageCapturer(List<Segment> segments, ImageStore imageStoreCapturer, String videoFile, float bpm) {
+        this.segments = segments;
         this.imageStoreCapturer = imageStoreCapturer;
         this.videoFile = videoFile;
         this.bpm = bpm;
@@ -126,6 +150,6 @@ class ImageCapturer implements Runnable {
 
     @Override
     public void run() {
-        new WaitingVideoThumbnailsCollector(imageStoreCapturer).capture(videoFile, Collections.singletonList(segment), bpm);
+        new WaitingVideoThumbnailsCollector(imageStoreCapturer).capture(videoFile, segments, bpm);
     }
 }

@@ -11,7 +11,7 @@ public interface ImageStore<TYPE> {
 
     void store(TYPE image, Long timeStamp, String segmentId);
 
-    List<TYPE> findImagesBySegmentId(String instructionId);
+    List<TYPE> findImagesBySegmentId(String segmentId);
 
     boolean readyForNewImage(String segmentId);
 
