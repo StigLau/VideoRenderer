@@ -12,8 +12,4 @@ public interface ImageStore<TYPE> {
     void store(TYPE image, Long timeStamp, String segmentId);
 
     List<TYPE> findImagesBySegmentId(String segmentId);
-
-    boolean readyForNewImage(String segmentId);
-
-    void prune(TYPE instance);
 }

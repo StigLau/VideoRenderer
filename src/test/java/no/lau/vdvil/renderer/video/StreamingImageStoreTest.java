@@ -39,7 +39,7 @@ public class StreamingImageStoreTest {
                 new TimeStampFixedImageSampleSegment("Dark lake", 69375000, 74583333, 8)
         );
         ImageBufferStore imageStore = new ImageBufferStore();
-        imageStore.setBufferSize(200);
+        imageStore.setBufferSize(400);
 
         new StreamingImageCapturer(fetchKomposition, imageStore, downmixedOriginalVideo).startUpThreads();
         //new VideoThumbnailsCollector(imageStore).capture(downmixedOriginalVideo, fetchKomposition);
@@ -65,16 +65,16 @@ public class StreamingImageStoreTest {
         buildKomposition.framerate = DEFAULT_TIME_UNIT.convert(15, MILLISECONDS);
         buildKomposition.width = 320;
         buildKomposition.height = 200;
-        MediaFile mf = new MediaFile(new URL(result4), 0f, 128f, "ced7f43f28520ca59ad3ae80356862bd");
+        MediaFile mf = new MediaFile(new URL(result4), 0f, 128f, "0e7d51d26f573386c229b772d126754a");
         buildKomposition.storageLocation = mf;
 
-        Thread.sleep(10000);
+        //Thread.sleep(10000);
         CreateVideoFromScratchImages.createVideo(buildKomposition, sobotaMp3, imageStore);
         assertEquals(mf.checksum, md5Checksum(mf.fileName));
 
-        assertEquals(232, imageStore.findImagesBySegmentId("Purple Mountains Clouds").size());
-        assertEquals(57, imageStore.findImagesBySegmentId("Besseggen").size());
-        assertEquals(95, imageStore.findImagesBySegmentId("Dark lake").size());
+        assertEquals(325, imageStore.findImagesBySegmentId("Purple Mountains Clouds").size());
+        assertEquals(152, imageStore.findImagesBySegmentId("Besseggen").size());
+        assertEquals(124, imageStore.findImagesBySegmentId("Dark lake").size());
     }
 
     public String md5Checksum(URL url) throws IOException {

@@ -90,7 +90,6 @@ class VideoAdapter {
         while (clock >= nextFrameTime) {
             for (BufferedImage frame : imageStore.getImageAt(clock, komposition)) {
                 writer.encodeVideo(videoStreamIndex, frame, nextFrameTime, DEFAULT_TIME_UNIT);
-                imageStore.prune(frame);
             }
             nextFrameTime += frameRate;
         }

@@ -71,13 +71,7 @@ public class WaitingVideoThumbnailsCollector {
                 throw new VideoExtractionFinished("End of compilation");
             }
 
-            if(timestamp >= 7541667) {
-                System.out.println("timestamp = " + timestamp);
-            }
-
-            List<Segment> asd = isInterestedInThisPicture(segments, bpm, timestamp);
-            System.out.println("asd.size() = " + asd.size());
-            for (Segment segment : asd) {
+            for (Segment segment : isInterestedInThisPicture(segments, bpm, timestamp)) {
                 System.out.println("Fetching for " + segment.id());
                 try {
                     if (segment instanceof ImageSampleInstruction) {
@@ -87,11 +81,6 @@ public class WaitingVideoThumbnailsCollector {
                     } else if(segment instanceof TimeStampFixedImageSampleSegment) {
                         BufferedImage image = event.getImage();
                         if(image != null) {
-                            //Wait until imageStore is ready to accept images
-                            while(!imageStore.readyForNewImage(segment.id())) {
-                                logger.trace("Buffer full - Waiting to write image to store");
-                                Thread.sleep(100);
-                            }
                             imageStore.store(event.getImage(), timestamp, segment.id());
                         }
                     }

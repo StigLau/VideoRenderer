@@ -7,6 +7,8 @@ import no.lau.vdvil.renderer.video.store.ImageRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import static no.lau.vdvil.domain.utils.KompositionUtils.calc;
@@ -18,7 +20,7 @@ import static no.lau.vdvil.domain.utils.KompositionUtils.calc;
 public class ImageBufferStore<TYPE> implements ImageStore<TYPE> {
 
     //Segment Identifier, List of buffered images
-    public final Map<String, List<ImageRepresentation>> segmentImageList = new HashMap<>();
+    public final Map<String, BlockingQueue<ImageRepresentation>> segmentImageList = new HashMap<>();
     private Logger logger = LoggerFactory.getLogger(ImageBufferStore.class);
     private int bufferSize = 1000;
 
@@ -50,27 +52,22 @@ public class ImageBufferStore<TYPE> implements ImageStore<TYPE> {
     }
 
 
-
+    /**
+     * Note the usage of BlockingQueue.put, to block if queue is full!
+     */
     public void store(TYPE instance, Long timeStamp, String segmentId) {
         ImageRepresentation imageRepresentation = new ImageRepresentation(Long.toString(timeStamp), segmentId);
         imageRepresentation.image = instance;
-        if(segmentImageList.containsKey(segmentId)) {
-            segmentImageList.get(segmentId).add(imageRepresentation);
-        } else {
-            List<ImageRepresentation> newImageList = new ArrayList<>();
-            newImageList.add(imageRepresentation);
-            segmentImageList.put(segmentId, newImageList);
-        }
-    }
-
-    public synchronized void prune(TYPE instance) {
-        for (List<ImageRepresentation> imageRepresentations : segmentImageList.values()) {
-            for (ImageRepresentation imageRepresentation : imageRepresentations) {
-                if(imageRepresentation.image == instance) {
-                    logger.info("Pruning {} of segment: ", imageRepresentation.imageId, imageRepresentation.segmentId);
-                    imageRepresentations.remove(instance);
-                }
+        try {
+            if (segmentImageList.containsKey(segmentId)) {
+                segmentImageList.get(segmentId).put(imageRepresentation);
+            } else {
+                BlockingQueue<ImageRepresentation> newImageList = new ArrayBlockingQueue<>(bufferSize);
+                newImageList.put(imageRepresentation);
+                segmentImageList.put(segmentId, newImageList);
             }
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Blocked queue insertion interrupted!", e);
         }
     }
 
@@ -107,15 +104,6 @@ public class ImageBufferStore<TYPE> implements ImageStore<TYPE> {
                 .map(imgRep -> (TYPE)imgRep.image)
                 .collect(Collectors.toList());
 
-    }
-
-    public boolean readyForNewImage(String segmentId) {
-        if(!segmentImageList.containsKey(segmentId))
-            return true;
-        else {
-            List<TYPE> images = findImagesBySegmentId(segmentId);
-            return images == null || images.size() < bufferSize;
-        }
     }
 
     public void setBufferSize(int imagesBufferSize) {
