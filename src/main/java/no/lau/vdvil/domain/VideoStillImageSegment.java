@@ -8,11 +8,8 @@ import java.util.List;
 /**
  * @author Stig@Lau.no 07/04/15.
  */
-public class VideoStillImageSegment<TYPE> implements FilterableSegment<TYPE> {
+public class VideoStillImageSegment<TYPE> extends SuperSegment implements FilterableSegment<TYPE> {
 
-    private final String id;
-    private final int start;
-    private final int duration;
     //Whether the list is to be reverted
     public boolean reverted = false;
     public double fromLimit = 0;
@@ -20,30 +17,12 @@ public class VideoStillImageSegment<TYPE> implements FilterableSegment<TYPE> {
     public int takter = -1;
 
     public VideoStillImageSegment(String id, int start, int duration) {
-        this.id = id;
-        this.start = start;
-        this.duration = duration;
-    }
-
-    public String id() {
-        return id;
-    }
-
-    public long start() {
-        return start;
-    }
-
-    public long duration() {
-        return duration;
+        super(id, start, duration);
     }
 
     public VideoStillImageSegment revert() {
         reverted = false;
         return this;
-    }
-
-    public boolean isReverted() {
-        return reverted;
     }
 
     public VideoStillImageSegment limit(double from, double until) {

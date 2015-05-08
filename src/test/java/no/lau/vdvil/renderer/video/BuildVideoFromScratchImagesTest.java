@@ -78,27 +78,7 @@ public class BuildVideoFromScratchImagesTest {
                 new TimeStampFixedImageSampleSegment("Seaside houses Panorama", 102583333, 108791667, 8),
                 new TimeStampFixedImageSampleSegment("Bergen movement", 108916667, 113541667, 8)
         );
-        ImageBufferStore imageStore = new ImageBufferStore();
-        imageStore.setBufferSize(200);
 
-        new StreamingImageCapturer(fetchKomposition, imageStore, downmixedOriginalVideo).startUpThreads();
-
-/*
-        assertEquals(232, imageStore.findImagesBySegmentId("Purple Mountains Clouds").size());
-        assertEquals(57, imageStore.findImagesBySegmentId("Besseggen").size());
-        assertEquals(38, imageStore.findImagesBySegmentId("Norway showing").size());
-        assertEquals(191, imageStore.findImagesBySegmentId("Flower fjord").size());
-        assertEquals(188, imageStore.findImagesBySegmentId("Slide Blue mountain top lake").size());
-        assertEquals(53, imageStore.findImagesBySegmentId("Fjord foss").size());
-        assertEquals(58, imageStore.findImagesBySegmentId("Fjord like river").size());
-        assertEquals(95, imageStore.findImagesBySegmentId("Dark lake").size());
-        assertEquals(88, imageStore.findImagesBySegmentId("Mountain range").size());
-        assertEquals(132, imageStore.findImagesBySegmentId("Omnious fjord Lightbrake").size());
-        assertEquals(132, imageStore.findImagesBySegmentId("Boat village panorama").size());
-        assertEquals(87, imageStore.findImagesBySegmentId("Village street").size());
-        assertEquals(85, imageStore.findImagesBySegmentId("Seaside houses Panorama").size());
-        assertEquals(48, imageStore.findImagesBySegmentId("Bergen movement").size());
-        */
 
         Komposition buildKomposition =  new Komposition(124,
                 new VideoStillImageSegment("Dark lake", 0, 4),
@@ -131,6 +111,34 @@ public class BuildVideoFromScratchImagesTest {
         buildKomposition.height = 200;
         MediaFile mf = new MediaFile(new URL(result2), 0f, 128f, "c24f323e8ef4588ee30c78dccb9b3472");
         buildKomposition.storageLocation = mf;
+
+
+        ImageBufferStore imageStore = new ImageBufferStore();
+        imageStore.setBufferSize(350);
+
+
+
+
+        new StreamingImageCapturer(fetchKomposition, buildKomposition, imageStore, downmixedOriginalVideo).startUpThreads();
+
+/*
+        assertEquals(232, imageStore.findImagesBySegmentId("Purple Mountains Clouds").size());
+        assertEquals(57, imageStore.findImagesBySegmentId("Besseggen").size());
+        assertEquals(38, imageStore.findImagesBySegmentId("Norway showing").size());
+        assertEquals(191, imageStore.findImagesBySegmentId("Flower fjord").size());
+        assertEquals(188, imageStore.findImagesBySegmentId("Slide Blue mountain top lake").size());
+        assertEquals(53, imageStore.findImagesBySegmentId("Fjord foss").size());
+        assertEquals(58, imageStore.findImagesBySegmentId("Fjord like river").size());
+        assertEquals(95, imageStore.findImagesBySegmentId("Dark lake").size());
+        assertEquals(88, imageStore.findImagesBySegmentId("Mountain range").size());
+        assertEquals(132, imageStore.findImagesBySegmentId("Omnious fjord Lightbrake").size());
+        assertEquals(132, imageStore.findImagesBySegmentId("Boat village panorama").size());
+        assertEquals(87, imageStore.findImagesBySegmentId("Village street").size());
+        assertEquals(85, imageStore.findImagesBySegmentId("Seaside houses Panorama").size());
+        assertEquals(48, imageStore.findImagesBySegmentId("Bergen movement").size());
+        */
+
+
 
         CreateVideoFromScratchImages.createVideo(buildKomposition, sobotaMp3, imageStore);
         assertEquals(mf.checksum, md5Checksum(mf.fileName));

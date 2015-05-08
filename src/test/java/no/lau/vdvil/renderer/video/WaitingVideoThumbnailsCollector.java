@@ -32,7 +32,7 @@ public class WaitingVideoThumbnailsCollector {
     }
 
     public void capture(String inputFilename, List<Segment> segments, float bpm){
-        System.out.println("Starting capture ");
+        logger.info("Starting capture ");
         long start = System.currentTimeMillis();
 
 

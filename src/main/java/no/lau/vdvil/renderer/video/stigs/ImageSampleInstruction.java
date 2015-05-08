@@ -1,5 +1,6 @@
 package no.lau.vdvil.renderer.video.stigs;
 
+import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.domain.SuperSegment;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,5 +21,9 @@ public class ImageSampleInstruction extends SuperSegment {
 
     public List<String> collectedImages() {
         return collectedImages;
+    }
+
+    public Segment createCopy(long idIncrementation){
+        return new ImageSampleInstruction(id() + idIncrementation, start(), duration(), framesPerBeat);
     }
 }

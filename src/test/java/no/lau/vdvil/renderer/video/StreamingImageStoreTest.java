@@ -20,6 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static no.lau.vdvil.renderer.video.KompositionUtil.alignSegments;
+import static no.lau.vdvil.renderer.video.KompositionUtil.createUniqueSegments;
+import static no.lau.vdvil.renderer.video.KompositionUtil.performIdUniquenessCheck;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -38,12 +41,6 @@ public class StreamingImageStoreTest {
                 new TimeStampFixedImageSampleSegment("Besseggen", 21250000, 27625000, 2),
                 new TimeStampFixedImageSampleSegment("Dark lake", 69375000, 74583333, 8)
         );
-        ImageBufferStore imageStore = new ImageBufferStore();
-        imageStore.setBufferSize(400);
-
-        new StreamingImageCapturer(fetchKomposition, imageStore, downmixedOriginalVideo).startUpThreads();
-        //new VideoThumbnailsCollector(imageStore).capture(downmixedOriginalVideo, fetchKomposition);
-
 
         int bpm = 124;
         Komposition buildKomposition = new Komposition(bpm,
@@ -62,6 +59,13 @@ public class StreamingImageStoreTest {
                         .filter(new PercentageSplitter(0.5, 1), new Reverter(), new TaktSplitter(2)),
                 new VideoStillImageSegment("Dark lake", 16, 8)
         );
+
+        ImageBufferStore imageStore = new ImageBufferStore();
+        imageStore.setBufferSize(400);
+
+        new StreamingImageCapturer(fetchKomposition, buildKomposition, imageStore, downmixedOriginalVideo).startUpThreads();
+        //new VideoThumbnailsCollector(imageStore).capture(downmixedOriginalVideo, fetchKomposition);
+
         buildKomposition.framerate = DEFAULT_TIME_UNIT.convert(15, MILLISECONDS);
         buildKomposition.width = 320;
         buildKomposition.height = 200;
@@ -84,52 +88,37 @@ public class StreamingImageStoreTest {
 
 class StreamingImageCapturer {
 
-    final Komposition komposition;
+    final Komposition fetchKomposition;
+    final Komposition buildKomposition;
     List<ImageCapturer> imageCapturers = new ArrayList<>();
     final ImageStore capturer;
     final String videoFile;
     final Logger log = LoggerFactory.getLogger(StreamingImageCapturer.class);
 
-    public StreamingImageCapturer(Komposition komposition, ImageStore capturer, String videoFile) {
-        this.komposition = komposition;
+    public StreamingImageCapturer(Komposition fetchKomposition, Komposition buildKomposition, ImageStore capturer, String videoFile) {
+        this.fetchKomposition = fetchKomposition;
+        this.buildKomposition = buildKomposition;
         this.capturer = capturer;
         this.videoFile = videoFile;
     }
 
     public void startUpThreads() {
-        List<List<Segment>> alignedSegmentList = alignSegments(komposition.segments, new ArrayList<>());
-        for (List<Segment> alignedSegment : alignedSegmentList) {
-            log.info("Starting segments {}", alignedSegment.get(0).id());
-            ImageCapturer imageCapturer = new ImageCapturer(alignedSegment, capturer, videoFile, komposition.bpm);
+        performIdUniquenessCheck(fetchKomposition.segments);
+        List<Segment> extractedInSegments = createUniqueSegments(fetchKomposition.segments, buildKomposition.segments);
+
+        int segmentGroup = 0;
+        for (List<Segment> alignedSegment : alignSegments(extractedInSegments)) {
+            String ids = "";
+            for (Segment segment : alignedSegment) {
+                ids += "\n\t"+segment.id();
+            }
+            log.info("Segment group {}: {}", ++segmentGroup, ids);
+
+            ImageCapturer imageCapturer = new ImageCapturer(alignedSegment, capturer, videoFile, fetchKomposition.bpm);
             imageCapturers.add(imageCapturer);
             new Thread(imageCapturer).start();
         }
     }
-
-    /**
-     * Used for structuring the segments into  multiple lists of segments that are neatly following each other.
-     */
-    private synchronized List<List<Segment>> alignSegments(List<Segment> inSegments, List<List<Segment>> finalList) {
-        System.out.println("Segment list is " + inSegments.size());
-        long current = 0;
-        List<Segment> foundSegments = new ArrayList<>();
-        List<Segment> segmentRests = new ArrayList<>();
-        for (Segment segment : inSegments) {
-            if(segment.start() >= current) {
-                foundSegments.add(segment);
-                current = segment.start() + segment.duration();
-            } else {
-                segmentRests.add(segment);
-            }
-        }
-        finalList.add(foundSegments);
-        if(!segmentRests.isEmpty()) {
-            return alignSegments(segmentRests, finalList);
-        } else {
-            return finalList;
-        }
-    }
-
 
 }
 

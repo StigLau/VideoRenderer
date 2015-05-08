@@ -7,7 +7,7 @@ import java.util.Random;
  * @author Stig@Lau.no 20/04/15.
  */
 public abstract class SuperSegment implements Segment {
-    private final String id;
+    private String id;
     private final long start;
     private final long duration;
 
@@ -32,5 +32,40 @@ public abstract class SuperSegment implements Segment {
 
     public long duration() {
         return duration;
+    }
+
+    /**
+     * CreateCopy and changeId are special cases where Segments need to be duplicated because usage multiple places
+     */
+    public Segment createCopy(long idIncrementation){
+        return new SuperSegment(id() + idIncrementation, start, duration()) {
+            public String id() {
+                return super.id();
+            }
+
+            public long start() {
+                return super.start();
+            }
+
+            public long duration() {
+                return super.duration();
+            }
+
+            public Segment createCopy(long idIncrementation) {
+                return super.createCopy(idIncrementation);
+            }
+
+            public String toString() {
+                return super.toString();
+            }
+        };
+    }
+
+    public void changeId(int idIncrementation) {
+        this.id = id + idIncrementation;
+    }
+
+    public String toString() {
+        return "Segment: " + id + " start:" + start + " duration: " + duration;
     }
 }
