@@ -63,22 +63,22 @@ public class BuildVideoFromScratchImagesTest {
     @Test
     public void extractImagesFromNorwayVideo() throws IOException, InterruptedException {
         Komposition fetchKomposition = new Komposition(128,
-                new TimeStampFixedImageSampleSegment("Purple Mountains Clouds", 7541667, 21125000, 8),
+                new TimeStampFixedImageSampleSegment("Purple Mountains Clouds", 7541667, 20250000, 8),
                 new TimeStampFixedImageSampleSegment("Norway showing", 30166667, 34541667, 4),
                 new TimeStampFixedImageSampleSegment("Besseggen", 21250000, 27625000, 2),
                 new TimeStampFixedImageSampleSegment("Flower fjord", 35916667, 47000000, 8),
-                new TimeStampFixedImageSampleSegment("Slide Blue mountain top lake", 47083333, 58416667, 8),
-                new TimeStampFixedImageSampleSegment("Fjord like river", 64250000, 68958333, 8),
+                new TimeStampFixedImageSampleSegment("Slide Blue mountain top lake", 47125000, 57750000, 8),
+                new TimeStampFixedImageSampleSegment("Fjord like river", 64250000, 68750000, 8),
                 new TimeStampFixedImageSampleSegment("Fjord foss", 58541667, 64041667, 8),
-                new TimeStampFixedImageSampleSegment("Dark lake", 69375000, 74583333, 8),
+                new TimeStampFixedImageSampleSegment("Dark lake", 69375000, 74375000, 8),
                 new TimeStampFixedImageSampleSegment("Mountain range", 74833333, 80250000, 8),
-                new TimeStampFixedImageSampleSegment("Omnious fjord Lightbrake", 80291667, 88666667, 8),
+                new TimeStampFixedImageSampleSegment("Omnious fjord Lightbrake", 80000000, 88125000, 8),
                 new TimeStampFixedImageSampleSegment("Boat village panorama", 88750000, 97000000, 8),
                 new TimeStampFixedImageSampleSegment("Village street", 97083333, 102541667, 8),
                 new TimeStampFixedImageSampleSegment("Seaside houses Panorama", 102583333, 108791667, 8),
                 new TimeStampFixedImageSampleSegment("Bergen movement", 108916667, 113541667, 8)
         );
-
+        fetchKomposition.storageLocation= new MediaFile(new URL("file://" + downmixedOriginalVideo), 0f, -1f, "abc");
 
         Komposition buildKomposition =  new Komposition(124,
                 new VideoStillImageSegment("Dark lake", 0, 4),
@@ -109,7 +109,7 @@ public class BuildVideoFromScratchImagesTest {
         buildKomposition.framerate = DEFAULT_TIME_UNIT.convert(15, MILLISECONDS);
         buildKomposition.width = 320;
         buildKomposition.height = 200;
-        MediaFile mf = new MediaFile(new URL(result2), 0f, 128f, "c24f323e8ef4588ee30c78dccb9b3472");
+        MediaFile mf = new MediaFile(new URL(result2), 0f, 128f, "ee990400c8bc69f4a10c18697f766461");
         buildKomposition.storageLocation = mf;
 
 
@@ -119,7 +119,7 @@ public class BuildVideoFromScratchImagesTest {
 
 
 
-        new StreamingImageCapturer(fetchKomposition, buildKomposition, imageStore, downmixedOriginalVideo).startUpThreads();
+        new StreamingImageCapturer(fetchKomposition, buildKomposition, imageStore).startUpThreads();
 
 /*
         assertEquals(232, imageStore.findImagesBySegmentId("Purple Mountains Clouds").size());
