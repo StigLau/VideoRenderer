@@ -57,8 +57,8 @@ public class SegmentStructureTest {
         List<Segment> extractedInSegments = createUniqueSegments(inSegments, resultKomposition.segments);
 
         List<List<Segment>> result = alignSegments(extractedInSegments);
-        assertEquals(2, result.size());
-        assertEquals(6, result.get(0).size());
+        assertEquals(6, result.size());
+        assertEquals(1, result.get(0).size());
         assertEquals(2, result.get(1).size());
         //Make
     }

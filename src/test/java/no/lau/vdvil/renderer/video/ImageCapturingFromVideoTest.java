@@ -2,7 +2,7 @@ package no.lau.vdvil.renderer.video;
 
 import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.domain.out.Komposition;
-import no.lau.vdvil.renderer.video.creator.ImageBufferStore;
+import no.lau.vdvil.renderer.video.creator.ImageFileStore;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
 import no.lau.vdvil.renderer.video.stigs.ImageSampleInstruction;
 import org.junit.Test;
@@ -19,16 +19,16 @@ public class ImageCapturingFromVideoTest {
 
     @Test
     public void testCapturing() {
-        String inputFilename = "/tmp/CLMD-The_Stockholm_Syndrome_320.mp4";
-        String outputFilePrefix = "/tmp/snaps/CLMD-The_Stockholm_Syndrome_320/";
+        String inputFilename = "/tmp/320_NORWAY-A_Time-Lapse_Adventure.mp4";
+        String outputFilePrefix = "/tmp/snaps/320_NORWAY-A_Time-Lapse_Adventure/";
         Komposition komposition = new Komposition(128,
-                new ImageSampleInstruction("First capture sequence", 64, 64, 2),
-                new ImageSampleInstruction("Second capture sequence", 256, 32, 1)
+                new ImageSampleInstruction("First capture sequence", 0, 256, 15),
+                new ImageSampleInstruction("Second capture sequence", 256, 256, 15)
         );
-        ImageStore ibs = new ImageBufferStore();
+        ImageStore ibs = new ImageFileStore<>(komposition, outputFilePrefix);
         new VideoThumbnailsCollector(ibs).capture(inputFilename, komposition);
-        assertEquals(719, ibs.findImagesBySegmentId("First capture sequence").size());
-        assertEquals(359, ibs.findImagesBySegmentId("Second capture sequence").size());
+        assertEquals(113, ibs.findImagesBySegmentId("First capture sequence").size());
+        assertEquals(140, ibs.findImagesBySegmentId("Second capture sequence").size());
 
         logger.info("Found files:");
         for (Segment instruction : komposition.segments) {

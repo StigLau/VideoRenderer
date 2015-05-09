@@ -4,6 +4,7 @@ import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.renderer.video.creator.ImageFileStore;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
+import no.lau.vdvil.renderer.video.stigs.ImageSampleInstruction;
 import no.lau.vdvil.renderer.video.stigs.TimeStampFixedImageSampleSegment;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -63,8 +64,16 @@ public class KompositionUtils {
     }
 
     public static List<Segment> isInterestedInThisPicture(List<Segment> segments, float bpm, long timestamp) {
-        return segments.stream().filter(segment -> timestamp > segment.start() &&
-                timestamp < (segment.start() + segment.duration()))
+        return segments.stream().filter(segment -> {
+                    if(segment instanceof ImageSampleInstruction) {
+                        return timestamp > calc(segment.start(), bpm) &&
+                                timestamp < calc((segment.start() + segment.duration()),bpm);
+                    }else {
+                        return timestamp > segment.start() &&
+                                timestamp < (segment.start() + segment.duration());
+                    }
+                }
+        )
                 .collect(Collectors.toList());
     }
 
