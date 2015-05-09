@@ -13,6 +13,8 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Test;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.junit.Assert.assertEquals;
@@ -23,6 +25,7 @@ import static org.junit.Assert.assertEquals;
 public class BuildVideoFromScratchImagesTest {
 
     String downmixedOriginalVideo = "/tmp/320_NORWAY-A_Time-Lapse_Adventure.mp4";
+    String theSwingVideo = "/tmp/320_Worlds_Largest_Rope_Swing.mp4";
     String snapshotFileStorage = "/tmp/snaps/CLMD-The_Stockholm_Syndrome_320/";
 
     String sobotaMp3 = "/Users/stiglau/vids/The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix.mp3";
@@ -62,7 +65,7 @@ public class BuildVideoFromScratchImagesTest {
 
     @Test
     public void extractImagesFromNorwayVideo() throws IOException, InterruptedException {
-        Komposition fetchKomposition = new Komposition(128,
+        Komposition fetchKompositionNorway = new Komposition(128,
                 new TimeStampFixedImageSampleSegment("Purple Mountains Clouds", 7541667, 20250000, 8),
                 new TimeStampFixedImageSampleSegment("Norway showing", 30166667, 34541667, 4),
                 new TimeStampFixedImageSampleSegment("Besseggen", 21250000, 27625000, 2),
@@ -78,7 +81,17 @@ public class BuildVideoFromScratchImagesTest {
                 new TimeStampFixedImageSampleSegment("Seaside houses Panorama", 102583333, 108791667, 8),
                 new TimeStampFixedImageSampleSegment("Bergen movement", 108916667, 113541667, 8)
         );
-        fetchKomposition.storageLocation= new MediaFile(new URL("file://" + downmixedOriginalVideo), 0f, -1f, "abc");
+        fetchKompositionNorway.storageLocation= new MediaFile(new URL("file://" + downmixedOriginalVideo), 0f, -1f, "abc");
+
+        Komposition fetchKompositionSwing = new Komposition(128,
+                new TimeStampFixedImageSampleSegment("Red bridge", 2919583, 6047708, 8),
+                new TimeStampFixedImageSampleSegment("Swing into bridge", 22439083, 26484792, 8),
+                new TimeStampFixedImageSampleSegment("Swing out from bridge", 26526500, 28194833, 8),
+                new TimeStampFixedImageSampleSegment("Swing second out from bridge", 32323958, 33908875, 8),
+                new TimeStampFixedImageSampleSegment("Smile girl, smile", 34200833, 34993292, 8),
+                new TimeStampFixedImageSampleSegment("Swing through bridge with mountain smile", 45128417, 46713333, 8)
+        );
+        fetchKompositionSwing.storageLocation = new MediaFile(new URL("file://" + theSwingVideo), 0f, 120F, "abc");
 
         Komposition buildKomposition =  new Komposition(124,
                 new VideoStillImageSegment("Dark lake", 0, 4),
@@ -95,7 +108,11 @@ public class BuildVideoFromScratchImagesTest {
 
                 //new VideoStillImageSegment("Besseggen", 60, 3),
                 new VideoStillImageSegment("Norway showing", 63, 1).revert(),
-                new VideoStillImageSegment("Omnious fjord Lightbrake", 64, 8)
+                //new VideoStillImageSegment("Omnious fjord Lightbrake", 64, 8),
+                new VideoStillImageSegment("Smile girl, smile", 64, 8),
+                new VideoStillImageSegment("Swing into bridge", 72, 8),
+                new VideoStillImageSegment("Swing out from bridge", 80, 8),
+                new VideoStillImageSegment("Swing through bridge with mountain smile", 88, 8)
                 /*
                 new VideoStillImageSegment("Seaside houses Panorama", 72, 4),
                 new VideoStillImageSegment("Boat village panorama", 76, 8),
@@ -117,9 +134,10 @@ public class BuildVideoFromScratchImagesTest {
         imageStore.setBufferSize(350);
 
 
-
-
-        new StreamingImageCapturer(fetchKomposition, buildKomposition, imageStore).startUpThreads();
+        List<Komposition> fetchKompositions = new ArrayList<>();
+        fetchKompositions.add(fetchKompositionNorway);
+        fetchKompositions.add(fetchKompositionSwing);
+        new StreamingImageCapturer(fetchKompositions, buildKomposition, imageStore).startUpThreads();
 
 /*
         assertEquals(232, imageStore.findImagesBySegmentId("Purple Mountains Clouds").size());

@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -114,10 +113,6 @@ class StreamingImageCapturer {
     List<ImageCapturer> imageCapturers = new ArrayList<>();
     final ImageStore capturer;
     final Logger log = LoggerFactory.getLogger(StreamingImageCapturer.class);
-
-    public StreamingImageCapturer(Komposition fetchKomposition, Komposition buildKomposition, ImageStore capturer) {
-        this(Collections.singletonList(fetchKomposition), buildKomposition, capturer);
-    }
 
     public StreamingImageCapturer(List<Komposition> fetchKompositions, Komposition buildKomposition, ImageStore capturer) {
         this.fetchKompositions = fetchKompositions;
