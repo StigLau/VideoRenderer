@@ -22,13 +22,13 @@ public class ImageCapturingFromVideoTest {
         String inputFilename = "/tmp/320_NORWAY-A_Time-Lapse_Adventure.mp4";
         String outputFilePrefix = "/tmp/snaps/320_NORWAY-A_Time-Lapse_Adventure/";
         Komposition komposition = new Komposition(128,
-                new ImageSampleInstruction("First capture sequence", 0, 256, 15),
-                new ImageSampleInstruction("Second capture sequence", 256, 256, 15)
+                new ImageSampleInstruction("First capture sequence", 0, 256, 1),
+                new ImageSampleInstruction("Second capture sequence", 256, 256, 1)
         );
         ImageStore ibs = new ImageFileStore<>(komposition, outputFilePrefix);
         new VideoThumbnailsCollector(ibs).capture(inputFilename, komposition);
-        assertEquals(113, ibs.findImagesBySegmentId("First capture sequence").size());
-        assertEquals(140, ibs.findImagesBySegmentId("Second capture sequence").size());
+        assertEquals(225, ibs.findImagesBySegmentId("First capture sequence").size());
+        assertEquals(225, ibs.findImagesBySegmentId("Second capture sequence").size());
 
         logger.info("Found files:");
         for (Segment instruction : komposition.segments) {

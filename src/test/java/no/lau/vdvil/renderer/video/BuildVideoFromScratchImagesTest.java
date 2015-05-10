@@ -88,7 +88,7 @@ public class BuildVideoFromScratchImagesTest {
                 new TimeStampFixedImageSampleSegment("Swing into bridge", 22439083, 26484792, 8),
                 new TimeStampFixedImageSampleSegment("Swing out from bridge", 26526500, 28194833, 8),
                 new TimeStampFixedImageSampleSegment("Swing second out from bridge", 32323958, 33908875, 8),
-                new TimeStampFixedImageSampleSegment("Smile girl, smile", 34200833, 34993292, 8),
+                new TimeStampFixedImageSampleSegment("Smile girl, smile", 34034000, 34993292, 15),
                 new TimeStampFixedImageSampleSegment("Swing through bridge with mountain smile", 45128417, 46713333, 8)
         );
         fetchKompositionSwing.storageLocation = new MediaFile(new URL("file://" + theSwingVideo), 0f, 120F, "abc");
@@ -109,8 +109,8 @@ public class BuildVideoFromScratchImagesTest {
                 //new VideoStillImageSegment("Besseggen", 60, 3),
                 new VideoStillImageSegment("Norway showing", 63, 1).revert(),
                 //new VideoStillImageSegment("Omnious fjord Lightbrake", 64, 8),
-                new VideoStillImageSegment("Smile girl, smile", 64, 8),
-                new VideoStillImageSegment("Swing into bridge", 72, 8),
+                new VideoStillImageSegment("Smile girl, smile", 64, 4),
+                new VideoStillImageSegment("Swing into bridge", 68, 12),
                 new VideoStillImageSegment("Swing out from bridge", 80, 8),
                 new VideoStillImageSegment("Swing through bridge with mountain smile", 88, 8)
                 /*
@@ -126,7 +126,7 @@ public class BuildVideoFromScratchImagesTest {
         buildKomposition.framerate = DEFAULT_TIME_UNIT.convert(15, MILLISECONDS);
         buildKomposition.width = 320;
         buildKomposition.height = 200;
-        MediaFile mf = new MediaFile(new URL(result2), 0f, 128f, "ee990400c8bc69f4a10c18697f766461");
+        MediaFile mf = new MediaFile(new URL(result2), 0f, 128f, "6da35d1a74999dbd0be4bb60e10b302c");
         buildKomposition.storageLocation = mf;
 
 
