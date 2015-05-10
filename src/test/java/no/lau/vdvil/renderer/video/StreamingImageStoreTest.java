@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -81,7 +82,7 @@ public class StreamingImageStoreTest {
         );
 
         ImageBufferStore imageStore = new ImageBufferStore();
-        imageStore.setBufferSize(400);
+        imageStore.setBufferSize(1);
 
         new StreamingImageCapturer(fetchKompositions, buildKomposition, imageStore).startUpThreads();
         //new VideoThumbnailsCollector(imageStore).capture(downmixedOriginalVideo, fetchKomposition);
@@ -126,13 +127,9 @@ class StreamingImageCapturer {
             List<Segment> extractedInSegments = createUniqueSegments(fetchKomposition.segments, buildKomposition.segments);
 
             int segmentGroup = 0;
-            for (List<Segment> alignedSegments : alignSegments(extractedInSegments)) {
-                String ids = "";
-                for (Segment segment : alignedSegments) {
-                    ids += "\n\t" + segment.id();
-                }
-                log.info("Segment group {}: {}", ++segmentGroup, ids);
-                ImageCapturer imageCapturer = new ImageCapturer(alignedSegments, capturer, fetchKomposition.storageLocation.fileName.getFile(), fetchKomposition.bpm);
+            for (Segment segment : extractedInSegments) {
+                log.info("Segment group {}: {}", ++segmentGroup, segment.id());
+                ImageCapturer imageCapturer = new ImageCapturer(Collections.singletonList(segment), capturer, fetchKomposition.storageLocation.fileName.getFile(), fetchKomposition.bpm);
                 imageCapturers.add(imageCapturer);
                 new Thread(imageCapturer).start();
             }

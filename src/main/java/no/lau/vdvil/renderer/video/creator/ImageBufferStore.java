@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import static no.lau.vdvil.domain.utils.KompositionUtils.calc;
@@ -43,12 +44,7 @@ public class ImageBufferStore<TYPE> implements ImageStore<TYPE> {
     List<TYPE> extractImage(long timeStamp, float bpm, Segment segmentA) {
         //TODO find a better way to pass inn filter configuration
         FilterableSegment segment = (FilterableSegment) segmentA;
-        List<TYPE> images = segment.applyModifications(findImagesBySegmentId(segment.id(), 0, 20));
-        long start = calc(segment.start(), bpm);
-        double split = images.size() * (timeStamp - start) / calc(segment.duration(), bpm);
-        int index = (int) Math.round(split);
-        logger.debug("@{} - {} - {}/{}", timeStamp, segment.id(), index + 1, images.size());
-        return Collections.singletonList(images.get(index));
+        return findImagesBySegmentId(segment.id(), 0, 20);
     }
 
 
@@ -72,11 +68,7 @@ public class ImageBufferStore<TYPE> implements ImageStore<TYPE> {
     }
 
     public synchronized List<TYPE> findImagesBySegmentId(String segmentId) {
-        if(!segmentImageList.containsKey(segmentId)) {
-            return Collections.emptyList();
-        }else {
-            return findImagesCore(segmentId);
-        }
+        return findImagesCore(segmentId);
     }
 
     /**
@@ -99,11 +91,15 @@ public class ImageBufferStore<TYPE> implements ImageStore<TYPE> {
         }
     }
 
-    List<TYPE> findImagesCore(String segmentId) {
-        return segmentImageList.get(segmentId).stream()
-                .map(imgRep -> (TYPE)imgRep.image)
-                .collect(Collectors.toList());
-
+    List<TYPE> findImagesCore(String segmentId){
+        try {
+            BlockingQueue<ImageRepresentation> blockingQueue = segmentImageList.get(segmentId);
+            ImageRepresentation representation = blockingQueue.poll(1000, TimeUnit.MILLISECONDS);
+            return Collections.singletonList((TYPE) representation.image);
+        } catch (Exception e) {
+            logger.debug("Fuck? {}, {}",segmentId, e.getMessage());
+            return Collections.emptyList();
+        }
     }
 
     public void setBufferSize(int imagesBufferSize) {
