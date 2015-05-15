@@ -5,6 +5,9 @@ import com.xuggle.mediatool.MediaListenerAdapter;
 import com.xuggle.mediatool.ToolFactory;
 import com.xuggle.mediatool.event.IVideoPictureEvent;
 import com.xuggle.xuggler.Global;
+import no.lau.vdvil.collector.FrameRepresentation;
+import no.lau.vdvil.collector.KompositionPlanner;
+import no.lau.vdvil.collector.SegmentFramePlan;
 import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
 import no.lau.vdvil.renderer.video.stigs.ImageSampleInstruction;
@@ -13,8 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.awt.image.BufferedImage;
 import java.util.List;
-import static no.lau.vdvil.domain.utils.KompositionUtils.isFinishedProcessing;
-import static no.lau.vdvil.domain.utils.KompositionUtils.isInterestedInThisPicture;
 
 public class WaitingVideoThumbnailsCollector {
 
@@ -31,8 +32,8 @@ public class WaitingVideoThumbnailsCollector {
         this.imageStore = imageStore;
     }
 
-    public void capture(String inputFilename, List<Segment> segments, float bpm){
-        logger.info("Starting capture ");
+    public void capture(String inputFilename, KompositionPlanner planner, float bpm){
+        logger.info("Starting capture {}", planner.plans.get(0).originalSegment.id());
         long start = System.currentTimeMillis();
 
 
@@ -41,7 +42,7 @@ public class WaitingVideoThumbnailsCollector {
             // stipulate that we want BufferedImages created in BGR 24bit color space
             mediaReader.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
 
-            mediaReader.addListener(new ImageSnapListener(segments, imageStore, bpm));
+            mediaReader.addListener(new ImageSnapListener(planner, imageStore, bpm));
 
             // read out the contents of the media file and
             // dispatch events to the attached listener
@@ -55,37 +56,47 @@ public class WaitingVideoThumbnailsCollector {
     }
 
 	private class ImageSnapListener extends MediaListenerAdapter {
-        final List<Segment> segments;
+        private KompositionPlanner planner;
         final ImageStore<BufferedImage> imageStore;
         final float bpm;
 
-        private ImageSnapListener(List<Segment> segments, ImageStore imageStore, float bpm) {
-            this.segments = segments;
+        private ImageSnapListener(KompositionPlanner planner, ImageStore imageStore, float bpm) {
+            this.planner = planner;
             this.imageStore = imageStore;
             this.bpm = bpm;
         }
 
         public void onVideoPicture(IVideoPictureEvent event) {
             long timestamp = event.getTimeStamp();
-            if(isFinishedProcessing(segments, timestamp, bpm)) {
+            //TODO How to halt video processing
+            if(planner.isFinishedProcessing(timestamp)) {
                 throw new VideoExtractionFinished("End of compilation");
             }
+            for (SegmentFramePlan plan : planner.plansAt(timestamp)) {
+                Segment segment = plan.originalSegment;
+                logger.debug("Fetching segment {}, {} frames ", segment.id(), plan.frameRepresentations.size());
+                List<FrameRepresentation> frames = plan.findUnusedFramesAtTimestamp(timestamp);
+                if(frames.size() > 0)
+                    System.out.println("frames = " + frames.size());
+                for (FrameRepresentation frameRepresentation : frames) {
+                    //System.out.println("Writing for frameRepresentation " + frameRepresentation.timestamp);
 
-            for (Segment segment : isInterestedInThisPicture(segments, bpm, timestamp)) {
-                System.out.println("Fetching for " + segment.id());
-                try {
-                    if (segment instanceof ImageSampleInstruction) {
-                        ImageSampleInstruction sampleInstruction = (ImageSampleInstruction) segment;
-                        BufferedImage image = fetchImage(event, sampleInstruction);
-                        imageStore.store(image, timestamp, sampleInstruction.id());
-                    } else if(segment instanceof TimeStampFixedImageSampleSegment) {
-                        BufferedImage image = event.getImage();
-                        if(image != null) {
-                            imageStore.store(event.getImage(), timestamp, segment.id());
+                    try {
+                        if (segment instanceof ImageSampleInstruction) {
+                            ImageSampleInstruction sampleInstruction = (ImageSampleInstruction) segment;
+                            BufferedImage image = fetchImage(event, sampleInstruction);
+                            imageStore.store(image, timestamp, sampleInstruction.id());
+                            frameRepresentation.use();
+                        } else if (segment instanceof TimeStampFixedImageSampleSegment) {
+                            BufferedImage image = event.getImage();
+                            if (image != null) {
+                                imageStore.store(event.getImage(), timestamp, segment.id());
+                                frameRepresentation.use();
+                            }
                         }
+                    } catch (Exception e) {
+                        logger.error("Nothing exciting happened - could not fetch file: ", e);
                     }
-                }catch (Exception e) {
-                    logger.error("Nothing exciting happened - could not fetch file: ", e);
                 }
             }
         }

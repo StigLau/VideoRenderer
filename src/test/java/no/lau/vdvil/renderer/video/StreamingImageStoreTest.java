@@ -1,5 +1,6 @@
 package no.lau.vdvil.renderer.video;
 
+import no.lau.vdvil.collector.KompositionPlanner;
 import no.lau.vdvil.domain.MediaFile;
 import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.domain.VideoStillImageSegment;
@@ -11,16 +12,19 @@ import no.lau.vdvil.renderer.video.creator.filter.Reverter;
 import no.lau.vdvil.renderer.video.creator.filter.TaktSplitter;
 import no.lau.vdvil.renderer.video.stigs.TimeStampFixedImageSampleSegment;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static no.lau.vdvil.renderer.video.KompositionUtil.alignSegments;
 import static no.lau.vdvil.renderer.video.KompositionUtil.createUniqueSegments;
 import static no.lau.vdvil.renderer.video.KompositionUtil.performIdUniquenessCheck;
 import static org.junit.Assert.assertEquals;
@@ -30,11 +34,28 @@ import static org.junit.Assert.assertEquals;
  */
 public class StreamingImageStoreTest {
 
-    String downmixedOriginalVideo = "/tmp/320_NORWAY-A_Time-Lapse_Adventure.mp4";
-    String theSwingVideo = "/tmp/320_Worlds_Largest_Rope_Swing.mp4";
-    private String result4 = "file:///tmp/from_scratch_images_test_4.mp4";
-    String sobotaMp3 = "/Users/stiglau/vids/The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix.mp3";
+     URL downmixedOriginalVideo;
+    URL theSwingVideo;
+    URL result4;
+    String sobotaMp3 = "/tmp/The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix.mp3";
 
+    @Before
+    public void setUp() throws MalformedURLException {
+        downmixedOriginalVideo = Paths.get("/tmp/320_NORWAY-A_Time-Lapse_Adventure.mp4").toUri().toURL();
+        theSwingVideo = Paths.get("/tmp/320_Worlds_Largest_Rope_Swing.mp4").toUri().toURL();
+        result4 = Paths.get("/tmp/from_scratch_images_test_4.mp4").toUri().toURL();
+    }
+
+/*
+    @Test
+    public void testFile() throws MalformedURLException, URISyntaxException {
+        //File file = new File(new URL(sobotaMp3).toURI());
+        //assert file.canRead();
+
+        File a = Paths.get("C:\\vids\\320_Worlds_Largest_Rope_Swing.mp4").toFile();
+        System.out.println("a = " + a.canRead());
+    }
+*/
     @Test
     public void testStreamingFromInVideoSource() throws InterruptedException, IOException {
         Komposition fetchKompositionNorway = new Komposition(128,
@@ -42,7 +63,7 @@ public class StreamingImageStoreTest {
                 new TimeStampFixedImageSampleSegment("Besseggen", 21250000, 27625000, 2),
                 new TimeStampFixedImageSampleSegment("Dark lake", 69375000, 74583333, 8)
         );
-        fetchKompositionNorway.storageLocation = new MediaFile(new URL("file://" + downmixedOriginalVideo), 0f, 120F, "abc");
+        fetchKompositionNorway.storageLocation = new MediaFile(downmixedOriginalVideo, 0f, 120F, "abc");
 
         Komposition fetchKompositionSwing = new Komposition(128,
                 new TimeStampFixedImageSampleSegment("Red bridge", 2919583, 6047708, 8),
@@ -52,7 +73,7 @@ public class StreamingImageStoreTest {
                 new TimeStampFixedImageSampleSegment("Smile girl, smile", 34200833, 34993292, 8),
                 new TimeStampFixedImageSampleSegment("Swing through bridge with mountain smile", 45128417, 46713333, 8)
         );
-        fetchKompositionSwing.storageLocation = new MediaFile(new URL("file://" + theSwingVideo), 0f, 120F, "abc");
+        fetchKompositionSwing.storageLocation = new MediaFile(theSwingVideo, 0f, 120F, "abc");
 
         List<Komposition> fetchKompositions = new ArrayList<>();
         fetchKompositions.add(fetchKompositionNorway);
@@ -79,6 +100,7 @@ public class StreamingImageStoreTest {
                 new VideoStillImageSegment("Smile girl, smile", 24, 16),
                 new VideoStillImageSegment("Swing into bridge", 40, 4)
         );
+        buildKomposition.framerate = 15;
 
         ImageBufferStore imageStore = new ImageBufferStore();
         imageStore.setBufferSize(400);
@@ -89,7 +111,7 @@ public class StreamingImageStoreTest {
         buildKomposition.framerate = DEFAULT_TIME_UNIT.convert(15, MILLISECONDS);
         buildKomposition.width = 320;
         buildKomposition.height = 200;
-        MediaFile mf = new MediaFile(new URL(result4), 0f, 128f, "0e7d51d26f573386c229b772d126754a");
+        MediaFile mf = new MediaFile(result4, 0f, 128f, "0e7d51d26f573386c229b772d126754a");
         buildKomposition.storageLocation = mf;
 
         //Thread.sleep(10000);
@@ -124,32 +146,37 @@ class StreamingImageCapturer {
         for (Komposition fetchKomposition : fetchKompositions) {
             performIdUniquenessCheck(fetchKomposition.segments);
             List<Segment> extractedInSegments = createUniqueSegments(fetchKomposition.segments, buildKomposition.segments);
+            List<KompositionPlanner> planners = createPlanners(extractedInSegments, buildKomposition.bpm, buildKomposition.framerate);
 
-            int segmentGroup = 0;
-            for (List<Segment> alignedSegments : alignSegments(extractedInSegments)) {
-                String ids = "";
-                for (Segment segment : alignedSegments) {
-                    ids += "\n\t" + segment.id();
-                }
-                log.info("Segment group {}: {}", ++segmentGroup, ids);
-                ImageCapturer imageCapturer = new ImageCapturer(alignedSegments, capturer, fetchKomposition.storageLocation.fileName.getFile(), fetchKomposition.bpm);
+            for (KompositionPlanner planner : planners) {
+                log.info("Fetching plan:{}", planner.plans.get(0).originalSegment.id());
+                ImageCapturer imageCapturer = new ImageCapturer(planner, capturer, fetchKomposition.storageLocation.fileName.getFile(), fetchKomposition.bpm);
                 imageCapturers.add(imageCapturer);
                 new Thread(imageCapturer).start();
             }
         }
+    }
+
+    List<KompositionPlanner> createPlanners(List<Segment> inSegments, float bpm, long framerate) {
+        List<KompositionPlanner> plans = new ArrayList<>();
+        for (Segment inSegment : inSegments) {
+            plans.add(new KompositionPlanner(Collections.singletonList(inSegment), bpm, framerate));
+        }
+        return plans;
+
     }
 }
 
 //Responsible for extracting the images. Will wait for more work to do
 class ImageCapturer implements Runnable {
 
-    private final List<Segment> segments;
+    private final KompositionPlanner planner;
     private final ImageStore imageStoreCapturer;
     private final String videoFile;
     final float bpm;
 
-    public ImageCapturer(List<Segment> segments, ImageStore imageStoreCapturer, String videoFile, float bpm) {
-        this.segments = segments;
+    public ImageCapturer(KompositionPlanner planner, ImageStore imageStoreCapturer, String videoFile, float bpm) {
+        this.planner = planner;
         this.imageStoreCapturer = imageStoreCapturer;
         this.videoFile = videoFile;
         this.bpm = bpm;
@@ -157,6 +184,6 @@ class ImageCapturer implements Runnable {
 
     @Override
     public void run() {
-        new WaitingVideoThumbnailsCollector(imageStoreCapturer).capture(videoFile, segments, bpm);
+        new WaitingVideoThumbnailsCollector(imageStoreCapturer).capture(videoFile, planner, bpm);
     }
 }

@@ -5,7 +5,6 @@ import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.renderer.video.creator.ImageFileStore;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
 import no.lau.vdvil.renderer.video.stigs.ImageSampleInstruction;
-import no.lau.vdvil.renderer.video.stigs.TimeStampFixedImageSampleSegment;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,18 +33,6 @@ public class KompositionUtils {
 
     public static long calc(double time, double bpm) {
         return (long) (time * 60 * 1000 * 1000 / bpm);
-    }
-
-    public static boolean contains(Segment segment, Komposition komposition, long timestamp) {
-        if (segment instanceof TimeStampFixedImageSampleSegment) {
-            return (timestamp > segment.start() && timestamp < segment.start() + segment.duration());
-        } else
-            return contains(segment, komposition.bpm, timestamp);
-    }
-
-    public static boolean contains(Segment segment, float bpm, long timestamp) {
-        return (timestamp > fromMillis(segment, bpm) &&
-                timestamp < (fromMillis(segment, bpm) + durationMillis(segment, bpm)));
     }
 
     public static long lastSegment(List<Segment> segments, float bpm) {

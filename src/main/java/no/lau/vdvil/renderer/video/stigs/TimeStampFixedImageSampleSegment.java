@@ -9,11 +9,11 @@ import no.lau.vdvil.domain.SuperSegment;
 public class TimeStampFixedImageSampleSegment extends SuperSegment {
     public final double framesPerBeat;
     //Need to store these values in case needed for object-copying
-    private final long timestampStart;
-    private final long timestampEnd;
+    public final long timestampStart;
+    public final long timestampEnd;
 
     public TimeStampFixedImageSampleSegment(String id, long timestampStart, long timestampEnd, double framesPerBeat) {
-        super(id, timestampStart, timestampEnd - timestampStart);
+        super(id, -1, -1);
         this.framesPerBeat = framesPerBeat;
         this.timestampStart = timestampStart;
         this.timestampEnd = timestampEnd;
@@ -21,5 +21,13 @@ public class TimeStampFixedImageSampleSegment extends SuperSegment {
 
     public Segment createCopy(long idIncrementation) {
         return new TimeStampFixedImageSampleSegment(id() + idIncrementation, timestampStart, timestampEnd, framesPerBeat);
+    }
+
+    public long startCalculated(float bpm) {
+        return timestampStart;
+    }
+
+    public long durationCalculated(float bpm) {
+        return timestampEnd - timestampStart;
     }
 }

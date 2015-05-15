@@ -5,14 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static no.lau.vdvil.domain.utils.KompositionUtils.calc;
-
 /**
  * @author Stig@Lau.no 10/05/15.
  */
 public class SegmentFramePlan implements Comparable {
     public final Segment originalSegment;
-    final List<FrameRepresentation> frameRepresentations;
+    public final List<FrameRepresentation> frameRepresentations;
 
     public SegmentFramePlan(Segment segment, float bpm, long framerate) {
         this.originalSegment = segment;
@@ -21,12 +19,11 @@ public class SegmentFramePlan implements Comparable {
 
     static List<FrameRepresentation> calculateFramesFromSegment(Segment segment, float bpm, long framerate) {
         List<FrameRepresentation> plans = new ArrayList<>();
-
-        long numberOfImages = segment.duration() * 60 / 120 * framerate;
+        long numberOfImages = Math.round(segment.durationCalculated(bpm) * bpm * framerate / (60 * 1000 * 1000));
         System.out.println("numberOfImages = " + numberOfImages);
+        long start = segment.startCalculated(bpm);
         for (int i = 0; i < numberOfImages; i++) {
-            long start = calc(segment.start(), bpm);
-            long thisDuration = calc(segment.duration(), bpm) * i / numberOfImages;
+            long thisDuration = segment.durationCalculated(bpm) * i / numberOfImages;
             plans.add(new FrameRepresentation(start + thisDuration));
         }
         return plans;
@@ -41,23 +38,5 @@ public class SegmentFramePlan implements Comparable {
 
     public int compareTo(Object other) {
         return Long.compare(originalSegment.start(), ((SegmentFramePlan) other).originalSegment.start());
-    }
-}
-
-class FrameRepresentation {
-    final long timestamp;
-    public boolean used;
-
-    FrameRepresentation(long timestamp) {
-        this.timestamp = timestamp;
-        used = false;
-    }
-
-    public void use() {
-        this.used = true;
-    }
-
-    public boolean used() {
-        return this.used;
     }
 }

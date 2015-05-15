@@ -1,6 +1,7 @@
 package no.lau.vdvil.domain;
 
 import java.util.Random;
+import static no.lau.vdvil.domain.utils.KompositionUtils.calc;
 
 /**
  * An simple implementation of Segment to avoid some duplication
@@ -63,6 +64,14 @@ public abstract class SuperSegment implements Segment {
 
     public void changeId(int idIncrementation) {
         this.id = id + idIncrementation;
+    }
+
+    public long startCalculated(float bpm) {
+        return calc(start(), bpm);
+    }
+
+    public long durationCalculated(float bpm) {
+        return calc(duration(), bpm);
     }
 
     public String toString() {
