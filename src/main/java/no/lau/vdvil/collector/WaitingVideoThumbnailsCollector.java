@@ -1,14 +1,12 @@
-package no.lau.vdvil.renderer.video;
+package no.lau.vdvil.collector;
 
 import com.xuggle.mediatool.IMediaReader;
 import com.xuggle.mediatool.MediaListenerAdapter;
 import com.xuggle.mediatool.ToolFactory;
 import com.xuggle.mediatool.event.IVideoPictureEvent;
 import com.xuggle.xuggler.Global;
-import no.lau.vdvil.collector.FrameRepresentation;
-import no.lau.vdvil.collector.KompositionPlanner;
-import no.lau.vdvil.collector.SegmentFramePlan;
 import no.lau.vdvil.domain.Segment;
+import no.lau.vdvil.renderer.video.VideoExtractionFinished;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
 import no.lau.vdvil.renderer.video.stigs.ImageSampleInstruction;
 import no.lau.vdvil.renderer.video.stigs.TimeStampFixedImageSampleSegment;
