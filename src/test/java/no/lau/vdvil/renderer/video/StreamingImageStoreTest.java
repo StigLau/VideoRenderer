@@ -97,7 +97,7 @@ public class StreamingImageStoreTest {
         buildKomposition.framerate = 15;
 
         ImageBufferStore imageStore = new ImageBufferStore();
-        imageStore.setBufferSize(400);
+        imageStore.setBufferSize(1);
 
         StreamingImageCapturer capturer = new StreamingImageCapturer(fetchKompositions, buildKomposition, imageStore);
         List<KompositionPlanner> planners = capturer.createPlanners();
