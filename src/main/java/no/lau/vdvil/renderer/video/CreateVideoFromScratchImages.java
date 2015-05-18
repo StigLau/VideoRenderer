@@ -6,11 +6,15 @@ import com.xuggle.xuggler.IAudioSamples;
 import com.xuggle.xuggler.IContainer;
 import com.xuggle.xuggler.IPacket;
 import com.xuggle.xuggler.IStreamCoder;
+import no.lau.vdvil.collector.FrameRepresentation;
+import no.lau.vdvil.collector.KompositionPlanner;
+import no.lau.vdvil.collector.SegmentFramePlan;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.awt.image.BufferedImage;
+import java.util.List;
 import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
 
 /**
@@ -24,7 +28,7 @@ public class CreateVideoFromScratchImages {
 
     final static int sampleCount = 1000;
 
-    public static void createVideo(Komposition komposition, String inputAudioFilePath, ImageStore imageStore) {
+    public static void createVideo(Komposition komposition, List<KompositionPlanner> planners, ImageStore imageStore, String inputAudioFilePath) {
         log.info("Init");
 
         // total duration of the media
@@ -45,7 +49,7 @@ public class CreateVideoFromScratchImages {
             for (long clock = 0; clock < duration; clock = IAudioSamples.samplesToDefaultPts(totalSampleCount, audioAdapter.sampleRate)) {
                 // while the clock time exceeds the time of the next video frame,
                 // get and encode the next video frame
-                videoAdapter.writeNextPacket(clock, komposition);
+                videoAdapter.writeNextPacket(clock, planners);
                 audioAdapter.writeNextPacket(clock, komposition);
                 totalSampleCount += sampleCount;
             }
@@ -62,6 +66,7 @@ public class CreateVideoFromScratchImages {
 
 class VideoAdapter {
 
+    Logger logger = LoggerFactory.getLogger(VideoAdapter.class);
     final int videoStreamIndex = 0;
     final int videoStreamId = 0;
     final long frameRate;
@@ -86,12 +91,26 @@ class VideoAdapter {
 
     }
 
-    public void writeNextPacket(long clock, Komposition komposition) {
+    public void writeNextPacket(long clock, List<KompositionPlanner> planners) {
         while (clock >= nextFrameTime) {
-            for (BufferedImage frame : imageStore.getImageAt(clock, komposition)) {
-                writer.encodeVideo(videoStreamIndex, frame, nextFrameTime, DEFAULT_TIME_UNIT);
+            for (KompositionPlanner planner : planners) {
+                List<SegmentFramePlan> framePlans = planner.plansAt(clock);
+
+                for (SegmentFramePlan framePlan : framePlans) {
+                    List<FrameRepresentation> frameRepresentations = framePlan.findUnusedFramesAtTimestamp(clock);
+                    for (FrameRepresentation frameRepresentation : frameRepresentations) {
+                        logger.debug("Writing image {} from {} to outStream", frameRepresentation.timestamp, framePlan.originalSegment.id());
+                        frameRepresentation.use();
+                        List<BufferedImage> bufferedImages = imageStore.findImagesBySegmentId(framePlan.originalSegment.id());
+                        //TODO Smoking gun!
+                        for (BufferedImage image : bufferedImages) {
+                            writer.encodeVideo(videoStreamIndex, image, nextFrameTime, DEFAULT_TIME_UNIT);
+                        }
+                    }
+
+                }
+                nextFrameTime += frameRate;
             }
-            nextFrameTime += frameRate;
         }
     }
 }

@@ -72,10 +72,9 @@ public class WaitingVideoThumbnailsCollector {
             }
             for (SegmentFramePlan plan : planner.plansAt(timestamp)) {
                 Segment segment = plan.originalSegment;
-                logger.debug("Fetching segment {}, {} frames ", segment.id(), plan.frameRepresentations.size());
+                logger.trace("Fetching segment {}, {} frames ", segment.id(), plan.frameRepresentations.size());
                 List<FrameRepresentation> frames = plan.findUnusedFramesAtTimestamp(timestamp);
-                if(frames.size() > 0)
-                    System.out.println("frames = " + frames.size());
+                int framesCount = 0;
                 for (FrameRepresentation frameRepresentation : frames) {
                     //System.out.println("Writing for frameRepresentation " + frameRepresentation.timestamp);
 
@@ -88,8 +87,10 @@ public class WaitingVideoThumbnailsCollector {
                         } else if (segment instanceof TimeStampFixedImageSampleSegment) {
                             BufferedImage image = event.getImage();
                             if (image != null) {
+                                logger.debug("Storing image {}@{} {}/{}", segment.id(), timestamp, framesCount, frames.size());
                                 imageStore.store(event.getImage(), timestamp, segment.id());
                                 frameRepresentation.use();
+                                framesCount++;
                             }
                         }
                     } catch (Exception e) {

@@ -1,5 +1,6 @@
 package no.lau.vdvil.renderer.video;
 
+import no.lau.vdvil.collector.KompositionPlanner;
 import no.lau.vdvil.collector.StreamingImageCapturer;
 import no.lau.vdvil.domain.MediaFile;
 import no.lau.vdvil.domain.VideoStillImageSegment;
@@ -98,7 +99,9 @@ public class StreamingImageStoreTest {
         ImageBufferStore imageStore = new ImageBufferStore();
         imageStore.setBufferSize(400);
 
-        new StreamingImageCapturer(fetchKompositions, buildKomposition, imageStore).startUpThreads();
+        StreamingImageCapturer capturer = new StreamingImageCapturer(fetchKompositions, buildKomposition, imageStore);
+        List<KompositionPlanner> planners = capturer.createPlanners();
+        capturer.startUpThreads(planners);
         //new VideoThumbnailsCollector(imageStore).capture(downmixedOriginalVideo, fetchKomposition);
 
         buildKomposition.framerate = DEFAULT_TIME_UNIT.convert(15, MILLISECONDS);
@@ -108,7 +111,7 @@ public class StreamingImageStoreTest {
         buildKomposition.storageLocation = mf;
 
         //Thread.sleep(10000);
-        CreateVideoFromScratchImages.createVideo(buildKomposition, sobotaMp3, imageStore);
+        CreateVideoFromScratchImages.createVideo(buildKomposition, planners, imageStore, sobotaMp3);
         assertEquals(mf.checksum, md5Checksum(mf.fileName));
 
         assertEquals(325, imageStore.findImagesBySegmentId("Purple Mountains Clouds").size());

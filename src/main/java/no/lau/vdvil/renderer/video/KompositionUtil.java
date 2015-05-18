@@ -60,7 +60,7 @@ public class KompositionUtil {
         List<Segment> uniqueSegments = new ArrayList<>();
         for (Segment outSegment : outSegments) {
             for (Segment inSegment : inSegments) {
-                if(outSegment.id().equals(inSegment.id())) {
+                if(outSegment.id().contains(inSegment.id())) {
                     Segment copyOfInSegment = ((SuperSegment)inSegment).createCopy(idIncrement);
                     uniqueSegments.add(copyOfInSegment);
                     ((SuperSegment)outSegment).changeId(idIncrement);

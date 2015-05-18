@@ -1,5 +1,6 @@
 package no.lau.vdvil.renderer.video;
 
+import no.lau.vdvil.collector.KompositionPlanner;
 import no.lau.vdvil.collector.StreamingImageCapturer;
 import no.lau.vdvil.domain.MediaFile;
 import no.lau.vdvil.domain.VideoStillImageSegment;
@@ -15,6 +16,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -59,8 +61,8 @@ public class BuildVideoFromScratchImagesTest {
 
         MediaFile mf = new MediaFile(new URL(result1), 0f, 128f, "dunno yet");
         buildKomposition.storageLocation = mf;
-
-        CreateVideoFromScratchImages.createVideo(buildKomposition, sobotaMp3, imageStore);
+        List<KompositionPlanner> planners = new StreamingImageCapturer(Collections.singletonList(fetchKomposition), buildKomposition, imageStore).createPlanners();
+        CreateVideoFromScratchImages.createVideo(buildKomposition, planners, imageStore, sobotaMp3);
         assertEquals(mf.checksum, md5Checksum(mf.fileName));
     }
 
@@ -138,7 +140,10 @@ public class BuildVideoFromScratchImagesTest {
         List<Komposition> fetchKompositions = new ArrayList<>();
         fetchKompositions.add(fetchKompositionNorway);
         fetchKompositions.add(fetchKompositionSwing);
-        new StreamingImageCapturer(fetchKompositions, buildKomposition, imageStore).startUpThreads();
+
+        StreamingImageCapturer imageCapturer = new StreamingImageCapturer(fetchKompositions, buildKomposition, imageStore);
+        List<KompositionPlanner> planners = imageCapturer.createPlanners();
+        imageCapturer.startUpThreads(planners);
 
 /*
         assertEquals(232, imageStore.findImagesBySegmentId("Purple Mountains Clouds").size());
@@ -159,7 +164,7 @@ public class BuildVideoFromScratchImagesTest {
 
 
 
-        CreateVideoFromScratchImages.createVideo(buildKomposition, sobotaMp3, imageStore);
+        CreateVideoFromScratchImages.createVideo(buildKomposition, planners, imageStore, sobotaMp3);
         assertEquals(mf.checksum, md5Checksum(mf.fileName));
     }
 
@@ -212,8 +217,8 @@ public class BuildVideoFromScratchImagesTest {
         buildKomposition.height = 200;
         MediaFile mf = new MediaFile(new URL(result3), 0f, 128f, "9bf2c55d6ef8bc7c384ba21f2920e9d1");
         buildKomposition.storageLocation = mf;
-
-        CreateVideoFromScratchImages.createVideo(buildKomposition, sobotaMp3, imageStore);
+        List<KompositionPlanner> planner = new StreamingImageCapturer(Collections.singletonList(fetchKomposition), buildKomposition, imageStore).createPlanners();
+        CreateVideoFromScratchImages.createVideo(buildKomposition, planner, imageStore, sobotaMp3);
         assertEquals(mf.checksum, md5Checksum(mf.fileName));
     }
 }
