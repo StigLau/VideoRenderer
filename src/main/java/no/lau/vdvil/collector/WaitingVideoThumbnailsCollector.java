@@ -82,13 +82,13 @@ public class WaitingVideoThumbnailsCollector {
                         if (segment instanceof ImageSampleInstruction) {
                             ImageSampleInstruction sampleInstruction = (ImageSampleInstruction) segment;
                             BufferedImage image = fetchImage(event, sampleInstruction);
-                            imageStore.store(image, timestamp, sampleInstruction.id());
+                            imageStore.store(image, timestamp, sampleInstruction.id(), frameRepresentation);
                             frameRepresentation.use();
                         } else if (segment instanceof TimeStampFixedImageSampleSegment) {
                             BufferedImage image = event.getImage();
                             if (image != null) {
                                 logger.debug("Storing image {}@{} {}/{}", segment.id(), timestamp, framesCount, frames.size());
-                                imageStore.store(event.getImage(), timestamp, segment.id());
+                                imageStore.store(event.getImage(), timestamp, segment.id(), frameRepresentation);
                                 frameRepresentation.use();
                                 framesCount++;
                             }

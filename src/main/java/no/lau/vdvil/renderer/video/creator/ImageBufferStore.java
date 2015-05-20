@@ -1,5 +1,7 @@
 package no.lau.vdvil.renderer.video.creator;
 
+import no.lau.vdvil.collector.FrameRepresentation;
+import no.lau.vdvil.collector.SegmentFramePlan;
 import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.renderer.video.creator.filter.FilterableSegment;
@@ -37,6 +39,11 @@ public class ImageBufferStore<TYPE> implements ImageStore<TYPE> {
         return images.collect(Collectors.toList());
     }
 
+    @Override
+    public void store(TYPE image, Long timeStamp, String segmentId) {
+        throw new RuntimeException("Not implemented - go away!");
+    }
+
     /**
      * Calculate which image among a list to show from a imageSample series
      * Returns a singleton list or empty list
@@ -51,8 +58,8 @@ public class ImageBufferStore<TYPE> implements ImageStore<TYPE> {
     /**
      * Note the usage of BlockingQueue.put, to block if queue is full!
      */
-    public void store(TYPE instance, Long timeStamp, String segmentId) {
-        ImageRepresentation imageRepresentation = new ImageRepresentation(Long.toString(timeStamp), segmentId);
+    public void store(TYPE instance, Long timeStamp, String segmentId, FrameRepresentation frameRepresentation) {
+        ImageRepresentation imageRepresentation = new ImageRepresentation(Long.toString(timeStamp), segmentId, frameRepresentation);
         imageRepresentation.image = instance;
         try {
             if (segmentImageList.containsKey(segmentId)) {
@@ -69,6 +76,20 @@ public class ImageBufferStore<TYPE> implements ImageStore<TYPE> {
 
     public synchronized List<TYPE> findImagesBySegmentId(String segmentId) {
         return findImagesCore(segmentId);
+    }
+
+    public TYPE findImagesByFramePlan(SegmentFramePlan framePlan, FrameRepresentation frameRepresentation) {
+        String sid = framePlan.originalSegment.id();
+        try {
+            BlockingQueue<ImageRepresentation> blockingQueue = segmentImageList.get(sid);
+            ImageRepresentation representation = blockingQueue.poll(1000, TimeUnit.MILLISECONDS);
+            logger.debug("Segment {}", framePlan.originalSegment.id());
+            logger.debug("FrameRep {}, Imagerep {}", frameRepresentation.timestamp, representation.frameRepresentation.timestamp);
+            return (TYPE) representation.image;
+        } catch (Exception e) {
+            logger.debug("Fuck? {}, {}",sid, e.getMessage());
+            return null;
+        }
     }
 
     /**

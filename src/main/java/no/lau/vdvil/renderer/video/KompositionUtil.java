@@ -60,6 +60,9 @@ public class KompositionUtil {
         List<Segment> uniqueSegments = new ArrayList<>();
         for (Segment outSegment : outSegments) {
             for (Segment inSegment : inSegments) {
+
+                //TODO Add file reference to each segment that is to be collected!
+
                 if(outSegment.id().contains(inSegment.id())) {
                     Segment copyOfInSegment = ((SuperSegment)inSegment).createCopy(idIncrement);
                     uniqueSegments.add(copyOfInSegment);

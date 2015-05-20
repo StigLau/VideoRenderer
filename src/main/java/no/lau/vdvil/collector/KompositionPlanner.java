@@ -13,18 +13,18 @@ public class KompositionPlanner {
     public final List<SegmentFramePlan> plans = new ArrayList<>();
     final long lastTimeStamp;
     final float bpm;
+    public final Segment builderSegment;
     public final Komposition fetchKomposition;
 
-    public KompositionPlanner(List<Segment> segments, float bpm, long framerate, Komposition fetchKomposition) {
+    public KompositionPlanner(Segment originalSegment, Segment builderSegment, float bpm, long framerate, Komposition fetchKomposition) {
+        this.builderSegment = builderSegment;
         this.fetchKomposition = fetchKomposition;
         if(framerate <= 0) {
             throw new RuntimeException("Komposition Framerate not for komposition");
         }
         this.bpm = bpm;
-        for (Segment segment : segments) {
-            plans.add(new SegmentFramePlan(segment, bpm, framerate));
-        }
-        lastTimeStamp = calculateLastTimeStamp(segments, bpm);
+        plans.add(new SegmentFramePlan(originalSegment, builderSegment, bpm, framerate));
+        lastTimeStamp = originalSegment.startCalculated(bpm) + originalSegment.durationCalculated(bpm);
         Collections.sort(plans);
     }
 

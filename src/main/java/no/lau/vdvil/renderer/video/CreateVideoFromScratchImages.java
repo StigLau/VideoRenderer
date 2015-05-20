@@ -95,17 +95,16 @@ class VideoAdapter {
         while (clock >= nextFrameTime) {
             for (KompositionPlanner planner : planners) {
                 List<SegmentFramePlan> framePlans = planner.plansAt(clock);
-
+                //TODO Hvorfor kommer Planner 5 - Red bridge0 ut først!?
                 for (SegmentFramePlan framePlan : framePlans) {
-                    List<FrameRepresentation> frameRepresentations = framePlan.findUnusedFramesAtTimestamp(clock);
+                    List<FrameRepresentation> frameRepresentations = framePlan.findUnusedBuilderFramesAtTimestamp(clock);
                     for (FrameRepresentation frameRepresentation : frameRepresentations) {
-                        logger.debug("Writing image {} from {} to outStream", frameRepresentation.timestamp, framePlan.originalSegment.id());
+                        logger.debug("Pushing image {} from {} from pipedream to video", frameRepresentation.timestamp, framePlan.originalSegment.id());
                         frameRepresentation.use();
-                        List<BufferedImage> bufferedImages = imageStore.findImagesBySegmentId(framePlan.originalSegment.id());
-                        //TODO Smoking gun!
-                        for (BufferedImage image : bufferedImages) {
-                            writer.encodeVideo(videoStreamIndex, image, nextFrameTime, DEFAULT_TIME_UNIT);
-                        }
+                        BufferedImage image = imageStore.findImagesByFramePlan(framePlan, frameRepresentation);
+
+                        writer.encodeVideo(videoStreamIndex, image, nextFrameTime, DEFAULT_TIME_UNIT);
+
                     }
 
                 }

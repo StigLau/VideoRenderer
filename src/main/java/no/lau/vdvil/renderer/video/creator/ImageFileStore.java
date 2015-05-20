@@ -1,5 +1,7 @@
 package no.lau.vdvil.renderer.video.creator;
 
+import no.lau.vdvil.collector.FrameRepresentation;
+import no.lau.vdvil.collector.SegmentFramePlan;
 import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.renderer.video.stigs.ImageSampleInstruction;
@@ -50,7 +52,12 @@ public class ImageFileStore<TYPE> implements ImageStore<TYPE> {
                 .filter(instance -> instance != null)
                 .collect(Collectors.toList());
     }
+
     public void store(TYPE image, Long timeStamp, String segmentId) {
+        throw new RuntimeException("Not implemented - go away!");
+    }
+
+    public void store(TYPE image, Long timeStamp, String segmentId, FrameRepresentation frameRepresentation) {
         String outputFilename = outputFilePrefix + timeStamp + ".png";
         if(image == null) {
             logger.debug("No image to write at {}", timeStamp);
@@ -77,6 +84,10 @@ public class ImageFileStore<TYPE> implements ImageStore<TYPE> {
         return segmentImageList.get(instructionId).stream()
                 .map(this::getAsFile)
                 .collect(Collectors.toList());
+    }
+
+    public TYPE findImagesByFramePlan(SegmentFramePlan framePlan, FrameRepresentation frameRepresentation) {
+        throw new RuntimeException("Not implemented - go away!");
     }
 
     /**

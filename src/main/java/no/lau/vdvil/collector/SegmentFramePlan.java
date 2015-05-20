@@ -10,11 +10,13 @@ import java.util.stream.Collectors;
  */
 public class SegmentFramePlan implements Comparable {
     public final Segment originalSegment;
+    public final Segment builderSegment;
     public final List<FrameRepresentation> frameRepresentations;
 
-    public SegmentFramePlan(Segment segment, float bpm, long framerate) {
-        this.originalSegment = segment;
-        frameRepresentations = calculateFramesFromSegment(segment, bpm, framerate);
+    public SegmentFramePlan(Segment originalSegment, Segment builderSegment, float bpm, long framerate) {
+        this.originalSegment = originalSegment;
+        this.builderSegment = builderSegment;
+        frameRepresentations = calculateFramesFromSegment(builderSegment, bpm, framerate);
     }
 
     static List<FrameRepresentation> calculateFramesFromSegment(Segment segment, float bpm, long framerate) {
@@ -30,6 +32,12 @@ public class SegmentFramePlan implements Comparable {
     }
 
     public List<FrameRepresentation> findUnusedFramesAtTimestamp(long timestamp) {
+        return frameRepresentations.stream()
+                .filter(plan -> !plan.used && timestamp >= plan.timestamp)
+                .collect(Collectors.toList());
+    }
+
+    public List<FrameRepresentation> findUnusedBuilderFramesAtTimestamp(long timestamp) {
         return frameRepresentations.stream()
                 .filter(plan -> !plan.used && timestamp >= plan.timestamp)
                 .collect(Collectors.toList());

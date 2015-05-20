@@ -6,8 +6,8 @@ import no.lau.vdvil.renderer.video.creator.ImageStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import static no.lau.vdvil.renderer.video.KompositionUtil.createUniqueSegments;
 import static no.lau.vdvil.renderer.video.KompositionUtil.performIdUniquenessCheck;
 
@@ -29,15 +29,33 @@ public class StreamingImageCapturer {
     }
 
     public List<KompositionPlanner> createPlanners() {
-        List<KompositionPlanner> allPlanners = new ArrayList<>();
         for (Komposition fetchKomposition : fetchKompositions) {
             performIdUniquenessCheck(fetchKomposition.segments);
-            List<Segment> extractedInSegments = createUniqueSegments(fetchKomposition.segments, buildKomposition.segments);
-            List<KompositionPlanner> planners = createPlanners(extractedInSegments, buildKomposition.bpm, buildKomposition.framerate, fetchKomposition);
-            allPlanners.addAll(planners);
+        }//TODO Change back to fetchkompositions segments
+        return createUniqueSegments(buildKomposition.segments, buildKomposition.segments).stream()
+                .map(segment -> new KompositionPlanner(findMatchingSegment(segment, fetchKompositions), segment, buildKomposition.bpm, buildKomposition.framerate,
+                        findMatchingKomposition(segment, fetchKompositions)))
+                .collect(Collectors.toList());
+    }
 
+    private Komposition findMatchingKomposition(Segment extractedInSegment, List<Komposition> fetchKompositions) {
+        for (Komposition fetchKomposition : fetchKompositions) {
+            for (Segment fetchSegment : fetchKomposition.segments) {
+                if(extractedInSegment.id().contains(fetchSegment.id()))
+                    return fetchKomposition;
+            }
         }
-        return allPlanners;
+        throw new RuntimeException("Should not happen");
+    }
+
+    private Segment findMatchingSegment(Segment segment, List<Komposition> fetchKompositions) {
+        for (Komposition fetchKomposition : fetchKompositions) {
+            for (Segment fetchSegment : fetchKomposition.segments) {
+                if(segment.id().contains(fetchSegment.id()))
+                    return fetchSegment;
+            }
+        }
+        throw new RuntimeException("Should not happen");
     }
 
     //TODO Factor out composition and thread startup
@@ -48,15 +66,6 @@ public class StreamingImageCapturer {
             imageCapturers.add(imageCapturer);
             new Thread(imageCapturer).start();
         }
-    }
-
-    List<KompositionPlanner> createPlanners(List<Segment> inSegments, float bpm, long framerate, Komposition fetchKomposition) {
-        List<KompositionPlanner> plans = new ArrayList<>();
-        for (Segment inSegment : inSegments) {
-            plans.add(new KompositionPlanner(Collections.singletonList(inSegment), bpm, framerate, fetchKomposition));
-        }
-        return plans;
-
     }
 }
 
