@@ -13,9 +13,6 @@ public class Komposition {
     public final long lastInstruction;
     public final float bpm;
 
-    //Width and height of the final Kompost to be produced
-    public int height;
-    public int width;
     //Where the final komposition is to be stored
     public MediaFile storageLocation;
     public long framerate;

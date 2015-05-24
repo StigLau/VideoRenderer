@@ -5,6 +5,7 @@ import no.lau.vdvil.collector.SegmentFramePlan;
 import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.renderer.video.stigs.ImageSampleInstruction;
+import no.lau.vdvil.renderer.video.store.ImageRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.imageio.ImageIO;
@@ -57,7 +58,8 @@ public class ImageFileStore<TYPE> implements ImageStore<TYPE> {
         throw new RuntimeException("Not implemented - go away!");
     }
 
-    public void store(TYPE image, Long timeStamp, String segmentId, FrameRepresentation frameRepresentation) {
+    public void store(TYPE image, Long timeStamp, FrameRepresentation frameRepresentation) {
+        String segmentId = frameRepresentation.referenceId();
         String outputFilename = outputFilePrefix + timeStamp + ".png";
         if(image == null) {
             logger.debug("No image to write at {}", timeStamp);
@@ -88,6 +90,11 @@ public class ImageFileStore<TYPE> implements ImageStore<TYPE> {
 
     public TYPE findImagesByFramePlan(SegmentFramePlan framePlan, FrameRepresentation frameRepresentation) {
         throw new RuntimeException("Not implemented - go away!");
+    }
+
+    @Override
+    public ImageRepresentation getNextImageRepresentation(String id) {
+        throw new RuntimeException("Not implemented yet");
     }
 
     /**

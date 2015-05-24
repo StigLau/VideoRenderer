@@ -1,6 +1,8 @@
 package no.lau.vdvil.collector;
 
 import no.lau.vdvil.domain.Segment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -9,24 +11,27 @@ import java.util.stream.Collectors;
  * @author Stig@Lau.no 10/05/15.
  */
 public class SegmentFramePlan implements Comparable {
+
+    static Logger logger = LoggerFactory.getLogger(SegmentFramePlan.class);
     public final Segment originalSegment;
-    public final Segment builderSegment;
     public final List<FrameRepresentation> frameRepresentations;
 
-    public SegmentFramePlan(Segment originalSegment, Segment builderSegment, float bpm, long framerate) {
-        this.originalSegment = originalSegment;
-        this.builderSegment = builderSegment;
-        frameRepresentations = calculateFramesFromSegment(builderSegment, bpm, framerate);
+    public SegmentFramePlan(String id, Segment segment, float bpm, long framerate) {
+        this.originalSegment = segment;
+        frameRepresentations = calculateFramesFromSegment(id, segment, bpm, framerate);
     }
 
-    static List<FrameRepresentation> calculateFramesFromSegment(Segment segment, float bpm, long framerate) {
+    static List<FrameRepresentation> calculateFramesFromSegment(String id, Segment segment, float bpm, long framerate) {
+        if(framerate <= 0) {
+            throw new RuntimeException("framerate was " + framerate);
+        }
         List<FrameRepresentation> plans = new ArrayList<>();
         long numberOfImages = Math.round(segment.durationCalculated(bpm) * bpm * framerate / (60 * 1000 * 1000));
-        System.out.println("numberOfImages = " + numberOfImages);
+        logger.info("numberOfImages = " + numberOfImages);
         long start = segment.startCalculated(bpm);
         for (int i = 0; i < numberOfImages; i++) {
             long thisDuration = segment.durationCalculated(bpm) * i / numberOfImages;
-            plans.add(new FrameRepresentation(start + thisDuration));
+            plans.add(new FrameRepresentation(start + thisDuration, id));
         }
         return plans;
     }

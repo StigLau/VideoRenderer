@@ -1,8 +1,6 @@
 package no.lau.vdvil.renderer.video;
 
 import no.lau.vdvil.domain.Segment;
-import no.lau.vdvil.domain.SuperSegment;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,53 +23,30 @@ public class KompositionUtil {
         }
     }
 
-    public static List<List<Segment>> alignSegments(List<Segment> inSegments) {
-        return alignSegments(inSegments, new ArrayList<>());
+    public static List<List<Segment>> alignSegments(List<Segment> inSegments, float bpm) {
+        return alignSegments(inSegments, bpm, new ArrayList<>());
     }
 
     /**
      * Used for structuring the segments into  multiple lists of segments that are neatly following each other.
      */
-    static List<List<Segment>> alignSegments(List<Segment> inSegments, List<List<Segment>> resultSegments) {
+    static List<List<Segment>> alignSegments(List<Segment> inSegments, float bpm, List<List<Segment>> resultSegments) {
         long current = 0;
         List<Segment> foundSegments = new ArrayList<>();
         List<Segment> segmentRests = new ArrayList<>();
         for (Segment segment : inSegments) {
-            if(segment.start() >= current) {
+            if(segment.startCalculated(bpm) >= current) {
                 foundSegments.add(segment);
-                current = segment.start() + segment.duration();
+                current = segment.startCalculated(bpm) + segment.durationCalculated(bpm);
             } else {
                 segmentRests.add(segment);
             }
         }
         resultSegments.add(foundSegments);
         if(!segmentRests.isEmpty()) {
-            return alignSegments(segmentRests, resultSegments);
+            return alignSegments(segmentRests, bpm, resultSegments);
         } else {
             return resultSegments;
         }
     }
-
-    /**
-     * Gives segments "unique" id's to avoid ID crashes.
-     */
-    public static List<Segment> createUniqueSegments(List<Segment> inSegments, List<Segment> outSegments) {
-        int idIncrement = 0;
-        List<Segment> uniqueSegments = new ArrayList<>();
-        for (Segment outSegment : outSegments) {
-            for (Segment inSegment : inSegments) {
-
-                //TODO Add file reference to each segment that is to be collected!
-
-                if(outSegment.id().contains(inSegment.id())) {
-                    Segment copyOfInSegment = ((SuperSegment)inSegment).createCopy(idIncrement);
-                    uniqueSegments.add(copyOfInSegment);
-                    ((SuperSegment)outSegment).changeId(idIncrement);
-                    idIncrement++;
-                }
-            }
-        }
-        return uniqueSegments;
-    }
-
 }

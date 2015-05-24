@@ -7,14 +7,12 @@ import com.xuggle.xuggler.IContainer;
 import com.xuggle.xuggler.IPacket;
 import com.xuggle.xuggler.IStreamCoder;
 import no.lau.vdvil.collector.FrameRepresentation;
-import no.lau.vdvil.collector.KompositionPlanner;
-import no.lau.vdvil.collector.SegmentFramePlan;
-import no.lau.vdvil.domain.out.Komposition;
+import no.lau.vdvil.plan.Plan;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
+import no.lau.vdvil.renderer.video.store.ImageRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.awt.image.BufferedImage;
-import java.util.List;
 import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
 
 /**
@@ -28,15 +26,12 @@ public class CreateVideoFromScratchImages {
 
     final static int sampleCount = 1000;
 
-    public static void createVideo(Komposition komposition, List<KompositionPlanner> planners, ImageStore imageStore, String inputAudioFilePath) {
+    public static void createVideo(Plan buildPlan, ImageStore imageStore, String inputAudioFilePath, Config config) {
         log.info("Init");
 
-        // total duration of the media
-        long duration = komposition.lastInstruction;
+        final IMediaWriter writer = ToolFactory.makeWriter(buildPlan.ioFile());
 
-        final IMediaWriter writer = ToolFactory.makeWriter(komposition.storageLocation.fileName.getFile());
-
-        VideoAdapter videoAdapter = new VideoAdapter(komposition, writer, imageStore);
+        VideoAdapter videoAdapter = new VideoAdapter(buildPlan, config, writer, imageStore);
         //AudioStream must be added after videostream!
         AudioAdapter audioAdapter = new AudioAdapter(inputAudioFilePath, writer);
 
@@ -46,11 +41,11 @@ public class CreateVideoFromScratchImages {
 
             // loop through clock time, which starts at zero and increases based
             // on the total number of samples created thus far the clock time of the next frame
-            for (long clock = 0; clock < duration; clock = IAudioSamples.samplesToDefaultPts(totalSampleCount, audioAdapter.sampleRate)) {
+            for (long clock = 0; !buildPlan.isFinishedProcessing(clock); clock = IAudioSamples.samplesToDefaultPts(totalSampleCount, audioAdapter.sampleRate)) {
                 // while the clock time exceeds the time of the next video frame,
                 // get and encode the next video frame
-                videoAdapter.writeNextPacket(clock, planners);
-                audioAdapter.writeNextPacket(clock, komposition);
+                videoAdapter.writeNextPacket(clock, buildPlan);
+                audioAdapter.writeNextPacket(clock, buildPlan);
                 totalSampleCount += sampleCount;
             }
             log.info("Finished writing video");
@@ -79,37 +74,32 @@ class VideoAdapter {
     final ImageStore<BufferedImage> imageStore;
 
 
-    public VideoAdapter(Komposition komposition, IMediaWriter writer, ImageStore imageStore) {
+    public VideoAdapter(Plan buildPlan, Config config, IMediaWriter writer, ImageStore imageStore) {
         this.writer = writer;
         this.imageStore = imageStore;
-        this.width = komposition.width;
-        this.height = komposition.height;
-        this.frameRate = komposition.framerate;
+        this.width = config.width;
+        this.height = config.height;
+        this.frameRate = config.framerate;
 
         // add audio and video streams
         writer.addVideoStream(videoStreamIndex, videoStreamId, width, height);
 
     }
 
-    public void writeNextPacket(long clock, List<KompositionPlanner> planners) {
+    public void writeNextPacket(long clock, Plan buildPlan) {
         while (clock >= nextFrameTime) {
-            for (KompositionPlanner planner : planners) {
-                List<SegmentFramePlan> framePlans = planner.plansAt(clock);
-                //TODO Hvorfor kommer Planner 5 - Red bridge0 ut først!?
-                for (SegmentFramePlan framePlan : framePlans) {
-                    List<FrameRepresentation> frameRepresentations = framePlan.findUnusedBuilderFramesAtTimestamp(clock);
-                    for (FrameRepresentation frameRepresentation : frameRepresentations) {
-                        logger.debug("Pushing image {} from {} from pipedream to video", frameRepresentation.timestamp, framePlan.originalSegment.id());
-                        frameRepresentation.use();
-                        BufferedImage image = imageStore.findImagesByFramePlan(framePlan, frameRepresentation);
+            FrameRepresentation frameRepresentation = buildPlan.whatToDoAt(clock);
 
-                        writer.encodeVideo(videoStreamIndex, image, nextFrameTime, DEFAULT_TIME_UNIT);
+            logger.trace("Pushing image {} from {} from pipedream to video", frameRepresentation.timestamp, frameRepresentation.referenceId());
+            frameRepresentation.use();
+            ImageRepresentation imageRep = imageStore.getNextImageRepresentation(frameRepresentation.referenceId());
 
-                    }
-
-                }
-                nextFrameTime += frameRate;
+            if(imageRep != null) {
+                writer.encodeVideo(videoStreamIndex, (BufferedImage) imageRep.image, nextFrameTime, DEFAULT_TIME_UNIT);
+            } else {
+                logger.trace("WTF!!?! NULL?");
             }
+            nextFrameTime += frameRate;
         }
     }
 }
@@ -141,7 +131,7 @@ class AudioAdapter {
         writer.addAudioStream(audioStreamIndex, audioStreamId, coderAudio.getChannels(), coderAudio.getSampleRate());
     }
 
-    public void writeNextPacket(long clock, Komposition komposition) {
+    public void writeNextPacket(long clock, Plan buildPlan) {
         //Clock not required by current implemenetation
         // Audio
         containerAudio.readNextPacket(packetaudio);

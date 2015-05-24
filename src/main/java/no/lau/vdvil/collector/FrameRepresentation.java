@@ -6,9 +6,11 @@ package no.lau.vdvil.collector;
 public class FrameRepresentation {
     public final long timestamp;
     public boolean used;
+    private String referenceId;
 
-    FrameRepresentation(long timestamp) {
+    public FrameRepresentation(long timestamp, String referenceId) {
         this.timestamp = timestamp;
+        this.referenceId = referenceId;
         used = false;
     }
 
@@ -18,5 +20,9 @@ public class FrameRepresentation {
 
     public boolean used() {
         return this.used;
+    }
+
+    public String referenceId() {
+        return referenceId;
     }
 }

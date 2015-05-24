@@ -3,7 +3,7 @@ package no.lau.vdvil.renderer.video.concatenator;
 import com.xuggle.mediatool.IMediaWriter;
 import com.xuggle.mediatool.ToolFactory;
 import com.xuggle.xuggler.*;
-import no.lau.vdvil.domain.out.Komposition;
+import no.lau.vdvil.renderer.video.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,8 +15,8 @@ public class AudioVideoConcatenator {
 
     private static Logger log = LoggerFactory.getLogger(AudioVideoConcatenator.class);
 
-    public static void concatenateAudioAndVideo(String inputAudioFilePath, String inputVideoFilePath, Komposition komposition) {
-        IMediaWriter mWriter = ToolFactory.makeWriter(komposition.storageLocation.fileName.getFile());
+    public static void concatenateAudioAndVideo(String inputAudioFilePath, String inputVideoFilePath, String storageLocation, Config config) {
+        IMediaWriter mWriter = ToolFactory.makeWriter(storageLocation);
         IContainer containerVideo = IContainer.make();
         IContainer containerAudio = IContainer.make();
         IPacket packetvideo = IPacket.make();
@@ -35,12 +35,12 @@ public class AudioVideoConcatenator {
 
         try {
             mWriter.addAudioStream(1, 0, coderAudio.getChannels(), coderAudio.getSampleRate());
-            mWriter.addVideoStream(0, 0, komposition.width, komposition.height);
+            mWriter.addVideoStream(0, 0, config.width, config.height);
 
             while (containerVideo.readNextPacket(packetvideo) >= 0) {
                 containerAudio.readNextPacket(packetaudio);
                 // video packet
-                IVideoPicture picture = IVideoPicture.make(coderVideo.getPixelType(), komposition.width, komposition.height);
+                IVideoPicture picture = IVideoPicture.make(coderVideo.getPixelType(), config.width, config.height);
                 coderVideo.decodeVideo(picture, packetvideo, 0);
                 if (picture.isComplete())
                     mWriter.encodeVideo(0, picture);

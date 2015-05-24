@@ -14,7 +14,7 @@ public abstract class SuperSegment implements Segment {
 
 
     public SuperSegment(long start, long duration) {
-        this(start + " - " + duration + " Rand:" + new Random().nextLong(), start, duration);
+        this(start + " - " + duration + " Rand:" + Math.abs(new Random().nextLong()), start, duration);
     }
 
     public SuperSegment(String id, long start, long duration) {

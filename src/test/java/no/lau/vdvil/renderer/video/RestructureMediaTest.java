@@ -3,7 +3,7 @@ package no.lau.vdvil.renderer.video;
 import no.lau.vdvil.domain.*;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.domain.utils.KompositionUtils;
-import no.lau.vdvil.renderer.video.creator.ImageBufferStore;
+import no.lau.vdvil.renderer.video.creator.PipeDream;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
 import no.lau.vdvil.renderer.video.creator.VideoImageStitcher;
 import no.lau.vdvil.renderer.video.stigs.ImageSampleInstruction;
@@ -41,7 +41,7 @@ public class RestructureMediaTest {
                 new ImageSampleInstruction("First capture sequence", 64, 64, 2),
                 new ImageSampleInstruction("Second capture sequence", 256, 32, 1)
         );
-        ImageStore ibs = new ImageBufferStore();
+        ImageStore ibs = new PipeDream();
         new VideoThumbnailsCollector(ibs).capture(collectPicsFromVideo, fetchKomposition);
         assertEquals(719, ibs.findImagesBySegmentId("Capture some pics").size());
         assertEquals(359, ((ImageSampleInstruction) fetchKomposition.segments.get(1)).collectedImages().size());
@@ -60,7 +60,7 @@ public class RestructureMediaTest {
                 new ImageSampleInstruction("First capture sequence", 64, 64, 2),
                 new ImageSampleInstruction("Second capture sequence", 256, 32, 1)
         );
-        new VideoThumbnailsCollector(new ImageBufferStore()).capture(collectPicsFromVideo, fetchKomposition);
+        new VideoThumbnailsCollector(new PipeDream()).capture(collectPicsFromVideo, fetchKomposition);
         assertEquals(719, ((ImageSampleInstruction) fetchKomposition.segments.get(0)).collectedImages().size());
         assertEquals(359, ((ImageSampleInstruction) fetchKomposition.segments.get(1)).collectedImages().size());
 

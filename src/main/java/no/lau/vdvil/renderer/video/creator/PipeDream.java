@@ -20,11 +20,11 @@ import static no.lau.vdvil.domain.utils.KompositionUtils.calc;
  * Storage for images in memory between extractor and video creator
  * @author Stig@Lau.no 12/04/15.
  */
-public class ImageBufferStore<TYPE> implements ImageStore<TYPE> {
+public class PipeDream<TYPE> implements ImageStore<TYPE> {
 
     //Segment Identifier, List of buffered images
     public final Map<String, BlockingQueue<ImageRepresentation>> segmentImageList = new HashMap<>();
-    private Logger logger = LoggerFactory.getLogger(ImageBufferStore.class);
+    private Logger logger = LoggerFactory.getLogger(PipeDream.class);
     private int bufferSize = 1000;
 
     public List<TYPE> getImageAt(Long timeStamp, Komposition komposition) {
@@ -39,7 +39,7 @@ public class ImageBufferStore<TYPE> implements ImageStore<TYPE> {
         return images.collect(Collectors.toList());
     }
 
-    @Override
+    @Override @Deprecated
     public void store(TYPE image, Long timeStamp, String segmentId) {
         throw new RuntimeException("Not implemented - go away!");
     }
@@ -58,16 +58,18 @@ public class ImageBufferStore<TYPE> implements ImageStore<TYPE> {
     /**
      * Note the usage of BlockingQueue.put, to block if queue is full!
      */
-    public void store(TYPE instance, Long timeStamp, String segmentId, FrameRepresentation frameRepresentation) {
-        ImageRepresentation imageRepresentation = new ImageRepresentation(Long.toString(timeStamp), segmentId, frameRepresentation);
+    public void store(TYPE instance, Long timeStamp, FrameRepresentation frameRepresentation) {
+        String referenceId = frameRepresentation.referenceId();
+        ImageRepresentation imageRepresentation = new ImageRepresentation(Long.toString(timeStamp), referenceId, frameRepresentation);
         imageRepresentation.image = instance;
         try {
-            if (segmentImageList.containsKey(segmentId)) {
-                segmentImageList.get(segmentId).put(imageRepresentation);
+            if (segmentImageList.containsKey(referenceId)) {
+                segmentImageList.get(referenceId).put(imageRepresentation);
             } else {
+                logger.info("Creating queue {} from frameRepresentationId", referenceId);
                 BlockingQueue<ImageRepresentation> newImageList = new ArrayBlockingQueue<>(bufferSize);
                 newImageList.put(imageRepresentation);
-                segmentImageList.put(segmentId, newImageList);
+                segmentImageList.put(referenceId, newImageList);
             }
         } catch (InterruptedException e) {
             throw new RuntimeException("Blocked queue insertion interrupted!", e);
@@ -76,6 +78,17 @@ public class ImageBufferStore<TYPE> implements ImageStore<TYPE> {
 
     public synchronized List<TYPE> findImagesBySegmentId(String segmentId) {
         return findImagesCore(segmentId);
+    }
+
+    public ImageRepresentation getNextImageRepresentation(String referenceId) {
+        logger.trace("Looking for BlockQueue id = " + referenceId);
+        BlockingQueue<ImageRepresentation> blockingQueue = segmentImageList.get(referenceId);
+        try {
+        return blockingQueue.poll(1000, TimeUnit.MILLISECONDS);
+        } catch (Exception e) {
+            logger.error("Fuck? {}, {}", referenceId, e.getMessage());
+            return null;
+        }
     }
 
     public TYPE findImagesByFramePlan(SegmentFramePlan framePlan, FrameRepresentation frameRepresentation) {
