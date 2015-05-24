@@ -14,12 +14,12 @@ import java.awt.image.BufferedImage;
 
 public class WaitingVideoThumbnailsCollector {
 
-	// The video stream index, used to ensure we display frames from one and
-	// only one video stream from the media container.
-	private static int mVideoStreamIndex = -1;
+    // The video stream index, used to ensure we display frames from one and
+    // only one video stream from the media container.
+    private static int mVideoStreamIndex = -1;
 
-	// Time of last frame write
-	private double mLastPtsWrite = Global.NO_PTS;
+    // Time of last frame write
+    private double mLastPtsWrite = Global.NO_PTS;
     private Logger logger = LoggerFactory.getLogger(WaitingVideoThumbnailsCollector.class);
     private final ImageStore imageStore;
 
@@ -27,7 +27,7 @@ public class WaitingVideoThumbnailsCollector {
         this.imageStore = imageStore;
     }
 
-    public void capture(Plan collectPlan){
+    public void capture(Plan collectPlan) {
         logger.info("Starting capture {}", collectPlan.id());
         long start = System.currentTimeMillis();
 
@@ -41,16 +41,16 @@ public class WaitingVideoThumbnailsCollector {
 
             // read out the contents of the media file and
             // dispatch events to the attached listener
-            while (mediaReader.readPacket() == null)  ;
-        } catch(VideoExtractionFinished finished) {
-            logger.info("Work completed {}", finished.getMessage());
+            while (mediaReader.readPacket() == null) ;
+        } catch (VideoExtractionFinished finished) {
+            logger.info("Work completed for {} - {}", collectPlan.id(), finished.getMessage());
         } finally {
             mediaReader.close();
         }
-        logger.debug("Duration: " + (System.currentTimeMillis() - start) / 1000);
+        logger.debug("{} Duration: {}",collectPlan.id(), (System.currentTimeMillis() - start) / 1000);
     }
 
-	private class ImageSnapListener extends MediaListenerAdapter {
+    private class ImageSnapListener extends MediaListenerAdapter {
         private Plan collectPlan;
         final ImageStore<BufferedImage> imageStore;
         final float bpm;
@@ -64,24 +64,26 @@ public class WaitingVideoThumbnailsCollector {
         public void onVideoPicture(IVideoPictureEvent event) {
             long timestamp = event.getTimeStamp();
             //TODO How to halt video processing
-            if(collectPlan.isFinishedProcessing(timestamp)) {
+            if (collectPlan.isFinishedProcessing(timestamp)) {
                 throw new VideoExtractionFinished("End of compilation");
             }
-            FrameRepresentation frameRepresentation  = collectPlan.whatToDoAt(timestamp);
-
-            //logger.trace("Fetching segment {}, {} frames ", collectPlan.id(), plan.frameRepresentations.size());
+            FrameRepresentation frameRepresentation = collectPlan.whatToDoAt(timestamp);
+            if (frameRepresentation != null) {
+                //logger.trace("Fetching segment {}, {} frames ", collectPlan.id(), plan.frameRepresentations.size());
 
                 try {
-                        BufferedImage image = event.getImage();
-                        imageStore.store(image, timestamp, frameRepresentation);
-                        frameRepresentation.use();
-                        logger.debug("Storing image {}@{} {}/{}", frameRepresentation.referenceId(), timestamp);
+                    BufferedImage image = event.getImage();
+                    imageStore.store(image, timestamp, frameRepresentation);
+                    frameRepresentation.use();
+                    logger.trace("Storing image {}@{} {}/{}", frameRepresentation.referenceId(), timestamp);
                 } catch (Exception e) {
                     logger.error("Nothing exciting happened - could not fetch file: ", e);
                 }
+            } else {
+                logger.info("No more FrameRepresentations for " + collectPlan.id() + " at " + timestamp);
             }
-
         }
+    }
     //TODO What does this mean!?
 /*
         public BufferedImage fetchImage(IVideoPictureEvent event, ImageSampleInstruction segment) throws Exception {

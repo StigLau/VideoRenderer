@@ -112,8 +112,8 @@ public class StreamingImageStoreTest {
         //new VideoThumbnailsCollector(imageStore).capture(downmixedOriginalVideo, fetchKomposition);
 
 
-        Thread.sleep(10000);
-        CreateVideoFromScratchImages.createVideo(planner.buildPlan(),imageStore, sobotaMp3, new Config(260, 480, 15));
+        Thread.sleep(1000);
+        CreateVideoFromScratchImages.createVideo(planner.buildPlan(),imageStore, sobotaMp3, new Config(260, 480, DEFAULT_TIME_UNIT.convert(15, MILLISECONDS)));
         //assertEquals(mf.checksum, md5Checksum(mf.fileName)); //TODO Validate
 
         assertEquals(325, imageStore.findImagesBySegmentId("Purple Mountains Clouds").size());

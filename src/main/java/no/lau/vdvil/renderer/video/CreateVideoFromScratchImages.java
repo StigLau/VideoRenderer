@@ -31,7 +31,7 @@ public class CreateVideoFromScratchImages {
 
         final IMediaWriter writer = ToolFactory.makeWriter(buildPlan.ioFile());
 
-        VideoAdapter videoAdapter = new VideoAdapter(buildPlan, config, writer, imageStore);
+        VideoAdapter videoAdapter = new VideoAdapter(config, writer, imageStore);
         //AudioStream must be added after videostream!
         AudioAdapter audioAdapter = new AudioAdapter(inputAudioFilePath, writer);
 
@@ -74,7 +74,7 @@ class VideoAdapter {
     final ImageStore<BufferedImage> imageStore;
 
 
-    public VideoAdapter(Plan buildPlan, Config config, IMediaWriter writer, ImageStore imageStore) {
+    public VideoAdapter(Config config, IMediaWriter writer, ImageStore imageStore) {
         this.writer = writer;
         this.imageStore = imageStore;
         this.width = config.width;
@@ -90,14 +90,15 @@ class VideoAdapter {
         while (clock >= nextFrameTime) {
             FrameRepresentation frameRepresentation = buildPlan.whatToDoAt(clock);
 
-            logger.trace("Pushing image {} from {} from pipedream to video", frameRepresentation.timestamp, frameRepresentation.referenceId());
-            frameRepresentation.use();
+            logger.debug("Pushing image {} from {} from pipedream to video", frameRepresentation.timestamp, frameRepresentation.referenceId());
+
             ImageRepresentation imageRep = imageStore.getNextImageRepresentation(frameRepresentation.referenceId());
 
             if(imageRep != null) {
+                frameRepresentation.use();
                 writer.encodeVideo(videoStreamIndex, (BufferedImage) imageRep.image, nextFrameTime, DEFAULT_TIME_UNIT);
             } else {
-                logger.trace("WTF!!?! NULL?");
+                logger.error("WTF!!?! NULL?");
             }
             nextFrameTime += frameRate;
         }

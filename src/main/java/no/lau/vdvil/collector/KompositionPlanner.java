@@ -63,7 +63,6 @@ public class KompositionPlanner {
             }
         }
 
-        //TODO Fortell BuildPlan'en hvilken kø + pipedream man skal finne FrameRepresentation' på!
         buildPlan = new SuperPlan(buildKomposition, segmentIdReferenceIdMap);//This SuperPlan is bad - all segments get the same refId
 
         //this.lastTimeStamp = calculateLastTimeStamp()
