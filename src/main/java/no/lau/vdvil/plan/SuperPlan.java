@@ -92,6 +92,14 @@ public class SuperPlan implements Plan{
         return lastTimeStamp;
     }
 
+    public List<SegmentFramePlan> getFramePlans() {
+        return framePlans;
+    }
+
+    public List<FrameRepresentation> getFrameRepresentations() {
+        return frameRepresentations;
+    }
+
     public String toString() {
         return collectId;
     }

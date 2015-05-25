@@ -1,10 +1,14 @@
 package no.lau.vdvil.renderer.video;
 
+import no.lau.vdvil.collector.FrameRepresentation;
 import no.lau.vdvil.collector.KompositionPlanner;
+import no.lau.vdvil.collector.SegmentFramePlan;
 import no.lau.vdvil.collector.StreamingImageCapturer;
 import no.lau.vdvil.domain.MediaFile;
 import no.lau.vdvil.domain.VideoStillImageSegment;
 import no.lau.vdvil.domain.out.Komposition;
+import no.lau.vdvil.plan.Plan;
+import no.lau.vdvil.plan.SuperPlan;
 import no.lau.vdvil.renderer.video.creator.PipeDream;
 import no.lau.vdvil.renderer.video.creator.filter.PercentageSplitter;
 import no.lau.vdvil.renderer.video.creator.filter.Reverter;
@@ -92,16 +96,32 @@ public class StreamingImageStoreTest {
         planner = new KompositionPlanner(fetchKompositions, buildKomposition);
     }
 
-/*
     @Test
-    public void testFile() throws MalformedURLException, URISyntaxException {
-        //File file = new File(new URL(sobotaMp3).toURI());
-        //assert file.canRead();
+    public void testWhatDoWeGetFromAPlan() {
 
-        File a = Paths.get("C:\\vids\\320_Worlds_Largest_Rope_Swing.mp4").toFile();
-        System.out.println("a = " + a.canRead());
+
+        SuperPlan buildPlan = (SuperPlan) planner.buildPlan();
+
+        assertEquals(8, buildPlan.getFramePlans().size());
+        assertEquals(660000, buildPlan.getFrameRepresentations().size());
+
+
+        List<Plan> collectPlan = planner.collectPlans();
+        assertEquals(5, collectPlan.size());
+        List<SegmentFramePlan> collectFramePlans = new ArrayList<>();
+        for (Plan plan : collectPlan) {
+            collectFramePlans.addAll(((SuperPlan) plan).getFramePlans());
+        }
+        assertEquals(21, collectFramePlans.size());
+
+        List<FrameRepresentation> collectFrameRepresentations = new ArrayList<>();
+        for (Plan plan : collectPlan) {
+            collectFrameRepresentations.addAll(((SuperPlan)plan).getFrameRepresentations());
+        }
+        assertEquals(1355, collectFrameRepresentations.size());
+
     }
-*/
+
     @Test
     public void testStreamingFromInVideoSource() throws InterruptedException, IOException {
         PipeDream imageStore = new PipeDream();
@@ -113,7 +133,7 @@ public class StreamingImageStoreTest {
 
 
         Thread.sleep(1000);
-        CreateVideoFromScratchImages.createVideo(planner.buildPlan(),imageStore, sobotaMp3, new Config(260, 480, DEFAULT_TIME_UNIT.convert(15, MILLISECONDS)));
+        CreateVideoFromScratchImages.createVideo(planner.buildPlan(),imageStore, sobotaMp3, new Config(480, 260, DEFAULT_TIME_UNIT.convert(15, MILLISECONDS)));
         //assertEquals(mf.checksum, md5Checksum(mf.fileName)); //TODO Validate
 
         assertEquals(325, imageStore.findImagesBySegmentId("Purple Mountains Clouds").size());
