@@ -26,12 +26,15 @@ public class SegmentFramePlan implements Comparable {
             throw new RuntimeException("framerate was " + framerate);
         }
         List<FrameRepresentation> plans = new ArrayList<>();
-        long numberOfImages = Math.round(segment.durationCalculated(bpm) * bpm * framerate / (60 * 1000 * 1000));
-        logger.info("numberOfImages = " + numberOfImages);
+        long numberOfFrames = Math.round(segment.durationCalculated(bpm) * bpm * framerate / (60 * 1000 * 1000));
+        logger.info("numberOfImages = " + numberOfFrames);
         long start = segment.startCalculated(bpm);
-        for (int i = 0; i < numberOfImages; i++) {
-            long thisDuration = segment.durationCalculated(bpm) * i / numberOfImages;
-            plans.add(new FrameRepresentation(start + thisDuration, id));
+        for (int i = 0; i < numberOfFrames; i++) {
+            long thisDuration = segment.durationCalculated(bpm) * i / numberOfFrames;
+            FrameRepresentation frame = new FrameRepresentation(start + thisDuration, id, segment);
+            frame.numberOfFrames = numberOfFrames;
+            frame.frameNr = i;
+            plans.add(frame);
         }
         return plans;
     }

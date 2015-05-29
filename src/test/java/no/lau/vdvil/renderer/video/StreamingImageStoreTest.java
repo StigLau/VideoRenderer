@@ -50,7 +50,7 @@ public class StreamingImageStoreTest {
                 new TimeStampFixedImageSampleSegment("Dark lake", 69375000, 74583333, 8)
         );
         fetchKompositionNorway.storageLocation = new MediaFile(downmixedOriginalVideo, 0f, 120F, "abc");
-        fetchKompositionNorway.framerate = 5;
+        fetchKompositionNorway.framerate = 15;
 
         Komposition fetchKompositionSwing = new Komposition(128,
                 new TimeStampFixedImageSampleSegment("Red bridge", 2919583, 6047708, 8),
@@ -61,7 +61,7 @@ public class StreamingImageStoreTest {
                 new TimeStampFixedImageSampleSegment("Swing through bridge with mountain smile", 45128417, 46713333, 8)
         );
         fetchKompositionSwing.storageLocation = new MediaFile(theSwingVideo, 0f, 120F, "abc");
-        fetchKompositionSwing.framerate=10;
+        fetchKompositionSwing.framerate=15;
 
         List<Komposition> fetchKompositions = new ArrayList<>();
         fetchKompositions.add(fetchKompositionNorway);
@@ -88,10 +88,7 @@ public class StreamingImageStoreTest {
                 new VideoStillImageSegment("Smile girl, smile", 24, 16),
                 new VideoStillImageSegment("Swing into bridge", 40, 4)
         );
-        buildKomposition.framerate = 15;
-        buildKomposition.framerate = DEFAULT_TIME_UNIT.convert(15, MILLISECONDS);
-        //buildKomposition.width = 320;
-        //buildKomposition.height = 200;
+        buildKomposition.framerate = 5;
         buildKomposition.storageLocation = new MediaFile(result4, 0f, 128f, "0e7d51d26f573386c229b772d126754a");
         planner = new KompositionPlanner(fetchKompositions, buildKomposition);
     }
@@ -103,7 +100,7 @@ public class StreamingImageStoreTest {
         SuperPlan buildPlan = (SuperPlan) planner.buildPlan();
 
         assertEquals(8, buildPlan.getFramePlans().size());
-        assertEquals(660000, buildPlan.getFrameRepresentations().size());
+        assertEquals(220, buildPlan.getFrameRepresentations().size());
 
 
         List<Plan> collectPlan = planner.collectPlans();
@@ -112,13 +109,13 @@ public class StreamingImageStoreTest {
         for (Plan plan : collectPlan) {
             collectFramePlans.addAll(((SuperPlan) plan).getFramePlans());
         }
-        assertEquals(21, collectFramePlans.size());
+        assertEquals(8, collectFramePlans.size());
 
         List<FrameRepresentation> collectFrameRepresentations = new ArrayList<>();
         for (Plan plan : collectPlan) {
             collectFrameRepresentations.addAll(((SuperPlan)plan).getFrameRepresentations());
         }
-        assertEquals(1355, collectFrameRepresentations.size());
+        assertEquals(330, collectFrameRepresentations.size());
 
     }
 
@@ -132,7 +129,7 @@ public class StreamingImageStoreTest {
         //new VideoThumbnailsCollector(imageStore).capture(downmixedOriginalVideo, fetchKomposition);
 
 
-        Thread.sleep(1000);
+        Thread.sleep(10000);
         CreateVideoFromScratchImages.createVideo(planner.buildPlan(),imageStore, sobotaMp3, new Config(480, 260, DEFAULT_TIME_UNIT.convert(15, MILLISECONDS)));
         //assertEquals(mf.checksum, md5Checksum(mf.fileName)); //TODO Validate
 

@@ -89,12 +89,10 @@ class VideoAdapter {
     public void writeNextPacket(long clock, Plan buildPlan) {
         while (clock >= nextFrameTime) {
             FrameRepresentation frameRepresentation = buildPlan.whatToDoAt(clock);
-
-            logger.debug("Pushing image {} from {} from pipedream to video", frameRepresentation.timestamp, frameRepresentation.referenceId());
-
             ImageRepresentation imageRep = imageStore.getNextImageRepresentation(frameRepresentation.referenceId());
 
             if(imageRep != null) {
+                logger.debug("Pushing image {}@{}/{} - Clock:{} from {} from pipedream to video ", frameRepresentation.timestamp, frameRepresentation.frameNr, frameRepresentation.numberOfFrames, clock, frameRepresentation.referenceId());
                 frameRepresentation.use();
                 writer.encodeVideo(videoStreamIndex, (BufferedImage) imageRep.image, nextFrameTime, DEFAULT_TIME_UNIT);
             } else {

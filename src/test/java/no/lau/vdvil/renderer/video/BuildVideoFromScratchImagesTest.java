@@ -141,6 +141,7 @@ public class BuildVideoFromScratchImagesTest {
         fetchKompositions.add(fetchKompositionSwing);
 
         KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition);
+        //TODO EEERRRRR - Dont use the collectplans!
         StreamingImageCapturer.startUpThreads(planner.collectPlans(), imageStore);
 
 /*

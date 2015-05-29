@@ -12,11 +12,6 @@ public abstract class SuperSegment implements Segment {
     private final long start;
     private final long duration;
 
-
-    public SuperSegment(long start, long duration) {
-        this(start + " - " + duration + " Rand:" + Math.abs(new Random().nextLong()), start, duration);
-    }
-
     public SuperSegment(String id, long start, long duration) {
         this.id = id;
         this.start = start;
@@ -60,10 +55,6 @@ public abstract class SuperSegment implements Segment {
                 return super.toString();
             }
         };
-    }
-
-    public void changeId(int idIncrementation) {
-        this.id = id + idIncrementation;
     }
 
     public long startCalculated(float bpm) {

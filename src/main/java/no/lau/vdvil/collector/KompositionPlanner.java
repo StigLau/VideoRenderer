@@ -1,13 +1,9 @@
 package no.lau.vdvil.collector;
 
-import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.plan.Plan;
 import no.lau.vdvil.plan.SuperPlan;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import static no.lau.vdvil.renderer.video.KompositionUtil.performIdUniquenessCheck;
 
 /**
@@ -53,14 +49,18 @@ public class KompositionPlanner {
 
         //Conveniencemap for finding out the Reference Id of a given Segment Id
         Map<String, String> segmentIdReferenceIdMap = new HashMap<>();
-
-        for (SegmentKompositionMap komSegments : new ForNoTull(fetchKompositions)
-                .alignSegments(buildKomposition.segments, buildKomposition.bpm)) {
-            SuperPlan plan = new SuperPlan(komSegments.komposition);
+        List<SegmentKompositionMap> alignedSegments = new ForNoTull(fetchKompositions)
+                .alignSegments(buildKomposition.segments, buildKomposition.bpm);
+        for (SegmentKompositionMap komSegments : alignedSegments) {
+            SuperPlan plan = new SuperPlan(komSegments.komposition, komSegments.segments);
             collectPlans.add(plan);
+
+            segmentIdReferenceIdMap.putAll(plan.referenceIdSegmentIdMap);
+            /*
             for (Segment segment : komSegments.segments) {
-                segmentIdReferenceIdMap.put(segment.id(), plan.id());
+                segmentIdReferenceIdMap.put(segment.id() + Math.abs(new Random().nextInt()), segment.id());
             }
+            */
         }
 
         buildPlan = new SuperPlan(buildKomposition, segmentIdReferenceIdMap);//This SuperPlan is bad - all segments get the same refId

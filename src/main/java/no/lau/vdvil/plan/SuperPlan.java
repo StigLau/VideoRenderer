@@ -18,21 +18,22 @@ public class SuperPlan implements Plan{
     final long lastTimeStamp;
     final List<SegmentFramePlan> framePlans = new ArrayList<>();
     List<FrameRepresentation> frameRepresentations = new ArrayList<>();
-    String collectId;
+    String collectId = "";
+    public Map<String, String> referenceIdSegmentIdMap = new HashMap<>();
 
-    public SuperPlan(Komposition komposition) {
+    public SuperPlan(Komposition komposition, List<Segment> segments) {
         this.komposition = komposition;
         lastTimeStamp = calculateLastTimeStamp(komposition.segments, komposition.bpm);
-        this.collectId = komposition.segments.get(0).id() + "_" + Math.abs(new Random().nextInt()); //TODO Les fra Map om hva ID'en skal hete!
-        for (Segment segment : komposition.segments) {
-            SegmentFramePlan framePlan = new SegmentFramePlan(this.collectId, segment, komposition.bpm, komposition.framerate);
+        //this.collectId = komposition.segments.get(0).id() + "_" + Math.abs(new Random().nextInt()); //TODO Les fra Map om hva ID'en skal hete!
+
+        for (Segment segment : segments) {
+            collectId += segment.id() + " ";
+            String referenceId = segment.id() + "_"+ Math.abs(new Random().nextInt());
+            referenceIdSegmentIdMap.put(referenceId, segment.id());
+            SegmentFramePlan framePlan = new SegmentFramePlan(referenceId, segment, komposition.bpm, komposition.framerate);
             framePlans.add(framePlan);
             frameRepresentations.addAll(framePlan.frameRepresentations);
         }
-        logger.info("Collect id = " + collectId);
-
-
-
         //TODO Sort framePlans
     }
 
@@ -42,14 +43,32 @@ public class SuperPlan implements Plan{
     public SuperPlan(Komposition komposition, Map<String, String> segmentIdReferenceIdMap) {
         this.komposition = komposition;
         lastTimeStamp = calculateLastTimeStamp(komposition.segments, komposition.bpm);
+
         for (Segment segment : komposition.segments) {
-            String id = segmentIdReferenceIdMap.get(segment.id());
+            String id = getUnusedPipeBySegmentId(segment.id(), segmentIdReferenceIdMap);
 
             SegmentFramePlan framePlan = new SegmentFramePlan(id, segment, komposition.bpm, komposition.framerate);
             framePlans.add(framePlan);
             frameRepresentations.addAll(framePlan.frameRepresentations);
             logger.info("Build id = " + id);
         }
+    }
+
+    List<String> usedIds = new ArrayList<>();
+
+
+    /**
+     * Responsible for dealing out references to Pipes, and making sure that they are not reused
+     */
+    private String getUnusedPipeBySegmentId(String segmentId, Map<String, String> segmentIdReferenceIdMap) {
+        Set<String> allIds = segmentIdReferenceIdMap.keySet();
+        for (String plausibleId : allIds) {
+            if(!usedIds.contains(plausibleId) && segmentIdReferenceIdMap.get(plausibleId).equals(segmentId)) {
+                usedIds.add(plausibleId);
+                return plausibleId;
+            }
+        }
+        throw new RuntimeException("Did not find a usabe ID");
     }
 
     @Override

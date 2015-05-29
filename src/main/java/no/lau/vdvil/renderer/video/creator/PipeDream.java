@@ -82,6 +82,10 @@ public class PipeDream<TYPE> implements ImageStore<TYPE> {
 
     public ImageRepresentation getNextImageRepresentation(String referenceId) {
         logger.trace("Looking for BlockQueue id = " + referenceId);
+        if(!segmentImageList.containsKey(referenceId)) {
+            logger.error("Pipe: " + referenceId + " not found in PipeDream");
+            return null;
+        }
         BlockingQueue<ImageRepresentation> blockingQueue = segmentImageList.get(referenceId);
         try {
         return blockingQueue.poll(1000, TimeUnit.MILLISECONDS);
