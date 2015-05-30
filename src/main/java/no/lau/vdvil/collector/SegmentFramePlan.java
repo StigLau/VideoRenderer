@@ -16,17 +16,17 @@ public class SegmentFramePlan implements Comparable {
     public final Segment originalSegment;
     public final List<FrameRepresentation> frameRepresentations;
 
-    public SegmentFramePlan(String id, Segment segment, float bpm, long framerate) {
+    public SegmentFramePlan(String id, Segment segment, float bpm, long framerate, FrameCalculator frameCalculator) {
         this.originalSegment = segment;
-        frameRepresentations = calculateFramesFromSegment(id, segment, bpm, framerate);
+        frameRepresentations = calculateFramesFromSegment(id, segment, bpm, framerate, frameCalculator);
     }
 
-    static List<FrameRepresentation> calculateFramesFromSegment(String id, Segment segment, float bpm, long framerate) {
+    static List<FrameRepresentation> calculateFramesFromSegment(String id, Segment segment, float bpm, long framerate, FrameCalculator frameCalculator) {
         if(framerate <= 0) {
             throw new RuntimeException("framerate was " + framerate);
         }
         List<FrameRepresentation> plans = new ArrayList<>();
-        long numberOfFrames = Math.round(segment.durationCalculated(bpm) * bpm * framerate / (60 * 1000 * 1000));
+        long numberOfFrames = frameCalculator.calculateNumberOfFrames(segment, bpm, framerate);
         logger.info("numberOfImages = " + numberOfFrames);
         long start = segment.startCalculated(bpm);
         for (int i = 0; i < numberOfFrames; i++) {
@@ -54,5 +54,9 @@ public class SegmentFramePlan implements Comparable {
 
     public int compareTo(Object other) {
         return Long.compare(originalSegment.start(), ((SegmentFramePlan) other).originalSegment.start());
+    }
+
+    public String toString() {
+        return originalSegment.id() + " " + originalSegment.start() + " + " + originalSegment.duration();
     }
 }

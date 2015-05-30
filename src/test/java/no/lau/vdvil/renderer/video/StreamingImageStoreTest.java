@@ -26,6 +26,7 @@ import java.util.List;
 import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Stig@Lau.no 24/04/15.
@@ -75,7 +76,8 @@ public class StreamingImageStoreTest {
                 new VideoStillImageSegment("Purple Mountains Clouds", 32, 16).filter(new TaktSplitter(4)),
                 new VideoStillImageSegment("Purple Mountains Clouds", 48, 16).filter(new TaktSplitter(1))
                 */
-                new VideoStillImageSegment("Dark lake", 0, 4).filter(new TaktSplitter(4)),
+                new VideoStillImageSegment("Dark lake", 0, 4).filter(new TaktSplitter(4))
+                ,
                 new VideoStillImageSegment("Purple Mountains Clouds", 4, 4)
                         .filter(new PercentageSplitter(0, 0.5), new TaktSplitter(1)),
                 new VideoStillImageSegment("Dark lake", 8, 2)
@@ -115,7 +117,16 @@ public class StreamingImageStoreTest {
         for (Plan plan : collectPlan) {
             collectFrameRepresentations.addAll(((SuperPlan)plan).getFrameRepresentations());
         }
-        assertEquals(330, collectFrameRepresentations.size());
+        assertEquals(1625, collectFrameRepresentations.size());
+
+        assertEquals(0, buildPlan.getFrameRepresentations().get(0).timestamp);
+        assertTrue(buildPlan.getFrameRepresentations().get(0).referenceId().contains("Dark lake"));
+        assertEquals(967741, buildPlan.getFrameRepresentations().get(10).timestamp);
+        assertTrue(buildPlan.getFrameRepresentations().get(200).referenceId().contains("Swing into bridge"));
+        assertEquals(19354838, buildPlan.getFrameRepresentations().get(200).timestamp);
+
+        //The collect timestamp should not start at 0
+        assertEquals(69375000, collectFrameRepresentations.get(0).timestamp);
 
     }
 

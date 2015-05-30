@@ -2,6 +2,7 @@ package no.lau.vdvil.plan;
 
 import no.lau.vdvil.collector.FrameRepresentation;
 import no.lau.vdvil.collector.SegmentFramePlan;
+import no.lau.vdvil.collector.SimpleCalculator;
 import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.domain.out.Komposition;
 import org.slf4j.Logger;
@@ -30,7 +31,7 @@ public class SuperPlan implements Plan{
             collectId += segment.id() + " ";
             String referenceId = segment.id() + "_"+ Math.abs(new Random().nextInt());
             referenceIdSegmentIdMap.put(referenceId, segment.id());
-            SegmentFramePlan framePlan = new SegmentFramePlan(referenceId, segment, komposition.bpm, komposition.framerate);
+            SegmentFramePlan framePlan = new SegmentFramePlan(referenceId, segment, komposition.bpm, komposition.framerate, new SimpleCalculator());
             framePlans.add(framePlan);
             frameRepresentations.addAll(framePlan.frameRepresentations);
         }
@@ -47,7 +48,7 @@ public class SuperPlan implements Plan{
         for (Segment segment : komposition.segments) {
             String id = getUnusedPipeBySegmentId(segment.id(), segmentIdReferenceIdMap);
 
-            SegmentFramePlan framePlan = new SegmentFramePlan(id, segment, komposition.bpm, komposition.framerate);
+            SegmentFramePlan framePlan = new SegmentFramePlan(id, segment, komposition.bpm, komposition.framerate, new SimpleCalculator());
             framePlans.add(framePlan);
             frameRepresentations.addAll(framePlan.frameRepresentations);
             logger.info("Build id = " + id);

@@ -1,5 +1,6 @@
 package no.lau.vdvil.collector;
 
+import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.plan.Plan;
 import no.lau.vdvil.plan.SuperPlan;
@@ -52,10 +53,15 @@ public class KompositionPlanner {
         List<SegmentKompositionMap> alignedSegments = new ForNoTull(fetchKompositions)
                 .alignSegments(buildKomposition.segments, buildKomposition.bpm);
         for (SegmentKompositionMap komSegments : alignedSegments) {
-            SuperPlan plan = new SuperPlan(komSegments.komposition, komSegments.segments);
-            collectPlans.add(plan);
 
-            segmentIdReferenceIdMap.putAll(plan.referenceIdSegmentIdMap);
+            //CollectSegments should use collecting segments. This translation is to get the collection segments from segment identifiers.
+            List<Segment> colletionSegments = new ArrayList<>();
+            colletionSegments.addAll(convertBuildSegmentListToCollectSegments(komSegments.segments, fetchKompositions));
+
+            SuperPlan collectPlan = new SuperPlan(komSegments.komposition, colletionSegments);
+            collectPlans.add(collectPlan);
+
+            segmentIdReferenceIdMap.putAll(collectPlan.referenceIdSegmentIdMap);
             /*
             for (Segment segment : komSegments.segments) {
                 segmentIdReferenceIdMap.put(segment.id() + Math.abs(new Random().nextInt()), segment.id());
@@ -68,6 +74,21 @@ public class KompositionPlanner {
         //this.lastTimeStamp = calculateLastTimeStamp()
         //Something needs to be sorted
         //Collections.sort(plans);
+    }
+
+    private Set<Segment> convertBuildSegmentListToCollectSegments(List<Segment> segments, List<Komposition> fetchKompositions) {
+        Set<Segment> foundSegments = new HashSet<>();
+        for (Segment segment : segments) {
+            String buildSegmentId = segment.id();
+            for (Komposition fetchKomposition : fetchKompositions) {
+                for (Segment collectSegment : fetchKomposition.segments) {
+                    if(collectSegment.id().equals(buildSegmentId)) {
+                        foundSegments.add(collectSegment);
+                    }
+                }
+            }
+        }
+        return foundSegments;
     }
 
     public List<Plan> collectPlans() {

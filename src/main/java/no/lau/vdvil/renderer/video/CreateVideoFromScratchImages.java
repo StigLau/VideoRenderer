@@ -88,15 +88,19 @@ class VideoAdapter {
 
     public void writeNextPacket(long clock, Plan buildPlan) {
         while (clock >= nextFrameTime) {
-            FrameRepresentation frameRepresentation = buildPlan.whatToDoAt(clock);
-            ImageRepresentation imageRep = imageStore.getNextImageRepresentation(frameRepresentation.referenceId());
-
-            if(imageRep != null) {
-                logger.debug("Pushing image {}@{}/{} - Clock:{} from {} from pipedream to video ", frameRepresentation.timestamp, frameRepresentation.frameNr, frameRepresentation.numberOfFrames, clock, frameRepresentation.referenceId());
-                frameRepresentation.use();
-                writer.encodeVideo(videoStreamIndex, (BufferedImage) imageRep.image, nextFrameTime, DEFAULT_TIME_UNIT);
+            FrameRepresentation frameRepresentation = buildPlan.whatToDoAt(nextFrameTime);
+            if(frameRepresentation == null) {
+             logger.error("FrameRepresentation null");
             } else {
-                logger.error("WTF!!?! NULL?");
+                ImageRepresentation imageRep = imageStore.getNextImageRepresentation(frameRepresentation.referenceId());
+
+                if (imageRep != null) {
+                    logger.debug("Pushing image {}@{}/{} - Clock:{} from {} from pipedream to video ", frameRepresentation.timestamp, frameRepresentation.frameNr, frameRepresentation.numberOfFrames, nextFrameTime, frameRepresentation.referenceId());
+                    frameRepresentation.use();
+                    writer.encodeVideo(videoStreamIndex, (BufferedImage) imageRep.image, nextFrameTime, DEFAULT_TIME_UNIT);
+                } else {
+                    logger.error("WTF!!?! NULL?");
+                }
             }
             nextFrameTime += frameRate;
         }
