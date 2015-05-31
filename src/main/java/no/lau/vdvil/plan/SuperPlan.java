@@ -80,8 +80,10 @@ public class SuperPlan implements Plan{
     @Override
     public FrameRepresentation whatToDoAt(long timestamp) {
         for (FrameRepresentation frameRepresentation : frameRepresentations) {
-            if(frameRepresentation.timestamp >= timestamp)
+            if(!frameRepresentation.used && frameRepresentation.timestamp <= timestamp) {
+                frameRepresentation.use();
                 return frameRepresentation;
+            }
         }
         return null;
     }

@@ -80,7 +80,7 @@ public class WaitingVideoThumbnailsCollector {
                     logger.error("Nothing exciting happened - could not fetch file: ", e);
                 }
             } else {
-                logger.info("No more FrameRepresentations for " + collectPlan.id() + " at " + timestamp);
+                logger.trace("No more FrameRepresentations for " + collectPlan.id() + " at " + timestamp);
             }
         }
     }

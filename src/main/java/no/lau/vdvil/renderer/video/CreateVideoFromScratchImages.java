@@ -89,9 +89,7 @@ class VideoAdapter {
     public void writeNextPacket(long clock, Plan buildPlan) {
         while (clock >= nextFrameTime) {
             FrameRepresentation frameRepresentation = buildPlan.whatToDoAt(nextFrameTime);
-            if(frameRepresentation == null) {
-             logger.error("FrameRepresentation null");
-            } else {
+            if(frameRepresentation != null) {
                 ImageRepresentation imageRep = imageStore.getNextImageRepresentation(frameRepresentation.referenceId());
 
                 if (imageRep != null) {
