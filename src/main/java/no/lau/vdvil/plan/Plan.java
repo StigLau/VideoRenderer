@@ -1,6 +1,7 @@
 package no.lau.vdvil.plan;
 
 import no.lau.vdvil.collector.FrameRepresentation;
+import java.util.List;
 
 /**
  * @author stiglau on 22/05/15.
@@ -9,7 +10,7 @@ import no.lau.vdvil.collector.FrameRepresentation;
 public interface Plan {
     boolean isFinishedProcessing(long timestamp);
 
-    FrameRepresentation whatToDoAt(long timestamp);
+    List<FrameRepresentation> whatToDoAt(long timestamp);
 
     String id();
 

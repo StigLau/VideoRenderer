@@ -78,14 +78,15 @@ public class SuperPlan implements Plan{
     }
 
     @Override
-    public FrameRepresentation whatToDoAt(long timestamp) {
+    public List<FrameRepresentation> whatToDoAt(long timestamp) {
+        List<FrameRepresentation> foundFrames = new ArrayList<>();
         for (FrameRepresentation frameRepresentation : frameRepresentations) {
             if(!frameRepresentation.used && frameRepresentation.timestamp <= timestamp) {
                 frameRepresentation.use();
-                return frameRepresentation;
+                foundFrames.add(frameRepresentation);
             }
         }
-        return null;
+        return foundFrames;
     }
 
     @Override

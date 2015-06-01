@@ -54,6 +54,7 @@ public class WaitingVideoThumbnailsCollector {
         private Plan collectPlan;
         final ImageStore<BufferedImage> imageStore;
         final float bpm;
+        BufferedImage previous = null;
 
         private ImageSnapListener(Plan collectPlan, ImageStore imageStore, float bpm) {
             this.collectPlan = collectPlan;
@@ -67,20 +68,20 @@ public class WaitingVideoThumbnailsCollector {
             if (collectPlan.isFinishedProcessing(timestamp)) {
                 throw new VideoExtractionFinished("End of compilation");
             }
-            FrameRepresentation frameRepresentation = collectPlan.whatToDoAt(timestamp);
-            if (frameRepresentation != null) {
+            for (FrameRepresentation frameRepresentation : collectPlan.whatToDoAt(timestamp)) {
                 //logger.trace("Fetching segment {}, {} frames ", collectPlan.id(), plan.frameRepresentations.size());
 
                 try {
-                    BufferedImage image = event.getImage();
+                    BufferedImage image = (event.getImage() != null)?
+                            event.getImage() :
+                            previous;
+
                     imageStore.store(image, timestamp, frameRepresentation);
                     frameRepresentation.use();
                     logger.trace("Storing image {}@{} {}/{}", frameRepresentation.referenceId(), timestamp);
                 } catch (Exception e) {
                     logger.error("Nothing exciting happened - could not fetch file: ", e);
                 }
-            } else {
-                logger.trace("No more FrameRepresentations for " + collectPlan.id() + " at " + timestamp);
             }
         }
     }

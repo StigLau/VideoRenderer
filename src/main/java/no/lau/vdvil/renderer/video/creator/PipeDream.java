@@ -63,6 +63,8 @@ public class PipeDream<TYPE> implements ImageStore<TYPE> {
         ImageRepresentation imageRepresentation = new ImageRepresentation(Long.toString(timeStamp), referenceId, frameRepresentation);
         imageRepresentation.image = instance;
         try {
+            logger.info("Storing {}@{} {}/{}", frameRepresentation.referenceId(), frameRepresentation.timestamp, frameRepresentation.frameNr +1, frameRepresentation.numberOfFrames );
+
             if (segmentImageList.containsKey(referenceId)) {
                 segmentImageList.get(referenceId).put(imageRepresentation);
             } else {
@@ -88,7 +90,8 @@ public class PipeDream<TYPE> implements ImageStore<TYPE> {
         }
         BlockingQueue<ImageRepresentation> blockingQueue = segmentImageList.get(referenceId);
         try {
-        return blockingQueue.poll(1000, TimeUnit.MILLISECONDS);
+        //return blockingQueue.poll(1000, TimeUnit.MILLISECONDS);
+            return blockingQueue.take();
         } catch (Exception e) {
             logger.error("Fuck? {}, {}", referenceId, e.getMessage());
             return null;

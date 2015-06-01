@@ -13,6 +13,7 @@ import no.lau.vdvil.renderer.video.store.ImageRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.awt.image.BufferedImage;
+import java.util.List;
 import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
 
 /**
@@ -85,17 +86,24 @@ class VideoAdapter {
         writer.addVideoStream(videoStreamIndex, videoStreamId, width, height);
 
     }
+    BufferedImage previous = null;
 
     public void writeNextPacket(long clock, Plan buildPlan) {
         while (clock >= nextFrameTime) {
-            FrameRepresentation frameRepresentation = buildPlan.whatToDoAt(nextFrameTime);
-            if(frameRepresentation != null) {
+            List<FrameRepresentation> frameRepresentations = buildPlan.whatToDoAt(nextFrameTime);
+            for (FrameRepresentation frameRepresentation : frameRepresentations) {
                 ImageRepresentation imageRep = imageStore.getNextImageRepresentation(frameRepresentation.referenceId());
 
-                if (imageRep != null) {
-                    logger.debug("Pushing image {}@{}/{} - Clock:{} from {} from pipedream to video ", frameRepresentation.timestamp, frameRepresentation.frameNr, frameRepresentation.numberOfFrames, nextFrameTime, frameRepresentation.referenceId());
+                if (imageRep != null || previous != null) {
+                    logger.debug("Pushing image {}@{}/{} - Clock:{} from {} from pipedream to video ", frameRepresentation.timestamp, frameRepresentation.frameNr +1, frameRepresentation.numberOfFrames, nextFrameTime, frameRepresentation.referenceId());
                     frameRepresentation.use();
-                    writer.encodeVideo(videoStreamIndex, (BufferedImage) imageRep.image, nextFrameTime, DEFAULT_TIME_UNIT);
+                    //In some circumstances, one must reuse the previous image
+                    BufferedImage theImage = (imageRep.image != null)?
+                            (BufferedImage) imageRep.image :
+                            previous;
+
+                    writer.encodeVideo(videoStreamIndex, theImage, nextFrameTime, DEFAULT_TIME_UNIT);
+                    previous = theImage;
                 } else {
                     logger.error("WTF!!?! NULL?");
                 }

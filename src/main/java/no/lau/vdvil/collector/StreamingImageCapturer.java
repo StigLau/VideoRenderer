@@ -40,6 +40,11 @@ public class StreamingImageCapturer {
             log.info("Fetching plan:{}", collectPlan.id());
             ImageCapturer imageCapturer = new ImageCapturer(collectPlan, pipeDream);
             new Thread(imageCapturer).start();
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
