@@ -63,7 +63,7 @@ public class PipeDream<TYPE> implements ImageStore<TYPE> {
         ImageRepresentation imageRepresentation = new ImageRepresentation(Long.toString(timeStamp), referenceId, frameRepresentation);
         imageRepresentation.image = instance;
         try {
-            logger.info("Storing {}@{} {}/{}", frameRepresentation.referenceId(), frameRepresentation.timestamp, frameRepresentation.frameNr +1, frameRepresentation.numberOfFrames );
+            logger.info("Storing {}@{}-{}/{} {}", frameRepresentation.referenceId(), timeStamp, frameRepresentation.frameNr +1, frameRepresentation.numberOfFrames, frameRepresentation.timestamp);
 
             if (segmentImageList.containsKey(referenceId)) {
                 segmentImageList.get(referenceId).put(imageRepresentation);

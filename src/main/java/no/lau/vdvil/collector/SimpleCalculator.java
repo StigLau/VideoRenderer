@@ -14,7 +14,6 @@ public class SimpleCalculator implements FrameCalculator{
 
     public long calculateNumberOfFrames(Segment segment, float bpm, long framerate) {
         long duration = segment.durationCalculated(bpm);
-        System.out.println(segment.id() + " " + duration);
         return Math.round(duration * bpm * framerate / (60 * 1000 * 1000) * buildRatio / collectRatio);
     }
 }

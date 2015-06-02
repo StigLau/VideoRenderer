@@ -148,9 +148,11 @@ public class StreamingImageStoreTest {
         CreateVideoFromScratchImages.createVideo(planner.buildPlan(),imageStore, sobotaMp3, new Config(480, 260, DEFAULT_TIME_UNIT.convert(15, MILLISECONDS)));
 
 
-        assertEquals(240, ((SuperPlan)planner.buildPlan()).getFrameRepresentations().stream().filter(frame -> frame.used).count());
-        assertEquals(240, ((SuperPlan) planner.collectPlans().get(0)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
-        assertEquals("1a3a8452020bc10a8b33a6b328558cd3", md5Checksum(resultingMediaFile.fileName));
+        assertEquals(220, ((SuperPlan)planner.buildPlan()).getFrameRepresentations().stream().filter(frame -> frame.used).count());
+        assertEquals(20, ((SuperPlan) planner.collectPlans().get(0)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
+        assertEquals(30, ((SuperPlan) planner.collectPlans().get(1)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
+        assertEquals(90, ((SuperPlan) planner.collectPlans().get(2)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
+        assertEquals("e81b586fb372cc34022794ddf4ad1243", md5Checksum(resultingMediaFile.fileName));
 /*
         assertEquals(325, imageStore.findImagesBySegmentId("Purple Mountains Clouds").size());
         assertEquals(152, imageStore.findImagesBySegmentId("Besseggen").size());
