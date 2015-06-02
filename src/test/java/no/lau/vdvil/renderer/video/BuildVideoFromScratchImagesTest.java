@@ -63,7 +63,7 @@ public class BuildVideoFromScratchImagesTest {
 
         MediaFile mf = new MediaFile(new URL(result1), 0f, 128f, "dunno yet");
         buildKomposition.storageLocation = mf;
-        KompositionPlanner planner = new KompositionPlanner(Collections.singletonList(fetchKomposition), buildKomposition);
+        KompositionPlanner planner = new KompositionPlanner(Collections.singletonList(fetchKomposition), buildKomposition, 15);
         CreateVideoFromScratchImages.createVideo(planner.buildPlan(), imageStore, sobotaMp3, config);
         assertEquals(mf.checksum, md5Checksum(mf.fileName));
     }
@@ -140,7 +140,7 @@ public class BuildVideoFromScratchImagesTest {
         fetchKompositions.add(fetchKompositionNorway);
         fetchKompositions.add(fetchKompositionSwing);
 
-        KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition);
+        KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition, 15);
         //TODO EEERRRRR - Dont use the collectplans!
         StreamingImageCapturer.startUpThreads(planner.collectPlans(), imageStore);
 
@@ -212,7 +212,7 @@ public class BuildVideoFromScratchImagesTest {
 
         MediaFile mf = new MediaFile(new URL(result3), 0f, 128f, "9bf2c55d6ef8bc7c384ba21f2920e9d1");
         buildKomposition.storageLocation = mf;
-        KompositionPlanner planner = new KompositionPlanner(Collections.singletonList(fetchKomposition), buildKomposition);
+        KompositionPlanner planner = new KompositionPlanner(Collections.singletonList(fetchKomposition), buildKomposition, 15);
 
         CreateVideoFromScratchImages.createVideo(planner.buildPlan(), imageStore, sobotaMp3, config);
         assertEquals(mf.checksum, md5Checksum(mf.fileName));

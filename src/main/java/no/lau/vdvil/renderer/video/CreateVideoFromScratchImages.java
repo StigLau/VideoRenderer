@@ -95,7 +95,7 @@ class VideoAdapter {
                 ImageRepresentation imageRep = imageStore.getNextImageRepresentation(frameRepresentation.referenceId());
 
                 if (imageRep != null || previous != null) {
-                    logger.debug("Pushing image {}@{}/{} - Clock:{} from {} from pipedream to video ", frameRepresentation.timestamp, frameRepresentation.frameNr +1, frameRepresentation.numberOfFrames, nextFrameTime, frameRepresentation.referenceId());
+                    logger.debug("Pushing image {}@{}-{}/{} - Clock:{} from {} from pipedream to video ", frameRepresentation.referenceId(), frameRepresentation.timestamp, frameRepresentation.frameNr +1, frameRepresentation.numberOfFrames, nextFrameTime);
                     frameRepresentation.use();
                     //In some circumstances, one must reuse the previous image
                     BufferedImage theImage = (imageRep.image != null)?

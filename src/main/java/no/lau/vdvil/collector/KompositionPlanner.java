@@ -18,7 +18,7 @@ public class KompositionPlanner {
     //Calculating last timestamp is to be done on each entity one is interested in
 
 
-    public KompositionPlanner(List<Komposition> fetchKompositions, Komposition buildKomposition) {
+    public KompositionPlanner(List<Komposition> fetchKompositions, Komposition buildKomposition, long finalFramerate) {
         //Verify that all fetchSegments are unique
         for (Komposition fetchKomposition : fetchKompositions) {
             performIdUniquenessCheck(fetchKomposition.segments);
@@ -58,7 +58,7 @@ public class KompositionPlanner {
             List<Segment> colletionSegments = new ArrayList<>();
             colletionSegments.addAll(convertBuildSegmentListToCollectSegments(komSegments.segments, fetchKompositions));
 
-            SuperPlan collectPlan = new SuperPlan(komSegments.komposition, colletionSegments);
+            SuperPlan collectPlan = new SuperPlan(komSegments.komposition, colletionSegments, komSegments.segments, finalFramerate); // 5 * 3  - 29 vs 16
             collectPlans.add(collectPlan);
 
             segmentIdReferenceIdMap.putAll(collectPlan.referenceIdSegmentIdMap);
@@ -69,7 +69,7 @@ public class KompositionPlanner {
             */
         }
 
-        buildPlan = new SuperPlan(buildKomposition, segmentIdReferenceIdMap);//This SuperPlan is bad - all segments get the same refId
+        buildPlan = new SuperPlan(buildKomposition, segmentIdReferenceIdMap, finalFramerate);//This SuperPlan is bad - all segments get the same refId
 
         //this.lastTimeStamp = calculateLastTimeStamp()
         //Something needs to be sorted

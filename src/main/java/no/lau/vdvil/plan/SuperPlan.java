@@ -22,33 +22,44 @@ public class SuperPlan implements Plan{
     String collectId = "";
     public Map<String, String> referenceIdSegmentIdMap = new HashMap<>();
 
-    public SuperPlan(Komposition komposition, List<Segment> segments) {
+    public SuperPlan(Komposition komposition, List<Segment> collectionSegments, List<Segment> buildSegments, long finalFramerate) {
         this.komposition = komposition;
         lastTimeStamp = calculateLastTimeStamp(komposition.segments, komposition.bpm);
         //this.collectId = komposition.segments.get(0).id() + "_" + Math.abs(new Random().nextInt()); //TODO Les fra Map om hva ID'en skal hete!
 
-        for (Segment segment : segments) {
+        Map<String ,Segment> segmentMap = asSegmentMap(buildSegments);
+
+        for (Segment segment : collectionSegments) {
             collectId += segment.id() + " ";
             String referenceId = segment.id() + "_"+ Math.abs(new Random().nextInt());
             referenceIdSegmentIdMap.put(referenceId, segment.id());
-            SegmentFramePlan framePlan = new SegmentFramePlan(referenceId, segment, komposition.bpm, komposition.framerate, new SimpleCalculator());
+            Segment buildSegment = segmentMap.get(segment.id());
+            SegmentFramePlan framePlan = new SegmentFramePlan(referenceId, segment, komposition.bpm, finalFramerate, new SimpleCalculator(segment.durationCalculated(komposition.bpm), buildSegment.durationCalculated(komposition.bpm)));
             framePlans.add(framePlan);
             frameRepresentations.addAll(framePlan.frameRepresentations);
         }
         //TODO Sort framePlans
     }
 
+    private Map<String, Segment> asSegmentMap(List<Segment> segments) {
+        HashMap<String, Segment> result = new HashMap<>();
+        for (Segment segment : segments) {
+            result.put(segment.id(), segment);
+        }
+        return result;
+    }
+
     /**
      * Constructor for BuildPlan
      */
-    public SuperPlan(Komposition komposition, Map<String, String> segmentIdReferenceIdMap) {
+    public SuperPlan(Komposition komposition, Map<String, String> segmentIdReferenceIdMap, long finalFramerate) {
         this.komposition = komposition;
         lastTimeStamp = calculateLastTimeStamp(komposition.segments, komposition.bpm);
 
         for (Segment segment : komposition.segments) {
             String id = getUnusedPipeBySegmentId(segment.id(), segmentIdReferenceIdMap);
 
-            SegmentFramePlan framePlan = new SegmentFramePlan(id, segment, komposition.bpm, komposition.framerate, new SimpleCalculator());
+            SegmentFramePlan framePlan = new SegmentFramePlan(id, segment, komposition.bpm, finalFramerate, new SimpleCalculator(1, 1));
             framePlans.add(framePlan);
             frameRepresentations.addAll(framePlan.frameRepresentations);
             logger.info("Build id = " + id);
@@ -74,7 +85,7 @@ public class SuperPlan implements Plan{
 
     @Override
     public boolean isFinishedProcessing(long timestamp) {
-        return timestamp >= lastTimeStamp;
+        return timestamp > lastTimeStamp;
     }
 
     @Override

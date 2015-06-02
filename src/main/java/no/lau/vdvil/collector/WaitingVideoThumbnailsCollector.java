@@ -69,19 +69,20 @@ public class WaitingVideoThumbnailsCollector {
                 throw new VideoExtractionFinished("End of compilation");
             }
             for (FrameRepresentation frameRepresentation : collectPlan.whatToDoAt(timestamp)) {
-                //logger.trace("Fetching segment {}, {} frames ", collectPlan.id(), plan.frameRepresentations.size());
+                BufferedImage image = (event.getImage() != null)?
+                        event.getImage() :
+                        previous;
+                writeImage(image, timestamp, frameRepresentation);
+            }
+        }
 
-                try {
-                    BufferedImage image = (event.getImage() != null)?
-                            event.getImage() :
-                            previous;
-
-                    imageStore.store(image, timestamp, frameRepresentation);
-                    frameRepresentation.use();
-                    logger.trace("Storing image {}@{} {}/{}", frameRepresentation.referenceId(), timestamp);
-                } catch (Exception e) {
-                    logger.error("Nothing exciting happened - could not fetch file: ", e);
-                }
+        private void writeImage(BufferedImage image, long timestamp, FrameRepresentation frameRepresentation) {
+            try {
+                imageStore.store(image, timestamp, frameRepresentation);
+                frameRepresentation.use();
+                logger.trace("Storing image {}@{} {}/{}", frameRepresentation.referenceId(), timestamp);
+            } catch (Exception e) {
+                logger.error("Nothing exciting happened - could not fetch file: ", e);
             }
         }
     }
