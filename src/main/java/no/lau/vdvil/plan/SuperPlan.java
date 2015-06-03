@@ -3,8 +3,8 @@ package no.lau.vdvil.plan;
 import no.lau.vdvil.collector.FrameRepresentation;
 import no.lau.vdvil.collector.SegmentFramePlan;
 import no.lau.vdvil.collector.SimpleCalculator;
+import no.lau.vdvil.domain.MediaFile;
 import no.lau.vdvil.domain.Segment;
-import no.lau.vdvil.domain.out.Komposition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.*;
@@ -15,72 +15,36 @@ import java.util.*;
 public class SuperPlan implements Plan{
 
     Logger logger = LoggerFactory.getLogger(SuperPlan.class);
-    final Komposition komposition;
     final long lastTimeStamp;
-    final List<SegmentFramePlan> framePlans = new ArrayList<>();
+    final List<SegmentFramePlan> framePlans = new ArrayList<>(); //TODO Note that frameplans contain BOTH build and collect frameplans!
     List<FrameRepresentation> frameRepresentations = new ArrayList<>();
     String collectId = "";
-    public Map<String, String> referenceIdSegmentIdMap = new HashMap<>();
+    final MediaFile storageLocation;
 
-    public SuperPlan(Komposition komposition, List<Segment> collectionSegments, List<Segment> buildSegments, long finalFramerate) {
-        this.komposition = komposition;
-        lastTimeStamp = calculateLastTimeStamp(komposition.segments, komposition.bpm);
+    public SuperPlan(Segment collectionSegment, SegmentFramePlan buildFramePlan, MediaFile storageLocation, long finalFramerate, float collectBpm) {
+        this.storageLocation = storageLocation;
+        lastTimeStamp = calculateLastTimeStamp(Collections.singletonList(collectionSegment), collectBpm);
         //this.collectId = komposition.segments.get(0).id() + "_" + Math.abs(new Random().nextInt()); //TODO Les fra Map om hva ID'en skal hete!
 
-        Map<String ,Segment> segmentMap = asSegmentMap(buildSegments);
-
-        for (Segment segment : collectionSegments) {
-            collectId += segment.id() + " ";
-            String referenceId = segment.id() + "_"+ Math.abs(new Random().nextInt());
-            referenceIdSegmentIdMap.put(referenceId, segment.id());
-            Segment buildSegment = segmentMap.get(segment.id());
-            SegmentFramePlan framePlan = new SegmentFramePlan(referenceId, segment, komposition.bpm, finalFramerate, new SimpleCalculator(segment.durationCalculated(komposition.bpm), buildSegment.durationCalculated(komposition.bpm)));
+            collectId = buildFramePlan.originalSegment.id();
+            Segment buildSegment = buildFramePlan.originalSegment;
+            SegmentFramePlan framePlan = new SegmentFramePlan(collectId, collectionSegment, collectBpm, finalFramerate, new SimpleCalculator(collectionSegment.durationCalculated(collectBpm), buildSegment.durationCalculated(collectBpm)));
             framePlans.add(framePlan);
             frameRepresentations.addAll(framePlan.frameRepresentations);
-        }
-        //TODO Sort framePlans
-    }
-
-    private Map<String, Segment> asSegmentMap(List<Segment> segments) {
-        HashMap<String, Segment> result = new HashMap<>();
-        for (Segment segment : segments) {
-            result.put(segment.id(), segment);
-        }
-        return result;
     }
 
     /**
      * Constructor for BuildPlan
      */
-    public SuperPlan(Komposition komposition, Map<String, String> segmentIdReferenceIdMap, long finalFramerate) {
-        this.komposition = komposition;
-        lastTimeStamp = calculateLastTimeStamp(komposition.segments, komposition.bpm);
-
-        for (Segment segment : komposition.segments) {
-            String id = getUnusedPipeBySegmentId(segment.id(), segmentIdReferenceIdMap);
-
-            SegmentFramePlan framePlan = new SegmentFramePlan(id, segment, komposition.bpm, finalFramerate, new SimpleCalculator(1, 1));
+    public SuperPlan(List<Segment> buildSegments, MediaFile storageLocation, float buildBpm, long finalFramerate) {
+        this.storageLocation = storageLocation;
+        lastTimeStamp = calculateLastTimeStamp(buildSegments, buildBpm);
+        for (Segment buildSegment : buildSegments) {
+            SegmentFramePlan framePlan = new SegmentFramePlan(buildSegment.id(), buildSegment, buildBpm, finalFramerate, new SimpleCalculator(1, 1));
             framePlans.add(framePlan);
             frameRepresentations.addAll(framePlan.frameRepresentations);
-            logger.info("Build id = " + id);
+            logger.info("Build: " + buildSegment.id());
         }
-    }
-
-    List<String> usedIds = new ArrayList<>();
-
-
-    /**
-     * Responsible for dealing out references to Pipes, and making sure that they are not reused
-     */
-    private String getUnusedPipeBySegmentId(String segmentId, Map<String, String> segmentIdReferenceIdMap) {
-        Set<String> allIds = segmentIdReferenceIdMap.keySet();
-        for (String plausibleId : allIds) {
-            if(!usedIds.contains(plausibleId) && segmentIdReferenceIdMap.get(plausibleId).equals(segmentId)) {
-                usedIds.add(plausibleId);
-                return plausibleId;
-            }
-        }
-        throw new RuntimeException("Did not find a usabe ID");
     }
 
     @Override
@@ -101,18 +65,14 @@ public class SuperPlan implements Plan{
     }
 
     @Override
+    @Deprecated //Use toString. This is no real id!
     public String id() {
         return collectId;
     }
 
     @Override
     public String ioFile() {
-        return komposition.storageLocation.fileName.toString();
-    }
-
-    @Override
-    public float bpm() {
-        return komposition.bpm;
+        return storageLocation.fileName.toString();
     }
 
     static long calculateLastTimeStamp(List<Segment> segments, float bpm) {

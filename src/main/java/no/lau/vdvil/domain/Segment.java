@@ -5,6 +5,7 @@ package no.lau.vdvil.domain;
  */
 public interface Segment {
     String id();
+    String shortId();
     long start();
     long duration();
 

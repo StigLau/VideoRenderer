@@ -1,6 +1,5 @@
 package no.lau.vdvil.renderer.video.stigs;
 
-import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.domain.SuperSegment;
 
 /**
@@ -13,14 +12,10 @@ public class TimeStampFixedImageSampleSegment extends SuperSegment {
     public final long timestampEnd;
 
     public TimeStampFixedImageSampleSegment(String id, long timestampStart, long timestampEnd, double framesPerBeat) {
-        super(id, -1, -1);
+        super(id, timestampStart, timestampEnd - timestampStart);
         this.framesPerBeat = framesPerBeat;
         this.timestampStart = timestampStart;
         this.timestampEnd = timestampEnd;
-    }
-
-    public Segment createCopy(long idIncrementation) {
-        return new TimeStampFixedImageSampleSegment(id() + idIncrementation, timestampStart, timestampEnd, framesPerBeat);
     }
 
     public long startCalculated(float bpm) {

@@ -34,7 +34,7 @@ public class StreamingImageCapturer {
         }
         throw new RuntimeException("Should not happen");
     }
-
+    //TODO Align fetchPlans in a single thread!
     public static void startUpThreads(List<Plan> fetchPlans, ImageStore pipeDream) {
         for (Plan collectPlan : fetchPlans) {
             log.info("Fetching plan:{}", collectPlan.id());

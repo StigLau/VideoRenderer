@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author Stig@Lau.no 10/05/15.
@@ -27,7 +26,7 @@ public class SegmentFramePlan implements Comparable {
         }
         List<FrameRepresentation> plans = new ArrayList<>();
         long numberOfFrames = frameCalculator.calculateNumberOfFrames(segment, bpm, framerate);
-        logger.info("numberOfImages = " + numberOfFrames);
+        logger.info("numberOfImages = {} id: {}", numberOfFrames, id);
         long start = segment.startCalculated(bpm);
         for (int i = 0; i < numberOfFrames; i++) {
             long thisDuration = segment.durationCalculated(bpm) * i / numberOfFrames;
@@ -39,24 +38,8 @@ public class SegmentFramePlan implements Comparable {
         return plans;
     }
 
-    public List<FrameRepresentation> findUnusedFramesAtTimestamp(long timestamp) {
-        return frameRepresentations.stream()
-                .filter(plan -> !plan.used && timestamp >= plan.timestamp)
-                .collect(Collectors.toList());
-    }
-
-    public List<FrameRepresentation> findUnusedBuilderFramesAtTimestamp(long timestamp) {
-        return frameRepresentations.stream()
-                .filter(plan -> !plan.used && timestamp >= plan.timestamp)
-                .collect(Collectors.toList());
-    }
-
 
     public int compareTo(Object other) {
         return Long.compare(originalSegment.start(), ((SegmentFramePlan) other).originalSegment.start());
-    }
-
-    public String toString() {
-        return originalSegment.id() + " " + originalSegment.start() + " + " + originalSegment.duration();
     }
 }

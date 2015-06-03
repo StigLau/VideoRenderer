@@ -15,6 +15,4 @@ public interface Plan {
     String id();
 
     String ioFile();
-
-    float bpm();
 }

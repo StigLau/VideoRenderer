@@ -19,6 +19,8 @@ public class KompositionPlanner {
 
 
     public KompositionPlanner(List<Komposition> fetchKompositions, Komposition buildKomposition, long finalFramerate) {
+        buildPlan = new SuperPlan(buildKomposition.segments, buildKomposition.storageLocation, buildKomposition.bpm, finalFramerate);
+
         //Verify that all fetchSegments are unique
         for (Komposition fetchKomposition : fetchKompositions) {
             performIdUniquenessCheck(fetchKomposition.segments);
@@ -48,28 +50,37 @@ public class KompositionPlanner {
             }
 */
 
-        //Conveniencemap for finding out the Reference Id of a given Segment Id
-        Map<String, String> segmentIdReferenceIdMap = new HashMap<>();
-        List<SegmentKompositionMap> alignedSegments = new ForNoTull(fetchKompositions)
-                .alignSegments(buildKomposition.segments, buildKomposition.bpm);
-        for (SegmentKompositionMap komSegments : alignedSegments) {
+        //Conveniencemap Segment <--> komposition
+        Map<Segment, Komposition> segmentFetchKompositionMap = new HashMap<>();
+        for (Komposition fetchKomposition : fetchKompositions) {
+            for (Segment segment : fetchKomposition.segments) {
+                segmentFetchKompositionMap.put(segment, fetchKomposition);
+            }
+        }
+        //Conveniencemap SegmentId <--> Segment
+        Map<String, Segment> segmentIdCollectSegmentMap = new HashMap<>();
+        for (Segment segment : segmentFetchKompositionMap.keySet()) {
+            segmentIdCollectSegmentMap.put(segment.shortId(), segment);
+        }
 
+
+//        List<SegmentKompositionMap> alignedSegments = new ForNoTull(fetchKompositions)
+//                .alignSegments(buildKomposition.segments, buildKomposition.bpm);
+        for (SegmentFramePlan buildFramePlan : ((SuperPlan) buildPlan).getFramePlans()) {
             //CollectSegments should use collecting segments. This translation is to get the collection segments from segment identifiers.
-            List<Segment> colletionSegments = new ArrayList<>();
-            colletionSegments.addAll(convertBuildSegmentListToCollectSegments(komSegments.segments, fetchKompositions));
+            //List<Segment> colletionSegments = new ArrayList<>();
+            //colletionSegments.addAll(convertBuildSegmentListToCollectSegments(komSegments.segments, fetchKompositions));
+            Segment collectSegment = segmentIdCollectSegmentMap.get(buildFramePlan.originalSegment.shortId());
+            Komposition fetchKomposition = segmentFetchKompositionMap.get(collectSegment);
 
-            SuperPlan collectPlan = new SuperPlan(komSegments.komposition, colletionSegments, komSegments.segments, finalFramerate); // 5 * 3  - 29 vs 16
+            SuperPlan collectPlan = new SuperPlan(collectSegment, buildFramePlan, fetchKomposition.storageLocation, finalFramerate, fetchKomposition.bpm);
             collectPlans.add(collectPlan);
-
-            segmentIdReferenceIdMap.putAll(collectPlan.referenceIdSegmentIdMap);
             /*
             for (Segment segment : komSegments.segments) {
                 segmentIdReferenceIdMap.put(segment.id() + Math.abs(new Random().nextInt()), segment.id());
             }
             */
         }
-
-        buildPlan = new SuperPlan(buildKomposition, segmentIdReferenceIdMap, finalFramerate);//This SuperPlan is bad - all segments get the same refId
 
         //this.lastTimeStamp = calculateLastTimeStamp()
         //Something needs to be sorted

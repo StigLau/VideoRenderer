@@ -37,7 +37,7 @@ public class WaitingVideoThumbnailsCollector {
             // stipulate that we want BufferedImages created in BGR 24bit color space
             mediaReader.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
 
-            mediaReader.addListener(new ImageSnapListener(collectPlan, imageStore, collectPlan.bpm()));
+            mediaReader.addListener(new ImageSnapListener(collectPlan, imageStore));
 
             // read out the contents of the media file and
             // dispatch events to the attached listener
@@ -53,13 +53,11 @@ public class WaitingVideoThumbnailsCollector {
     private class ImageSnapListener extends MediaListenerAdapter {
         private Plan collectPlan;
         final ImageStore<BufferedImage> imageStore;
-        final float bpm;
         BufferedImage previous = null;
 
-        private ImageSnapListener(Plan collectPlan, ImageStore imageStore, float bpm) {
+        private ImageSnapListener(Plan collectPlan, ImageStore imageStore) {
             this.collectPlan = collectPlan;
             this.imageStore = imageStore;
-            this.bpm = bpm;
         }
 
         public void onVideoPicture(IVideoPictureEvent event) {

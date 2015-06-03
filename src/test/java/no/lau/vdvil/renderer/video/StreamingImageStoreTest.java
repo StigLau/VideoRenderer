@@ -150,14 +150,13 @@ public class StreamingImageStoreTest {
 
         assertEquals(220, ((SuperPlan)planner.buildPlan()).getFrameRepresentations().stream().filter(frame -> frame.used).count());
         assertEquals(20, ((SuperPlan) planner.collectPlans().get(0)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
-        assertEquals(30, ((SuperPlan) planner.collectPlans().get(1)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
-        assertEquals(90, ((SuperPlan) planner.collectPlans().get(2)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
+        assertEquals(20, ((SuperPlan) planner.collectPlans().get(1)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
+        assertEquals(10, ((SuperPlan) planner.collectPlans().get(2)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
+        assertEquals(10, ((SuperPlan) planner.collectPlans().get(3)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
+        assertEquals(20, ((SuperPlan) planner.collectPlans().get(4)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
+        assertEquals(40, ((SuperPlan) planner.collectPlans().get(5)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
+        assertEquals(80, ((SuperPlan) planner.collectPlans().get(6)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
         assertEquals("e81b586fb372cc34022794ddf4ad1243", md5Checksum(resultingMediaFile.fileName));
-/*
-        assertEquals(325, imageStore.findImagesBySegmentId("Purple Mountains Clouds").size());
-        assertEquals(152, imageStore.findImagesBySegmentId("Besseggen").size());
-        assertEquals(124, imageStore.findImagesBySegmentId("Dark lake").size());
-        */
     }
 
     /* TODO Do we need this?
