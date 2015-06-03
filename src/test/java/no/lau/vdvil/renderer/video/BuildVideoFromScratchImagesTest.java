@@ -13,6 +13,8 @@ import no.lau.vdvil.renderer.video.stigs.ImageSampleInstruction;
 import no.lau.vdvil.renderer.video.stigs.TimeStampFixedImageSampleSegment;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -38,6 +40,7 @@ public class BuildVideoFromScratchImagesTest {
     private String result3 = "file:///tmp/from_scratch_images_test_3.mp4";
 
     Config config = new Config(320, 200,DEFAULT_TIME_UNIT.convert(15, MILLISECONDS));
+    private Logger logger = LoggerFactory.getLogger(BuildVideoFromScratchImagesTest.class);
 
 
     @Test
@@ -128,12 +131,12 @@ public class BuildVideoFromScratchImagesTest {
                 //new Instruction("inst2", 72, 8, new VideoStillImageSegment("Norway showing", 72, 8))
 
         );
-        MediaFile mf = new MediaFile(new URL(result2), 0f, 128f, "6da35d1a74999dbd0be4bb60e10b302c");
+        MediaFile mf = new MediaFile(new URL(result2), 0f, 128f, "ad0e6fd14dcd283fe03167881dfe821d");
         buildKomposition.storageLocation = mf;
 
 
         PipeDream imageStore = new PipeDream();
-        imageStore.setBufferSize(350);
+        imageStore.setBufferSize(10);
 
 
         List<Komposition> fetchKompositions = new ArrayList<>();
@@ -162,6 +165,7 @@ public class BuildVideoFromScratchImagesTest {
         */
 
         CreateVideoFromScratchImages.createVideo(planner.buildPlan(), imageStore, sobotaMp3, config);
+        logger.info("Storing file at {}", mf.fileName);
         assertEquals(mf.checksum, md5Checksum(mf.fileName));
     }
 

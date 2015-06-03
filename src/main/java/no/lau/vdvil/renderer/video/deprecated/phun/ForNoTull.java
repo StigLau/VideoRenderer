@@ -1,4 +1,4 @@
-package no.lau.vdvil.collector;
+package no.lau.vdvil.renderer.video.deprecated.phun;
 
 import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.domain.out.Komposition;
