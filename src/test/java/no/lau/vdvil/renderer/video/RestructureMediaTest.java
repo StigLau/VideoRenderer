@@ -43,8 +43,6 @@ public class RestructureMediaTest {
         );
         ImageStore ibs = new PipeDream();
         new VideoThumbnailsCollector(ibs).capture(collectPicsFromVideo, fetchKomposition);
-        assertEquals(719, ibs.findImagesBySegmentId("Capture some pics").size());
-        assertEquals(359, ((ImageSampleInstruction) fetchKomposition.segments.get(1)).collectedImages().size());
 
         Komposition buildKomposition =  new Komposition(128,null);
                 //new VideoStillImageSegment("inst1", 8, 7, ((ImageSampleInstruction)fetchKomposition.segments.get(0)).collectedImages()));
@@ -61,8 +59,6 @@ public class RestructureMediaTest {
                 new ImageSampleInstruction("Second capture sequence", 256, 32, 1)
         );
         new VideoThumbnailsCollector(new PipeDream()).capture(collectPicsFromVideo, fetchKomposition);
-        assertEquals(719, ((ImageSampleInstruction) fetchKomposition.segments.get(0)).collectedImages().size());
-        assertEquals(359, ((ImageSampleInstruction) fetchKomposition.segments.get(1)).collectedImages().size());
 
         Komposition buildKomposition =  new Komposition(128,
                 new ImageSampleInstruction("inst1", 0, 32, 2));// new Instruction("inst1", 0, 32, fetchKomposition.segments.get(0)));

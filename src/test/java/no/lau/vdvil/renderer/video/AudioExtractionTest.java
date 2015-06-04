@@ -12,7 +12,7 @@ import org.junit.Test;
  */
 public class AudioExtractionTest {
     //May need multiplexing first
-    String inFile = "/tmp/CLMD-The_Stockholm_Syndrome_320.mp4";
+    String inFile = "/tmp/320_CLMD-The_Stockholm_Syndrome.mp4";
     //String inFile = "/tmp/320_Onewheel_The_World_is_Your_Playground.mp4";
     String outfile = "/tmp/an4.mp3";
 

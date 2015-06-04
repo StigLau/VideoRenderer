@@ -13,6 +13,7 @@ import no.lau.vdvil.renderer.video.store.ImageRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.awt.image.BufferedImage;
+import java.net.URL;
 import java.util.List;
 import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
 
@@ -27,14 +28,14 @@ public class CreateVideoFromScratchImages {
 
     final static int sampleCount = 1000;
 
-    public static void createVideo(Plan buildPlan, ImageStore imageStore, String inputAudioFilePath, Config config) {
+    public static void createVideo(Plan buildPlan, ImageStore imageStore, URL inputAudioFilePath, Config config) {
         log.info("Init");
 
         final IMediaWriter writer = ToolFactory.makeWriter(buildPlan.ioFile());
 
         VideoAdapter videoAdapter = new VideoAdapter(config, writer, imageStore);
         //AudioStream must be added after videostream!
-        AudioAdapter audioAdapter = new AudioAdapter(inputAudioFilePath, writer);
+        AudioAdapter audioAdapter = new AudioAdapter(inputAudioFilePath.getFile(), writer);
 
         try {
             // the total number of audio samples

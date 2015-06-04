@@ -12,11 +12,15 @@ import no.lau.vdvil.renderer.video.creator.filter.TaktSplitter;
 import no.lau.vdvil.renderer.video.stigs.ImageSampleInstruction;
 import no.lau.vdvil.renderer.video.stigs.TimeStampFixedImageSampleSegment;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,34 +33,34 @@ import static org.junit.Assert.assertEquals;
  */
 public class BuildVideoFromScratchImagesTest {
 
-    String downmixedOriginalVideo = "/tmp/320_NORWAY-A_Time-Lapse_Adventure.mp4";
-    String theSwingVideo = "/tmp/320_Worlds_Largest_Rope_Swing.mp4";
-    String snapshotFileStorage = "/tmp/snaps/CLMD-The_Stockholm_Syndrome_320/";
+    URL downmixedOriginalVideo;
+    URL theSwingVideo;
+    URL snapshotFileStorage;
 
-    String sobotaMp3 = "/Users/stiglau/vids/The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix.mp3";
+    URL sobotaMp3;
 
     private String result1 = "file:///tmp/from_scratch_images_test_1.mp4";
     private String result2 = "file:///tmp/from_scratch_images_test_2.mp4";
     private String result3 = "file:///tmp/from_scratch_images_test_3.mp4";
 
     Config config = new Config(320, 200,DEFAULT_TIME_UNIT.convert(15, MILLISECONDS));
-    private Logger logger = LoggerFactory.getLogger(BuildVideoFromScratchImagesTest.class);
+    Logger logger = LoggerFactory.getLogger(BuildVideoFromScratchImagesTest.class);
 
+    @Before
+    public void setUp() throws MalformedURLException {
+        downmixedOriginalVideo = Paths.get("/tmp/320_NORWAY-A_Time-Lapse_Adventure.mp4").toUri().toURL();
+        theSwingVideo = Paths.get("/tmp/320_Worlds_Largest_Rope_Swing.mp4").toUri().toURL();
+        snapshotFileStorage = Paths.get("/tmp/snaps/CLMD-The_Stockholm_Syndrome_320/").toUri().toURL();
+        sobotaMp3 = Paths.get("/Users/stiglau/vids/The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix.mp3").toUri().toURL();
+    }
 
     @Test
+    @Ignore //Not sure how to keep this feature
     public void buildWithXuggle() throws IOException {
         Komposition fetchKomposition = new Komposition(128,
                 new ImageSampleInstruction("First capture sequence", 64, 64, 4),
                 new ImageSampleInstruction("Second capture sequence", 256, 32, 1)
         );
-        PipeDream imageStore = new PipeDream();
-        //ImageStore imageStore = new ImageFileStore(fetchKomposition, "/tmp/snaps/");
-
-        new VideoThumbnailsCollector(imageStore).capture(downmixedOriginalVideo, fetchKomposition);
-
-        assertEquals(460, imageStore.findImagesBySegmentId("First capture sequence").size());
-        assertEquals(162, imageStore.findImagesBySegmentId("Second capture sequence").size());
-        //140
 
         Komposition buildKomposition =  new Komposition(124,
                 new VideoStillImageSegment("First capture sequence", 0, 32),
@@ -64,10 +68,14 @@ public class BuildVideoFromScratchImagesTest {
                 new VideoStillImageSegment("First capture sequence", 64, 30)
                 );
 
-        MediaFile mf = new MediaFile(new URL(result1), 0f, 128f, "dunno yet");
+        MediaFile mf = new MediaFile(new URL(result1), 0f, 128f, "49ed1e68ba7b600e1f55d1cb0a178b2b");
         buildKomposition.storageLocation = mf;
+
         KompositionPlanner planner = new KompositionPlanner(Collections.singletonList(fetchKomposition), buildKomposition, 15);
+        PipeDream imageStore = new PipeDream();
+        StreamingImageCapturer.startUpThreads(planner.collectPlans(), imageStore);
         CreateVideoFromScratchImages.createVideo(planner.buildPlan(), imageStore, sobotaMp3, config);
+
         assertEquals(mf.checksum, md5Checksum(mf.fileName));
     }
 
@@ -89,7 +97,7 @@ public class BuildVideoFromScratchImagesTest {
                 new TimeStampFixedImageSampleSegment("Seaside houses Panorama", 102583333, 108791667, 8),
                 new TimeStampFixedImageSampleSegment("Bergen movement", 108916667, 113541667, 8)
         );
-        fetchKompositionNorway.storageLocation= new MediaFile(new URL("file://" + downmixedOriginalVideo), 0f, -1f, "abc");
+        fetchKompositionNorway.storageLocation= new MediaFile(downmixedOriginalVideo, 0f, -1f, "abc");
 
         Komposition fetchKompositionSwing = new Komposition(128,
                 new TimeStampFixedImageSampleSegment("Red bridge", 2919583, 6047708, 8),
@@ -99,7 +107,7 @@ public class BuildVideoFromScratchImagesTest {
                 new TimeStampFixedImageSampleSegment("Smile girl, smile", 34034000, 34993292, 15),
                 new TimeStampFixedImageSampleSegment("Swing through bridge with mountain smile", 45128417, 46713333, 8)
         );
-        fetchKompositionSwing.storageLocation = new MediaFile(new URL("file://" + theSwingVideo), 0f, 120F, "abc");
+        fetchKompositionSwing.storageLocation = new MediaFile(theSwingVideo, 0f, 120F, "abc123");
 
         Komposition buildKomposition =  new Komposition(124,
                 new VideoStillImageSegment("Dark lake", 0, 4),
@@ -144,7 +152,6 @@ public class BuildVideoFromScratchImagesTest {
         fetchKompositions.add(fetchKompositionSwing);
 
         KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition, 15);
-        //TODO EEERRRRR - Dont use the collectplans!
         StreamingImageCapturer.startUpThreads(planner.collectPlans(), imageStore);
 
 /*
@@ -175,26 +182,23 @@ public class BuildVideoFromScratchImagesTest {
 
     @Test
     public void specificVideoCompositionTest() throws IOException {
-        Komposition fetchKomposition = new Komposition(128,
-                new TimeStampFixedImageSampleSegment("Purple Mountains Clouds", 7541667, 21125000, 8),
+        Komposition fetchKompositionNorway = new Komposition(128,
+                new TimeStampFixedImageSampleSegment("Purple Mountains Clouds", 7541667, 20250000, 8),
                 new TimeStampFixedImageSampleSegment("Besseggen", 21250000, 27625000, 2),
                 new TimeStampFixedImageSampleSegment("Norway showing", 30166667, 34541667, 4),
                 new TimeStampFixedImageSampleSegment("Flower fjord", 35916667, 47000000, 8),
-                new TimeStampFixedImageSampleSegment("Slide Blue mountain top lake", 47083333, 58416667, 8),
+                new TimeStampFixedImageSampleSegment("Slide Blue mountain top lake", 47125000, 57750000, 8),
                 new TimeStampFixedImageSampleSegment("Fjord foss", 58541667, 64041667, 8),
                 new TimeStampFixedImageSampleSegment("Fjord like river", 64250000, 68958333, 8),
-                new TimeStampFixedImageSampleSegment("Dark lake", 69375000, 74583333, 8),
+                new TimeStampFixedImageSampleSegment("Dark lake", 69375000, 74375000, 8),
                 new TimeStampFixedImageSampleSegment("Mountain range", 74833333, 80250000, 8),
-                new TimeStampFixedImageSampleSegment("Omnious fjord Lightbrake", 80291667, 88666667, 8),
+                new TimeStampFixedImageSampleSegment("Omnious fjord Lightbrake", 80000000, 88125000, 8),
                 new TimeStampFixedImageSampleSegment("Boat village panorama", 88750000, 97000000, 8),
                 new TimeStampFixedImageSampleSegment("Village street", 97083333, 102541667, 8),
                 new TimeStampFixedImageSampleSegment("Seaside houses Panorama", 102583333, 108791667, 8),
                 new TimeStampFixedImageSampleSegment("Bergen movement", 108916667, 113541667, 8)
         );
-        PipeDream imageStore = new PipeDream();
-
-        new VideoThumbnailsCollector(imageStore).capture(downmixedOriginalVideo, fetchKomposition);
-
+        fetchKompositionNorway.storageLocation= new MediaFile(downmixedOriginalVideo, 0f, -1f, "abc");
 
         int bpm = 124;
         Komposition buildKomposition =  new Komposition(bpm,
@@ -214,10 +218,11 @@ public class BuildVideoFromScratchImagesTest {
                 new VideoStillImageSegment("Dark lake", 16, 8)
         );
 
-        MediaFile mf = new MediaFile(new URL(result3), 0f, 128f, "9bf2c55d6ef8bc7c384ba21f2920e9d1");
+        MediaFile mf = new MediaFile(new URL(result3), 0f, 128f, "6b98411e786e2e0e0f3bf80d8fcd889b");
         buildKomposition.storageLocation = mf;
-        KompositionPlanner planner = new KompositionPlanner(Collections.singletonList(fetchKomposition), buildKomposition, 15);
-
+        KompositionPlanner planner = new KompositionPlanner(Collections.singletonList(fetchKompositionNorway), buildKomposition, 15);
+        PipeDream imageStore = new PipeDream();
+        StreamingImageCapturer.startUpThreads(planner.collectPlans(), imageStore);
         CreateVideoFromScratchImages.createVideo(planner.buildPlan(), imageStore, sobotaMp3, config);
         assertEquals(mf.checksum, md5Checksum(mf.fileName));
     }

@@ -33,10 +33,10 @@ import static org.junit.Assert.assertTrue;
  */
 public class StreamingImageStoreTest {
 
-     URL downmixedOriginalVideo;
+    URL downmixedOriginalVideo;
     URL theSwingVideo;
     URL result4;
-    String sobotaMp3 = "/tmp/The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix.mp3";
+    URL sobotaMp3;
     KompositionPlanner planner;
     MediaFile resultingMediaFile;
 
@@ -45,11 +45,12 @@ public class StreamingImageStoreTest {
         downmixedOriginalVideo = Paths.get("/tmp/320_NORWAY-A_Time-Lapse_Adventure.mp4").toUri().toURL();
         theSwingVideo = Paths.get("/tmp/320_Worlds_Largest_Rope_Swing.mp4").toUri().toURL();
         result4 = Paths.get("/tmp/from_scratch_images_test_4.mp4").toUri().toURL();
+        sobotaMp3 = Paths.get("/tmp/The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix.mp3").toUri().toURL();
 
         Komposition fetchKompositionNorway = new Komposition(128,
-                new TimeStampFixedImageSampleSegment("Purple Mountains Clouds", 7541667, 21125000, 8),
+                new TimeStampFixedImageSampleSegment("Purple Mountains Clouds", 7541667, 20250000, 8),
                 new TimeStampFixedImageSampleSegment("Besseggen", 21250000, 27625000, 2),
-                new TimeStampFixedImageSampleSegment("Dark lake", 69375000, 74583333, 8)
+                new TimeStampFixedImageSampleSegment("Dark lake", 69375000, 74375000, 8)
         );
         fetchKompositionNorway.storageLocation = new MediaFile(downmixedOriginalVideo, 0f, 120F, "abc");
         //fetchKompositionNorway.framerate = 15;
@@ -110,7 +111,7 @@ public class StreamingImageStoreTest {
 
 
         List<Plan> collectPlan = planner.collectPlans();
-        assertEquals(5, collectPlan.size());
+        assertEquals(8, collectPlan.size());
         List<SegmentFramePlan> collectFramePlans = new ArrayList<>();
         for (Plan plan : collectPlan) {
             collectFramePlans.addAll(((SuperPlan) plan).getFramePlans());
@@ -121,7 +122,7 @@ public class StreamingImageStoreTest {
         for (Plan plan : collectPlan) {
             collectFrameRepresentations.addAll(((SuperPlan)plan).getFrameRepresentations());
         }
-        assertEquals(1625, collectFrameRepresentations.size());
+        assertEquals(220, collectFrameRepresentations.size());
 
         assertEquals(0, buildPlan.getFrameRepresentations().get(0).timestamp);
         assertTrue(buildPlan.getFrameRepresentations().get(0).referenceId().contains("Dark lake"));
@@ -156,7 +157,7 @@ public class StreamingImageStoreTest {
         assertEquals(20, ((SuperPlan) planner.collectPlans().get(4)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
         assertEquals(40, ((SuperPlan) planner.collectPlans().get(5)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
         assertEquals(80, ((SuperPlan) planner.collectPlans().get(6)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
-        assertEquals("e81b586fb372cc34022794ddf4ad1243", md5Checksum(resultingMediaFile.fileName));
+        assertEquals("64db0f32dce8f0646ce110cfa0aca841", md5Checksum(resultingMediaFile.fileName));
     }
 
     /* TODO Do we need this?
