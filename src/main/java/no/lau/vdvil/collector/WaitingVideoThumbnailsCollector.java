@@ -11,6 +11,7 @@ import no.lau.vdvil.renderer.video.creator.ImageStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.awt.image.BufferedImage;
+import java.util.List;
 
 public class WaitingVideoThumbnailsCollector {
 
@@ -25,6 +26,12 @@ public class WaitingVideoThumbnailsCollector {
 
     public WaitingVideoThumbnailsCollector(ImageStore imageStore) {
         this.imageStore = imageStore;
+    }
+
+    public void capture(List<Plan> collectPlans) {
+        for (Plan collectPlan : collectPlans) {
+            capture(collectPlan);
+        }
     }
 
     public void capture(Plan collectPlan) {

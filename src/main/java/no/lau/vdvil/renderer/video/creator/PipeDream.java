@@ -1,7 +1,6 @@
 package no.lau.vdvil.renderer.video.creator;
 
 import no.lau.vdvil.collector.FrameRepresentation;
-import no.lau.vdvil.collector.SegmentFramePlan;
 import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.renderer.video.creator.filter.FilterableSegment;
@@ -84,30 +83,26 @@ public class PipeDream<TYPE> implements ImageStore<TYPE> {
 
     public ImageRepresentation getNextImageRepresentation(String referenceId) {
         logger.trace("Looking for BlockQueue id = " + referenceId);
-        if(!segmentImageList.containsKey(referenceId)) {
-            logger.error("Pipe: " + referenceId + " not found in PipeDream");
-            return null;
+        int maxCount = 20;
+        while(maxCount > 0) {
+            if (!segmentImageList.containsKey(referenceId)) {
+                try {
+                    logger.warn("PipeDream waiting for {} - {}", referenceId, maxCount);
+                    Thread.sleep(5000);
+                    maxCount--;
+                } catch (InterruptedException e) {
+
+                }
+            }else {
+                break;
+            }
         }
         BlockingQueue<ImageRepresentation> blockingQueue = segmentImageList.get(referenceId);
         try {
-        //return blockingQueue.poll(1000, TimeUnit.MILLISECONDS);
-            return blockingQueue.take();
+        return blockingQueue.poll(10000, TimeUnit.MILLISECONDS);
+            //return blockingQueue.take();
         } catch (Exception e) {
             logger.error("Fuck? {}, {}", referenceId, e.getMessage());
-            return null;
-        }
-    }
-
-    public TYPE findImagesByFramePlan(SegmentFramePlan framePlan, FrameRepresentation frameRepresentation) {
-        String sid = framePlan.originalSegment.id();
-        try {
-            BlockingQueue<ImageRepresentation> blockingQueue = segmentImageList.get(sid);
-            ImageRepresentation representation = blockingQueue.poll(1000, TimeUnit.MILLISECONDS);
-            logger.debug("Segment {}", framePlan.originalSegment.id());
-            logger.debug("FrameRep {}, Imagerep {}", frameRepresentation.timestamp, representation.frameRepresentation.timestamp);
-            return (TYPE) representation.image;
-        } catch (Exception e) {
-            logger.debug("Fuck? {}, {}",sid, e.getMessage());
             return null;
         }
     }

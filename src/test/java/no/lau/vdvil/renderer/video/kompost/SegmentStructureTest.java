@@ -19,7 +19,7 @@ public class SegmentStructureTest {
     @Test
     public void testStuff() {
         Komposition videoKomposition1 = new Komposition(128,
-                new TimeStampFixedImageSampleSegment("Purple Mountains Clouds", 7541667, 21125000, 8),
+                new TimeStampFixedImageSampleSegment("Purple Mountains Clouds", 7541667, 19750000, 8),
                 new TimeStampFixedImageSampleSegment("Besseggen", 21250000, 27625000, 2),
                 new TimeStampFixedImageSampleSegment("Dark lake", 69375000, 74583333, 8)
         );

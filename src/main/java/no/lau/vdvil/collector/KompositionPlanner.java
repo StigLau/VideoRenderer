@@ -25,6 +25,9 @@ public class KompositionPlanner {
         for (Komposition fetchKomposition : fetchKompositions) {
             performIdUniquenessCheck(fetchKomposition.segments);
         }
+
+        //Sort buildSegments
+        verifyNonOverlappingSegments(buildKomposition.segments);
         //TODO Verify none-overlapping segments or handle overlapping segments through merging (?)!
 
         //Create collect plans - based on
@@ -85,6 +88,17 @@ public class KompositionPlanner {
         //this.lastTimeStamp = calculateLastTimeStamp()
         //Something needs to be sorted
         //Collections.sort(plans);
+    }
+
+    private void verifyNonOverlappingSegments(List<Segment> segments) {
+        long i = 0;
+        for (Segment segment : segments) {
+            if(segment.start() < i) {
+                throw new RuntimeException("Segment " + segment.id() + " collided with other segments");
+            } else {
+                i = segment.start() + segment.duration();
+            }
+        }
     }
 
     private Set<Segment> convertBuildSegmentListToCollectSegments(List<Segment> segments, List<Komposition> fetchKompositions) {

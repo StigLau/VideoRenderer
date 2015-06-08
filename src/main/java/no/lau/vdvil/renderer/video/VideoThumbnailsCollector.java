@@ -6,6 +6,7 @@ import com.xuggle.mediatool.MediaListenerAdapter;
 import com.xuggle.mediatool.ToolFactory;
 import com.xuggle.mediatool.event.IVideoPictureEvent;
 import com.xuggle.xuggler.Global;
+import no.lau.vdvil.collector.FrameRepresentation;
 import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
@@ -73,7 +74,8 @@ public class VideoThumbnailsCollector {
                 try {
                     if (segment instanceof ImageSampleInstruction) {
                         ImageSampleInstruction sampleInstruction = (ImageSampleInstruction) segment;
-                        imageStore.store(fetchImage(event, sampleInstruction), timestamp, sampleInstruction.id());
+                        imageStore.store(fetchImage(event, sampleInstruction), timestamp,
+                                new FrameRepresentation(timestamp, sampleInstruction.id(), segment));
                     } else if(segment instanceof TimeStampFixedImageSampleSegment) {
                         BufferedImage image = event.getImage();
                         if(image != null) {

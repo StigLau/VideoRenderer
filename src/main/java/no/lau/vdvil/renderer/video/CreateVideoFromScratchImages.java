@@ -96,17 +96,24 @@ class VideoAdapter {
                 ImageRepresentation imageRep = imageStore.getNextImageRepresentation(frameRepresentation.referenceId());
 
                 if (imageRep != null || previous != null) {
-                    logger.debug("Pushing image Clock:{} {}@{}-{}/{} from from pipedream to video ", nextFrameTime, frameRepresentation.referenceId(), imageRep.imageId, frameRepresentation.frameNr +1, frameRepresentation.numberOfFrames);
+                    String imgid;
+                    BufferedImage theImage;
+                    if(imageRep != null) {
+                        imgid= imageRep.imageId;
+                        theImage = (BufferedImage) imageRep.image;
+                    } else {
+                        imgid = "UNKNOWN IMAGE DUE TO NULL";
+                        theImage = previous;
+                    }
+
+                    logger.debug("Pushing image Clock:{} {}@{}-{}/{} from from pipedream to video ", nextFrameTime, frameRepresentation.referenceId(), imgid, frameRepresentation.frameNr +1, frameRepresentation.numberOfFrames);
                     frameRepresentation.use();
                     //In some circumstances, one must reuse the previous image
-                    BufferedImage theImage = (imageRep.image != null)?
-                            (BufferedImage) imageRep.image :
-                            previous;
 
                     writer.encodeVideo(videoStreamIndex, theImage, nextFrameTime, DEFAULT_TIME_UNIT);
                     previous = theImage;
                 } else {
-                    logger.error("WTF!!?! NULL?");
+                    logger.error("OMG OMG!!! Imagerep was null after waiting 10 seconds!! - {} - {}/{} is this related to division rest error?" + frameRepresentation.referenceId(), frameRepresentation.frameNr, frameRepresentation.numberOfFrames);
                 }
             }
             nextFrameTime += frameRate;

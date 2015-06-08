@@ -35,27 +35,19 @@ public class StreamingImageCapturer {
         throw new RuntimeException("Should not happen");
     }
     //TODO Align fetchPlans in a single thread!
-    public static void startUpThreads(List<Plan> fetchPlans, ImageStore pipeDream) {
-        for (Plan collectPlan : fetchPlans) {
-            log.info("Fetching plan:{}", collectPlan.id());
-            ImageCapturer imageCapturer = new ImageCapturer(collectPlan, pipeDream);
+    public static void startUpThreads(List<Plan> collectPlans, ImageStore pipeDream) {
+            ImageCapturer imageCapturer = new ImageCapturer(collectPlans, pipeDream);
             new Thread(imageCapturer).start();
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
     }
 }
 
 //Responsible for extracting the images. Will wait for more work to do
 class ImageCapturer implements Runnable {
 
-    private final Plan collectPlan;
+    private final List<Plan> collectPlan;
     private final ImageStore pipeDream;
 
-    public ImageCapturer(Plan collectPlan, ImageStore pipeDream) {
+    public ImageCapturer(List<Plan> collectPlan, ImageStore pipeDream) {
 
         this.collectPlan = collectPlan;
         this.pipeDream = pipeDream;
