@@ -88,7 +88,7 @@ public class PipeDream<TYPE> implements ImageStore<TYPE> {
             if (!segmentImageList.containsKey(referenceId)) {
                 try {
                     logger.warn("PipeDream waiting for {} - {}", referenceId, maxCount);
-                    Thread.sleep(5000);
+                    Thread.sleep(2000);
                     maxCount--;
                 } catch (InterruptedException e) {
 

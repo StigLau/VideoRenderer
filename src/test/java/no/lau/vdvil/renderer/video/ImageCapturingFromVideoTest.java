@@ -19,11 +19,15 @@ public class ImageCapturingFromVideoTest {
 
     @Test
     public void testCapturing() {
-        String inputFilename = "/Users/stiglau/vids/NORWAY-A_Time-Lapse_Adventure.mp4";
-        String outputFilePrefix = "/tmp/snaps/NORWAY-A_Time-Lapse_Adventure.mp4/";
+        String inputFilename = "/tmp/1280_NORWAY-A_Time-Lapse_Adventure.mp4";
+        String outputFilePrefix = "/tmp/snaps/1280_NORWAY-A_Time-Lapse_Adventure.mp4/";
+        //String inputFilename = "/tmp/320_NORWAY-A_Time-Lapse_Adventure.mp4";
+        //String outputFilePrefix = "/tmp/snaps/320_NORWAY-A_Time-Lapse_Adventure.mp4/";
+        //String inputFilename = "/tmp/NORWAY-A_Time-Lapse_Adventure.mp4";
+        //String outputFilePrefix = "/tmp/snaps/NORWAY-A_Time-Lapse_Adventure.mp4_2/";
         Komposition komposition = new Komposition(128,
-                new ImageSampleInstruction("First capture sequence", 0, 256, 15),
-                new ImageSampleInstruction("Second capture sequence", 256, 256, 1)
+                new ImageSampleInstruction("First capture sequence", 146, 4, 15)
+                //new ImageSampleInstruction("Second capture sequence", 300, 16, 1)
         );
         ImageStore ibs = new ImageFileStore<>(komposition, outputFilePrefix);
         new VideoThumbnailsCollector(ibs).capture(inputFilename, komposition);

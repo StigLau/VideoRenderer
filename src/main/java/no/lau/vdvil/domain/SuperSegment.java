@@ -44,6 +44,11 @@ public abstract class SuperSegment implements Segment {
         return calc(duration(), bpm);
     }
 
+    public int compareTo(Object otherSegment) {
+        //ascending order
+        return new Long(this.start()).compareTo(((Segment)otherSegment).start());
+    }
+
     public String toString() {
         return "Segment: " + id + " start:" + start + " duration: " + duration;
     }

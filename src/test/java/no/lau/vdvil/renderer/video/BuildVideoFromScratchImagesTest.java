@@ -72,7 +72,7 @@ public class BuildVideoFromScratchImagesTest {
                 new TimeStampFixedImageSampleSegment("Slide Blue mountain top lake", 47000000, 57000000, 8),
                 new TimeStampFixedImageSampleSegment("Fjord foss", 58541667, 62875000, 8),
                 new TimeStampFixedImageSampleSegment("Fjord like river", 64250000, 68125000, 8),
-                new TimeStampFixedImageSampleSegment("Dark lake", 68750000, 74000000, 8),
+                new TimeStampFixedImageSampleSegment("Dark lake", 69375000, 74000000, 8),
                 new TimeStampFixedImageSampleSegment("Mountain range", 74750000, 79500000, 8),
                 new TimeStampFixedImageSampleSegment("Omnious fjord Lightbrake", 79750000, 87750000, 8),
                 new TimeStampFixedImageSampleSegment("Boat village panorama", 88125000, 96125000, 8),
@@ -140,27 +140,13 @@ public class BuildVideoFromScratchImagesTest {
                 new VideoStillImageSegment("Swing through bridge with mountain smile", 72, 8),
                 new VideoStillImageSegment("Smile girl, smile", 80, 8),
                 new VideoStillImageSegment("Swing out from bridge", 88, 12)
-
-
-        //new VideoStillImageSegment("Omnious fjord Lightbrake", 76, 4),
-
-
-                /*
-                new VideoStillImageSegment("Seaside houses Panorama", 72, 4),
-                new VideoStillImageSegment("Boat village panorama", 76, 8),
-                new VideoStillImageSegment("Bergen movement", 84, 4)
-                */
-                //new Instruction("inst2", 64, 8, new VideoStillImageSegment("Norway showing", 32, 8),
-                //new Instruction("inst4", 56, 16, new VideoStillImageSegment("Flower fjord", 56, 16),
-                //new Instruction("inst2", 72, 8, new VideoStillImageSegment("Norway showing", 72, 8))
-
         );
-        MediaFile mf = new MediaFile(new URL(result2), 0f, 128f, "ad0e6fd14dcd283fe03167881dfe821d");
+        MediaFile mf = new MediaFile(new URL(result2), 0f, 128f, "68211470f443e842613b8d15c6a8174b");
         buildKomposition.storageLocation = mf;
 
 
         PipeDream imageStore = new PipeDream();
-        imageStore.setBufferSize(10);
+        imageStore.setBufferSize(100);
 
 
         List<Komposition> fetchKompositions = new ArrayList<>();
@@ -169,23 +155,6 @@ public class BuildVideoFromScratchImagesTest {
 
         KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition, 30);
         StreamingImageCapturer.startUpThreads(planner.collectPlans(), imageStore);
-
-/*
-        assertEquals(232, imageStore.findImagesBySegmentId("Purple Mountains Clouds").size());
-        assertEquals(57, imageStore.findImagesBySegmentId("Besseggen").size());
-        assertEquals(38, imageStore.findImagesBySegmentId("Norway showing").size());
-        assertEquals(191, imageStore.findImagesBySegmentId("Flower fjord").size());
-        assertEquals(188, imageStore.findImagesBySegmentId("Slide Blue mountain top lake").size());
-        assertEquals(53, imageStore.findImagesBySegmentId("Fjord foss").size());
-        assertEquals(58, imageStore.findImagesBySegmentId("Fjord like river").size());
-        assertEquals(95, imageStore.findImagesBySegmentId("Dark lake").size());
-        assertEquals(88, imageStore.findImagesBySegmentId("Mountain range").size());
-        assertEquals(132, imageStore.findImagesBySegmentId("Omnious fjord Lightbrake").size());
-        assertEquals(132, imageStore.findImagesBySegmentId("Boat village panorama").size());
-        assertEquals(87, imageStore.findImagesBySegmentId("Village street").size());
-        assertEquals(85, imageStore.findImagesBySegmentId("Seaside houses Panorama").size());
-        assertEquals(48, imageStore.findImagesBySegmentId("Bergen movement").size());
-        */
 
         CreateVideoFromScratchImages.createVideo(planner.buildPlan(), imageStore, sobotaMp3, config);
         logger.info("Storing file at {}", mf.fileName);
@@ -201,12 +170,6 @@ public class BuildVideoFromScratchImagesTest {
 
         int bpm = 124;
         Komposition buildKomposition =  new Komposition(bpm,
-                /*
-                new VideoStillImageSegment("Purple Mountains Clouds", 0, 16).filter(new TaktSplitter(1)),
-                new VideoStillImageSegment("Purple Mountains Clouds", 16, 16).filter(new TaktSplitter(2)),
-                new VideoStillImageSegment("Purple Mountains Clouds", 32, 16).filter(new TaktSplitter(4)),
-                new VideoStillImageSegment("Purple Mountains Clouds", 48, 16).filter(new TaktSplitter(1))
-                */
                 new VideoStillImageSegment("Dark lake", 0, 4).filter(new TaktSplitter(1)),
                 new VideoStillImageSegment("Purple Mountains Clouds", 4, 4)
                         .filter(new PercentageSplitter(0, 0.5), new TaktSplitter(1)),
