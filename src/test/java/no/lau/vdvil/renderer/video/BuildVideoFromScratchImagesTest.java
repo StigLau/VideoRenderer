@@ -141,12 +141,12 @@ public class BuildVideoFromScratchImagesTest {
                 new VideoStillImageSegment("Smile girl, smile", 80, 8),
                 new VideoStillImageSegment("Swing out from bridge", 88, 12)
         );
-        MediaFile mf = new MediaFile(new URL(result2), 0f, 128f, "68211470f443e842613b8d15c6a8174b");
+        MediaFile mf = new MediaFile(new URL(result2), 0f, 128f, "394387e72729aabc65806e7f3c4d6e47");
         buildKomposition.storageLocation = mf;
 
 
         PipeDream imageStore = new PipeDream();
-        imageStore.setBufferSize(100);
+        imageStore.setBufferSize(250);
 
 
         List<Komposition> fetchKompositions = new ArrayList<>();
