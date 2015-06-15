@@ -8,7 +8,7 @@ import static no.lau.vdvil.domain.utils.KompositionUtils.calc;
  */
 public abstract class SuperSegment implements Segment {
     protected String id;
-    private final long start;
+    protected long start; //Start can be moved in some circumstances
     private final long duration;
 
     public SuperSegment(String id, long start, long duration) {

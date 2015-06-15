@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * @author Stig@Lau.no 07/04/15.
  */
-public class VideoStillImageSegment<TYPE> extends SuperSegment implements FilterableSegment<TYPE> {
+public class VideoStillImageSegment<TYPE> extends SuperSegment implements FilterableSegment<TYPE>, MovableSegment {
 
     //Whether the list is to be reverted
     public boolean reverted = false;
@@ -65,5 +65,9 @@ public class VideoStillImageSegment<TYPE> extends SuperSegment implements Filter
 
     public List applyModifications(List<TYPE> inList) {
         return modificator.applyModifications(inList);
+    }
+
+    public void moveStart(long newStart) {
+        super.start = newStart;
     }
 }

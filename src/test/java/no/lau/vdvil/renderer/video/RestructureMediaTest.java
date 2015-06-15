@@ -44,7 +44,7 @@ public class RestructureMediaTest {
         ImageStore ibs = new PipeDream();
         new VideoThumbnailsCollector(ibs).capture(collectPicsFromVideo, fetchKomposition);
 
-        Komposition buildKomposition =  new Komposition(128,null);
+        Komposition buildKomposition =  new Komposition(128);
                 //new VideoStillImageSegment("inst1", 8, 7, ((ImageSampleInstruction)fetchKomposition.segments.get(0)).collectedImages()));
         buildKomposition.storageLocation = new MediaFile(new URL("file:///tmp/from_pix_with_xuggle.mp4"), 0f, 128f, "dunno yet");
 
