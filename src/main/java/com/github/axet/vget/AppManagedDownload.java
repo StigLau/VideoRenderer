@@ -30,7 +30,7 @@ public class AppManagedDownload {
             //
             // if youtube does not have video with requested quality, program
             // will raise en exception.
-            VGetParser user = null;
+            VGetParser user;
 
             // create proper html parser depends on url
             user = VGet.parser(url);

@@ -73,12 +73,9 @@ class VideoAdapter {
 
     long nextFrameTime = 0;
 
-    final ImageStore<BufferedImage> imageStore;
-
 
     public VideoAdapter(Config config, IMediaWriter writer, ImageStore imageStore) {
         this.writer = writer;
-        this.imageStore = imageStore;
         this.width = config.width;
         this.height = config.height;
         this.frameRate = config.framerate;
@@ -93,7 +90,7 @@ class VideoAdapter {
         while (clock >= nextFrameTime) {
             List<FrameRepresentation> frameRepresentations = buildPlan.whatToDoAt(nextFrameTime);
             for (FrameRepresentation frameRepresentation : frameRepresentations) {
-                ImageRepresentation imageRep = imageStore.getNextImageRepresentation(frameRepresentation.referenceId());
+                ImageRepresentation imageRep = frameRepresentation.contentStore.getNextImageRepresentation(frameRepresentation.referenceId());
 
                 if (imageRep != null || previous != null) {
                     String imgid;

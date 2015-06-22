@@ -45,6 +45,7 @@ public class KompositionPlanner {
 
 //        List<SegmentKompositionMap> alignedSegments = new ForNoTull(fetchKompositions)
 //                .alignSegments(buildKomposition.segments, buildKomposition.bpm);
+        //Create CollectPlan list based on the buildPlan
         for (SegmentFramePlan buildFramePlan : ((SuperPlan) buildPlan).getFramePlans()) {
             Segment collectSegment = segmentIdCollectSegmentMap.get(buildFramePlan.originalSegment.shortId());
             Komposition fetchKomposition = segmentFetchKompositionMap.get(collectSegment);

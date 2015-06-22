@@ -75,7 +75,7 @@ public class VideoThumbnailsCollector {
                     if (segment instanceof ImageSampleInstruction) {
                         ImageSampleInstruction sampleInstruction = (ImageSampleInstruction) segment;
                         imageStore.store(fetchImage(event, sampleInstruction), timestamp,
-                                new FrameRepresentation(timestamp, sampleInstruction.id(), segment));
+                                new FrameRepresentation(timestamp, sampleInstruction.id(), segment, imageStore));
                     } else if(segment instanceof TimeStampFixedImageSampleSegment) {
                         BufferedImage image = event.getImage();
                         if(image != null) {

@@ -22,10 +22,9 @@ public class WaitingVideoThumbnailsCollector {
     // Time of last frame write
     private double mLastPtsWrite = Global.NO_PTS;
     private Logger logger = LoggerFactory.getLogger(WaitingVideoThumbnailsCollector.class);
-    private final ImageStore imageStore;
 
+    @Deprecated //Remove imageStore in constructor
     public WaitingVideoThumbnailsCollector(ImageStore imageStore) {
-        this.imageStore = imageStore;
     }
 
     public void capture(List<Plan> collectPlans) {
@@ -44,7 +43,7 @@ public class WaitingVideoThumbnailsCollector {
             // stipulate that we want BufferedImages created in BGR 24bit color space
             mediaReader.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
 
-            mediaReader.addListener(new ImageSnapListener(collectPlan, imageStore));
+            mediaReader.addListener(new ImageSnapListener(collectPlan));
 
             // read out the contents of the media file and
             // dispatch events to the attached listener
@@ -59,12 +58,10 @@ public class WaitingVideoThumbnailsCollector {
 
     private class ImageSnapListener extends MediaListenerAdapter {
         private Plan collectPlan;
-        final ImageStore<BufferedImage> imageStore;
         BufferedImage previous = null;
 
-        private ImageSnapListener(Plan collectPlan, ImageStore imageStore) {
+        private ImageSnapListener(Plan collectPlan) {
             this.collectPlan = collectPlan;
-            this.imageStore = imageStore;
         }
 
         public void onVideoPicture(IVideoPictureEvent event) {
@@ -83,7 +80,7 @@ public class WaitingVideoThumbnailsCollector {
 
         private void writeImage(BufferedImage image, long timestamp, FrameRepresentation frameRepresentation) {
             try {
-                imageStore.store(image, timestamp, frameRepresentation);
+                frameRepresentation.contentStore.store(image, timestamp, frameRepresentation);
                 frameRepresentation.use();
                 logger.trace("Storing image {}@{} {}/{}", frameRepresentation.referenceId(), timestamp);
             } catch (Exception e) {

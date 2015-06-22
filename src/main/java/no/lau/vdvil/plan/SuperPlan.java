@@ -5,6 +5,10 @@ import no.lau.vdvil.collector.SegmentFramePlan;
 import no.lau.vdvil.collector.SimpleCalculator;
 import no.lau.vdvil.domain.MediaFile;
 import no.lau.vdvil.domain.Segment;
+import no.lau.vdvil.domain.VideoStillImageSegment;
+import no.lau.vdvil.renderer.video.creator.ImageFileStore;
+import no.lau.vdvil.renderer.video.creator.ImageStore;
+import no.lau.vdvil.renderer.video.creator.PipeDream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.*;
@@ -24,11 +28,10 @@ public class SuperPlan implements Plan{
     public SuperPlan(Segment collectionSegment, SegmentFramePlan buildFramePlan, MediaFile storageLocation, long finalFramerate, float collectBpm) {
         this.storageLocation = storageLocation;
         lastTimeStamp = calculateLastTimeStamp(Collections.singletonList(collectionSegment), collectBpm);
-        //this.collectId = komposition.segments.get(0).id() + "_" + Math.abs(new Random().nextInt()); //TODO Les fra Map om hva ID'en skal hete!
 
             collectId = buildFramePlan.originalSegment.id();
             Segment buildSegment = buildFramePlan.originalSegment;
-            SegmentFramePlan framePlan = new SegmentFramePlan(collectId, collectionSegment, collectBpm, finalFramerate, new SimpleCalculator(collectionSegment.durationCalculated(collectBpm), buildSegment.durationCalculated(collectBpm)));
+            SegmentFramePlan framePlan = new SegmentFramePlan(collectId, collectionSegment, collectBpm, finalFramerate, new SimpleCalculator(collectionSegment.durationCalculated(collectBpm), buildSegment.durationCalculated(collectBpm)), buildFramePlan.reversed, buildFramePlan.pipe);
             framePlans.add(framePlan);
             frameRepresentations.addAll(framePlan.frameRepresentations);
     }

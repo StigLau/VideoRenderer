@@ -11,6 +11,7 @@ import java.util.List;
 public class VideoStillImageSegment<TYPE> extends SuperSegment implements FilterableSegment<TYPE>, MovableSegment {
 
     //Whether the list is to be reverted
+    //TODO Change to Reverse
     public boolean reverted = false;
     public double fromLimit = 0;
     public double untilLimit = 1;
@@ -21,8 +22,12 @@ public class VideoStillImageSegment<TYPE> extends SuperSegment implements Filter
     }
 
     public VideoStillImageSegment revert() {
-        reverted = false;
+        reverted = true;
         return this;
+    }
+
+    public boolean isReversed() {
+        return reverted;
     }
 
     public VideoStillImageSegment limit(double from, double until) {
