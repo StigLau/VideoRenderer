@@ -1,5 +1,6 @@
 package no.lau.vdvil.renderer.video.shrinker;
 
+import no.lau.vdvil.shrinker.MediaConvertor;
 import org.junit.Test;
 
 /**
@@ -11,8 +12,8 @@ public class MediaConvertorTest {
         Integer WIDTH = 320;
         Integer HEIGHT = 240;
         //String filename = "Onewheel_The_World_is_Your_Playground.mp4";
-        String filename = "NORWAY-A_Time-Lapse_Adventure.mp4";
-        MediaConvertor.convert("/tmp/" + filename, "/tmp/" + WIDTH + "_" + filename, WIDTH, HEIGHT);
+        String filename = "NORWAY-A_Time_Lapse_Adventure.mp4";
+        MediaConvertor.convert("/tmp/jalla/" + filename, "/tmp/" + WIDTH + "_" + filename, WIDTH, HEIGHT);
     }
 }
 

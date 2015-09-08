@@ -47,7 +47,7 @@ public class BuildVideoFromScratchImagesTest {
     private String result3 = "file:///tmp/from_scratch_images_test_3.mp4";
 
     //HighRez
-    Config config = new Config(1280, 720,DEFAULT_TIME_UNIT.convert(30, MILLISECONDS));
+    Config config = new Config(320, 180,DEFAULT_TIME_UNIT.convert(30, MILLISECONDS));
     //Low Rez
     //Config config = new Config(320, 200,DEFAULT_TIME_UNIT.convert(15, MILLISECONDS));
     Logger logger = LoggerFactory.getLogger(BuildVideoFromScratchImagesTest.class);
@@ -58,11 +58,11 @@ public class BuildVideoFromScratchImagesTest {
         //downmixedOriginalVideo = Paths.get("/tmp/320_NORWAY-A_Time-Lapse_Adventure.mp4").toUri().toURL();
         //theSwingVideo = Paths.get("/tmp/320_Worlds_Largest_Rope_Swing.mp4").toUri().toURL();
         //HighRez
-        downmixedOriginalVideo = Paths.get("/tmp/1280_NORWAY-A_Time-Lapse_Adventure.mp4").toUri().toURL();
-        theSwingVideo = Paths.get("/tmp/1280_Worlds_Largest_Rope_Swing.mp4").toUri().toURL();
+        downmixedOriginalVideo = Paths.get("/tmp/jalla/NORWAY-A_Time_Lapse_Adventure/320x180_NORWAY-A_Time_Lapse_Adventure.mp4").toUri().toURL();
+        theSwingVideo = Paths.get("/tmp/jalla/Worlds_Largest_Rope_Swing/320x180_Worlds_Largest_Rope_Swing.mp4").toUri().toURL();
 
         snapshotFileStorage = Paths.get("/tmp/snaps/CLMD-The_Stockholm_Syndrome_320/").toUri().toURL();
-        sobotaMp3 = Paths.get("/Users/stiglau/vids/The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix.mp3").toUri().toURL();
+        sobotaMp3 = Paths.get("/tmp/jalla/The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix/320x180_The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix.mp3").toUri().toURL();
 
         fetchKompositionNorway = new Komposition(128,
                 new TimeStampFixedImageSampleSegment("Purple Mountains Clouds", 7541667, 19750000, 8),
@@ -140,7 +140,7 @@ public class BuildVideoFromScratchImagesTest {
                 new VideoStillImageSegment("Swing through bridge with mountain smile", 72, 8),
                 new VideoStillImageSegment("Smile girl, smile", 80, 8),
                 new VideoStillImageSegment("Swing out from bridge", 88, 12)
-        ).filter(16, 16);
+        );//.filter(16, 16);
         MediaFile mf = new MediaFile(new URL(result2), 0f, 128f, "be343356691c5000621674ba9f6cf9f6");
         buildKomposition.storageLocation = mf;
 

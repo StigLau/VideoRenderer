@@ -23,6 +23,18 @@ public class KompositionUtil {
         }
     }
 
+    /**
+     * Verify that all segments have sane starts with ends coming afterwards
+     */
+    public static void performVerificationOfStartAndEnd(List<Segment> segments) {
+        for (Segment segment : segments) {
+            if(segment.start() < 0 || segment.duration() < 0) {
+                long end = segment.start() + segment.duration();
+                throw new RuntimeException("Error - Segment ID \"" + segment.id() + "\" is not sane! Segment time:" + segment.start() + "-" + end);
+            }
+        }
+    }
+
     public static List<List<Segment>> alignSegments(List<Segment> inSegments, float bpm) {
         return alignSegments(inSegments, bpm, new ArrayList<>());
     }

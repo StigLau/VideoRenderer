@@ -14,4 +14,8 @@ public class Config {
         this.height = height;
         this.framerate = framerate;
     }
+
+    public String toString() {
+        return "W:" + width + " H:" + height + " rate:" + framerate;
+    }
 }

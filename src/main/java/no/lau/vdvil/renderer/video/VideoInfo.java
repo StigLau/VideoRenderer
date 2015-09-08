@@ -20,7 +20,7 @@ public class VideoInfo {
 		
 		// check if the operation was successful
 		if (result<0)
-			throw new RuntimeException("Failed to open media file");
+			throw new RuntimeException("Failed to open media file " + filename);
         return container;
 	}
 

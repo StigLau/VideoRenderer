@@ -6,6 +6,7 @@ import no.lau.vdvil.plan.Plan;
 import no.lau.vdvil.plan.SuperPlan;
 import java.util.*;
 import static no.lau.vdvil.renderer.video.KompositionUtil.performIdUniquenessCheck;
+import static no.lau.vdvil.renderer.video.KompositionUtil.performVerificationOfStartAndEnd;
 
 /**
  * @author Stig@Lau.no 10/05/15.
@@ -24,10 +25,13 @@ public class KompositionPlanner {
         verifyNonOverlappingSegments(buildSegments);
         buildPlan = new SuperPlan(buildSegments, buildKomposition.storageLocation, buildKomposition.bpm, finalFramerate);
 
-        //Verify that all fetchSegments are unique
         for (Komposition fetchKomposition : fetchKompositions) {
+            //Verify that all fetchSegments are unique
             performIdUniquenessCheck(fetchKomposition.segments);
+            //Verify that all segment starts are before ends
+            performVerificationOfStartAndEnd(fetchKomposition.segments);
         }
+
 
         //Conveniencemap Segment <--> komposition
         Map<Segment, Komposition> segmentFetchKompositionMap = new HashMap<>();
@@ -42,15 +46,17 @@ public class KompositionPlanner {
             segmentIdCollectSegmentMap.put(segment.shortId(), segment);
         }
 
-
-//        List<SegmentKompositionMap> alignedSegments = new ForNoTull(fetchKompositions)
-//                .alignSegments(buildKomposition.segments, buildKomposition.bpm);
         for (SegmentFramePlan buildFramePlan : ((SuperPlan) buildPlan).getFramePlans()) {
-            Segment collectSegment = segmentIdCollectSegmentMap.get(buildFramePlan.originalSegment.shortId());
-            Komposition fetchKomposition = segmentFetchKompositionMap.get(collectSegment);
+            String segmentId = buildFramePlan.originalSegment.shortId();
+            Segment collectSegment = segmentIdCollectSegmentMap.get(segmentId);
+            if(collectSegment == null) {
+                throw new RuntimeException("Could not find collectSegment with id: " + segmentId);
+            } else {
+                Komposition fetchKomposition = segmentFetchKompositionMap.get(collectSegment);
 
-            SuperPlan collectPlan = new SuperPlan(collectSegment, buildFramePlan, fetchKomposition.storageLocation, finalFramerate, fetchKomposition.bpm);
-            collectPlans.add(collectPlan);
+                SuperPlan collectPlan = new SuperPlan(collectSegment, buildFramePlan, fetchKomposition.storageLocation, finalFramerate, fetchKomposition.bpm);
+                collectPlans.add(collectPlan);
+            }
         }
     }
 

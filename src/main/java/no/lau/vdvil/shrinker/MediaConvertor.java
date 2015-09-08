@@ -1,4 +1,4 @@
-package no.lau.vdvil.renderer.video.shrinker;
+package no.lau.vdvil.shrinker;
 
 import com.xuggle.mediatool.IMediaReader;
 import com.xuggle.mediatool.IMediaWriter;
@@ -20,7 +20,7 @@ public class MediaConvertor {
 
     public static void convert(String input, String output, int width, int height) {
         long startTime = System.currentTimeMillis();
-        printWidthAndHeight(input);
+        printWidthAndHeight(input, width, height);
 
         // reader
         IMediaReader reader = ToolFactory.makeReader(input);
@@ -46,11 +46,10 @@ public class MediaConvertor {
         log.info("Time used: " + (System.currentTimeMillis() - startTime)/1000 + " seconds" );
     }
 
-    private static void printWidthAndHeight(String input) {
+    private static void printWidthAndHeight(String input, int targetWidth, int targetHeight) {
         IContainer container = VideoInfo.getVideoProperties(input);
         IStreamCoder stream = container.getStream(0).getStreamCoder();
-        log.info("Width: " + stream.getWidth());
-        log.info("Height: " + stream.getHeight());
+        log.info("Converting " + input + " X,Y " + stream.getWidth()  + "," + stream.getHeight() + "--> " + targetWidth + ","+ targetHeight);
         stream.close();
         container.close();
     }
