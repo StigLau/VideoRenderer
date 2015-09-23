@@ -29,13 +29,13 @@ public class MediaConvertor {
         IMediaWriter writer = ToolFactory.makeWriter(output, reader);
 
         // create custom listeners
-        MyVideoListener myVideoListener = new MyVideoListener(width, height);
+        ShrinkListener shrinkListener = new ShrinkListener(width, height);
         Resizer resizer = new Resizer(width, height);
 
 
         reader.addListener(resizer);
         resizer.addListener(writer);
-        writer.addListener(myVideoListener);
+        writer.addListener(shrinkListener);
 
         // show video when encoding
         //reader.addListener(ToolFactory.makeViewer(true));
@@ -55,11 +55,11 @@ public class MediaConvertor {
     }
 }
 
-class MyVideoListener extends MediaToolAdapter {
+class ShrinkListener extends MediaToolAdapter {
     private Integer width;
     private Integer height;
 
-    public MyVideoListener(Integer aWidth, Integer aHeight) {
+    public ShrinkListener(Integer aWidth, Integer aHeight) {
         this.width = aWidth;
         this.height = aHeight;
     }
