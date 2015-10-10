@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
-public class WaitingVideoThumbnailsCollector {
+public class WaitingVideoThumbnailsCollector implements ImageCollector {
 
     // The video stream index, used to ensure we display frames from one and
     // only one video stream from the media container.
@@ -22,19 +22,21 @@ public class WaitingVideoThumbnailsCollector {
     // Time of last frame write
     private double mLastPtsWrite = Global.NO_PTS;
     private Logger logger = LoggerFactory.getLogger(WaitingVideoThumbnailsCollector.class);
-    private final ImageStore imageStore;
+    private final ImageStore<BufferedImage> imageStore;
+    private final List<Plan> collectPlans;
 
-    public WaitingVideoThumbnailsCollector(ImageStore imageStore) {
+    public WaitingVideoThumbnailsCollector(ImageStore<BufferedImage> imageStore, List<Plan> collectPlans) {
         this.imageStore = imageStore;
+        this.collectPlans = collectPlans;
     }
 
-    public void capture(List<Plan> collectPlans) {
+    public void run() {
         for (Plan collectPlan : collectPlans) {
-            capture(collectPlan);
+            runSingle(collectPlan);
         }
     }
 
-    public void capture(Plan collectPlan) {
+    void runSingle(Plan collectPlan) {
         logger.info("Starting capture {}", collectPlan.id());
         long start = System.currentTimeMillis();
 
