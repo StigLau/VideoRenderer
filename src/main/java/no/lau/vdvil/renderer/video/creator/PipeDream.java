@@ -24,7 +24,20 @@ public class PipeDream<TYPE> implements ImageStore<TYPE> {
     //Segment Identifier, List of buffered images
     public final Map<String, BlockingQueue<ImageRepresentation>> segmentImageList = new HashMap<>();
     private Logger logger = LoggerFactory.getLogger(PipeDream.class);
-    private int bufferSize = 1000;
+    //Number of images to buffer before blocking
+    private final int bufferSize;
+    private final int waitPeriod;
+
+    //Standard constructor
+    public PipeDream() {
+        this.waitPeriod = 2000;
+        bufferSize = 1000;
+    }
+
+    public PipeDream(int bufferSize, int retryAttemptWaitPeriodMillis) {
+        this.waitPeriod = retryAttemptWaitPeriodMillis;
+        this.bufferSize = bufferSize;
+    }
 
     public List<TYPE> getImageAt(Long timeStamp, Komposition komposition) {
         float bpm = komposition.bpm;
@@ -83,13 +96,12 @@ public class PipeDream<TYPE> implements ImageStore<TYPE> {
 
     public ImageRepresentation getNextImageRepresentation(String referenceId) {
         logger.trace("Looking for BlockQueue id = " + referenceId);
-        int maxCount = 20;
-        while(maxCount > 0) {
+        int numberOfRetryAttempts = 10;
+        for (int retryNr = 0; retryNr < numberOfRetryAttempts; retryNr++) {
             if (!segmentImageList.containsKey(referenceId)) {
                 try {
-                    logger.warn("PipeDream waiting for {} - {}", referenceId, maxCount);
-                    Thread.sleep(2000);
-                    maxCount--;
+                    logger.warn("PipeDream waiting for {} - {}", referenceId, numberOfRetryAttempts - retryNr);
+                    Thread.sleep(waitPeriod);
                 } catch (InterruptedException e) {
 
                 }
@@ -136,9 +148,5 @@ public class PipeDream<TYPE> implements ImageStore<TYPE> {
             logger.debug("Fuck? {}, {}",segmentId, e.getMessage());
             return Collections.emptyList();
         }
-    }
-
-    public void setBufferSize(int imagesBufferSize) {
-        this.bufferSize = imagesBufferSize;
     }
 }
