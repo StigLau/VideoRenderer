@@ -27,16 +27,19 @@ public class PipeDream<TYPE> implements ImageStore<TYPE> {
     //Number of images to buffer before blocking
     private final int bufferSize;
     private final int waitPeriod;
+    private final int queueBlockWait;
 
     //Standard constructor
     public PipeDream() {
         this.waitPeriod = 2000;
         bufferSize = 1000;
+        queueBlockWait = 10000;
     }
 
-    public PipeDream(int bufferSize, int retryAttemptWaitPeriodMillis) {
+    public PipeDream(int bufferSize, int retryAttemptWaitPeriodMillis, int queueBlockWait) {
         this.waitPeriod = retryAttemptWaitPeriodMillis;
         this.bufferSize = bufferSize;
+        this.queueBlockWait = queueBlockWait;
     }
 
     public List<TYPE> getImageAt(Long timeStamp, Komposition komposition) {
@@ -111,7 +114,7 @@ public class PipeDream<TYPE> implements ImageStore<TYPE> {
         }
         BlockingQueue<ImageRepresentation> blockingQueue = segmentImageList.get(referenceId);
         try {
-        return blockingQueue.poll(10000, TimeUnit.MILLISECONDS);
+        return blockingQueue.poll(queueBlockWait, TimeUnit.MILLISECONDS);
             //return blockingQueue.take();
         } catch (Exception e) {
             logger.error("Fuck? {}, {}", referenceId, e.getMessage());

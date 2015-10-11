@@ -93,7 +93,7 @@ public class StreamingImageStoreTest {
         buildKomposition.framerate = 30;
         buildKomposition.storageLocation = new MediaFile(result4, 0f, 128f, "0e7d51d26f573386c229b772d126754a");
         this.resultingMediaFile = buildKomposition.storageLocation;
-        planner = new KompositionPlanner(fetchKompositions, buildKomposition, 15);//<!-- Here is the key!
+        planner = new KompositionPlanner(fetchKompositions, buildKomposition, 30);//<!-- Here is the key!
     }
 
     @Test
@@ -133,13 +133,13 @@ public class StreamingImageStoreTest {
 
     @Test
     public void testStreamingFromInVideoSource() throws InterruptedException, IOException {
-        PipeDream<BufferedImage> imageStore = new PipeDream<>(200, 1000);
+        PipeDream<BufferedImage> imageStore = new PipeDream<>(200, 5000, 1000);
         TimeStampFixedImageSampleSegment segment = new TimeStampFixedImageSampleSegment("Dark lake", 69375000, 74000000, 100);
         new Thread(new StrippedWaitingVideoThumbnailsCollector(segment,downmixedOriginalVideo, imageStore)).start();
 
-        Thread.sleep(30000);
         System.out.println("Need to know how many pics to retrieve (Preferrably in a planner) before proceeding!");
-        CreateVideoFromScratchImages.createVideo(segment, result4.getFile(), imageStore, new Config(1280, 720, DEFAULT_TIME_UNIT.convert(30, MILLISECONDS)));
+        Plan buildPlan = new TimeStampFixedSegmentPlan(segment, result4.getFile());
+        CreateVideoFromScratchImages.createVideo(buildPlan, imageStore, new Config(1280, 720, DEFAULT_TIME_UNIT.convert(30, MILLISECONDS)));
 
 
         assertEquals(20, ((SuperPlan)planner.buildPlan()).getFrameRepresentations().stream().filter(frame -> frame.used).count());
