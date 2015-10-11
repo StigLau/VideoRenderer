@@ -14,6 +14,7 @@ public class TimeStampFixedSegmentPlan implements Plan {
     private final String mediaFile;
     private TimeStampFixedImageSampleSegment segment;
     private final long length;
+    private transient int frameNrLopenr = 0;
 
     public TimeStampFixedSegmentPlan(TimeStampFixedImageSampleSegment segment, String resultingMediaFile) {
         this.segment = segment;
@@ -21,27 +22,25 @@ public class TimeStampFixedSegmentPlan implements Plan {
         length = segment.timestampEnd - segment.timestampStart;
     }
 
-    @Override
     public boolean isFinishedProcessing(long timestamp) {
         return timestamp > length;
     }
 
-    @Override
     public List<FrameRepresentation> whatToDoAt(long timestamp) {
         //Assumes that segments will be written at start
         if(timestamp >= 0 && timestamp < length) {
-            return Collections.singletonList(new FrameRepresentation(timestamp, segment.id(), segment));
+            FrameRepresentation fr = new FrameRepresentation(timestamp, segment.id(), segment);
+            fr.frameNr = frameNrLopenr++;
+            return Collections.singletonList(fr);
         } else
             return Collections.emptyList();
 
     }
 
-    @Override
     public String id() {
         return segment.id();
     }
 
-    @Override
     public String ioFile() {
         return mediaFile;
     }

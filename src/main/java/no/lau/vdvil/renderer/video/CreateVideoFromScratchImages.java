@@ -7,6 +7,7 @@ import com.xuggle.xuggler.IContainer;
 import com.xuggle.xuggler.IPacket;
 import com.xuggle.xuggler.IStreamCoder;
 import no.lau.vdvil.collector.FrameRepresentation;
+import no.lau.vdvil.plan.AudioPlan;
 import no.lau.vdvil.plan.Plan;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
 import no.lau.vdvil.renderer.video.store.ImageRepresentation;
@@ -34,7 +35,11 @@ public class CreateVideoFromScratchImages {
 
         VideoAdapter videoAdapter = new VideoAdapter(config, writer, imageStore);
         //AudioStream must be added after videostream!
-        //AudioAdapter audioAdapter = new AudioAdapter(inputAudioFilePath.getFile(), writer);
+
+        AudioAdapter audioAdapter = null;
+        if(buildPlan instanceof AudioPlan) {
+            audioAdapter = new AudioAdapter(((AudioPlan)buildPlan).audioLocation().getFile(), writer);
+        }
 
         try {
             // the total number of audio samples
@@ -46,7 +51,9 @@ public class CreateVideoFromScratchImages {
                 // while the clock time exceeds the time of the next video frame,
                 // get and encode the next video frame
                 videoAdapter.writeNextPacket(clock, buildPlan);
-                //audioAdapter.writeNextPacket(clock, buildPlan);
+                if(buildPlan instanceof AudioPlan) {
+                    audioAdapter.writeNextPacket(clock, buildPlan);
+                }
                 totalSampleCount += sampleCount;
             }
             log.info("Finished writing video");

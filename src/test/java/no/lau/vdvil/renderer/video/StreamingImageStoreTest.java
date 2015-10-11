@@ -7,6 +7,9 @@ import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.plan.Plan;
 import no.lau.vdvil.plan.SuperPlan;
 import no.lau.vdvil.renderer.video.creator.PipeDream;
+import no.lau.vdvil.renderer.video.creator.filter.PercentageSplitter;
+import no.lau.vdvil.renderer.video.creator.filter.Reverter;
+import no.lau.vdvil.renderer.video.creator.filter.TaktSplitter;
 import no.lau.vdvil.renderer.video.stigs.TimeStampFixedImageSampleSegment;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Before;
@@ -31,6 +34,7 @@ public class StreamingImageStoreTest {
     URL downmixedOriginalVideo;
     URL theSwingVideo;
     URL result4;
+    URL strippedResult;
     URL sobotaMp3;
     KompositionPlanner planner;
     MediaFile resultingMediaFile;
@@ -40,9 +44,10 @@ public class StreamingImageStoreTest {
         downmixedOriginalVideo = Paths.get("/tmp/videoTest/NORWAY-A_Time_Lapse_Adventure/NORWAY-A_Time_Lapse_Adventure.mp4").toUri().toURL();
         theSwingVideo = Paths.get("/tmp/videoTest/Worlds_Largest_Rope_Swing/Worlds_Largest_Rope_Swing.mp4").toUri().toURL();
         result4 = Paths.get("/tmp/from_scratch_images_test_v4.mp4").toUri().toURL();
+        strippedResult = Paths.get("/tmp/streamingImagesStrippedResult.mp4").toUri().toURL();
         sobotaMp3 = Paths.get("/tmp/videoTest/The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix/The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix.mp3").toUri().toURL();
 
-        Komposition fetchKompositionNorway = new Komposition(20,
+        Komposition fetchKompositionNorway = new Komposition(128,
                 new TimeStampFixedImageSampleSegment("Purple Mountains Clouds", 7541667, 19750000, 8),
                 new TimeStampFixedImageSampleSegment("Besseggen", 21250000, 27625000, 2),
                 new TimeStampFixedImageSampleSegment("Dark lake", 69375000, 74000000, 100)
@@ -75,8 +80,7 @@ public class StreamingImageStoreTest {
                 */
                 //new VideoStillImageSegment("Purple Mountains Clouds", 0, 32).filter(new TaktSplitter(4)),
                 //new VideoStillImageSegment("Dark lake", 32, 16).filter(new TaktSplitter(4))
-                new VideoStillImageSegment("Dark lake", 0, 8)
-                /*
+                new VideoStillImageSegment("Dark lake", 0, 4).filter(new TaktSplitter(4)),
                 new VideoStillImageSegment("Purple Mountains Clouds", 4, 4)
                         .filter(new PercentageSplitter(0, 0.5), new TaktSplitter(1)),
                 new VideoStillImageSegment("Dark lake", 8, 2)
@@ -88,12 +92,12 @@ public class StreamingImageStoreTest {
                 new VideoStillImageSegment("Dark lake", 16, 8),
                 new VideoStillImageSegment("Smile girl, smile", 24, 16),
                 new VideoStillImageSegment("Swing into bridge", 40, 4)
-                */
         );
-        buildKomposition.framerate = 30;
+        buildKomposition.framerate = 24;
         buildKomposition.storageLocation = new MediaFile(result4, 0f, 128f, "0e7d51d26f573386c229b772d126754a");
         this.resultingMediaFile = buildKomposition.storageLocation;
-        planner = new KompositionPlanner(fetchKompositions, buildKomposition, 30);//<!-- Here is the key!
+        planner = new KompositionPlanner(fetchKompositions, buildKomposition, 24);//<!-- Here is the key!
+        ((SuperPlan)planner.buildPlan()).audioLocation = sobotaMp3;
     }
 
     @Test
@@ -134,16 +138,13 @@ public class StreamingImageStoreTest {
     @Test
     public void testStreamingFromInVideoSource() throws InterruptedException, IOException {
         PipeDream<BufferedImage> imageStore = new PipeDream<>(200, 5000, 1000);
-        TimeStampFixedImageSampleSegment segment = new TimeStampFixedImageSampleSegment("Dark lake", 69375000, 74000000, 100);
-        new Thread(new StrippedWaitingVideoThumbnailsCollector(segment,downmixedOriginalVideo, imageStore)).start();
+        new Thread(new WaitingVideoThumbnailsCollector(planner.collectPlans(), imageStore)).start();
 
         System.out.println("Need to know how many pics to retrieve (Preferrably in a planner) before proceeding!");
-        Plan buildPlan = new TimeStampFixedSegmentPlan(segment, result4.getFile());
-        CreateVideoFromScratchImages.createVideo(buildPlan, imageStore, new Config(1280, 720, DEFAULT_TIME_UNIT.convert(30, MILLISECONDS)));
+        Thread.sleep(2000);
+        CreateVideoFromScratchImages.createVideo(planner.buildPlan(),imageStore,new Config(480, 260, DEFAULT_TIME_UNIT.convert(15, MILLISECONDS)));
+        assertEquals(220, ((SuperPlan)planner.buildPlan()).getFrameRepresentations().stream().filter(frame -> frame.used).count());
 
-
-        assertEquals(20, ((SuperPlan)planner.buildPlan()).getFrameRepresentations().stream().filter(frame -> frame.used).count());
-        /*
         assertEquals(20, ((SuperPlan) planner.collectPlans().get(0)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
         assertEquals(20, ((SuperPlan) planner.collectPlans().get(1)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
         assertEquals(10, ((SuperPlan) planner.collectPlans().get(2)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
@@ -151,8 +152,23 @@ public class StreamingImageStoreTest {
         assertEquals(20, ((SuperPlan) planner.collectPlans().get(4)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
         assertEquals(40, ((SuperPlan) planner.collectPlans().get(5)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
         assertEquals(80, ((SuperPlan) planner.collectPlans().get(6)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
-        */
-        assertEquals("940a9adbcda575cc4b48772ac8ea2056", md5Checksum(resultingMediaFile.fileName));
+        assertEquals("64db0f32dce8f0646ce110cfa0aca841", md5Checksum(resultingMediaFile.fileName));
+    }
+
+    @Test
+    public void testSegmentStrip() throws InterruptedException, IOException {
+        PipeDream<BufferedImage> imageStore = new PipeDream<>(200, 5000, 1000);
+        TimeStampFixedImageSampleSegment segment = new TimeStampFixedImageSampleSegment("Dark lake", 69375000, 74000000, 100);
+        new Thread(new StrippedWaitingVideoThumbnailsCollector(segment,downmixedOriginalVideo, imageStore)).start();
+
+        System.out.println("Need to know how many pics to retrieve (Preferrably in a planner) before proceeding!");
+        Plan buildPlan = new TimeStampFixedSegmentPlan(segment, strippedResult.getFile());
+        long framerate = Math.round(new Double(1000000/24).doubleValue());
+        System.out.println("Short wait to make sure collection thread starts before this (build).");
+        Thread.sleep(2000);
+        CreateVideoFromScratchImages.createVideo(buildPlan, imageStore, new Config(1280, 720, framerate));
+        //assertEquals(111, ((SuperPlan)planner.buildPlan()).getFrameRepresentations().stream().filter(frame -> frame.used).count());
+        assertEquals("a84f83f0d90ce68f03e23c20c849dfb6", md5Checksum(resultingMediaFile.fileName));
     }
 
 

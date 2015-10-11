@@ -7,12 +7,13 @@ import no.lau.vdvil.domain.MediaFile;
 import no.lau.vdvil.domain.Segment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.net.URL;
 import java.util.*;
 
 /**
  * @author Stig@Lau.no
  */
-public class SuperPlan implements Plan{
+public class SuperPlan implements Plan, AudioPlan{
 
     Logger logger = LoggerFactory.getLogger(SuperPlan.class);
     final long lastTimeStamp;
@@ -20,6 +21,7 @@ public class SuperPlan implements Plan{
     List<FrameRepresentation> frameRepresentations = new ArrayList<>();
     String collectId = "";
     final MediaFile storageLocation;
+    public URL audioLocation;
 
     public SuperPlan(Segment collectionSegment, SegmentFramePlan buildFramePlan, MediaFile storageLocation, long finalFramerate, float collectBpm) {
         this.storageLocation = storageLocation;
@@ -96,5 +98,9 @@ public class SuperPlan implements Plan{
 
     public String toString() {
         return collectId;
+    }
+
+    public URL audioLocation() {
+        return audioLocation;
     }
 }
