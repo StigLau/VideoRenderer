@@ -4,7 +4,6 @@ import com.xuggle.mediatool.IMediaReader;
 import com.xuggle.mediatool.MediaListenerAdapter;
 import com.xuggle.mediatool.ToolFactory;
 import com.xuggle.mediatool.event.IVideoPictureEvent;
-import com.xuggle.xuggler.Global;
 import no.lau.vdvil.plan.Plan;
 import no.lau.vdvil.renderer.video.VideoExtractionFinished;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
@@ -13,19 +12,13 @@ import org.slf4j.LoggerFactory;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
-public class WaitingVideoThumbnailsCollector implements ImageCollector {
+public class WaitingVideoThumbnailsCollector implements ImageCollector{
 
-    // The video stream index, used to ensure we display frames from one and
-    // only one video stream from the media container.
-    private static int mVideoStreamIndex = -1;
-
-    // Time of last frame write
-    private double mLastPtsWrite = Global.NO_PTS;
-    private Logger logger = LoggerFactory.getLogger(WaitingVideoThumbnailsCollector.class);
+    private Logger logger = LoggerFactory.getLogger(getClass());
     private final ImageStore<BufferedImage> imageStore;
     private final List<Plan> collectPlans;
 
-    public WaitingVideoThumbnailsCollector(ImageStore<BufferedImage> imageStore, List<Plan> collectPlans) {
+    public WaitingVideoThumbnailsCollector(List<Plan> collectPlans, ImageStore<BufferedImage> imageStore) {
         this.imageStore = imageStore;
         this.collectPlans = collectPlans;
     }
@@ -64,7 +57,7 @@ public class WaitingVideoThumbnailsCollector implements ImageCollector {
         final ImageStore<BufferedImage> imageStore;
         BufferedImage previous = null;
 
-        private ImageSnapListener(Plan collectPlan, ImageStore imageStore) {
+        private ImageSnapListener(Plan collectPlan, ImageStore<BufferedImage> imageStore) {
             this.collectPlan = collectPlan;
             this.imageStore = imageStore;
         }
@@ -93,40 +86,4 @@ public class WaitingVideoThumbnailsCollector implements ImageCollector {
             }
         }
     }
-    //TODO What does this mean!?
-/*
-        public BufferedImage fetchImage(IVideoPictureEvent event, ImageSampleInstruction segment) throws Exception {
-
-			if (event.getStreamIndex() != mVideoStreamIndex) {
-				// if the selected video stream id is not yet set, go ahead an
-				// select this lucky video stream
-				if (mVideoStreamIndex == -1)
-					mVideoStreamIndex = event.getStreamIndex();
-				// no need to show frames from this video stream
-				else
-                    return null;
-			}
-
-            int clockRatio = 250000;
-
-
-			// if uninitialized, back date mLastPtsWrite so we get the very first frame
-			if (mLastPtsWrite == Global.NO_PTS)
-				mLastPtsWrite = event.getTimeStamp() - MICRO_SECONDS_BETWEEN_FRAMES;
-
-			// if it's time to write the next frame
-			if (event.getTimeStamp() - mLastPtsWrite >= MICRO_SECONDS_BETWEEN_FRAMES) {
-
-				// indicate file written
-				double seconds = ((double) event.getTimeStamp()) / Global.DEFAULT_PTS_PER_SECOND;
-                logger.info(
-                        "at elapsed time of {} seconds",
-                        seconds);
-                // update last write time
-				mLastPtsWrite += MICRO_SECONDS_BETWEEN_FRAMES;
-                return event.getImage();
-			}
-            return null;
-        }
-	}*/
 }
