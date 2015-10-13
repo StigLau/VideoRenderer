@@ -4,6 +4,7 @@ import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.plan.Plan;
 import no.lau.vdvil.plan.SuperPlan;
+import java.net.URL;
 import java.util.*;
 import static no.lau.vdvil.renderer.video.KompositionUtil.performIdUniquenessCheck;
 
@@ -18,11 +19,15 @@ public class KompositionPlanner {
     //Calculating last timestamp is to be done on each entity one is interested in
 
 
-    public KompositionPlanner(List<Komposition> fetchKompositions, Komposition buildKomposition, long finalFramerate) {
+    public KompositionPlanner(List<Komposition> fetchKompositions, Komposition buildKomposition, URL audioLocation, long finalFramerate) {
         List<Segment> buildSegments = buildKomposition.segments;
         Collections.sort(buildSegments);
         verifyNonOverlappingSegments(buildSegments);
-        buildPlan = new SuperPlan(buildSegments, buildKomposition.storageLocation, buildKomposition.bpm, finalFramerate);
+        {
+            SuperPlan superPlan = new SuperPlan(buildSegments, buildKomposition.storageLocation, buildKomposition.bpm, finalFramerate);
+            superPlan.audioLocation = audioLocation;
+            this.buildPlan = superPlan;
+        }
 
         //Verify that all fetchSegments are unique
         for (Komposition fetchKomposition : fetchKompositions) {
