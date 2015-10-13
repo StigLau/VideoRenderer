@@ -31,8 +31,7 @@ public class ImageCapturingFromVideoTest {
         );
         ImageStore ibs = new ImageFileStore<>(komposition, outputFilePrefix);
         new VideoThumbnailsCollector(ibs).capture(inputFilename, komposition);
-        assertEquals(225, ibs.findImagesBySegmentId("First capture sequence").size());
-        assertEquals(225, ibs.findImagesBySegmentId("Second capture sequence").size());
+        assertEquals(44, ibs.findImagesBySegmentId("First capture sequence 48 + 4").size());
 
         logger.info("Found files:");
         for (Segment instruction : komposition.segments) {

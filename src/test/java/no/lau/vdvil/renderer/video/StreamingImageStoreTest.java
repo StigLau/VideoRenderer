@@ -96,8 +96,7 @@ public class StreamingImageStoreTest {
         buildKomposition.framerate = 24;
         buildKomposition.storageLocation = new MediaFile(result4, 0f, 128f, "0e7d51d26f573386c229b772d126754a");
         this.resultingMediaFile = buildKomposition.storageLocation;
-        planner = new KompositionPlanner(fetchKompositions, buildKomposition, 24);//<!-- Here is the key!
-        ((SuperPlan)planner.buildPlan()).audioLocation = sobotaMp3;
+        planner = new KompositionPlanner(fetchKompositions, buildKomposition, sobotaMp3, 24);//<!-- Here is the key!
     }
 
     @Test

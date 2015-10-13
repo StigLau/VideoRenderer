@@ -11,7 +11,7 @@ import static org.junit.Assert.assertEquals;
  * @author Stig Lau 24/03/15.
  */
 public class VideoInfoTest {
-    String filename = "/tmp/Olive-Youre_Not_Alone.webm";
+    String filename = "/tmp/videoTest/NORWAY-A_Time_Lapse_Adventure/NORWAY-A_Time_Lapse_Adventure.mp4";
 
     @Test
     public void findOutShit() {
@@ -19,8 +19,8 @@ public class VideoInfoTest {
         IContainer container = videoInfo.getVideoProperties(filename);
 
         IStreamCoder asd = container.getStream(0).getStreamCoder();
-        assertEquals(480, asd.getWidth());
-        assertEquals(360, asd.getHeight());
+        assertEquals(1280, asd.getWidth());
+        assertEquals(720, asd.getHeight());
     }
 
     @Test
