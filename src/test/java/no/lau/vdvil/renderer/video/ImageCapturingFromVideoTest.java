@@ -19,7 +19,7 @@ public class ImageCapturingFromVideoTest {
 
     @Test
     public void testCapturing() {
-        String inputFilename = "/tmp/videoTest/NORWAY-A_Time_Lapse_Adventure/NORWAY-A_Time_Lapse_Adventure.mp4";
+        String inputFilename = "/tmp/videoTest/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time_Lapse_Adventure.mp4";
         String outputFilePrefix = "/tmp/snaps/1280_NORWAY-A_Time-Lapse_Adventure.mp4/";
         //String inputFilename = "/tmp/320_NORWAY-A_Time-Lapse_Adventure.mp4";
         //String outputFilePrefix = "/tmp/snaps/320_NORWAY-A_Time-Lapse_Adventure.mp4/";

@@ -8,7 +8,7 @@ import no.lau.vdvil.domain.SuperSegment;
 public class TimeStampFixedImageSampleSegment extends SuperSegment {
     public final double framesPerBeat;
     //Need to store these values in case needed for object-copying
-    public final long timestampStart;
+    public long timestampStart;
     public final long timestampEnd;
 
     public TimeStampFixedImageSampleSegment(String id, long timestampStart, long timestampEnd, double framesPerBeat) {

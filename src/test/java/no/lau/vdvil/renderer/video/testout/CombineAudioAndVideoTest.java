@@ -2,8 +2,8 @@ package no.lau.vdvil.renderer.video.testout;
 
 import no.lau.vdvil.domain.MediaFile;
 import no.lau.vdvil.domain.out.Komposition;
-import no.lau.vdvil.renderer.video.Config;
 import no.lau.vdvil.renderer.video.concatenator.AudioVideoConcatenator;
+import no.lau.vdvil.renderer.video.config.VideoConfig;
 import org.junit.Test;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -22,6 +22,6 @@ public class CombineAudioAndVideoTest {
 
         Komposition komposition = new Komposition(128);
         komposition.storageLocation = new MediaFile(new URL("file:///tmp/some-timelapse.mp4"), 0f, 128f, "checksuym");
-        AudioVideoConcatenator.concatenateAudioAndVideo(inputAudioFilePath, inputVideoFilePath, komposition.storageLocation.fileName.getFile(), new Config(360, 480, 15));
+        AudioVideoConcatenator.concatenateAudioAndVideo(inputAudioFilePath, inputVideoFilePath, komposition.storageLocation.fileName.getFile(), new VideoConfig(360, 480, 15));
     }
 }

@@ -9,6 +9,7 @@ import com.xuggle.xuggler.IStreamCoder;
 import no.lau.vdvil.collector.FrameRepresentation;
 import no.lau.vdvil.plan.AudioPlan;
 import no.lau.vdvil.plan.Plan;
+import no.lau.vdvil.renderer.video.config.VideoConfig;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
 import no.lau.vdvil.renderer.video.store.ImageRepresentation;
 import org.slf4j.Logger;
@@ -28,7 +29,7 @@ public class CreateVideoFromScratchImages {
 
     final static int sampleCount = 1000;
 
-    public static void createVideo(Plan buildPlan, ImageStore<BufferedImage> imageStore, Config config) {
+    public static void createVideo(Plan buildPlan, ImageStore<BufferedImage> imageStore, VideoConfig config) {
         log.info("Init");
 
         final IMediaWriter writer = ToolFactory.makeWriter(buildPlan.ioFile());
@@ -82,7 +83,7 @@ class VideoAdapter {
     final ImageStore<BufferedImage> imageStore;
 
 
-    public VideoAdapter(Config config, IMediaWriter writer, ImageStore<BufferedImage> imageStore) {
+    public VideoAdapter(VideoConfig config, IMediaWriter writer, ImageStore<BufferedImage> imageStore) {
         this.writer = writer;
         this.imageStore = imageStore;
         this.width = config.width;
@@ -112,7 +113,7 @@ class VideoAdapter {
                         theImage = previous;
                     }
 
-                    logger.debug("Pushing image Clock:{} {}@{}-{}/{} from from pipedream to video ", nextFrameTime, frameRepresentation.referenceId(), imgid, frameRepresentation.frameNr +1, frameRepresentation.numberOfFrames);
+                    logger.debug("Flushing {}@{}\t{}/{} \t Clock:{} from from pipedream to video", frameRepresentation.referenceId(), imgid, frameRepresentation.frameNr +1, frameRepresentation.numberOfFrames, nextFrameTime);
                     frameRepresentation.use();
                     //In some circumstances, one must reuse the previous image
 

@@ -5,6 +5,7 @@ import no.lau.vdvil.collector.WaitingVideoThumbnailsCollector;
 import no.lau.vdvil.domain.MediaFile;
 import no.lau.vdvil.domain.VideoStillImageSegment;
 import no.lau.vdvil.domain.out.Komposition;
+import no.lau.vdvil.renderer.video.config.VideoConfig;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
 import no.lau.vdvil.renderer.video.creator.PipeDream;
 import no.lau.vdvil.renderer.video.creator.filter.PercentageSplitter;
@@ -47,7 +48,7 @@ public class BuildVideoFromScratchImagesTest {
     private String result3 = "file:///tmp/from_scratch_images_test_3.mp4";
 
     //HighRez
-    Config config = new Config(1280, 720,DEFAULT_TIME_UNIT.convert(30, MILLISECONDS));
+    VideoConfig config = new VideoConfig(1280, 720,DEFAULT_TIME_UNIT.convert(30, MILLISECONDS));
     //Low Rez
     //Config config = new Config(320, 200,DEFAULT_TIME_UNIT.convert(15, MILLISECONDS));
     Logger logger = LoggerFactory.getLogger(BuildVideoFromScratchImagesTest.class);
@@ -58,7 +59,7 @@ public class BuildVideoFromScratchImagesTest {
         //downmixedOriginalVideo = Paths.get("/tmp/320_NORWAY-A_Time-Lapse_Adventure.mp4").toUri().toURL();
         //theSwingVideo = Paths.get("/tmp/320_Worlds_Largest_Rope_Swing.mp4").toUri().toURL();
         //HighRez
-        downmixedOriginalVideo = Paths.get("/tmp/videoTest/NORWAY-A_Time_Lapse_Adventure/NORWAY-A_Time_Lapse_Adventure.mp4").toUri().toURL();
+        downmixedOriginalVideo = Paths.get("/tmp/videoTest/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time-Lapse_Adventure.mp4").toUri().toURL();
         theSwingVideo = Paths.get("/tmp/videoTest/Worlds_Largest_Rope_Swing/Worlds_Largest_Rope_Swing.mp4").toUri().toURL();
 
         snapshotFileStorage = Paths.get("/tmp/snaps/CLMD-The_Stockholm_Syndrome_320/").toUri().toURL();
@@ -130,7 +131,7 @@ public class BuildVideoFromScratchImagesTest {
 
         new Thread(new WaitingVideoThumbnailsCollector(planner.collectPlans(), imageStore)).start();
         Thread.sleep(2000);
-        CreateVideoFromScratchImages.createVideo(planner.buildPlan(), imageStore, new Config(1280, 720, Math.round(1000000/24)));
+        CreateVideoFromScratchImages.createVideo(planner.buildPlan(), imageStore, new VideoConfig(1280, 720, Math.round(1000000/24)));
 
         logger.info("Storing file at {}", mf.fileName);
         assertEquals(mf.checksum, md5Checksum(mf.fileName));

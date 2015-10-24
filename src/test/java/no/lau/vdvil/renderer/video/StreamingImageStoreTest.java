@@ -6,6 +6,7 @@ import no.lau.vdvil.domain.VideoStillImageSegment;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.plan.Plan;
 import no.lau.vdvil.plan.SuperPlan;
+import no.lau.vdvil.renderer.video.config.VideoConfig;
 import no.lau.vdvil.renderer.video.creator.PipeDream;
 import no.lau.vdvil.renderer.video.creator.filter.PercentageSplitter;
 import no.lau.vdvil.renderer.video.creator.filter.Reverter;
@@ -41,7 +42,7 @@ public class StreamingImageStoreTest {
 
     @Before
     public void setUp() throws MalformedURLException {
-        downmixedOriginalVideo = Paths.get("/tmp/videoTest/NORWAY-A_Time_Lapse_Adventure/NORWAY-A_Time_Lapse_Adventure.mp4").toUri().toURL();
+        downmixedOriginalVideo = Paths.get("/tmp/videoTest/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time-Lapse_Adventure.mp4").toUri().toURL();
         theSwingVideo = Paths.get("/tmp/videoTest/Worlds_Largest_Rope_Swing/Worlds_Largest_Rope_Swing.mp4").toUri().toURL();
         result4 = Paths.get("/tmp/from_scratch_images_test_v4.mp4").toUri().toURL();
         strippedResult = Paths.get("/tmp/streamingImagesStrippedResult.mp4").toUri().toURL();
@@ -106,7 +107,7 @@ public class StreamingImageStoreTest {
         SuperPlan buildPlan = (SuperPlan) planner.buildPlan();
 
         assertEquals(8, buildPlan.getFramePlans().size());
-        assertEquals(220, buildPlan.getFrameRepresentations().size());
+        assertEquals(1056, buildPlan.getFrameRepresentations().size());
 
 
         List<Plan> collectPlan = planner.collectPlans();
@@ -121,13 +122,13 @@ public class StreamingImageStoreTest {
         for (Plan plan : collectPlan) {
             collectFrameRepresentations.addAll(((SuperPlan)plan).getFrameRepresentations());
         }
-        assertEquals(220, collectFrameRepresentations.size());
+        assertEquals(1056, collectFrameRepresentations.size());
 
         assertEquals(0, buildPlan.getFrameRepresentations().get(0).timestamp);
         assertTrue(buildPlan.getFrameRepresentations().get(0).referenceId().contains("Dark lake"));
-        assertEquals(967741, buildPlan.getFrameRepresentations().get(10).timestamp);
-        assertTrue(buildPlan.getFrameRepresentations().get(200).referenceId().contains("Swing into bridge"));
-        assertEquals(19354838, buildPlan.getFrameRepresentations().get(200).timestamp);
+        assertEquals(201612, buildPlan.getFrameRepresentations().get(10).timestamp);
+        assertTrue(buildPlan.getFrameRepresentations().get(200).referenceId().contains("Dark lake"));
+        assertEquals(4032257, buildPlan.getFrameRepresentations().get(200).timestamp);
 
         //The collect timestamp should not start at 0
         assertEquals(69375000, collectFrameRepresentations.get(0).timestamp);
@@ -141,17 +142,18 @@ public class StreamingImageStoreTest {
 
         System.out.println("Need to know how many pics to retrieve (Preferrably in a planner) before proceeding!");
         Thread.sleep(2000);
-        CreateVideoFromScratchImages.createVideo(planner.buildPlan(),imageStore,new Config(480, 260, DEFAULT_TIME_UNIT.convert(15, MILLISECONDS)));
-        assertEquals(220, ((SuperPlan)planner.buildPlan()).getFrameRepresentations().stream().filter(frame -> frame.used).count());
+        CreateVideoFromScratchImages.createVideo(planner.buildPlan(),imageStore,new VideoConfig(480, 260, DEFAULT_TIME_UNIT.convert(15, MILLISECONDS)));
+        assertEquals(1055, ((SuperPlan)planner.buildPlan()).getFrameRepresentations().stream().filter(frame -> frame.used).count());
 
-        assertEquals(20, ((SuperPlan) planner.collectPlans().get(0)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
-        assertEquals(20, ((SuperPlan) planner.collectPlans().get(1)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
-        assertEquals(10, ((SuperPlan) planner.collectPlans().get(2)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
-        assertEquals(10, ((SuperPlan) planner.collectPlans().get(3)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
-        assertEquals(20, ((SuperPlan) planner.collectPlans().get(4)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
-        assertEquals(40, ((SuperPlan) planner.collectPlans().get(5)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
-        assertEquals(80, ((SuperPlan) planner.collectPlans().get(6)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
-        assertEquals("64db0f32dce8f0646ce110cfa0aca841", md5Checksum(resultingMediaFile.fileName));
+        assertEquals(96, ((SuperPlan) planner.collectPlans().get(0)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
+        assertEquals(96, ((SuperPlan) planner.collectPlans().get(1)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
+        assertEquals(48, ((SuperPlan) planner.collectPlans().get(2)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
+        assertEquals(48, ((SuperPlan) planner.collectPlans().get(3)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
+        assertEquals(96, ((SuperPlan) planner.collectPlans().get(4)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
+        assertEquals(192, ((SuperPlan) planner.collectPlans().get(5)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
+        assertEquals(384, ((SuperPlan) planner.collectPlans().get(6)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
+        assertEquals(96, ((SuperPlan) planner.collectPlans().get(7)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
+        assertEquals("5156c7b907707065aa281e63065b4c37", md5Checksum(resultingMediaFile.fileName));
     }
 
     @Test
@@ -165,9 +167,9 @@ public class StreamingImageStoreTest {
         long framerate = Math.round(new Double(1000000/24).doubleValue());
         System.out.println("Short wait to make sure collection thread starts before this (build).");
         Thread.sleep(2000);
-        CreateVideoFromScratchImages.createVideo(buildPlan, imageStore, new Config(1280, 720, framerate));
+        CreateVideoFromScratchImages.createVideo(buildPlan, imageStore, new VideoConfig(1280, 720, framerate));
         //assertEquals(111, ((SuperPlan)planner.buildPlan()).getFrameRepresentations().stream().filter(frame -> frame.used).count());
-        assertEquals("a84f83f0d90ce68f03e23c20c849dfb6", md5Checksum(resultingMediaFile.fileName));
+        assertEquals("5156c7b907707065aa281e63065b4c37", md5Checksum(resultingMediaFile.fileName));
     }
 
 

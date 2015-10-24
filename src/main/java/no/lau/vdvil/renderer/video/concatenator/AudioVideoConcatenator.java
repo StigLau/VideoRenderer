@@ -3,7 +3,7 @@ package no.lau.vdvil.renderer.video.concatenator;
 import com.xuggle.mediatool.IMediaWriter;
 import com.xuggle.mediatool.ToolFactory;
 import com.xuggle.xuggler.*;
-import no.lau.vdvil.renderer.video.Config;
+import no.lau.vdvil.renderer.video.config.VideoConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +15,7 @@ public class AudioVideoConcatenator {
 
     private static Logger log = LoggerFactory.getLogger(AudioVideoConcatenator.class);
 
-    public static void concatenateAudioAndVideo(String inputAudioFilePath, String inputVideoFilePath, String storageLocation, Config config) {
+    public static void concatenateAudioAndVideo(String inputAudioFilePath, String inputVideoFilePath, String storageLocation, VideoConfig config) {
         IMediaWriter mWriter = ToolFactory.makeWriter(storageLocation);
         IContainer containerVideo = IContainer.make();
         IContainer containerAudio = IContainer.make();
