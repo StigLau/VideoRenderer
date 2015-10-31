@@ -23,11 +23,6 @@ public class KompositionPlanner {
         List<Segment> buildSegments = buildKomposition.segments;
         Collections.sort(buildSegments);
         verifyNonOverlappingSegments(buildSegments);
-        {
-            SuperPlan superPlan = new SuperPlan(buildSegments, buildKomposition.storageLocation, buildKomposition.bpm, finalFramerate);
-            superPlan.audioLocation = audioLocation;
-            this.buildPlan = superPlan;
-        }
 
         //Verify that all fetchSegments are unique
         for (Komposition fetchKomposition : fetchKompositions) {
@@ -46,7 +41,11 @@ public class KompositionPlanner {
         for (Segment segment : segmentFetchKompositionMap.keySet()) {
             segmentIdCollectSegmentMap.put(segment.shortId(), segment);
         }
-
+        {
+            SuperPlan superPlan = new SuperPlan(buildSegments, buildKomposition.storageLocation, buildKomposition.bpm, finalFramerate, segmentIdCollectSegmentMap);
+            superPlan.audioLocation = audioLocation;
+            this.buildPlan = superPlan;
+        }
 
 //        List<SegmentKompositionMap> alignedSegments = new ForNoTull(fetchKompositions)
 //                .alignSegments(buildKomposition.segments, buildKomposition.bpm);

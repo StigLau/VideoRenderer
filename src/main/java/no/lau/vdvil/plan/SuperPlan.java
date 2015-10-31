@@ -1,5 +1,6 @@
 package no.lau.vdvil.plan;
 
+import no.lau.vdvil.collector.FrameCalculator;
 import no.lau.vdvil.collector.FrameRepresentation;
 import no.lau.vdvil.collector.SegmentFramePlan;
 import no.lau.vdvil.collector.SimpleCalculator;
@@ -38,11 +39,32 @@ public class SuperPlan implements Plan, AudioPlan{
     /**
      * Constructor for BuildPlan
      */
+    @Deprecated
     public SuperPlan(List<Segment> buildSegments, MediaFile storageLocation, float buildBpm, long finalFramerate) {
         this.storageLocation = storageLocation;
         lastTimeStamp = calculateLastTimeStamp(buildSegments, buildBpm);
         for (Segment buildSegment : buildSegments) {
             SegmentFramePlan framePlan = new SegmentFramePlan(buildSegment.id(), buildSegment, buildBpm, finalFramerate, new SimpleCalculator(1, 1));
+            framePlans.add(framePlan);
+            frameRepresentations.addAll(framePlan.frameRepresentations);
+            logger.info("Build: " + buildSegment.id());
+        }
+    }
+
+    public SuperPlan(List<Segment> buildSegments, MediaFile storageLocation, float buildBpm, long finalFramerate, Map<String, Segment> segmentIdCollectSegmentMap) {
+        this.storageLocation = storageLocation;
+        lastTimeStamp = calculateLastTimeStamp(buildSegments, buildBpm);
+        for (Segment buildSegment : buildSegments) {
+            FrameCalculator frameCalculator;
+            { //Extract the Frame duration
+                Segment collectSegment = segmentIdCollectSegmentMap.get(buildSegment.shortId());
+                long collectDuration = collectSegment.durationCalculated(buildBpm);
+
+                long buildDuration = buildSegment.durationCalculated(buildBpm);
+                //frameCalculator = new SimpleCalculator(buildDuration, collectDuration);
+                frameCalculator = new SimpleCalculator(collectDuration, buildDuration);
+            }
+            SegmentFramePlan framePlan = new SegmentFramePlan(buildSegment.id(), buildSegment, buildBpm, finalFramerate, frameCalculator);
             framePlans.add(framePlan);
             frameRepresentations.addAll(framePlan.frameRepresentations);
             logger.info("Build: " + buildSegment.id());

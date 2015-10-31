@@ -1,6 +1,8 @@
 package no.lau.vdvil.collector;
 
 import no.lau.vdvil.domain.Segment;
+import no.lau.vdvil.domain.VideoStillImageSegment;
+import no.lau.vdvil.renderer.video.stigs.TimeStampFixedImageSampleSegment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
@@ -25,7 +27,14 @@ public class SegmentFramePlan implements Comparable {
             throw new RuntimeException("framerate was " + framerate);
         }
         List<FrameRepresentation> plans = new ArrayList<>();
-        long numberOfFrames = frameCalculator.calculateNumberOfFrames(segment, bpm, framerate);
+        long numberOfFrames = -1;
+        if (segment instanceof VideoStillImageSegment<?>) {
+            numberOfFrames = Math.round(segment.duration() * framerate * 60 / bpm);
+        } else if(segment instanceof TimeStampFixedImageSampleSegment) {
+            numberOfFrames = segment.duration() * framerate / 1000000;
+        }
+
+
         logger.info("numberOfImages = {} id: {}", numberOfFrames, id);
         long start = segment.startCalculated(bpm);
         for (int i = 0; i < numberOfFrames; i++) {

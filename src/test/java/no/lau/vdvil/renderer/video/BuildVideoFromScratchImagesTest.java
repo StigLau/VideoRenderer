@@ -156,7 +156,7 @@ public class BuildVideoFromScratchImagesTest {
                 new VideoStillImageSegment("Dark lake", 16, 8)
         );
 
-        MediaFile mf = new MediaFile(new URL(result3), 0f, 128f, "76bd338b79dcb63070402ef9b06f352c");
+        MediaFile mf = new MediaFile(new URL(result3), 0f, 128f, "0362c495e294bac76458ca56cdee20ee");
         buildKomposition.storageLocation = mf;
         KompositionPlanner planner = new KompositionPlanner(Collections.singletonList(fetchKompositionNorway), buildKomposition, sobotaMp3, 15);
         PipeDream<BufferedImage> imageStore = new PipeDream<>();
