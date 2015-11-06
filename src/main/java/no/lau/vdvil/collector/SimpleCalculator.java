@@ -4,8 +4,8 @@ import no.lau.vdvil.domain.Segment;
 
 public class SimpleCalculator implements FrameCalculator{
 
-    private final long collectRatio;
-    private final long buildRatio;
+    public final long collectRatio;
+    public final long buildRatio;
 
     public SimpleCalculator(long collect, long build) {
         this.collectRatio = collect;

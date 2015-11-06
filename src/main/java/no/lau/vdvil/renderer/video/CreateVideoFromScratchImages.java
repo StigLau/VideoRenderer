@@ -97,33 +97,40 @@ class VideoAdapter {
     BufferedImage previous = null;
 
     public void writeNextPacket(long clock, Plan buildPlan) {
+        ImageRepresentation previousImageRep = null;
         while (clock >= nextFrameTime) {
             List<FrameRepresentation> frameRepresentations = buildPlan.whatToDoAt(nextFrameTime);
             for (FrameRepresentation frameRepresentation : frameRepresentations) {
-                ImageRepresentation imageRep = imageStore.getNextImageRepresentation(frameRepresentation.referenceId());
+                ImageRepresentation imageRep;
+                if(frameRepresentation.isEmptyFrame() && previousImageRep != null) {
+                    imageRep = previousImageRep;
+                }else {
+                    imageRep = imageStore.getNextImageRepresentation(frameRepresentation.referenceId());
+                }
 
                 if (imageRep != null || previous != null) {
                     String imgid;
                     BufferedImage theImage;
                     if(imageRep != null) {
-                        imgid= imageRep.imageId;
+                        imgid= String.valueOf(imageRep.frameRepresentation.frameNr);
                         theImage = (BufferedImage) imageRep.image;
                     } else {
                         imgid = "UNKNOWN IMAGE DUE TO NULL";
                         theImage = previous;
                     }
 
-                    logger.debug("Flushing {}@{}\t{}/{} \t Clock:{} from from pipedream to video", frameRepresentation.referenceId(), imgid, frameRepresentation.frameNr +1, frameRepresentation.numberOfFrames, nextFrameTime);
+                    logger.debug("Flushing {}@image#{}\t{}/{} \t Clock:{} from from pipedream to video", frameRepresentation.referenceId(), imgid, frameRepresentation.frameNr +1, frameRepresentation.numberOfFrames, nextFrameTime);
                     frameRepresentation.use();
                     //In some circumstances, one must reuse the previous image
 
                     writer.encodeVideo(videoStreamIndex, theImage, nextFrameTime, DEFAULT_TIME_UNIT);
                     previous = theImage;
+                    previousImageRep = imageRep;
                 } else {
                     logger.error("OMG OMG!!! Imagerep was null after waiting 10 seconds!! - {} - {}/{} is this related to division rest error?" + frameRepresentation.referenceId(), frameRepresentation.frameNr, frameRepresentation.numberOfFrames);
                 }
+                nextFrameTime += frameRate / frameRepresentations.size();
             }
-            nextFrameTime += frameRate;
         }
     }
 }

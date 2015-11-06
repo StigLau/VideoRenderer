@@ -7,6 +7,7 @@ import no.lau.vdvil.domain.Segment;
  */
 public class FrameRepresentation {
     public final long timestamp;
+    private final boolean emptyFrame;
     public boolean used;
     private String referenceId;
     //Reference to Original segment for debugging purposes
@@ -16,10 +17,15 @@ public class FrameRepresentation {
     public long frameNr = 0;
 
     public FrameRepresentation(long timestamp, String referenceId, Segment originalSegment) {
+        this(timestamp, referenceId, originalSegment, false);
+    }
+
+    public FrameRepresentation(long timestamp, String referenceId, Segment originalSegment, boolean isEmptyFrame) {
         this.timestamp = timestamp;
         this.referenceId = referenceId;
         this.originalSegment = originalSegment;
         used = false;
+        this.emptyFrame = isEmptyFrame;
     }
 
     public void use() {
@@ -34,7 +40,11 @@ public class FrameRepresentation {
         return referenceId;
     }
 
+    public boolean isEmptyFrame() {
+        return emptyFrame;
+    }
+
     public String toString() {
-        return originalSegment.id() + " " + timestamp + "_" + referenceId;
+        return originalSegment.id() + " " + timestamp + "_" + referenceId + (isEmptyFrame() ? " Empty Frame" : "");
     }
 }

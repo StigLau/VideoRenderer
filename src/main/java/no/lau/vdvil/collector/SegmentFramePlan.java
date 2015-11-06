@@ -26,23 +26,40 @@ public class SegmentFramePlan implements Comparable {
         if(framerate <= 0) {
             throw new RuntimeException("framerate was " + framerate);
         }
+        long frameRateMillis = 1000000/framerate;
         List<FrameRepresentation> plans = new ArrayList<>();
-        long numberOfFrames = -1;
+        long numberOfFrames;
+        long numberOfCollectFrames = ((SimpleCalculator) frameCalculator).collectRatio / frameRateMillis;
         if (segment instanceof VideoStillImageSegment<?>) {
             numberOfFrames = Math.round(segment.duration() * framerate * 60 / bpm);
         } else if(segment instanceof TimeStampFixedImageSampleSegment) {
-            numberOfFrames = segment.duration() * framerate / 1000000;
+            numberOfFrames = numberOfCollectFrames;
+        } else {
+            numberOfFrames = -1;
         }
 
-
+        //Logic for adding empty frames in case of more build frames is than collect frames
+        long lastUsedFrame = 0;
         logger.info("numberOfImages = {} id: {}", numberOfFrames, id);
         long start = segment.startCalculated(bpm);
         for (int i = 0; i < numberOfFrames; i++) {
-            long thisDuration = segment.durationCalculated(bpm) * i / numberOfFrames;
-            FrameRepresentation frame = new FrameRepresentation(start + thisDuration, id, segment);
+            long thisDuration = frameRateMillis * i;
+
+            //Placing empty frames when there are too few collect images
+            boolean emptyFrame = true;
+            if(segment instanceof VideoStillImageSegment) {
+                if(i > lastUsedFrame * (float) numberOfFrames / numberOfCollectFrames) {
+                    emptyFrame = false;
+                    lastUsedFrame++;
+                }
+            }
+
+            FrameRepresentation frame = new FrameRepresentation(start + thisDuration, id, segment, emptyFrame);
             frame.numberOfFrames = numberOfFrames;
             frame.frameNr = i;
             plans.add(frame);
+
+            logger.trace(segment.id() + " #" + i + 1 + " duration:" + thisDuration + " Used:" + emptyFrame);
         }
         return plans;
     }
