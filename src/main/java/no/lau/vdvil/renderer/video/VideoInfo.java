@@ -71,6 +71,13 @@ public class VideoInfo {
                 System.out.printf("height: %d; ", coder.getHeight());
                 System.out.printf("format: %s; ", coder.getPixelType());
                 System.out.printf("frame-rate: %5.2f; ", coder.getFrameRate().getDouble());
+                System.out.println("coder.getSampleRate() = " + coder.getSampleRate());
+                System.out.println("coder.getNumDroppedFrames() = " + coder.getNumDroppedFrames());
+                System.out.println("coder.getTimeBase() = " + coder.getTimeBase());
+                System.out.println("coder.getNumPicturesInGroupOfPictures() = " + coder.getNumPicturesInGroupOfPictures());
+
+                System.out.println("coder.getPropertyAsString(frame_number) = " + coder.getPropertyAsString("frame_number"));
+                System.out.println("coder.getPropertyAsString(frame_size) = " + coder.getPropertyAsString("frame_size"));
             }
 
             System.out.println();

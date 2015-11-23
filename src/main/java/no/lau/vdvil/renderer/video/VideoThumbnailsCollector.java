@@ -58,6 +58,8 @@ public class VideoThumbnailsCollector {
         final Komposition komposition;
         ImageStore<BufferedImage> imageStore;
 
+        long accumulatedFrames = 0;
+
         private ImageSnapListener(Komposition komposition, ImageStore imageStore) {
             this.komposition = komposition;
             this.imageStore = imageStore;
@@ -111,10 +113,10 @@ public class VideoThumbnailsCollector {
 			if (event.getTimeStamp() - mLastPtsWrite >= MICRO_SECONDS_BETWEEN_FRAMES) {
 
 				// indicate file written
-				double seconds = ((double) event.getTimeStamp()) / Global.DEFAULT_PTS_PER_SECOND;
+				double microSeconds = ((double) 1000000 * event.getTimeStamp()) / Global.DEFAULT_PTS_PER_SECOND;
                 logger.info(
-                        "at elapsed time of {} seconds",
-                        seconds);
+                        "frame {} at {} ",
+                        ++accumulatedFrames, microSeconds);
                 // update last write time
 				mLastPtsWrite += MICRO_SECONDS_BETWEEN_FRAMES;
                 return event.getImage();

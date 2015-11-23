@@ -160,7 +160,8 @@ public class BuildVideoFromScratchImagesTest {
         buildKomposition.storageLocation = mf;
         KompositionPlanner planner = new KompositionPlanner(Collections.singletonList(fetchKompositionNorway), buildKomposition, sobotaMp3, 15);
         PipeDream<BufferedImage> imageStore = new PipeDream<>();
-        new WaitingVideoThumbnailsCollector(planner.collectPlans(), imageStore).run();
+        new Thread(new WaitingVideoThumbnailsCollector(planner.collectPlans(), imageStore)).run();
+        Thread.sleep(5000);
         CreateVideoFromScratchImages.createVideo(planner.buildPlan(), imageStore, config);
         assertEquals(mf.checksum, md5Checksum(mf.fileName));
     }

@@ -88,7 +88,7 @@ class VideoAdapter {
         this.imageStore = imageStore;
         this.width = config.width;
         this.height = config.height;
-        this.frameRate = config.framerate;
+        this.frameRate = config.framerateMillis();
 
         // add audio and video streams
         writer.addVideoStream(videoStreamIndex, videoStreamId, width, height);
@@ -99,6 +99,8 @@ class VideoAdapter {
     public void writeNextPacket(long clock, Plan buildPlan) {
         ImageRepresentation previousImageRep = null;
         while (clock >= nextFrameTime) {
+            boolean nextFrameTimeUpdated = false;
+            logger.trace("Time to write packets at {}", clock);
             List<FrameRepresentation> frameRepresentations = buildPlan.whatToDoAt(nextFrameTime);
             for (FrameRepresentation frameRepresentation : frameRepresentations) {
                 ImageRepresentation imageRep;
@@ -119,7 +121,7 @@ class VideoAdapter {
                         theImage = previous;
                     }
 
-                    logger.debug("Flushing {}@image#{}\t{}/{} \t Clock:{} from from pipedream to video", frameRepresentation.referenceId(), imgid, frameRepresentation.frameNr +1, frameRepresentation.numberOfFrames, nextFrameTime);
+                    logger.debug("Flushing {}@image#{}\t{}/{} \t Clock:{} from from pipedream to video", frameRepresentation.referenceId(), imgid, frameRepresentation.frameNr + 1, frameRepresentation.numberOfFrames, nextFrameTime);
                     frameRepresentation.use();
                     //In some circumstances, one must reuse the previous image
 
@@ -130,6 +132,10 @@ class VideoAdapter {
                     logger.error("OMG OMG!!! Imagerep was null after waiting 10 seconds!! - {} - {}/{} is this related to division rest error?" + frameRepresentation.referenceId(), frameRepresentation.frameNr, frameRepresentation.numberOfFrames);
                 }
                 nextFrameTime += frameRate / frameRepresentations.size();
+                nextFrameTimeUpdated = true;
+            }
+            if(!nextFrameTimeUpdated) {
+                nextFrameTime += frameRate;
             }
         }
     }

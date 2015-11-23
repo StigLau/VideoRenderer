@@ -4,6 +4,10 @@ import com.xuggle.mediatool.IMediaReader;
 import com.xuggle.mediatool.MediaListenerAdapter;
 import com.xuggle.mediatool.ToolFactory;
 import com.xuggle.mediatool.event.IVideoPictureEvent;
+import com.xuggle.xuggler.ICodec;
+import com.xuggle.xuggler.IContainer;
+import com.xuggle.xuggler.IStream;
+import com.xuggle.xuggler.IStreamCoder;
 import no.lau.vdvil.renderer.video.VideoExtractionFinished;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
 import no.lau.vdvil.renderer.video.stigs.TimeStampFixedImageSampleSegment;
@@ -14,7 +18,7 @@ import java.net.URL;
 
 public class StrippedWaitingVideoThumbnailsCollector implements ImageCollector{
 
-    private Logger logger = LoggerFactory.getLogger(StrippedWaitingVideoThumbnailsCollector.class);
+    private static Logger logger = LoggerFactory.getLogger(StrippedWaitingVideoThumbnailsCollector.class);
     private TimeStampFixedImageSampleSegment segment;
     private URL originalMediaFile;
     private final ImageStore<BufferedImage> imageStore;
@@ -30,13 +34,19 @@ public class StrippedWaitingVideoThumbnailsCollector implements ImageCollector{
         long start = System.currentTimeMillis();
 
 
-        IMediaReader mediaReader = ToolFactory.makeReader(originalMediaFile.getFile());
+        IContainer container = IContainer.make();
+        int result = container.open(originalMediaFile.getFile(), IContainer.Type.READ, null);
+        if (result<0)
+            throw new RuntimeException("Failed to open media file");
+
+        IMediaReader mediaReader = ToolFactory.makeReader(container);
         try {
             // stipulate that we want BufferedImages created in BGR 24bit color space
             mediaReader.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
 
             mediaReader.addListener(new ImageSnapListener(segment, imageStore));
 
+            seekToMs(container, segment.timestampStart);
             // read out the contents of the media file and
             // dispatch events to the attached listener
             while (mediaReader.readPacket() == null) ;
@@ -46,6 +56,19 @@ public class StrippedWaitingVideoThumbnailsCollector implements ImageCollector{
             mediaReader.close();
         }
         logger.debug("{} Duration: {}",segment.id(), (System.currentTimeMillis() - start) / 1000);
+    }
+
+    public static void seekToMs(IContainer container, long seekTo) {
+        for(int videoStreamId = 0; videoStreamId < container.getNumStreams(); videoStreamId++) {
+            IStream stream = container.getStream(videoStreamId);
+            IStreamCoder coder = stream.getStreamCoder();
+            if (coder.getCodecType() == ICodec.Type.CODEC_TYPE_VIDEO) {
+                double timeBase = stream.getTimeBase().getDouble();
+                logger.debug("Found video stream on id {}", videoStreamId);
+                double skipToFrame = seekTo / timeBase / 1000000;
+                container.seekKeyFrame(videoStreamId, Math.round(skipToFrame), IContainer.SEEK_FLAG_BACKWARDS);
+            }
+        }
     }
 
     private class ImageSnapListener extends MediaListenerAdapter {
@@ -62,6 +85,7 @@ public class StrippedWaitingVideoThumbnailsCollector implements ImageCollector{
         public void onVideoPicture(IVideoPictureEvent event) {
             long timestamp = event.getTimeStamp();
             //TODO How to halt video processing
+            logger.trace("Collect Video sample {}", timestamp);
             if (timestamp > segment.timestampEnd) {
                 throw new VideoExtractionFinished("End of compilation");
             }

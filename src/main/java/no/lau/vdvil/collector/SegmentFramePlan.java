@@ -33,7 +33,9 @@ public class SegmentFramePlan implements Comparable {
         if (segment instanceof VideoStillImageSegment<?>) {
             numberOfFrames = Math.round(segment.duration() * framerate * 60 / bpm);
         } else if(segment instanceof TimeStampFixedImageSampleSegment) {
-            numberOfFrames = numberOfCollectFrames;
+            //Todo use buildSegments number of frames!
+            SimpleCalculator calc = (SimpleCalculator) frameCalculator;
+            numberOfFrames = 1 + numberOfCollectFrames * calc.buildRatio / calc.collectRatio;
         } else {
             numberOfFrames = -1;
         }
@@ -47,7 +49,7 @@ public class SegmentFramePlan implements Comparable {
 
             //Placing empty frames when there are too few collect images
             boolean emptyFrame = true;
-            if(segment instanceof VideoStillImageSegment) {
+            if(segment instanceof TimeStampFixedImageSampleSegment) {
                 if(i > lastUsedFrame * (float) numberOfFrames / numberOfCollectFrames) {
                     emptyFrame = false;
                     lastUsedFrame++;
@@ -59,7 +61,7 @@ public class SegmentFramePlan implements Comparable {
             frame.frameNr = i;
             plans.add(frame);
 
-            logger.trace(segment.id() + " #" + i + 1 + " duration:" + thisDuration + " Used:" + emptyFrame);
+            logger.trace(segment.id() + " #" + (i + 1) + " duration:" + thisDuration + " Used:" + emptyFrame);
         }
         return plans;
     }
