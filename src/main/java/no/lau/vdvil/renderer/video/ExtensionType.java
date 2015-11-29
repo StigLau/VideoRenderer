@@ -12,6 +12,14 @@ public enum ExtensionType {
         this.stringValue = stringValue;
     }
 
+    public boolean isAudio() {
+        return this == mp3 || this == flac;
+    }
+
+    public boolean isVideo() {
+        return this == mp4 || this == webm;
+    }
+
     public String toString() {
         return stringValue;
     }
