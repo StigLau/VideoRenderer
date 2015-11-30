@@ -31,8 +31,14 @@ public class CreateVideoFromScratchImages {
 
     public static void createVideo(Plan buildPlan, ImageStore<BufferedImage> imageStore, VideoConfig config) {
         log.info("Init");
-
+        try {
+            log.info("Just a short wait to make sure the writer starts as expected");
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         final IMediaWriter writer = ToolFactory.makeWriter(buildPlan.ioFile());
+        ToolFactory.setTurboCharged(true);
 
         VideoAdapter videoAdapter = new VideoAdapter(config, writer, imageStore);
         //AudioStream must be added after videostream!
@@ -121,7 +127,7 @@ class VideoAdapter {
                         theImage = previous;
                     }
 
-                    logger.debug("Flushing {}@image#{}\t{}/{} \t Clock:{} from from pipedream to video", frameRepresentation.referenceId(), imgid, frameRepresentation.frameNr + 1, frameRepresentation.numberOfFrames, nextFrameTime);
+                    logger.debug("Flushing {}@image#{}\t{}/{} \t Clock:{} from from pipedream to video {}", frameRepresentation.referenceId(), imgid, frameRepresentation.frameNr + 1, frameRepresentation.numberOfFrames, nextFrameTime, theImage.toString());
                     frameRepresentation.use();
                     //In some circumstances, one must reuse the previous image
 

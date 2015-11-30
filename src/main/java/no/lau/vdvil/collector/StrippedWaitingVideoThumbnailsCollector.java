@@ -22,11 +22,19 @@ public class StrippedWaitingVideoThumbnailsCollector implements ImageCollector{
     private TimeStampFixedImageSampleSegment segment;
     private URL originalMediaFile;
     private final ImageStore<BufferedImage> imageStore;
+    //Testfeature for enabling scanning forward in large source-videos before starting collection of a snippet
+    private final boolean skipFramesAhead;
+
 
     public StrippedWaitingVideoThumbnailsCollector(TimeStampFixedImageSampleSegment segment, URL originalMediaFile, ImageStore<BufferedImage> imageStore) {
+        this(segment, originalMediaFile,   imageStore, false);
+    }
+
+    public StrippedWaitingVideoThumbnailsCollector(TimeStampFixedImageSampleSegment segment, URL originalMediaFile, ImageStore<BufferedImage> imageStore, boolean skipFramesAhead) {
         this.segment = segment;
         this.originalMediaFile = originalMediaFile;
         this.imageStore = imageStore;
+        this.skipFramesAhead = skipFramesAhead;
     }
 
     public void run() {
@@ -46,7 +54,10 @@ public class StrippedWaitingVideoThumbnailsCollector implements ImageCollector{
 
             mediaReader.addListener(new ImageSnapListener(segment, imageStore));
 
-            seekToMs(container, segment.timestampStart);
+            if(skipFramesAhead) {
+                logger.debug("Skipping ahead in {} by ", segment.id(), segment.timestampStart);
+                seekToMs(container, segment.timestampStart);
+            }
             // read out the contents of the media file and
             // dispatch events to the attached listener
             while (mediaReader.readPacket() == null) ;
