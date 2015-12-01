@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<komposition>
+    <reference>Worlds_Largest_Rope_Swing</reference>
+    <bpm>125.0</bpm>
+    <mediaFile>
+        <fileName>https://www.youtube.com/watch?v=4B36Lr0Unp4</fileName>
+        <startingOffset>0.00</startingOffset>
+        <checksumFileSize>53072847</checksumFileSize>
+        <type>youtube</type>
+        <extension>mp4</extension>
+    </mediaFile>
+    <segments>
+        <segment>
+            <id>Red bridge</id>
+            <start>2919583</start>
+            <end>6047708</end>
+        </segment>
+        <segment>
+            <id>Swing into bridge</id>
+            <start>22439083</start>
+            <end>26484792</end>
+        </segment>
+        <segment>
+            <id>Swing out from bridge</id>
+            <start>26526500</start>
+            <end>28194833</end>
+        </segment>
+        <segment>
+            <id>Swing second out from bridge</id>
+            <start>32323958</start>
+            <end>33908875</end>
+        </segment>
+        <segment>
+            <id>Smile girl, smile</id>
+            <start>34034000</start>
+            <end>34993292</end>
+        </segment>
+        <segment>
+            <id>Swing through bridge with mountain smile</id>
+            <start>45128417</start>
+            <end>46713333</end>
+        </segment>
+    </segments>
+</komposition>

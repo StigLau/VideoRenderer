@@ -1,0 +1,64 @@
+<komposition>
+    <reference>NORWAY-A_Time-Lapse_Adventure</reference>
+    <bpm>125.0</bpm>
+    <mediaFile>
+        <fileName>https://www.youtube.com/watch?v=Scxs7L0vhZ4</fileName>
+        <startingOffset>0.00</startingOffset>
+        <checksumFileSize>99449938</checksumFileSize>
+        <type>youtube</type>
+        <extension>mp4</extension>
+        <finalFileName>some value</finalFileName>
+    </mediaFile>
+    <segments>
+        <segment>
+            <id>Purple Mountains Clouds</id>
+            <start>7541667</start>
+            <end>19750000</end>
+        </segment>
+        <segment>
+            <id>Besseggen</id>
+            <start>21250000</start>
+            <end>27625000</end>
+        </segment>
+        <segment>
+            <id>Norway showing</id>
+            <start>30166667</start>
+            <end>34541667</end>
+        </segment>
+        <segment>
+            <id>Flower fjord</id>
+            <start>35500000</start>
+            <end>46250000</end>
+        </segment>
+        <segment>
+            <id>Slide Blue mountain top lake</id>
+            <start>47000000</start>
+            <end>57000000</end>
+        </segment>
+        <segment>
+            <id>Fjord foss</id>
+            <start>58541667</start>
+            <end>62875000</end>
+        </segment>
+        <segment>
+            <id>Fjord like river</id>
+            <start>64250000</start>
+            <end>68125000</end>
+        </segment>
+        <segment>
+            <id>Dark lake</id>
+            <start>69375000</start>
+            <end>74000000</end>
+        </segment>
+        <segment>
+            <id>Mountain range</id>
+            <start>74750000</start>
+            <end>79500000</end>
+        </segment>
+        <segment>
+            <id>Omnious fjord Lightbrake</id>
+            <start>79750000</start>
+            <end>87750000</end>
+        </segment>
+    </segments>
+</komposition>
