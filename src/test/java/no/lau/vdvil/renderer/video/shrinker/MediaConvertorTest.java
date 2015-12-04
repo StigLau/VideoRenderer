@@ -1,5 +1,6 @@
 package no.lau.vdvil.renderer.video.shrinker;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -7,6 +8,7 @@ import org.junit.Test;
  */
 public class MediaConvertorTest {
     @Test
+    @Ignore //Download first
     public void testConverting() {
         Integer WIDTH = 320;
         Integer HEIGHT = 240;

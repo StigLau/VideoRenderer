@@ -5,6 +5,7 @@ import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.renderer.video.creator.ImageFileStore;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
 import no.lau.vdvil.renderer.video.stigs.ImageSampleInstruction;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,7 @@ public class ImageCapturingFromVideoTest {
     private Logger logger = LoggerFactory.getLogger(ImageCapturingFromVideoTest.class);
 
     @Test
+    @Ignore //Download first
     public void testCapturing() {
         String inputFilename = "/tmp/streamingImagesStrippedResult.mp4";
         String outputFilePrefix = "/tmp/snaps/1280_NORWAY-A_Time-Lapse_Adventure.mp4/";

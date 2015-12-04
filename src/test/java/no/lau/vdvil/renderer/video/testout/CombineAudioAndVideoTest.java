@@ -4,6 +4,7 @@ import no.lau.vdvil.domain.MediaFile;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.renderer.video.concatenator.AudioVideoConcatenator;
 import no.lau.vdvil.renderer.video.config.VideoConfig;
+import org.junit.Ignore;
 import org.junit.Test;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -14,6 +15,7 @@ import java.net.URL;
  */
 public class CombineAudioAndVideoTest {
     @Test
+    @Ignore //Download first
     public void videoAudioCombinationTest() throws MalformedURLException {
         //String inputVideoFilePath = "/Users/stiglau/Downloads/NORWAY-A_Time-Lapse_Adventure.mp4"; Does not works
         //String inputVideoFilePath = "/Users/stiglau/Downloads/JavaZone_2014_10.sept.mp4";

@@ -5,6 +5,7 @@ import com.xuggle.mediatool.IMediaWriter;
 import com.xuggle.mediatool.ToolFactory;
 import com.xuggle.xuggler.ICodec;
 import com.xuggle.xuggler.IContainer;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -17,6 +18,7 @@ public class AudioExtractionTest {
     String outfile = "/tmp/an4.mp3";
 
     @Test
+    @Ignore //Download first
     public void testExtractingAudion() {
         VideoInfo videoInfo = new VideoInfo();
         IContainer container = videoInfo.getVideoProperties(inFile);
