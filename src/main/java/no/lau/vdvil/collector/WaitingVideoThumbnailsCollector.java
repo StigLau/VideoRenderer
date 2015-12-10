@@ -23,10 +23,16 @@ public class WaitingVideoThumbnailsCollector implements ImageCollector{
     private final ImageStore<BufferedImage> imageStore;
     private final List<Plan> collectPlans;
     Queue<BufferedImage> emptyFrameBuffer = new ArrayDeque<>();
+    private final boolean skipAhead;
 
     public WaitingVideoThumbnailsCollector(List<Plan> collectPlans, ImageStore<BufferedImage> imageStore) {
+        this(collectPlans, imageStore, false);
+    }
+
+    public WaitingVideoThumbnailsCollector(List<Plan> collectPlans, ImageStore<BufferedImage> imageStore, boolean skipAhead) {
         this.imageStore = imageStore;
         this.collectPlans = collectPlans;
+        this.skipAhead = skipAhead;
     }
 
     public void run() {
@@ -53,8 +59,10 @@ public class WaitingVideoThumbnailsCollector implements ImageCollector{
 
             mediaReader.addListener(new ImageSnapListener(collectPlan, imageStore));
 
-            long startMs = ((TimeStampFixedImageSampleSegment)((SuperPlan)collectPlan).getFramePlans().get(0).originalSegment).timestampStart;
-            StrippedWaitingVideoThumbnailsCollector.seekToMs(container, startMs);
+            if(skipAhead) {
+                long startMs = ((TimeStampFixedImageSampleSegment) ((SuperPlan) collectPlan).getFramePlans().get(0).originalSegment).timestampStart;
+                StrippedWaitingVideoThumbnailsCollector.seekToMs(container, startMs);
+            }
             // read out the contents of the media file and
             // dispatch events to the attached listener
             while (mediaReader.readPacket() == null) ;
