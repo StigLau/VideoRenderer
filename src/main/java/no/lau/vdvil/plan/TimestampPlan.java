@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Todo Merge with SuperPlan!!!
  */
-public class TimestampPlan implements Plan {
+public class TimestampPlan implements FrameRepresentationsPlan {
 
     final long startTimeStamp;
     final long endTimeStamp;
@@ -53,7 +53,7 @@ public class TimestampPlan implements Plan {
         return ioFile;
     }
 
-    public List<FrameRepresentation> frameRepresentations() {
+    public List<FrameRepresentation> getFrameRepresentations() {
         return frameRepresentations;
     }
 }

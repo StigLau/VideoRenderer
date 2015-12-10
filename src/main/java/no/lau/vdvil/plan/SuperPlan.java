@@ -14,7 +14,7 @@ import java.util.*;
 /**
  * @author Stig@Lau.no
  */
-public class SuperPlan implements Plan, AudioPlan{
+public class SuperPlan implements FrameRepresentationsPlan, AudioPlan{
 
     Logger logger = LoggerFactory.getLogger(SuperPlan.class);
     final long lastTimeStamp;
