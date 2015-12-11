@@ -36,7 +36,7 @@ public class VideoConfig implements Config {
         return extensionType;
     }
 
-    public long framerateMillis() {
-        return 1000000 / framerate;
+    public int framerate() {
+        return (int) (1000000 / framerate);
     }
 }

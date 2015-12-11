@@ -94,7 +94,7 @@ class VideoAdapter {
         this.imageStore = imageStore;
         this.width = config.width;
         this.height = config.height;
-        this.frameRate = config.framerateMillis();
+        this.frameRate = config.framerate();
 
         // add audio and video streams
         writer.addVideoStream(videoStreamIndex, videoStreamId, width, height);
