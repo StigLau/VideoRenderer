@@ -5,11 +5,11 @@
     <mediaFile>
         <fileName>https://s3.amazonaws.com/dvl-test-music/music/mario-aparicio-5am-original.mp3</fileName>
         <startingOffset>0.00</startingOffset>
-        <checksum>not_checked_yet</checksum>
+        <checksum>0a5e2b8803623743210e65f1c2d5d7c7</checksum>
         <type>url</type>
         <extension>mp3</extension>
     </mediaFile>
-    <bpm>125.0</bpm>
+    <bpm>120.0</bpm>
     <segments>
         <segment>
             <id>Intro?</id>
