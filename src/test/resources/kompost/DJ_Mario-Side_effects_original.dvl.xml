@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <komposition>
-    <reference>DJ_Mario-Side-effects-original</reference>
+    <reference>DJ_Mario-Side_effects_original</reference>
     <type>audioKomposition</type>
     <mediaFile>
-        <fileName>https://s3.amazonaws.com/dvl-test-music/music/mario-aparicio-5am-original.mp3</fileName>
+        <fileName>https://s3.amazonaws.com/kompost/dvl-test/DJ-Mario-Side_Effects.mp3</fileName>
         <startingOffset>0.00</startingOffset>
-        <checksum>0a5e2b8803623743210e65f1c2d5d7c7</checksum>
+        <checksum>not_correct</checksum>
         <type>url</type>
         <extension>mp3</extension>
     </mediaFile>
