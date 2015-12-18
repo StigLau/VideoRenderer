@@ -14,32 +14,32 @@
         <segment>
             <id>Intro?</id>
             <start>0</start>
-            <end>16</end>
+            <end>128</end>
         </segment>
         <segment>
             <id>Verse1?</id>
             <start>128</start>
-            <end>155</end>
+            <end>256</end>
         </segment>
         <segment>
             <id>Refrain 1?</id>
             <start>256</start>
-            <end>272</end>
+            <end>384</end>
         </segment>
         <segment>
             <id>Verse 2?</id>
             <start>384</start>
-            <end>400</end>
+            <end>512</end>
         </segment>
         <segment>
             <id>Refrain 2?</id>
             <start>512</start>
-            <end>528</end>
+            <end>640</end>
         </segment>
         <segment>
             <id>Outro ?</id>
             <start>640</start>
-            <end>656</end>
+            <end>768</end>
         </segment>
     </segments>
 </komposition>
