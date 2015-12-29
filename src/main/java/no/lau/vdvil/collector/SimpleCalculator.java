@@ -6,8 +6,6 @@ public class SimpleCalculator implements FrameCalculator{
 
     public final long collectRatio;
     public final long buildRatio;
-    //Todo Add other segment to Calculator!
-    public Segment other;
 
     public SimpleCalculator(long collect, long build) {
         this.collectRatio = collect;

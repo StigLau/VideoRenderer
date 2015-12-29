@@ -16,10 +16,12 @@ public class SegmentFramePlan implements Comparable {
 
     static Logger logger = LoggerFactory.getLogger(SegmentFramePlan.class);
     public final Segment originalSegment;
+    public final float bpm;
     public final List<FrameRepresentation> frameRepresentations;
 
     public SegmentFramePlan(String id, Segment segment, float bpm, long framerate, FrameCalculator frameCalculator) {
         this.originalSegment = segment;
+        this.bpm = bpm;
         frameRepresentations = calculateFramesFromSegment(id, segment, bpm, framerate, frameCalculator);
     }
 
@@ -79,7 +81,7 @@ public class SegmentFramePlan implements Comparable {
         } else {
             long numberOfCollectFrames = ((SimpleCalculator) frameCalculator).collectRatio / frameRateMillis;
             //Logic for adding empty frames in case of more build frames is than collect frames
-            long lastUsedFrame = 0; //TODO Verify where to get this number from!
+            long lastUsedFrame = 0; //Always starts at 0 for static images and collect
             logger.info("numberOfImages = {} id: {}", numberOfFrames, id);
 
             for (int i = 0; i < numberOfFrames; i++) {

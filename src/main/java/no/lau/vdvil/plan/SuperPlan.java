@@ -36,7 +36,7 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan{
         }
         collectId = buildFramePlan.originalSegment.id();
         Segment buildSegment = buildFramePlan.originalSegment;
-        SegmentFramePlan framePlan = new SegmentFramePlan(collectId, collectionSegment, collectBpm, finalFramerate, new SimpleCalculator(collectionSegment.durationCalculated(collectBpm), buildSegment.durationCalculated(collectBpm)));
+        SegmentFramePlan framePlan = new SegmentFramePlan(collectId, collectionSegment, collectBpm, finalFramerate, new SimpleCalculator(collectionSegment.durationCalculated(collectBpm), buildSegment.durationCalculated(buildFramePlan.bpm)));
         framePlans.add(framePlan);
         frameRepresentations.addAll(framePlan.frameRepresentations);
     }
