@@ -37,7 +37,7 @@ public class StrippedWaitingVideoThumbnailsCollector implements ImageCollector{
         this.skipFramesAhead = skipFramesAhead;
     }
 
-    public void run() {
+    public void runSingle() {
         logger.info("Starting capture {}", segment.id());
         long start = System.currentTimeMillis();
 

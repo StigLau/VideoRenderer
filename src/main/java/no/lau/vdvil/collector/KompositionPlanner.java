@@ -47,14 +47,10 @@ public class KompositionPlanner {
             this.buildPlan = superPlan;
         }
 
-//        List<SegmentKompositionMap> alignedSegments = new ForNoTull(fetchKompositions)
-//                .alignSegments(buildKomposition.segments, buildKomposition.bpm);
-        for (SegmentFramePlan buildFramePlan : ((SuperPlan) buildPlan).getFramePlans()) {
+        for (SegmentFramePlan buildFramePlan : ((SuperPlan) this.buildPlan).getFramePlans()) {
             Segment collectSegment = segmentIdCollectSegmentMap.get(buildFramePlan.originalSegment.shortId());
             Komposition fetchKomposition = segmentFetchKompositionMap.get(collectSegment);
-
-            SuperPlan collectPlan = new SuperPlan(collectSegment, buildFramePlan, fetchKomposition.storageLocation, finalFramerate, fetchKomposition.bpm);
-            collectPlans.add(collectPlan);
+            collectPlans.add(new SuperPlan(collectSegment, buildFramePlan, fetchKomposition.storageLocation, finalFramerate, fetchKomposition.bpm));
         }
     }
 

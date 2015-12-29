@@ -6,6 +6,7 @@ import no.lau.vdvil.collector.SegmentFramePlan;
 import no.lau.vdvil.collector.SimpleCalculator;
 import no.lau.vdvil.domain.MediaFile;
 import no.lau.vdvil.domain.Segment;
+import no.lau.vdvil.domain.StaticImagesSegment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.net.URL;
@@ -23,17 +24,21 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan{
     String collectId = "";
     final MediaFile storageLocation;
     public URL audioLocation;
+    Segment collectionSegment;
 
     public SuperPlan(Segment collectionSegment, SegmentFramePlan buildFramePlan, MediaFile storageLocation, long finalFramerate, float collectBpm) {
+        this.collectionSegment = collectionSegment;
         this.storageLocation = storageLocation;
-        lastTimeStamp = calculateLastTimeStamp(Collections.singletonList(collectionSegment), collectBpm);
-        //this.collectId = komposition.segments.get(0).id() + "_" + Math.abs(new Random().nextInt()); //TODO Les fra Map om hva ID'en skal hete!
-
-            collectId = buildFramePlan.originalSegment.id();
-            Segment buildSegment = buildFramePlan.originalSegment;
-            SegmentFramePlan framePlan = new SegmentFramePlan(collectId, collectionSegment, collectBpm, finalFramerate, new SimpleCalculator(collectionSegment.durationCalculated(collectBpm), buildSegment.durationCalculated(collectBpm)));
-            framePlans.add(framePlan);
-            frameRepresentations.addAll(framePlan.frameRepresentations);
+        if (collectionSegment instanceof StaticImagesSegment) {
+            lastTimeStamp = calculateLastTimeStamp(Collections.singletonList(buildFramePlan.originalSegment), collectBpm);
+        } else {
+            lastTimeStamp = calculateLastTimeStamp(Collections.singletonList(collectionSegment), collectBpm);
+        }
+        collectId = buildFramePlan.originalSegment.id();
+        Segment buildSegment = buildFramePlan.originalSegment;
+        SegmentFramePlan framePlan = new SegmentFramePlan(collectId, collectionSegment, collectBpm, finalFramerate, new SimpleCalculator(collectionSegment.durationCalculated(collectBpm), buildSegment.durationCalculated(collectBpm)));
+        framePlans.add(framePlan);
+        frameRepresentations.addAll(framePlan.frameRepresentations);
     }
 
     /**
@@ -124,5 +129,9 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan{
 
     public URL audioLocation() {
         return audioLocation;
+    }
+
+    public Segment collectionSegment() {
+        return collectionSegment;
     }
 }

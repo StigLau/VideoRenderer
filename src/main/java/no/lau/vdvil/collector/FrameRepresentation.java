@@ -1,6 +1,8 @@
 package no.lau.vdvil.collector;
 
 import no.lau.vdvil.domain.Segment;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * @author Stig@Lau.no 12.05.2015.
@@ -15,6 +17,7 @@ public class FrameRepresentation {
     //To keep track of number of frames during building
     public long numberOfFrames = 0;
     public long frameNr = 0;
+    URL imageUrl;
 
     public FrameRepresentation(long timestamp, String referenceId, Segment originalSegment) {
         this(timestamp, referenceId, originalSegment, false);
@@ -46,5 +49,17 @@ public class FrameRepresentation {
 
     public String toString() {
         return originalSegment.id() + " " + timestamp + "_" + referenceId + (isEmptyFrame() ? " Empty Frame" : "");
+    }
+
+    public URL imageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        try {
+            this.imageUrl = new URL(imageUrl);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Naugty imageURL " + imageUrl);
+        }
     }
 }

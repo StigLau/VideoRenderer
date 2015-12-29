@@ -1,6 +1,7 @@
 package no.lau.vdvil.collector;
 
 import no.lau.vdvil.domain.Segment;
+import no.lau.vdvil.domain.StaticImagesSegment;
 import no.lau.vdvil.domain.VideoStillImageSegment;
 import no.lau.vdvil.renderer.video.stigs.TimeStampFixedImageSampleSegment;
 import org.slf4j.Logger;
@@ -29,39 +30,77 @@ public class SegmentFramePlan implements Comparable {
         long frameRateMillis = 1000000/framerate;
         List<FrameRepresentation> plans = new ArrayList<>();
         long numberOfFrames;
-        long numberOfCollectFrames = ((SimpleCalculator) frameCalculator).collectRatio / frameRateMillis;
-        if (segment instanceof VideoStillImageSegment<?>) {
+
+        //TODO Extract this for future implementations!!!!1
+        if (segment instanceof VideoStillImageSegment<?> || segment instanceof StaticImagesSegment) {
             numberOfFrames = Math.round(segment.duration() * framerate * 60 / bpm);
         } else if(segment instanceof TimeStampFixedImageSampleSegment) {
             //Todo use buildSegments number of frames!
             SimpleCalculator calc = (SimpleCalculator) frameCalculator;
+            long numberOfCollectFrames = ((SimpleCalculator) frameCalculator).collectRatio / frameRateMillis;
             numberOfFrames = 1 + numberOfCollectFrames * calc.buildRatio / calc.collectRatio;
         } else {
+            logger.error("Not implemented for {}", segment.getClass());
             numberOfFrames = -1;
         }
 
-        //Logic for adding empty frames in case of more build frames is than collect frames
-        long lastUsedFrame = 0;
-        logger.info("numberOfImages = {} id: {}", numberOfFrames, id);
         long start = segment.startCalculated(bpm);
-        for (int i = 0; i < numberOfFrames; i++) {
-            long thisDuration = frameRateMillis * i;
 
-            //Placing empty frames when there are too few collect images
-            boolean emptyFrame = true;
-            if(segment instanceof TimeStampFixedImageSampleSegment) {
-                if(i > lastUsedFrame * (float) numberOfFrames / numberOfCollectFrames) {
-                    emptyFrame = false;
-                    lastUsedFrame++;
+        if (segment instanceof StaticImagesSegment) {
+            StaticImagesSegment staticImagesSegment = (StaticImagesSegment) segment;
+            int nrOfImages = staticImagesSegment.images.length;
+            int framezz = new Long(((SimpleCalculator) frameCalculator).buildRatio / frameRateMillis).intValue();
+            int bucketSize = framezz / nrOfImages;
+            int modulusRest = framezz % nrOfImages;
+
+            int imageNr = 0;
+            for (String image : staticImagesSegment.images) {
+                //Eat up the rest and add image as long as rest is inverse
+
+                int thisBucketSize = bucketSize;
+                if(modulusRest > 0) {
+                    thisBucketSize = bucketSize +1;
+                    modulusRest--;
+                }
+
+                for (int i = 0;i < thisBucketSize ; i++, imageNr++) {
+
+
+                    long thisDuration = frameRateMillis * imageNr  ;
+                    FrameRepresentation frame = new FrameRepresentation(start + thisDuration, id, segment);
+                    frame.numberOfFrames = framezz;
+                    frame.frameNr = imageNr;
+
+                    frame.setImageUrl(image);
+                    logger.debug("Adding image #{}, {}", imageNr, frame);
+                    plans.add(frame);
                 }
             }
+        } else {
+            long numberOfCollectFrames = ((SimpleCalculator) frameCalculator).collectRatio / frameRateMillis;
+            //Logic for adding empty frames in case of more build frames is than collect frames
+            long lastUsedFrame = 0; //TODO Verify where to get this number from!
+            logger.info("numberOfImages = {} id: {}", numberOfFrames, id);
 
-            FrameRepresentation frame = new FrameRepresentation(start + thisDuration, id, segment, emptyFrame);
-            frame.numberOfFrames = numberOfFrames;
-            frame.frameNr = i;
-            plans.add(frame);
+            for (int i = 0; i < numberOfFrames; i++) {
+                long thisDuration = frameRateMillis * i;
 
-            logger.trace(segment.id() + " #" + (i + 1) + " duration:" + thisDuration + " Used:" + emptyFrame);
+                //Placing empty frames when there are too few collect images
+                boolean emptyFrame = true;
+                if (segment instanceof TimeStampFixedImageSampleSegment) {
+                    if (i > lastUsedFrame * (float) numberOfFrames / numberOfCollectFrames) {
+                        emptyFrame = false;
+                        lastUsedFrame++;
+                    }
+                }
+
+                FrameRepresentation frame = new FrameRepresentation(start + thisDuration, id, segment, emptyFrame);
+                frame.numberOfFrames = numberOfFrames;
+                frame.frameNr = i;
+                plans.add(frame);
+
+                logger.trace(segment.id() + " #" + (i + 1) + " duration:" + thisDuration + " Used:" + emptyFrame);
+            }
         }
         return plans;
     }

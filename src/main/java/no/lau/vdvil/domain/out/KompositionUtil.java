@@ -31,7 +31,7 @@ public class KompositionUtil {
                 }
             } else if(end <= filterStart || filterEnd <= segment.start()) {
                 //Is outside filters range
-                logger.debug("starting at {} was filtered out of the composition", segment.start());
+                logger.debug("Filtered out of the composition: {}:\t{}",segment.start(), segment.shortId());
             }
         }
         return filteredPartsList;

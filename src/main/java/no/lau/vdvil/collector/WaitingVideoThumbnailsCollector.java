@@ -20,29 +20,23 @@ import java.util.Queue;
 public class WaitingVideoThumbnailsCollector implements ImageCollector{
 
     private Logger logger = LoggerFactory.getLogger(getClass());
+    private Plan collectPlan;
     private final ImageStore<BufferedImage> imageStore;
-    private final List<Plan> collectPlans;
+
     Queue<BufferedImage> emptyFrameBuffer = new ArrayDeque<>();
     private final boolean skipAhead;
 
-    public WaitingVideoThumbnailsCollector(List<Plan> collectPlans, ImageStore<BufferedImage> imageStore) {
-        this(collectPlans, imageStore, false);
+    public WaitingVideoThumbnailsCollector(Plan collectPlan, ImageStore<BufferedImage> imageStore) {
+        this(collectPlan, imageStore, false);
     }
 
-    public WaitingVideoThumbnailsCollector(List<Plan> collectPlans, ImageStore<BufferedImage> imageStore, boolean skipAhead) {
+    public WaitingVideoThumbnailsCollector(Plan collectPlan, ImageStore<BufferedImage> imageStore, boolean skipAhead) {
+        this.collectPlan = collectPlan;
         this.imageStore = imageStore;
-        this.collectPlans = collectPlans;
         this.skipAhead = skipAhead;
     }
 
-    public void run() {
-        for (Plan collectPlan : collectPlans) {
-            runSingle(collectPlan);
-        }
-        logger.info("Finished collecting");
-    }
-
-    void runSingle(Plan collectPlan) {
+    public void runSingle() {
         logger.info("Starting capture {}", collectPlan.id());
         long start = System.currentTimeMillis();
 
