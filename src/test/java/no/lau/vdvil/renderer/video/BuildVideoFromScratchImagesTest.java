@@ -120,7 +120,7 @@ public class BuildVideoFromScratchImagesTest {
                 new VideoStillImageSegment("Smile girl, smile", 80, 8),
                 new VideoStillImageSegment("Swing out from bridge", 88, 12)
         ).filter(16, 16);
-        MediaFile mf = new MediaFile(new URL(result2), 0f, 128f, "1a6714a7c66b45b908e9bac8d0fcbfc8");
+        MediaFile mf = new MediaFile(new URL(result2), 0f, 128f, "194cab04161712a4f07d995d7736c347");
         buildKomposition.storageLocation = mf;
 
 

@@ -74,7 +74,7 @@ public class SegmentFramePlan implements Comparable {
                     frame.frameNr = imageNr;
 
                     frame.setImageUrl(image);
-                    logger.debug("Adding image #{}, {}", imageNr, frame);
+                    logger.trace("Adding image #{}, {}", imageNr, frame);
                     plans.add(frame);
                 }
             }

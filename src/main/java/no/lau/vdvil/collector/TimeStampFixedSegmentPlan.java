@@ -1,5 +1,6 @@
 package no.lau.vdvil.collector;
 
+import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.plan.Plan;
 import no.lau.vdvil.renderer.video.stigs.TimeStampFixedImageSampleSegment;
 import java.util.Collections;
@@ -43,5 +44,9 @@ public class TimeStampFixedSegmentPlan implements Plan {
 
     public String ioFile() {
         return mediaFile;
+    }
+
+    public Segment originalSegment() {
+        return segment;
     }
 }

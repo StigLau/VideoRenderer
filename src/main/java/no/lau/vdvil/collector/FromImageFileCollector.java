@@ -37,7 +37,7 @@ public class FromImageFileCollector implements ImageCollector{
                     BufferedImage image = ImageIO.read(frameRepresentation.imageUrl());
                     imageStore.store(image, timestamp, frameRepresentation);
                     frameRepresentation.use();
-                    logger.debug("Storing image {}@{} {}/{}", frameRepresentation.referenceId(), timestamp);
+                    logger.trace("Storing image {}@{}", frameRepresentation.referenceId(), timestamp);
                 } catch (IOException e) {
                     logger.error("Problems collecting {}", frameRepresentation.referenceId());
                 }

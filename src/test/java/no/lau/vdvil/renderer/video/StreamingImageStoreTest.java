@@ -38,11 +38,11 @@ public class StreamingImageStoreTest {
 
     @Before
     public void setUp() throws MalformedURLException {
-        downmixedOriginalVideo = Paths.get("/tmp/videoTest/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time-Lapse_Adventure.mp4").toUri().toURL();
-        theSwingVideo = Paths.get("/tmp/videoTest/Worlds_Largest_Rope_Swing/Worlds_Largest_Rope_Swing.mp4").toUri().toURL();
+        downmixedOriginalVideo = Paths.get("/tmp/kompost/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time-Lapse_Adventure.mp4").toUri().toURL();
+        theSwingVideo = Paths.get("/tmp/kompost/Worlds_Largest_Rope_Swing/Worlds_Largest_Rope_Swing.mp4").toUri().toURL();
         result4 = Paths.get("/tmp/from_scratch_images_test_v4.mp4").toUri().toURL();
         strippedResult = Paths.get("/tmp/streamingImagesStrippedResult.mp4").toUri().toURL();
-        sobotaMp3 = Paths.get("/tmp/videoTest/The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix/The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix.mp3").toUri().toURL();
+        sobotaMp3 = Paths.get("/tmp/kompost/The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix/The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix.mp3").toUri().toURL();
 
         Komposition fetchKompositionNorway = new Komposition(128,
                 new TimeStampFixedImageSampleSegment("Purple Mountains Clouds", 7541667, 19750000, 8),
@@ -99,7 +99,7 @@ public class StreamingImageStoreTest {
         for (Plan plan : collectPlan) {
             collectFrameRepresentations.addAll(((SuperPlan)plan).getFrameRepresentations());
         }
-        assertEquals(361, collectFrameRepresentations.size());
+        assertEquals(372, collectFrameRepresentations.size());
 
         assertEquals(0, buildPlan.getFrameRepresentations().get(0).timestamp);
         assertTrue(buildPlan.getFrameRepresentations().get(0).referenceId().contains("Flower fjord"));
@@ -128,7 +128,7 @@ public class StreamingImageStoreTest {
         CreateVideoFromScratchImages.createVideo(planner.buildPlan(),imageStore,new VideoConfig(480, 260, 6000));
         assertEquals(372, ((SuperPlan)planner.buildPlan()).getFrameRepresentations().stream().filter(frame -> frame.used).count());
 
-        assertEquals(361, ((SuperPlan) planner.collectPlans().get(0)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
+        assertEquals(372, ((SuperPlan) planner.collectPlans().get(0)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
         /*
         assertEquals(258, ((SuperPlan) planner.collectPlans().get(1)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
         assertEquals(258, ((SuperPlan) planner.collectPlans().get(2)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
@@ -138,7 +138,7 @@ public class StreamingImageStoreTest {
         assertEquals(384, ((SuperPlan) planner.collectPlans().get(6)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
         assertEquals(96, ((SuperPlan) planner.collectPlans().get(7)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
         */
-        assertEquals("289b800bb9696613f76338099e38ea26", md5Checksum(resultingMediaFile.fileName));
+        assertEquals("43be3689e4e0bd6f39cb929a89809389", md5Checksum(resultingMediaFile.fileName));
     }
 
     @Test

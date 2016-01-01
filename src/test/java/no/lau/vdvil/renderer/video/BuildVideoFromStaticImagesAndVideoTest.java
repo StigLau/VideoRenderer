@@ -122,18 +122,11 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new VideoStillImageSegment("Flower fjord", 44, 8),
                 new VideoStillImageSegment("Fjord like river", 52, 12)
         );//.filter(16, 16);
-        /*
-        Komposition buildKomposition =  new Komposition(124,
-                new VideoStillImageSegment("Still Image Fun 1", 0, 24),
-                new VideoStillImageSegment("Still Image Fun 2", 24, 4),
-                new VideoStillImageSegment("Dark lake", 28, 4).revert()
-                );//.filter(16, 16);
-        */
-        MediaFile mf = new MediaFile(new URL(result3), 0f, 128f, "1a6714a7c66b45b908e9bac8d0fcbfc8");
+        MediaFile mf = new MediaFile(new URL(result3), 0f, 128f, "dfd55528d85c8590d823cf69f414ae7c");
         buildKomposition.storageLocation = mf;
 
 
-        ImageStore<BufferedImage> imageStore = new PipeDream<>(30, 1000, 5000);
+        ImageStore<BufferedImage> imageStore = new PipeDream<>(30, 2500, 5000);
 
         List<Komposition> fetchKompositions = new ArrayList<>();
         fetchKompositions.add(fetchKompositionStillImages);
@@ -146,17 +139,17 @@ public class BuildVideoFromStaticImagesAndVideoTest {
         ThreadedImageCollector collector = new ThreadedImageCollector();
         for (Plan plan : planner.collectPlans()) {
             SuperPlan superPlan = (SuperPlan) plan;
-            if(superPlan.collectionSegment() instanceof TimeStampFixedImageSampleSegment) {
+            if(superPlan.originalSegment() instanceof TimeStampFixedImageSampleSegment) {
                 collector.addCollector(new WaitingVideoThumbnailsCollector(plan, imageStore));
-            } else if(superPlan.collectionSegment() instanceof StaticImagesSegment) {
+            } else if(superPlan.originalSegment() instanceof StaticImagesSegment) {
               collector.addCollector(new FromImageFileCollector(plan, imageStore, 41666));
             } else {
-                logger.error("Not implemented collection type for {}", superPlan.collectionSegment().getClass());
+                logger.error("Not implemented collection type for {}", superPlan.originalSegment().getClass());
             }
         }
 
         new Thread(collector).start();
-        Thread.sleep(2000);
+        Thread.sleep(5000);
         CreateVideoFromScratchImages.createVideo(planner.buildPlan(), imageStore, new VideoConfig(1280, 720, Math.round(1000000/24)));
 
         logger.info("Storing file at {}", mf.fileName);

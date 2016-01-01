@@ -13,11 +13,13 @@ public class TimestampPlan implements FrameRepresentationsPlan {
     final long startTimeStamp;
     final long endTimeStamp;
     final String referenceId;
+    private final Segment segment;
 
     List<FrameRepresentation> frameRepresentations = new ArrayList<>();
     final String ioFile;
 
     public TimestampPlan(Segment segment, int framerate, String ioFile) {
+        this.segment = segment;
         this.startTimeStamp = segment.start();
         this.endTimeStamp = segment.start() + segment.duration();
         this.referenceId = segment.id();
@@ -55,5 +57,9 @@ public class TimestampPlan implements FrameRepresentationsPlan {
 
     public List<FrameRepresentation> getFrameRepresentations() {
         return frameRepresentations;
+    }
+
+    public Segment originalSegment() {
+        return segment;
     }
 }

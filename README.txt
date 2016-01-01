@@ -5,5 +5,5 @@ Strip pics from video - VideoThumbnailsExample
 
 ModifyMediaExample to converge. Concatenate as alternative.
 
-RuntimeException: could not open: /tmp/videoTest/NORWAY-A_Time..... -> May be because the file is erronous (Lacks videostream / empty)
+RuntimeException: could not open: /tmp/kompost/NORWAY-A_Time..... -> May be because the file is erronous (Lacks videostream / empty)
 TODO Check out IContainer.seekKeyFrame

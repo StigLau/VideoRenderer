@@ -24,19 +24,19 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan{
     String collectId = "";
     final MediaFile storageLocation;
     public URL audioLocation;
-    Segment collectionSegment;
+    Segment originalSegment;
 
-    public SuperPlan(Segment collectionSegment, SegmentFramePlan buildFramePlan, MediaFile storageLocation, long finalFramerate, float collectBpm) {
-        this.collectionSegment = collectionSegment;
+    public SuperPlan(Segment originalSegment, SegmentFramePlan buildFramePlan, MediaFile storageLocation, long finalFramerate, float collectBpm) {
+        this.originalSegment = originalSegment;
         this.storageLocation = storageLocation;
-        if (collectionSegment instanceof StaticImagesSegment) {
-            lastTimeStamp = calculateLastTimeStamp(Collections.singletonList(buildFramePlan.originalSegment), collectBpm);
+        if (originalSegment instanceof StaticImagesSegment) {
+            lastTimeStamp = calculateLastTimeStamp(Collections.singletonList(buildFramePlan.originalSegment), buildFramePlan.bpm);
         } else {
-            lastTimeStamp = calculateLastTimeStamp(Collections.singletonList(collectionSegment), collectBpm);
+            lastTimeStamp = calculateLastTimeStamp(Collections.singletonList(originalSegment), collectBpm);
         }
         collectId = buildFramePlan.originalSegment.id();
         Segment buildSegment = buildFramePlan.originalSegment;
-        SegmentFramePlan framePlan = new SegmentFramePlan(collectId, collectionSegment, collectBpm, finalFramerate, new SimpleCalculator(collectionSegment.durationCalculated(collectBpm), buildSegment.durationCalculated(buildFramePlan.bpm)));
+        SegmentFramePlan framePlan = new SegmentFramePlan(collectId, originalSegment, collectBpm, finalFramerate, new SimpleCalculator(originalSegment.durationCalculated(collectBpm), buildSegment.durationCalculated(buildFramePlan.bpm)));
         framePlans.add(framePlan);
         frameRepresentations.addAll(framePlan.frameRepresentations);
     }
@@ -131,7 +131,7 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan{
         return audioLocation;
     }
 
-    public Segment collectionSegment() {
-        return collectionSegment;
+    public Segment originalSegment() {
+        return originalSegment;
     }
 }

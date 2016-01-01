@@ -27,7 +27,7 @@ public class WaitingVideoThumbnailsCollector implements ImageCollector{
     private final boolean skipAhead;
 
     public WaitingVideoThumbnailsCollector(Plan collectPlan, ImageStore<BufferedImage> imageStore) {
-        this(collectPlan, imageStore, false);
+        this(collectPlan, imageStore, true);
     }
 
     public WaitingVideoThumbnailsCollector(Plan collectPlan, ImageStore<BufferedImage> imageStore, boolean skipAhead) {
