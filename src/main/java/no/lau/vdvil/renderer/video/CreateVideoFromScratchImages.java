@@ -109,12 +109,7 @@ class VideoAdapter {
             logger.trace("Time to write packets at {}", clock);
             List<FrameRepresentation> frameRepresentations = buildPlan.whatToDoAt(nextFrameTime);
             for (FrameRepresentation frameRepresentation : frameRepresentations) {
-                ImageRepresentation imageRep;
-                if(frameRepresentation.isEmptyFrame() && previousImageRep != null) {
-                    imageRep = previousImageRep;
-                }else {
-                    imageRep = imageStore.getNextImageRepresentation(frameRepresentation.referenceId());
-                }
+                ImageRepresentation imageRep = imageStore.getNextImageRepresentation(frameRepresentation.referenceId());
 
                 if (imageRep != null || previous != null) {
                     String imgid;

@@ -1,5 +1,6 @@
 package no.lau.vdvil.collector;
 
+import no.lau.vdvil.domain.KnownNumberOfFramesSegment;
 import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.domain.StaticImagesSegment;
 import no.lau.vdvil.domain.VideoStillImageSegment;
@@ -31,19 +32,24 @@ public class SegmentFramePlan implements Comparable {
         }
         long frameRateMillis = 1000000/framerate;
         List<FrameRepresentation> plans = new ArrayList<>();
-        long numberOfFrames;
+        long numberOfAvailableFrames;
+        long numberOfNeededBuildFrames = ((SimpleCalculator) frameCalculator).buildRatio / frameRateMillis;
 
         //TODO Extract this for future implementations!!!!1
         if (segment instanceof VideoStillImageSegment<?> || segment instanceof StaticImagesSegment) {
-            numberOfFrames = Math.round(segment.duration() * framerate * 60 / bpm);
+            numberOfAvailableFrames = Math.round(segment.duration() * framerate * 60 / bpm);
+        } else if(segment instanceof KnownNumberOfFramesSegment) {
+            numberOfAvailableFrames = ((KnownNumberOfFramesSegment)segment).numberOfFrames;
         } else if(segment instanceof TimeStampFixedImageSampleSegment) {
-            //Todo use buildSegments number of frames!
+            logger.warn("Please run method to find out number of segments, resulting in KnownNumberOfFramesSegment");
             SimpleCalculator calc = (SimpleCalculator) frameCalculator;
             long numberOfCollectFrames = ((SimpleCalculator) frameCalculator).collectRatio / frameRateMillis;
-            numberOfFrames = 1 + numberOfCollectFrames * calc.buildRatio / calc.collectRatio;
-        } else {
+            numberOfAvailableFrames = 1 + numberOfCollectFrames * calc.buildRatio / calc.collectRatio;
+            numberOfAvailableFrames = numberOfAvailableFrames / (((SimpleCalculator) frameCalculator).collectRatio / frameRateMillis);
+        }
+        else {
             logger.error("Not implemented for {}", segment.getClass());
-            numberOfFrames = -1;
+            numberOfAvailableFrames = -1;
         }
 
         long start = segment.startCalculated(bpm);
@@ -78,26 +84,40 @@ public class SegmentFramePlan implements Comparable {
                     plans.add(frame);
                 }
             }
+        } else if(segment instanceof KnownNumberOfFramesSegment){
+            logger.info("numberOfImages = {} id: {}", numberOfAvailableFrames, id);
+
+            for (int i = 0; i < numberOfAvailableFrames; i++) {
+                long thisDuration = frameRateMillis * i;
+                float bignr = numberOfNeededBuildFrames / numberOfAvailableFrames;
+                for (int j = 0; j < bignr + 1; j++) {
+                    FrameRepresentation frame = new FrameRepresentation(start + thisDuration, id, segment);
+                    frame.numberOfFrames = numberOfAvailableFrames;
+                    frame.frameNr = i;
+                    plans.add(frame);
+                }
+                logger.trace(segment.id() + " #" + (i + 1) + " duration:" + thisDuration);
+            }
         } else {
             long numberOfCollectFrames = ((SimpleCalculator) frameCalculator).collectRatio / frameRateMillis;
             //Logic for adding empty frames in case of more build frames is than collect frames
             long lastUsedFrame = 0; //Always starts at 0 for static images and collect
-            logger.info("numberOfImages = {} id: {}", numberOfFrames, id);
+            logger.info("numberOfImages = {} id: {}", numberOfAvailableFrames, id);
 
-            for (int i = 0; i < numberOfFrames; i++) {
+            for (int i = 0; i < numberOfAvailableFrames; i++) {
                 long thisDuration = frameRateMillis * i;
 
                 //Placing empty frames when there are too few collect images
                 boolean emptyFrame = true;
                 if (segment instanceof TimeStampFixedImageSampleSegment) {
-                    if (i > lastUsedFrame * (float) numberOfFrames / numberOfCollectFrames) {
+                    if (i > lastUsedFrame * (float) numberOfAvailableFrames / numberOfCollectFrames) {
                         emptyFrame = false;
                         lastUsedFrame++;
                     }
                 }
 
                 FrameRepresentation frame = new FrameRepresentation(start + thisDuration, id, segment, emptyFrame);
-                frame.numberOfFrames = numberOfFrames;
+                frame.numberOfFrames = numberOfAvailableFrames;
                 frame.frameNr = i;
                 plans.add(frame);
 

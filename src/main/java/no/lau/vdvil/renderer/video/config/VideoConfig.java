@@ -13,6 +13,7 @@ public class VideoConfig implements Config {
     public final int height;
     public final long framerate;
     final ExtensionType extensionType;
+    long duration;
 
     /**
      * Standard, simplified constructor
@@ -38,5 +39,13 @@ public class VideoConfig implements Config {
 
     public int framerate() {
         return (int) (1000000 / framerate);
+    }
+
+    public void setDuration(long duration) {
+        this.duration = duration;
+    }
+
+    public long duration() {
+        return duration;
     }
 }

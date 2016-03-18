@@ -2,10 +2,6 @@ package no.lau.vdvil.renderer.video.deprecated.phun;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.awt.image.BufferedImage;
-
-import com.xuggle.mediatool.IMediaViewer;
 import com.xuggle.mediatool.IMediaWriter;
 import com.xuggle.mediatool.ToolFactory;
 import com.xuggle.xuggler.IAudioSamples;
@@ -69,13 +65,8 @@ public class CreateBallVideo {
 
         final IMediaWriter writer = ToolFactory.makeWriter(outFile);
 
-        // add a viewer so we can see the media as it is created
-        writer.addListener(ToolFactory.makeViewer(
-                IMediaViewer.Mode.AUDIO_VIDEO, true,
-                javax.swing.WindowConstants.EXIT_ON_CLOSE));
 
         // add audio and video streams
-        writer.addVideoStream(videoStreamIndex, videoStreamId, width, height);
         writer.addAudioStream(audioStreamIndex, audioStreamId, channelCount, sampleRate);
 
         // create some balls to show on the screen
@@ -83,31 +74,23 @@ public class CreateBallVideo {
 
 
         try {
-            drawSomeBalls(duration, videoStreamIndex, frameRate, audioStreamIndex, sampleRate, sampleCount, nextFrameTime, totalSampleCount, writer, balls);
+            for (long clock = 0; clock < duration; clock = IAudioSamples.samplesToDefaultPts(totalSampleCount, sampleRate)) {
+                // while the clock time exceeds the time of the next video frame,
+                // get and encode the next video frame
+
+                // compute and encode the audio for the balls
+
+                short[] samples = balls.getAudioFrame(sampleRate);
+                writer.encodeAudio(audioStreamIndex, samples, clock, DEFAULT_TIME_UNIT);
+                totalSampleCount += sampleCount;
+            }
         }finally {
             // manually close the writer
             writer.close();
         }
     }
 
-    private static void drawSomeBalls(long duration, int videoStreamIndex, long frameRate, int audioStreamIndex, int sampleRate, int sampleCount, long nextFrameTime, long totalSampleCount, IMediaWriter writer, ImageCreatorI balls) {
-        // loop through clock time, which starts at zero and increases based
-        // on the total number of samples created thus far
-        for (long clock = 0; clock < duration; clock = IAudioSamples.samplesToDefaultPts(totalSampleCount, sampleRate)) {
-            // while the clock time exceeds the time of the next video frame,
-            // get and encode the next video frame
-
-            while (clock >= nextFrameTime) {
-                BufferedImage frame = balls.getVideoFrame(frameRate);
-                writer.encodeVideo(videoStreamIndex, frame, nextFrameTime, DEFAULT_TIME_UNIT);
-                nextFrameTime += frameRate;
-            }
-
-            // compute and encode the audio for the balls
-
-            short[] samples = balls.getAudioFrame(sampleRate);
-            writer.encodeAudio(audioStreamIndex, samples, clock, DEFAULT_TIME_UNIT);
-            totalSampleCount += sampleCount;
-        }
+    public static void main(String[] args) {
+        CreateBallVideo.createBallsVideo("/tmp/balls.mp3");
     }
 }

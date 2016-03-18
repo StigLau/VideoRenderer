@@ -8,6 +8,7 @@ public class AudioConfig implements Config {
 
     final ExtensionType extensionType;
     final int framerate;
+    long duration;
 
     /**
      * Standard, simplified constructor
@@ -28,5 +29,12 @@ public class AudioConfig implements Config {
 
     public int framerate() {
         return framerate;
+    }
+
+    public void setDuration(long duration) {
+        this.duration = duration;
+    }
+    public long duration() {
+        return duration;
     }
 }

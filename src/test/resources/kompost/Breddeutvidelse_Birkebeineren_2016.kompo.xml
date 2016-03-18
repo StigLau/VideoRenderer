@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<komposition>
+    <reference>3e7136107d87f39c00fc40e6d04c3412</reference>
+    <bpm>123</bpm>
+    <mediaFile>
+        <fileName>https://www.youtube.com/watch?v=Vczri7uY0CY</fileName>
+        <startingOffset>0</startingOffset>
+        <checksumFileSize>167875065</checksumFileSize>
+        <type>youtube</type>
+        <extension>mp4</extension>
+    </mediaFile>
+    <segments>
+        <segment>
+            <id>Not-so-pretty tracks</id>
+            <start>0</start>
+            <end>11000000</end>
+        </segment>
+        <segment>
+            <id>The start</id>
+            <start>34000000</start>
+            <end>64000000</end>
+        </segment>
+        <segment>
+            <id>Bumpy</id>
+            <start>64000000</start>
+            <end>74000000</end>
+        </segment>
+        <segment>
+            <id>Thru forest until right turn</id>
+            <start>74000000</start>
+            <end>145033333</end>
+        </segment>
+        <segment>
+            <id>Meeting of man and machine</id>
+            <start>145033333</start>
+            <end>201000000</end>
+        </segment>
+        <segment>
+            <id>Sunny slope</id>
+            <start>201000000</start>
+            <end>234000000</end>
+        </segment>
+        <segment>
+            <id>Dark climb and right turn</id>
+            <start>234000000</start>
+            <end>269000000</end>
+        </segment>
+        <segment>
+            <id>Glaring sun and hut</id>
+            <start>269000000</start>
+            <end>311000000</end>
+        </segment>
+        <segment>
+            <id>Long dark forest climb</id>
+            <start>311000000</start>
+            <end>413000000</end>
+        </segment>
+        <segment>
+            <id>Lighter forest</id>
+            <start>413000000</start>
+            <end>502000000</end>
+        </segment>
+        <segment>
+            <id>Sun run and beyond</id>
+            <start>502000000</start>
+            <end>525000000</end>
+        </segment>
+    </segments>
+</komposition>

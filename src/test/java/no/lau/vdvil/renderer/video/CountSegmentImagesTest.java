@@ -52,5 +52,18 @@ public class CountSegmentImagesTest {
         //This is the amount of images actually extractable from the snippet!!!! Compare 101 to the original expectation 113!
         assertEquals(101, collector.imagesCollected());
     }
+
+    @Test
+    public void countFlowerFjordSnippet() throws MalformedURLException {
+        String testVideo = "/tmp/kompost/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time-Lapse_Adventure_Flower_fjord_35500000___10750000.mp4";
+        VideoInfo.printProperties(VideoInfo.getVideoProperties(testVideo));
+        CountNumberOfEligableImagesBetweenTimestampsCollector collector = new CountNumberOfEligableImagesBetweenTimestampsCollector(0, VideoInfo.getVideoProperties(testVideo).getDuration(), testVideo);
+        try {
+            collector.runSingle();
+        }catch (VideoExtractionFinished e) {
+        }
+        //This is the amount of images actually extractable from the snippet!!!! Compare 101 to the original expectation 113!
+        assertEquals(248, collector.imagesCollected());
+    }
 }
 

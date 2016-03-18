@@ -9,7 +9,6 @@ import java.net.URL;
  */
 public class FrameRepresentation {
     public final long timestamp;
-    private final boolean emptyFrame;
     public boolean used;
     private String referenceId;
     //Reference to Original segment for debugging purposes
@@ -28,7 +27,6 @@ public class FrameRepresentation {
         this.referenceId = referenceId;
         this.originalSegment = originalSegment;
         used = false;
-        this.emptyFrame = isEmptyFrame;
     }
 
     public void use() {
@@ -43,12 +41,12 @@ public class FrameRepresentation {
         return referenceId;
     }
 
-    public boolean isEmptyFrame() {
-        return emptyFrame;
+    public String toString() {
+        return originalSegment.id() + " " + timestamp + "_" + referenceId;
     }
 
-    public String toString() {
-        return originalSegment.id() + " " + timestamp + "_" + referenceId + (isEmptyFrame() ? " Empty Frame" : "");
+    public String getSegmentShortId(){
+        return originalSegment.shortId();
     }
 
     public URL imageUrl() {

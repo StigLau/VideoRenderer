@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<komposition>
+    <reference>c19b676e4e67328e740fa60c61e83c4c</reference>
+    <mediaFile>
+        <fileName>file:/tmp/kompost/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time-Lapse_Adventure_Flower_fjord_35500000___10750000.mp4</fileName>
+        <startingOffset>0</startingOffset>
+        <extension>mp4</extension>
+    </mediaFile>
+    <segments>
+        <segment>
+            <id>Flower fjord</id>
+            <start>0</start>
+            <end>10333168</end>
+            <frames>248</frames>
+        </segment>
+    </segments>
+</komposition>

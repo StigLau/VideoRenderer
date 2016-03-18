@@ -4,7 +4,16 @@ package no.lau.vdvil.renderer.video;
  * @author Stig@Lau.no
  */
 public enum ExtensionType {
-    mp3 ("mp3"), mp4 ("mp4"), webm ("webm"), flac ("flac"), dvl ("dvl.xml"), kompo ("kompo.xml"), NONE ("");
+    aac ("aac"),
+    mp3 ("mp3"),
+    mp4 ("mp4"),
+    webm ("webm"),
+    flac ("flac"),
+    dvl ("dvl.xml"),
+    kompo ("kompo.xml"),
+    jpg ("jpg"),
+    png ("png"),
+    NONE ("");
 
     private final String stringValue;
 
@@ -13,7 +22,7 @@ public enum ExtensionType {
     }
 
     public boolean isAudio() {
-        return this == mp3 || this == flac;
+        return this == aac || this == mp3 || this == flac;
     }
 
     public boolean isVideo() {

@@ -13,9 +13,7 @@ import no.lau.vdvil.renderer.video.stigs.TimeStampFixedImageSampleSegment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.awt.image.BufferedImage;
-import java.util.ArrayDeque;
 import java.util.List;
-import java.util.Queue;
 
 public class WaitingVideoThumbnailsCollector implements ImageCollector{
 
@@ -23,7 +21,6 @@ public class WaitingVideoThumbnailsCollector implements ImageCollector{
     private Plan collectPlan;
     private final ImageStore<BufferedImage> imageStore;
 
-    Queue<BufferedImage> emptyFrameBuffer = new ArrayDeque<>();
     private final boolean skipAhead;
 
     public WaitingVideoThumbnailsCollector(Plan collectPlan, ImageStore<BufferedImage> imageStore) {
@@ -83,33 +80,20 @@ public class WaitingVideoThumbnailsCollector implements ImageCollector{
         public void onVideoPicture(IVideoPictureEvent event) {
             long timestamp = event.getTimeStamp();
             BufferedImage newestImage = null;
-            if (collectPlan.isFinishedProcessing(timestamp) && emptyFrameBuffer.isEmpty()) {
+            if (collectPlan.isFinishedProcessing(timestamp)) {
+                logger.trace("{} Finished collecting images", timestamp);
                 throw new VideoExtractionFinished("End of compilation");
-            } else if (!collectPlan.isFinishedProcessing(timestamp)) {
-                newestImage = event.getImage();
-                //Store last image to queue
-                emptyFrameBuffer.add(newestImage);
             } else {
-                logger.trace("No more images coming in. Emptying buffer. {}", timestamp);
+                newestImage = event.getImage();
             }
-
-            //Get oldest image
-            BufferedImage oldestImage = emptyFrameBuffer.poll();
 
             List<FrameRepresentation> frames = collectPlan.whatToDoAt(timestamp);
             for (FrameRepresentation frameRepresentation : frames) {
-                if(frameRepresentation.isEmptyFrame() && newestImage != null) {
-                    //Add duplicate if framerepresentation is empty
-                    logger.debug("Storing image from {} because of empty frame", event.getTimeStamp());
-                    emptyFrameBuffer.add(newestImage);
-                } else if(frameRepresentation.isEmptyFrame()) {
-                    logger.debug("Reusing the latest image at {}", timestamp);
-                    ((ArrayDeque<BufferedImage>)emptyFrameBuffer).addFirst(oldestImage);
-                }
-                writeImage(oldestImage, timestamp, frameRepresentation);
+                 logger.info("{} Collecting image {}#{}", timestamp, frameRepresentation.getSegmentShortId(), frameRepresentation.frameNr);
+                writeImage(newestImage, timestamp, frameRepresentation);
             }
             if(frames.isEmpty()) {
-                logger.trace("Not using any of these pics: {}", event.getTimeStamp());
+                logger.trace("@{} Not using any of these pics", timestamp);
             }
         }
 

@@ -60,7 +60,7 @@ public class ImageFileStore<TYPE> implements ImageStore<TYPE> {
 
     public void store(TYPE image, Long timeStamp, FrameRepresentation frameRepresentation) {
         String segmentId = frameRepresentation.referenceId();
-        String outputFilename = outputFilePrefix + "/" + frameRepresentation.referenceId() + "_" + timeStamp + ".png";
+        String outputFilename = outputFilePrefix + "/" + frameRepresentation.getSegmentShortId() + "_" + timeStamp + ".png";
         if(image == null) {
             logger.debug("No image to write at {}", timeStamp);
             return;

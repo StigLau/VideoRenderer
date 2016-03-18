@@ -12,7 +12,7 @@ import com.xuggle.xuggler.IStreamCoder;
 /**
  * copied from the netz
  */
-public class ExtractVideo {
+public class ExtractAudioFromVideo {
     public static void main(String[] args) {
         String filename = "/tmp/kompost/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time-Lapse_Adventure.mp4";
         IContainer props = VideoInfo.getVideoProperties(filename);

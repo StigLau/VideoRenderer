@@ -7,4 +7,5 @@ public interface Config {
 
     ExtensionType extensionType();
     int framerate();
+    long duration();
 }
