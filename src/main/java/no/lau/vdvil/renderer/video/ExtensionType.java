@@ -7,6 +7,7 @@ public enum ExtensionType {
     aac ("aac"),
     mp3 ("mp3"),
     mp4 ("mp4"),
+    snippet("snippet"), //The snippet is pulled from a longer video. This ExtensionType is used by the Splitter functionality
     webm ("webm"),
     flac ("flac"),
     dvl ("dvl.xml"),
