@@ -126,7 +126,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
         buildKomposition.storageLocation = mf;
 
 
-        ImageStore<BufferedImage> imageStore = new PipeDream<>(30, 2500, 5000);
+        ImageStore<BufferedImage> imageStore = new PipeDream<>(30, 2500, 5000, 10);
 
         List<Komposition> fetchKompositions = new ArrayList<>();
         fetchKompositions.add(fetchKompositionStillImages);

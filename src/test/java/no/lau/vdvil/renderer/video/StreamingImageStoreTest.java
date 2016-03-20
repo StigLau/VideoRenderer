@@ -116,7 +116,7 @@ public class StreamingImageStoreTest {
 
     @Test
     public void testStreamingFromInVideoSource() throws InterruptedException, IOException {
-        PipeDream<BufferedImage> imageStore = new PipeDream<>(200, 5000, 1000);
+        PipeDream<BufferedImage> imageStore = new PipeDream<>(200, 5000, 1000, 10);
         ThreadedImageCollector collector = new ThreadedImageCollector();
         for (Plan plan : planner.collectPlans()) {
             collector.addCollector(new WaitingVideoThumbnailsCollector(plan, imageStore));
@@ -144,7 +144,7 @@ public class StreamingImageStoreTest {
     @Test
     @Ignore //Segment strip doesnt stop
     public void testSegmentStrip() throws InterruptedException, IOException {
-        PipeDream<BufferedImage> imageStore = new PipeDream<>(200, 5000, 1000);
+        PipeDream<BufferedImage> imageStore = new PipeDream<>(200, 5000, 1000, 10);
         TimeStampFixedImageSampleSegment segment = new TimeStampFixedImageSampleSegment("Flower fjord", 35500000, 46250000, 24);
         ThreadedImageCollector collector = new ThreadedImageCollector();
         collector.addCollector(new StrippedWaitingVideoThumbnailsCollector(segment,downmixedOriginalVideo, imageStore));

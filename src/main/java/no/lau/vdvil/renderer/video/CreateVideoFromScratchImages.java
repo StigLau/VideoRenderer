@@ -63,7 +63,7 @@ public class CreateVideoFromScratchImages {
                 }
                 totalSampleCount += sampleCount;
             }
-            log.info("Finished writing video");
+            log.info("Finished writing video {}", buildPlan.ioFile());
         }catch(Exception e) {
             log.error("Sometin happened :´(", e);
         }
@@ -103,7 +103,6 @@ class VideoAdapter {
     BufferedImage previous = null;
 
     public void writeNextPacket(long clock, Plan buildPlan) {
-        ImageRepresentation previousImageRep = null;
         while (clock >= nextFrameTime) {
             boolean nextFrameTimeUpdated = false;
             logger.trace("Time to write packets at {}", clock);
@@ -128,7 +127,6 @@ class VideoAdapter {
 
                     writer.encodeVideo(videoStreamIndex, theImage, nextFrameTime, DEFAULT_TIME_UNIT);
                     previous = theImage;
-                    previousImageRep = imageRep;
                 } else {
                     logger.error("OMG OMG!!! Imagerep was null after waiting 10 seconds!! - {} - {}/{} is this related to division rest error?" + frameRepresentation.referenceId(), frameRepresentation.frameNr, frameRepresentation.numberOfFrames);
                 }

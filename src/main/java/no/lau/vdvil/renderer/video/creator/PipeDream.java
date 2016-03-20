@@ -28,18 +28,21 @@ public class PipeDream<TYPE> implements ImageStore<TYPE> {
     private final int bufferSize;
     private final int waitPeriod;
     private final int queueBlockWait;
+    private final int numberOfRetryAttempts;
 
     //Standard constructor
     public PipeDream() {
         this.waitPeriod = 2000;
         bufferSize = 1000;
         queueBlockWait = 10000;
+        numberOfRetryAttempts = 10;
     }
 
-    public PipeDream(int bufferSize, int retryAttemptWaitPeriodMillis, int queueBlockWait) {
+    public PipeDream(int bufferSize, int retryAttemptWaitPeriodMillis, int queueBlockWait, int numberOfRetryAttempts) {
         this.waitPeriod = retryAttemptWaitPeriodMillis;
         this.bufferSize = bufferSize;
         this.queueBlockWait = queueBlockWait;
+        this.numberOfRetryAttempts = numberOfRetryAttempts;
     }
 
     public List<TYPE> getImageAt(Long timeStamp, Komposition komposition) {
@@ -99,7 +102,6 @@ public class PipeDream<TYPE> implements ImageStore<TYPE> {
 
     public ImageRepresentation getNextImageRepresentation(String referenceId) {
         logger.trace("Looking for BlockQueue id = " + referenceId);
-        int numberOfRetryAttempts = 10;
         for (int retryNr = 0; retryNr < numberOfRetryAttempts; retryNr++) {
             if (!segmentImageList.containsKey(referenceId)) {
                 try {

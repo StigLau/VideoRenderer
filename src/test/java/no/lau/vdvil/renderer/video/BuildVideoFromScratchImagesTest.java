@@ -124,7 +124,7 @@ public class BuildVideoFromScratchImagesTest {
         buildKomposition.storageLocation = mf;
 
 
-        ImageStore<BufferedImage> imageStore = new PipeDream<>(250, 1000, 5000);
+        ImageStore<BufferedImage> imageStore = new PipeDream<>(250, 1000, 5000, 10);
 
         List<Komposition> fetchKompositions = new ArrayList<>();
         fetchKompositions.add(fetchKompositionNorway);
