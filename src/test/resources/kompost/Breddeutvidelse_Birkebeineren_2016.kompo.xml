@@ -21,13 +21,13 @@
             <id>The start</id>
             <start>34000000</start>
             <end>64000000</end>
-            <checksum>60d0a3da66c9856dc732e748092e5edb</checksum>
+            <checksum>009ca407c226ded03946d2a470021adc</checksum>
         </segment>
         <segment>
             <id>Bumpy</id>
             <start>64000000</start>
             <end>74000000</end>
-            <checksum>3936481</checksum>
+            <checksum>55505ab2a21351b8d9761c3f831ff4ff</checksum>
         </segment>
         <segment>
             <id>Thru forest until right turn</id>
@@ -39,13 +39,13 @@
             <id>Meeting of man and machine</id>
             <start>145033333</start>
             <end>201000000</end>
-            <checksum>fa48df5a6312323b0fd7fb0570dcdf89</checksum>
+            <checksum>3688680f17462be2017819e8f998a7b1</checksum>
         </segment>
         <segment>
             <id>Sunny slope</id>
             <start>201000000</start>
             <end>234000000</end>
-            <checksum>f4782f727329602df37e5864ec06f0b3</checksum>
+            <checksum>1467f09952a16882298239aa87f96a5b</checksum>
         </segment>
         <segment>
             <id>Dark climb and right turn</id>
