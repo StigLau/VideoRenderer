@@ -14,68 +14,78 @@
             <id>Not-so-pretty_tracks</id>
             <start>0</start>
             <end>11000000</end>
-            <frames>9</frames>
             <checksum>8483987619fe232a66a298536bc475b0</checksum>
+            <frames>320</frames>
         </segment>
         <segment>
             <id>The start</id>
             <start>34000000</start>
             <end>64000000</end>
             <checksum>009ca407c226ded03946d2a470021adc</checksum>
+            <frames>891</frames>
         </segment>
         <segment>
             <id>Bumpy</id>
             <start>64000000</start>
             <end>74000000</end>
             <checksum>55505ab2a21351b8d9761c3f831ff4ff</checksum>
+            <frames>291</frames>
         </segment>
         <segment>
             <id>Thru forest until right turn</id>
             <start>74000000</start>
             <end>145033333</end>
             <checksum>52f5e77ac2e276dbd2dc6fd00945056c</checksum>
+            <frames>2121</frames>
         </segment>
         <segment>
             <id>Meeting of man and machine</id>
             <start>145033333</start>
             <end>201000000</end>
             <checksum>3688680f17462be2017819e8f998a7b1</checksum>
+            <frames>1669</frames>
         </segment>
         <segment>
             <id>Sunny slope</id>
             <start>201000000</start>
             <end>234000000</end>
             <checksum>1467f09952a16882298239aa87f96a5b</checksum>
+            <frames>980</frames>
         </segment>
         <segment>
             <id>Dark climb and right turn</id>
             <start>234000000</start>
             <end>269000000</end>
             <checksum>c6eafc7a825f3eb7a8c5d894709d042f</checksum>
+            <frames>1040</frames>
         </segment>
         <segment>
             <id>Glaring sun and hut</id>
             <start>269000000</start>
             <end>311000000</end>
             <checksum>94e35f72775c084bed75290d2600d7a6</checksum>
+            <frames>1250</frames>
         </segment>
         <segment>
             <id>Long dark forest climb</id>
             <start>311000000</start>
             <end>413000000</end>
             <checksum>d2bba6dc15d456c9979e20efaf994754</checksum>
+            <frames>3050</frames>
         </segment>
         <segment>
             <id>Lighter forest</id>
             <start>413000000</start>
             <end>502000000</end>
             <checksum>a2abb6984bfb27abce8a5147a8b079df</checksum>
+            <frames>2660</frames>
         </segment>
         <segment>
             <id>Sun run and beyond</id>
             <start>502000000</start>
             <end>525000000</end>
             <checksum>c82872a787aebcc3dc6334472d6af9e4</checksum>
+            <frames>680</frames>
         </segment>
     </segments>
 </komposition>
