@@ -63,11 +63,14 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan{
             FrameCalculator frameCalculator;
             { //Extract the Frame duration
                 Segment collectSegment = segmentIdCollectSegmentMap.get(buildSegment.shortId());
-                long collectDuration = collectSegment.durationCalculated(buildBpm);
+                if(collectSegment == null) {
+                    throw new RuntimeException("Could not find buildSegment with id: " + buildSegment.shortId()+" in collectSegmentList " + segmentIdCollectSegmentMap.keySet());
+                } else {
+                    long collectDuration = collectSegment.durationCalculated(buildBpm);
 
-                long buildDuration = buildSegment.durationCalculated(buildBpm);
-                //frameCalculator = new SimpleCalculator(buildDuration, collectDuration);
-                frameCalculator = new SimpleCalculator(collectDuration, buildDuration);
+                    long buildDuration = buildSegment.durationCalculated(buildBpm);
+                    frameCalculator = new SimpleCalculator(collectDuration, buildDuration);
+                }
             }
             SegmentFramePlan framePlan = new SegmentFramePlan(buildSegment.id(), buildSegment, buildBpm, finalFramerate, frameCalculator);
             framePlans.add(framePlan);
@@ -99,7 +102,6 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan{
         return collectId;
     }
 
-    @Override
     public String ioFile() {
         return storageLocation.fileName.toString();
     }

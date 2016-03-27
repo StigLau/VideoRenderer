@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<komposition>
+    <reference>Dark climb and right turn 234000000   269000000</reference>
+    <mediaFile>
+        <fileName>
+            file:/tmp/kompost/3e7136107d87f39c00fc40e6d04c3412/3e7136107d87f39c00fc40e6d04c3412_Dark_climb_and_right_turn_234000000___269000000.mp4
+        </fileName>
+        <startingOffset>0</startingOffset>
+        <checksum>c6eafc7a825f3eb7a8c5d894709d042f</checksum>
+        <extension>mp4</extension>
+    </mediaFile>
+    <segments>
+        <segment>
+            <id>Dark climb and right turn</id>
+            <start>0</start>
+            <end>1000000000000000</end>
+            <checksum>c6eafc7a825f3eb7a8c5d894709d042f</checksum>
+            <frames>1040</frames>
+        </segment>
+    </segments>
+</komposition>

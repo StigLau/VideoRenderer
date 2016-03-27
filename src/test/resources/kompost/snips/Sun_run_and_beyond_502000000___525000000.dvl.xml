@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<komposition>
+    <reference>Sun run and beyond 502000000   525000000</reference>
+    <mediaFile>
+        <fileName>
+            file:/tmp/kompost/3e7136107d87f39c00fc40e6d04c3412/3e7136107d87f39c00fc40e6d04c3412_Sun_run_and_beyond_502000000___525000000.mp4
+        </fileName>
+        <startingOffset>0</startingOffset>
+        <checksum>c82872a787aebcc3dc6334472d6af9e4</checksum>
+        <extension>mp4</extension>
+    </mediaFile>
+    <segments>
+        <segment>
+            <id>Sun run and beyond</id>
+            <start>0</start>
+            <end>1000000000000000</end>
+            <checksum>c82872a787aebcc3dc6334472d6af9e4</checksum>
+            <frames>680</frames>
+        </segment>
+    </segments>
+</komposition>

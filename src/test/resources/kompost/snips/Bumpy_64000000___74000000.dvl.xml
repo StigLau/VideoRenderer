@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<komposition>
+    <reference>Bumpy 64000000   74000000</reference>
+    <mediaFile>
+        <fileName>
+            file:/tmp/kompost/3e7136107d87f39c00fc40e6d04c3412/3e7136107d87f39c00fc40e6d04c3412_Bumpy_64000000___74000000.mp4
+        </fileName>
+        <startingOffset>0</startingOffset>
+        <checksum>55505ab2a21351b8d9761c3f831ff4ff</checksum>
+        <extension>mp4</extension>
+    </mediaFile>
+    <segments>
+        <segment>
+            <id>Bumpy</id>
+            <start>0</start>
+            <end>1000000000000000</end>
+            <checksum>55505ab2a21351b8d9761c3f831ff4ff</checksum>
+            <frames>291</frames>
+        </segment>
+    </segments>
+</komposition>

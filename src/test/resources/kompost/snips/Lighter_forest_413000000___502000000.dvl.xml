@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<komposition>
+    <reference>Lighter forest 413000000   502000000</reference>
+    <mediaFile>
+        <fileName>
+            file:/tmp/kompost/3e7136107d87f39c00fc40e6d04c3412/3e7136107d87f39c00fc40e6d04c3412_Lighter_forest_413000000___502000000.mp4
+        </fileName>
+        <startingOffset>0</startingOffset>
+        <checksum>a2abb6984bfb27abce8a5147a8b079df</checksum>
+        <extension>mp4</extension>
+    </mediaFile>
+    <segments>
+        <segment>
+            <id>Lighter forest</id>
+            <start>0</start>
+            <end>1000000000000000</end>
+            <checksum>a2abb6984bfb27abce8a5147a8b079df</checksum>
+            <frames>2660</frames>
+        </segment>
+    </segments>
+</komposition>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<komposition>
+    <reference>Thru forest until right turn 74000000   145033333</reference>
+    <mediaFile>
+        <fileName>
+            file:/tmp/kompost/3e7136107d87f39c00fc40e6d04c3412/3e7136107d87f39c00fc40e6d04c3412_Thru_forest_until_right_turn_74000000___145033333.mp4
+        </fileName>
+        <startingOffset>0</startingOffset>
+        <checksum>52f5e77ac2e276dbd2dc6fd00945056c</checksum>
+        <extension>mp4</extension>
+    </mediaFile>
+    <segments>
+        <segment>
+            <id>Thru forest until right turn</id>
+            <start>0</start>
+            <end>1000000000000000</end>
+            <checksum>52f5e77ac2e276dbd2dc6fd00945056c</checksum>
+            <frames>2121</frames>
+        </segment>
+    </segments>
+</komposition>

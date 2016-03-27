@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?><komposition>
+    <reference>Not-so-pretty_tracks 0   11000000</reference>
+    <mediaFile>
+        <fileName>file:/tmp/kompost/3e7136107d87f39c00fc40e6d04c3412/3e7136107d87f39c00fc40e6d04c3412_Not-so-pretty_tracks_0___11000000.mp4</fileName>
+        <startingOffset>0</startingOffset>
+        <checksum>8483987619fe232a66a298536bc475b0</checksum>
+        <extension>mp4</extension>
+    </mediaFile>
+    <segments>
+        <segment>
+            <id>Not-so-pretty_tracks</id>
+            <start>0</start>
+            <end>1000000000000000</end>
+            <checksum>8483987619fe232a66a298536bc475b0</checksum>
+            <frames>320</frames>
+        </segment>
+    </segments>
+</komposition>

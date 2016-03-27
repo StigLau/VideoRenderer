@@ -16,7 +16,7 @@ public class VideoStillImageSegment<TYPE> extends SuperSegment implements Filter
     public double untilLimit = 1;
     public int takter = -1;
 
-    public VideoStillImageSegment(String id, int start, int duration) {
+    public VideoStillImageSegment(String id, long start, long duration) {
         super(id, start, duration);
     }
 
