@@ -14,7 +14,7 @@ public class MediaConvertorTest {
         Integer HEIGHT = 240;
         //String filename = "Onewheel_The_World_is_Your_Playground.mp4";
         String filename = "NORWAY-A_Time-Lapse_Adventure.mp4";
-        MediaConvertor.convert("/tmp/kompost/NORWAY-A_Time_Lapse_Adventure/" + filename, "/tmp/videoTest/NORWAY-A_Time_Lapse_Adventure" + WIDTH + "_" + filename, WIDTH, HEIGHT);
+        MediaConvertor.convert("/tmp/kompost/NORWAY-A_Time-Lapse_Adventure/" + filename, "/tmp/NORWAY-A_Time_Lapse_Adventure" + WIDTH + "_" + filename, WIDTH, HEIGHT);
     }
 }
 

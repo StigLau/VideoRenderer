@@ -75,10 +75,7 @@ public class SegmentFramePlan implements Comparable {
 
 
                     long thisDuration = frameRateMillis * imageNr  ;
-                    FrameRepresentation frame = new FrameRepresentation(start + thisDuration, id, segment);
-                    frame.numberOfFrames = framezz;
-                    frame.frameNr = imageNr;
-
+                    FrameRepresentation frame = createFrameRepresentation(id, segment, framezz, start, imageNr, thisDuration);
                     frame.setImageUrl(image);
                     logger.trace("Adding image #{}, {}", imageNr, frame);
                     plans.add(frame);
@@ -87,16 +84,31 @@ public class SegmentFramePlan implements Comparable {
         } else if(segment instanceof KnownNumberOfFramesSegment){
             logger.info("numberOfImages = {} id: {}", numberOfAvailableFrames, id);
 
-            for (int i = 0; i < numberOfAvailableFrames; i++) {
+            long manipulatedFrames = 0;
+            for (int i = 1; i <= numberOfAvailableFrames; i++) {
                 long thisDuration = frameRateMillis * i;
-                float bignr = numberOfNeededBuildFrames / numberOfAvailableFrames;
-                for (int j = 0; j < bignr + 1; j++) {
-                    FrameRepresentation frame = new FrameRepresentation(start + thisDuration, id, segment);
-                    frame.numberOfFrames = numberOfAvailableFrames;
-                    frame.frameNr = i;
-                    plans.add(frame);
+
+                if (numberOfAvailableFrames > numberOfNeededBuildFrames) { // remove a / (a-b)
+                    if(Math.round(i * (numberOfAvailableFrames-numberOfNeededBuildFrames) / numberOfAvailableFrames) > manipulatedFrames) {
+                        manipulatedFrames++;
+                    } else {
+                        plans.add(createFrameRepresentation(id, segment, numberOfAvailableFrames, start, i, thisDuration));
+                    }
+                } else if (numberOfAvailableFrames < numberOfNeededBuildFrames) { //(b-a)/a
+                    //For every collect, add 1
+                    plans.add(createFrameRepresentation(id, segment, numberOfAvailableFrames, start, i, thisDuration));
+                    //For additional
+                    if(Math.round(i * (numberOfNeededBuildFrames-numberOfAvailableFrames)/numberOfAvailableFrames) > manipulatedFrames) {
+                        plans.add(createFrameRepresentation(id, segment, numberOfAvailableFrames, start, i, thisDuration));
+                        manipulatedFrames++;
+                    }
                 }
-                logger.trace(segment.id() + " #" + (i + 1) + " duration:" + thisDuration);
+            }
+            logger.debug("{} numberOfAvailableFrames: {} numberOfNeededBuildFrames: {} ", segment.shortId(), numberOfAvailableFrames, numberOfNeededBuildFrames);
+            if(numberOfAvailableFrames > numberOfNeededBuildFrames) {
+                logger.debug("{} subtracted {} frames", segment.shortId(), manipulatedFrames);
+            } else {
+                logger.debug("{} added {} duplicate frames", segment.shortId(), manipulatedFrames);
             }
         } else {
             long numberOfCollectFrames = ((SimpleCalculator) frameCalculator).collectRatio / frameRateMillis;
@@ -125,6 +137,13 @@ public class SegmentFramePlan implements Comparable {
             }
         }
         return plans;
+    }
+
+    private static FrameRepresentation createFrameRepresentation(String id, Segment segment, long numberOfAvailableFrames, long start, int i, long thisDuration) {
+        FrameRepresentation frame = new FrameRepresentation(start + thisDuration, id, segment);
+        frame.numberOfFrames = numberOfAvailableFrames;
+        frame.frameNr = i;
+        return frame;
     }
 
 
