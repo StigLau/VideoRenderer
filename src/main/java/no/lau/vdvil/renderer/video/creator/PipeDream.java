@@ -33,7 +33,7 @@ public class PipeDream<TYPE> implements ImageStore<TYPE> {
     //Standard constructor
     public PipeDream() {
         this.waitPeriod = 2000;
-        bufferSize = 1000;
+        bufferSize = 15;
         queueBlockWait = 10000;
         numberOfRetryAttempts = 10;
     }
