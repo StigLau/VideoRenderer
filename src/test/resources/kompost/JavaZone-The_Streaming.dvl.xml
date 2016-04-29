@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<komposition>
+    <reference>JavaZone-The_Streaming</reference>
+    <bpm>125.0</bpm>
+    <mediaFile>
+        <fileName>https://www.youtube.com/watch?v=5U1_KW6ww7Y</fileName>
+        <startingOffset>0.00</startingOffset>
+        <checksumFileSize>39739421</checksumFileSize>
+        <type>youtube</type>
+        <extension>mp4</extension>
+        <finalFileName>some value</finalFileName>
+    </mediaFile>
+    <segments>
+        <segment>
+            <id>Java Bros Duke intro image</id>
+            <start>3000000</start>
+            <end>6040000</end>
+        </segment>
+        <segment>
+            <id>Boy and carpet 1</id>
+            <start>44400000</start>
+            <end>46080000</end>
+        </segment>
+        <segment>
+            <id>You have a gift 1</id>
+            <start>44400000</start>
+            <end>58080000</end>
+        </segment>
+        <segment>
+            <id>Deploy EAR 1</id>
+            <start>58440000</start>
+            <end>66560000</end>
+        </segment>
+        <segment>
+            <id>Boy and carpet 2</id>
+            <start>66800000</start>
+            <end>68400000</end>
+        </segment>
+        <segment>
+            <id>Deploy EAR 2</id>
+            <start>68640000</start>
+            <end>69960000</end>
+        </segment>
+        <segment>
+            <id>Boy and carpet 3</id>
+            <start>70000000</start>
+            <end>70720000</end>
+        </segment>
+        <segment>
+            <id>Deploy EAR 3</id>
+            <start>70760000</start>
+            <end>72720000</end>
+        </segment>
+        <segment>
+            <id>Boy and carpet 4</id>
+            <start>72760000</start>
+            <end>74960000</end>
+        </segment>
+        <segment>
+            <id>Deploy EAR 4</id>
+            <start>75000000</start>
+            <end>77480000</end>
+        </segment>
+        <segment>
+            <id>Deploy EAR 5</id>
+            <start>81560000</start>
+            <end>92040000</end>
+        </segment>
+    </segments>
+</komposition>
