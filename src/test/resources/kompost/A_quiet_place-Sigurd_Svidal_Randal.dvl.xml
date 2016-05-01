@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<komposition>
+    <reference>A_quiet_place-Sigurd_Svidal_Randal</reference>
+    <bpm>125.0</bpm>
+    <mediaFile>
+        <fileName>https://www.youtube.com/watch?v=CSdmqIbdLVY</fileName>
+        <startingOffset>0.00</startingOffset>
+        <checksumFileSize>43782507</checksumFileSize>
+        <type>youtube</type>
+        <extension>mp4</extension>
+        <finalFileName>some value</finalFileName>
+    </mediaFile>
+    <segments>
+        <segment>
+            <id>Quiet place intro</id>
+            <start>1543208</start>
+            <end>6464792</end>
+        </segment>
+        <segment>
+            <id>Sheep grazing on hill</id>
+            <start>7549208</start>
+            <end>9134125</end>
+        </segment>
+        <segment>
+            <id>Sheep by stone wall</id>
+            <start>9175833</start>
+            <end>13221542</end>
+        </segment>
+        <segment>
+            <id>Small dark sheep with small white</id>
+            <start>13263250</start>
+            <end>17600917</end>
+        </segment>
+        <segment>
+            <id>Brown fjord landskape pan right</id>
+            <start>17642625</start>
+            <end>25608917</end>
+        </segment>
+        <segment>
+            <id>Brown house bathed in late light with sheep and cloud movement</id>
+            <start>25650625</start>
+            <end>30739042</end>
+        </segment>
+        <segment>
+            <id>Stone house with no roof, and sheep movement</id>
+            <start>30780750</start>
+            <end>34868167</end>
+        </segment>
+        <segment>
+            <id>Stone boulder with wet snow flurries</id>
+            <start>34909875</start>
+            <end>40915875</end>
+        </segment>
+        <segment>
+            <id>Snowing on trees in valley</id>
+            <start>43126417</start>
+            <end>45920875</end>
+        </segment>
+        <segment>
+            <id>Snowing on field of stones</id>
+            <start>47505792</start>
+            <end>50800750</end>
+        </segment>
+        <segment>
+            <id>Tree blowing</id>
+            <start>51843458</start>
+            <end>54888167</end>
+        </segment>
+        <segment>
+            <id>Flurries on roadside einer</id>
+            <start>56222833</start>
+            <end>60477083</end>
+        </segment>
+        <segment>
+            <id>Roof removal</id>
+            <start>60518792</start>
+            <end>72238833</end>
+        </segment>
+        <segment>
+            <id>Hei of nothing exciting</id>
+            <start>72280542</start>
+            <end>74365958</end>
+        </segment>
+        <segment>
+            <id>Boat approaching on fjord with little movement</id>
+            <start>74407667</start>
+            <end>78036292</end>
+        </segment>
+        <segment>
+            <id>Trees with red</id>
+            <start>78078000</start>
+            <end>81039292</end>
+        </segment>
+        <segment>
+            <id>Red båthus panning out</id>
+            <start>81081000</start>
+            <end>87462375</end>
+        </segment>
+        <segment>
+            <id>Stone house with red blikktak</id>
+            <start>87587500</start>
+            <end>96304542</end>
+        </segment>
+        <segment>
+            <id>Green house with moon passing</id>
+            <start>96346250</start>
+            <end>107023583</end>
+        </segment>
+        <segment>
+            <id>Sunset over distant silouette</id>
+            <start>107107000</start>
+            <end>120161708</end>
+        </segment>
+        <segment>
+            <id>Moon passing over frame</id>
+            <start>120203417</start>
+            <end>126167708</end>
+        </segment>
+        <segment>
+            <id>Green and red sunset</id>
+            <start>126209417</start>
+            <end>132423958</end>
+        </segment>
+        <segment>
+            <id>Star sky passing</id>
+            <start>132465667</start>
+            <end>136094292</end>
+        </segment>
+        <segment>
+            <id>Outro credits Quiet Place</id>
+            <start>137262125</start>
+            <end>142642500</end>
+        </segment>
+    </segments>
+</komposition>

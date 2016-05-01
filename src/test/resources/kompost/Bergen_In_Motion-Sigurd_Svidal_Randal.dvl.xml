@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<komposition>
+    <reference>Bergen_In_Motion-Sigurd_Svidal_Randal</reference>
+    <bpm>125.0</bpm>
+    <mediaFile>
+        <fileName>https://www.youtube.com/watch?v=hxSCyOeW0Gc</fileName>
+        <startingOffset>0.00</startingOffset>
+        <checksumFileSize>61216204</checksumFileSize>
+        <type>youtube</type>
+        <extension>mp4</extension>
+        <finalFileName>some value</finalFileName>
+    </mediaFile>
+    <segments>
+        <segment>
+            <id>Bergen by night intro credits</id>
+            <start>1209542</start>
+            <end>11594917</end>
+        </segment>
+        <segment>
+            <id>View over Bergenhus - blue light</id>
+            <start>11636625</start>
+            <end>30572208</end>
+        </segment>
+        <segment>
+            <id>Damgårdsfjellet viewing Cruiseship - pan left</id>
+            <start>30613917</start>
+            <end>42959583</end>
+        </segment>
+        <segment>
+            <id>Mountain top, blue sky view of houses</id>
+            <start>43001292</start>
+            <end>56222833</end>
+        </segment>
+        <segment>
+            <id>View from Smørfjellet? - clouds passing left</id>
+            <start>56556500</start>
+            <end>62353958</end>
+        </segment>
+        <segment>
+            <id>Askøybroa, clouds passing right</id>
+            <start>62437375</start>
+            <end>70612208</end>
+        </segment>
+        <segment>
+            <id>Johanneskirken</id>
+            <start>71988583</start>
+            <end>78536792</end>
+        </segment>
+        <segment>
+            <id>Yellow skyline over houses, clouds moving away</id>
+            <start>78578500</start>
+            <end>92550792</end>
+        </segment>
+        <segment>
+            <id>Climbing mountain</id>
+            <start>92592500</start>
+            <end>101476375</end>
+        </segment>
+        <segment>
+            <id>Ødeland</id>
+            <start>102852750</start>
+            <end>109776333</end>
+        </segment>
+        <segment>
+            <id>Rooftop yellow sun setting into fjord</id>
+            <start>109818042</start>
+            <end>116074292</end>
+        </segment>
+        <segment>
+            <id>Windy Tree fork</id>
+            <start>116116000</start>
+            <end>119828042</end>
+        </segment>
+        <segment>
+            <id>Clouds moving over ice</id>
+            <start>119869750</start>
+            <end>122288833</end>
+        </segment>
+        <segment>
+            <id>Changing coloured clouds passing over hill silouette</id>
+            <start>122330542</start>
+            <end>126876750</end>
+        </segment>
+        <segment>
+            <id>Below approaching clouds with Bergen in distance</id>
+            <start>126918458</start>
+            <end>132465667</end>
+        </segment>
+        <segment>
+            <id>Trolsk pond with yellow clouds passing left</id>
+            <start>133716917</start>
+            <end>138888750</end>
+        </segment>
+        <segment>
+            <id>Lake closeup with wite clouds approaching</id>
+            <start>138930458</start>
+            <end>145311833</end>
+        </segment>
+        <segment>
+            <id>Green vegetation around waterfall</id>
+            <start>145353542</start>
+            <end>150942458</end>
+        </segment>
+        <segment>
+            <id>Light blue hilltop view pan left</id>
+            <start>151568083</start>
+            <end>160451958</end>
+        </segment>
+        <segment>
+            <id>Dark blue hilltip pan right</id>
+            <start>160493667</start>
+            <end>166749917</end>
+        </segment>
+        <segment>
+            <id>Fotgangfelt oversyn immens lys</id>
+            <start>166791625</start>
+            <end>174924750</end>
+        </segment>
+        <segment>
+            <id>Hill climbers on .. sunset</id>
+            <start>174966458</start>
+            <end>190190000</end>
+        </segment>
+        <segment>
+            <id>End credits</id>
+            <start>191608083</start>
+            <end>201117583</end>
+        </segment>
+    </segments>
+</komposition>
