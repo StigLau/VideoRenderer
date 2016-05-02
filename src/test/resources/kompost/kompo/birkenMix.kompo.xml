@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<komposition xmlns:xlink="http://www.w3.org/1999/xhtml">
+    <framerate>15</framerate>
+    <config>
+        <width>960</width>
+        <height>720</height>
+        <framerate>30</framerate>
+        <extensionType>mp4</extensionType>
+    </config>
+    <beatpattern>
+        <fromBeat>0</fromBeat>
+        <toBeat>384</toBeat>
+        <masterBpm>120</masterBpm>
+    </beatpattern>
+    <segments>
+        <segment>
+            <id>Not-so-pretty_tracks</id>
+            <start>0</start>
+            <duration>32</duration>
+        </segment>
+        <segment>
+            <id>The start</id>
+            <start>32</start>
+            <duration>32</duration>
+        </segment>
+        <segment>
+            <id>Bumpy</id>
+            <start>64</start>
+            <duration>32</duration>
+        </segment>
+
+        <segment>
+            <id>Thru forest until right turn</id>
+            <start>96</start>
+            <duration>32</duration>
+        </segment>
+
+        <segment>
+            <id>Meeting of man and machine</id>
+            <start>128</start>
+            <duration>32</duration>
+        </segment>
+
+        <segment>
+            <id>Sunny slope</id>
+            <start>160</start>
+            <duration>32</duration>
+        </segment>
+        <segment>
+            <id>Dark climb and right turn</id>
+            <start>192</start>
+            <duration>16</duration>
+        </segment>
+        <segment>
+            <id>Dark climb and right turn</id>
+            <start>208</start>
+            <duration>16</duration>
+        </segment>
+        <segment>
+            <id>Glaring sun and hut</id>
+            <start>224</start>
+            <duration>32</duration>
+        </segment>
+        <segment>
+            <id>Long dark forest climb</id>
+            <start>256</start>
+            <duration>64</duration>
+        </segment>
+        <segment>
+            <id>Lighter forest</id>
+            <start>320</start>
+            <duration>32</duration>
+        </segment>
+        <segment>
+            <id>Sun run and beyond</id>
+            <start>352</start>
+            <duration>32</duration>
+        </segment>
+    </segments>
+    <sources>
+        <a type="video" href="https://raw.githubusercontent.com/StigLau/VideoRenderer/master/src/test/resources/kompost/Breddeutvidelse_Birkebeineren_2016.kompo.xml" md5checksum="aa850e62943a7b68d9285df32171ab0d">Breddeutvidelse_Birkebeineren_2016</a>
+        <a type="audio" href="https://raw.githubusercontent.com/StigLau/VideoRenderer/master/src/test/resources/kompost/Clarian_Ver_(11_Am_Mix).dvl.xml" md5checksum="596945d08840c92ab3a1c5a371ffef9c">Clarian_Ver_(11_Am_Mix)</a>
+    </sources>
+</komposition>
