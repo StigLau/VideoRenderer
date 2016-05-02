@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<komposition xmlns:xlink="http://www.w3.org/1999/xhtml">
+    <framerate>15</framerate>
+    <config>
+        <width>1280</width>
+        <height>720</height>
+        <framerate>24</framerate>
+        <extensionType>mp4</extensionType>
+    </config>
+    <beatpattern>
+        <fromBeat>0</fromBeat>
+        <toBeat>16</toBeat>
+        <masterBpm>120</masterBpm>
+    </beatpattern>
+    <segments>
+        <segment>
+            <id>Flurries on roadside einer</id>
+            <start>0</start>
+            <duration>16</duration>
+        </segment>
+        <segment>
+            <id>Tree blowing</id>
+            <start>16</start>
+            <duration>16</duration>
+        </segment>
+        <segment>
+            <id>Green house with moon passing</id>
+            <start>32</start>
+            <duration>32</duration>
+        </segment>
+        <segment>
+            <id>Mountain top, blue sky view of houses</id>
+            <start>64</start>
+            <duration>32</duration>
+        </segment>
+
+        <segment>
+            <id>Ask0ybroa, clouds passing right</id>
+            <start>96</start>
+            <duration>32</duration>
+        </segment>
+
+        <segment>
+            <id>Yellow skyline over houses, clouds moving away</id>
+            <start>128</start>
+            <duration>32</duration>
+        </segment>
+
+        <segment>
+            <id>0deland</id>
+            <start>160</start>
+            <duration>32</duration>
+        </segment>
+        <segment>
+            <id>Changing coloured clouds passing over hill silouette</id>
+            <start>192</start>
+            <duration>16</duration>
+        </segment>
+        <segment>
+            <id>Below approaching clouds with Bergen in distance</id>
+            <start>208</start>
+            <duration>16</duration>
+        </segment>
+        <segment>
+            <id>Trolsk pond with yellow clouds passing left</id>
+            <start>224</start>
+            <duration>32</duration>
+        </segment>
+        <segment>
+            <id>Light blue hilltop view pan left</id>
+            <start>256</start>
+            <duration>64</duration>
+        </segment>
+        <segment>
+            <id>Hill climbers on sunset</id>
+            <start>320</start>
+            <duration>32</duration>
+        </segment>
+        <segment>
+            <id>Stone house with no roof, and sheep movement</id>
+            <start>352</start>
+            <duration>32</duration>
+        </segment>
+    </segments>
+    <sources>
+        <a type="video" href="https://raw.githubusercontent.com/StigLau/VideoRenderer/master/src/test/resources/kompost/Bergen_In_Motion-Sigurd_Svidal_Randal.dvl.xml" md5checksum="2a63cd92c19be591d7482ecd43fc8354">Bergen_In_Motion-Sigurd_Svidal_Randal</a>
+        <a type="video" href="https://raw.githubusercontent.com/StigLau/VideoRenderer/master/src/test/resources/kompost/A_quiet_place-Sigurd_Svidal_Randal.dvl.xml" md5checksum="e59f0b01f3973208e9dc62d3180895e3">A_quiet_place-Sigurd_Svidal_Randal</a>
+        <a type="audio" href="https://raw.githubusercontent.com/StigLau/VideoRenderer/master/src/test/resources/kompost/Clarian_Ver_(11_Am_Mix).dvl.xml" md5checksum="596945d08840c92ab3a1c5a371ffef9c">Clarian_Ver_(11_Am_Mix)</a>
+    </sources>
+</komposition>
