@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<komposition>
+    <reference>Nerroversykling_paa_Nesodden_-_Gaupa_-_David_Gabrielsen</reference>
+    <bpm>125.0</bpm>
+    <mediaFile>
+        <fileName>https://www.youtube.com/watch?v=WOjaD5qiXyk</fileName>
+        <startingOffset>0.00</startingOffset>
+        <checksumFileSize>52859676</checksumFileSize>
+        <type>youtube</type>
+        <extension>mp4</extension>
+        <finalFileName>some value</finalFileName>
+    </mediaFile>
+    <!-- 1280 x 720 30FPS -->
+    <segments>
+        <segment>
+            <id>Intro Magnificent Crash Part 1 Flying</id>
+            <start>1600000</start>
+            <end>3733333</end>
+        </segment>
+        <segment>
+            <id>Intro Magnificent Crash Part 2 Landing</id>
+            <start>3766667</start>
+            <end>5933333</end>
+        </segment>
+        <segment>
+            <id>Intro Magnificent Crash Part 3 Bike tumbling</id>
+            <start>5966667</start>
+            <end>8666667</end>
+        </segment>
+        <segment>
+            <id>Intro Magnificent Crash Part 4 Getting back up again</id>
+            <start>8700000</start>
+            <end>16633333</end>
+        </segment>
+        <segment>
+            <id>Blue and red shirt panning in forest - Thumbs up</id>
+            <start>19500000</start>
+            <end>42533333</end>
+        </segment>
+        <segment>
+            <id>Forest approaching</id>
+            <start>52333333</start>
+            <end>55700000</end>
+        </segment>
+        <segment>
+            <id>Forest leaving</id>
+            <start>55800000</start>
+            <end>60333333</end>
+        </segment>
+        <segment>
+            <id>Forest FPV, short climb</id>
+            <start>60366667</start>
+            <end>63100000</end>
+        </segment>
+        <segment>
+            <id>Approaching - camera on branch</id>
+            <start>63133333</start>
+            <end>66333333</end>
+        </segment>
+        <segment>
+            <id>Leaving - camera on branch</id>
+            <start>66400000</start>
+            <end>68100000</end>
+        </segment>
+        <segment>
+            <id>Forest POV #2</id>
+            <start>68133333</start>
+            <end>69866667</end>
+        </segment>
+        <segment>
+            <id>Approaching - Camera near wheel</id>
+            <start>69900000</start>
+            <end>71300000</end>
+        </segment>
+        <segment>
+            <id>Leaving - camera on branch #2</id>
+            <start>71333333</start>
+            <end>73133333</end>
+        </segment>
+        <segment>
+            <id>Passing wheel heigth camera going left</id>
+            <start>73166667</start>
+            <end>74133333</end>
+        </segment>
+        <segment>
+            <id>Passing wheel heigth camera going right</id>
+            <start>74166667</start>
+            <end>75866667</end>
+        </segment>
+        <segment>
+            <id>Cycling away from camera left near tree</id>
+            <start>75900000</start>
+            <end>79333333</end>
+        </segment>
+        <segment>
+            <id>Forest POV #3</id>
+            <start>79366667</start>
+            <end>81633333</end>
+        </segment>
+        <segment>
+            <id>Flying past camera going left</id>
+            <start>81666667</start>
+            <end>83533333</end>
+        </segment>
+        <segment>
+            <id>Leaving camera #2</id>
+            <start>83566667</start>
+            <end>85766667</end>
+        </segment>
+        <segment>
+            <id>Passing camera going right</id>
+            <start>85800000</start>
+            <end>88333333</end>
+        </segment>
+        <segment>
+            <id>Forest POV #4</id>
+            <start>91066667</start>
+            <end>92766667</end>
+        </segment>
+        <segment>
+            <id>Leaving camera #3</id>
+            <start>92800000</start>
+            <end>96133333</end>
+        </segment>
+        <segment>
+            <id>Forest POV #5</id>
+            <start>96166667</start>
+            <end>100200000</end>
+        </segment>
+        <segment>
+            <id>Passing camera going left</id>
+            <start>100233333</start>
+            <end>103966667</end>
+        </segment>
+        <segment>
+            <id>Passing camera going left #2</id>
+            <start>104000000</start>
+            <end>109200000</end>
+        </segment>
+        <segment>
+            <id>Passing downed tree going left</id>
+            <start>109233333</start>
+            <end>113466667</end>
+        </segment>
+        <segment>
+            <id>Cycling away from camera left near tree #2</id>
+            <start>113500000</start>
+            <end>116600000</end>
+        </segment>
+        <segment>
+            <id>Approaching - Camera near wheel #2</id>
+            <start>116633333</start>
+            <end>122066667</end>
+        </segment>
+        <segment>
+            <id>Forest POV #6</id>
+            <start>122100000</start>
+            <end>124666667</end>
+        </segment>
+        <segment>
+            <id>Passing camera going left #3</id>
+            <start>124700000</start>
+            <end>127933333</end>
+        </segment>
+        <segment>
+            <id>Approaching - Camera near wheel #3 Action downhill</id>
+            <start>127966667</start>
+            <end>132900000</end>
+        </segment>
+        <segment>
+            <id>Magnificent view passing left</id>
+            <start>132933333</start>
+            <end>137300000</end>
+        </segment>
+        <segment>
+            <id>Passing camera going right #2</id>
+            <start>137333333</start>
+            <end>139366667</end>
+        </segment>
+        <segment>
+            <id>Forest POV #6</id>
+            <start>139400000</start>
+            <end>144133333</end>
+        </segment>
+        <segment>
+            <id>Magnificent view passing left #2</id>
+            <start>144166667</start>
+            <end>146666667</end>
+        </segment>
+        <segment>
+            <id>Forest POV #7</id>
+            <start>146700000</start>
+            <end>149433333</end>
+        </segment>
+        <segment>
+            <id>Cycling past camera left near tree</id>
+            <start>149466667</start>
+            <end>151800000</end>
+        </segment>
+        <segment>
+            <id>Passing camera going left #4 View to water</id>
+            <start>151833333</start>
+            <end>155300000</end>
+        </segment>
+        <segment>
+            <id>Cycling away thorugh trolsk skau</id>
+            <start>155333333</start>
+            <end>159666667</end>
+        </segment>
+        <segment>
+            <id>Cycling away down to the water</id>
+            <start>159700000</start>
+            <end>163066667</end>
+        </segment>
+    </segments>
+</komposition>

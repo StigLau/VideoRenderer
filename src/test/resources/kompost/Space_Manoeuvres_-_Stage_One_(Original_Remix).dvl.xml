@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<komposition>
+    <reference>Space_Manoeuvres_-_Stage_One_(Original_Remix)</reference>
+    <mediaFile>
+        <fileName>https://s3.amazonaws.com/kompost/dvl-test/Space_Manoeuvres_-_Stage_One_(Original_Remix).mp3</fileName>
+        <startingOffset>15.525</startingOffset>
+        <checksum>8b628de5c543b0b5d8f41bd217ed7ce5</checksum>
+        <extension>mp3</extension>
+    </mediaFile>
+    <bpm>130.42</bpm>
+    <segments>
+        <segment>
+            <id>Calm start with strings</id>
+            <start>0</start>
+            <end>64</end>
+        </segment>
+        <segment>
+            <id>Escalating strings with synth</id>
+            <start>64</start>
+            <end>64</end>
+        </segment>
+        <segment>
+            <id>Buildup string end</id>
+            <start>128</start>
+            <end>48</end>
+        </segment>
+        <segment>
+            <id>Rising</id>
+            <start>172</start>
+            <end>36</end>  starts
+        </segment>
+        <segment>
+            <id>Intro verse 1</id>
+            <start>208</start>
+            <end>32</end>
+        </segment>
+        <segment>
+            <id>Verse 1 - deep space</id>
+            <start>240</start>
+            <end>64</end>
+        </segment>
+        <segment>
+            <id>Refrain 1 - Any crew</id>
+            <start>304</start>
+            <end>128</end>
+        </segment>
+        <segment>
+            <id>Any crew - Negative</id>
+            <start>432</start>
+            <end>32</end>
+        </segment>
+        <segment>
+            <id>Zappy zappy</id>
+            <start>464</start>
+            <end>32</end>
+        </segment>
+        <segment>
+            <id>My sweet love - abrupt ending</id>
+            <start>496</start>
+            <end>160</end>
+        </segment>
+    </segments>
+</komposition>
