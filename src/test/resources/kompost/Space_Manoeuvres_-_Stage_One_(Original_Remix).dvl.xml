@@ -17,47 +17,47 @@
         <segment>
             <id>Escalating strings with synth</id>
             <start>64</start>
-            <end>64</end>
+            <end>128</end>
         </segment>
         <segment>
             <id>Buildup string end</id>
             <start>128</start>
-            <end>48</end>
+            <end>176</end>
         </segment>
         <segment>
             <id>Rising</id>
             <start>176</start>
-            <end>32</end>
+            <end>208</end>
         </segment>
         <segment>
             <id>Intro verse 1</id>
             <start>208</start>
-            <end>32</end>
+            <end>240</end>
         </segment>
         <segment>
             <id>Verse 1 - deep space</id>
             <start>240</start>
-            <end>64</end>
+            <end>304</end>
         </segment>
         <segment>
             <id>Refrain 1 - Any crew</id>
             <start>304</start>
-            <end>128</end>
+            <end>432</end>
         </segment>
         <segment>
             <id>Any crew - Negative</id>
             <start>432</start>
-            <end>32</end>
+            <end>464</end>
         </segment>
         <segment>
             <id>Zappy zappy</id>
             <start>464</start>
-            <end>32</end>
+            <end>496</end>
         </segment>
         <segment>
             <id>My sweet love - abrupt ending</id>
             <start>496</start>
-            <end>160</end>
+            <end>656</end>
         </segment>
     </segments>
 </komposition>
