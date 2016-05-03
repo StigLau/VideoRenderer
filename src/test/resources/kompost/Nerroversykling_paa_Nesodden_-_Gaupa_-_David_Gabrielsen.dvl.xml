@@ -33,6 +33,16 @@
             <end>16633333</end>
         </segment>
         <segment>
+            <id>Intro Monologue 1</id>
+            <start>16666667</start>
+            <end>17900000</end>
+        </segment>
+        <segment>
+            <id>Intro Monologue 2</id>
+            <start>19200000</start>
+            <end>42000000</end>
+        </segment>
+        <segment>
             <id>Blue and red shirt panning in forest - Thumbs up</id>
             <start>19500000</start>
             <end>42533333</end>
