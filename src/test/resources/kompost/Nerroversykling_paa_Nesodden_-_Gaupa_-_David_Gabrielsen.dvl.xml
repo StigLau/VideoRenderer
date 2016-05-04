@@ -143,7 +143,7 @@
             <end>103966667</end>
         </segment>
         <segment>
-            <id>Passing camera going left #2</id>
+            <id>Passing camera going left nr2</id>
             <start>104000000</start>
             <end>109200000</end>
         </segment>
@@ -153,27 +153,27 @@
             <end>113466667</end>
         </segment>
         <segment>
-            <id>Cycling away from camera left near tree #2</id>
+            <id>Cycling away from camera left near tree nr2</id>
             <start>113500000</start>
             <end>116600000</end>
         </segment>
         <segment>
-            <id>Approaching - Camera near wheel #2</id>
+            <id>Approaching - Camera near wheel nr2</id>
             <start>116633333</start>
             <end>122066667</end>
         </segment>
         <segment>
-            <id>Forest POV #6</id>
+            <id>Forest POV nr6</id>
             <start>122100000</start>
             <end>124666667</end>
         </segment>
         <segment>
-            <id>Passing camera going left #3</id>
+            <id>Passing camera going left nr3</id>
             <start>124700000</start>
             <end>127933333</end>
         </segment>
         <segment>
-            <id>Approaching - Camera near wheel #3 Action downhill</id>
+            <id>Approaching - Camera near wheel nr3 Action downhill</id>
             <start>127966667</start>
             <end>132900000</end>
         </segment>
@@ -183,22 +183,22 @@
             <end>137300000</end>
         </segment>
         <segment>
-            <id>Passing camera going right #2</id>
+            <id>Passing camera going right nr2</id>
             <start>137333333</start>
             <end>139366667</end>
         </segment>
         <segment>
-            <id>Forest POV #6</id>
+            <id>Forest POV nr6</id>
             <start>139400000</start>
             <end>144133333</end>
         </segment>
         <segment>
-            <id>Magnificent view passing left #2</id>
+            <id>Magnificent view passing left nr2</id>
             <start>144166667</start>
             <end>146666667</end>
         </segment>
         <segment>
-            <id>Forest POV #7</id>
+            <id>Forest POV nr7</id>
             <start>146700000</start>
             <end>149433333</end>
         </segment>
@@ -208,7 +208,7 @@
             <end>151800000</end>
         </segment>
         <segment>
-            <id>Passing camera going left #4 View to water</id>
+            <id>Passing camera going left nr4 View to water</id>
             <start>151833333</start>
             <end>155300000</end>
         </segment>
