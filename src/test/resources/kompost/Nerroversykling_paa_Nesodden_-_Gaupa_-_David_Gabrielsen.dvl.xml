@@ -73,7 +73,7 @@
             <end>68100000</end>
         </segment>
         <segment>
-            <id>Forest POV #2</id>
+            <id>Forest POV nr2</id>
             <start>68133333</start>
             <end>69866667</end>
         </segment>
@@ -83,7 +83,7 @@
             <end>71300000</end>
         </segment>
         <segment>
-            <id>Leaving - camera on branch #2</id>
+            <id>Leaving - camera on branch nr2</id>
             <start>71333333</start>
             <end>73133333</end>
         </segment>
@@ -103,7 +103,7 @@
             <end>79333333</end>
         </segment>
         <segment>
-            <id>Forest POV #3</id>
+            <id>Forest POV nr3</id>
             <start>79366667</start>
             <end>81633333</end>
         </segment>
@@ -113,7 +113,7 @@
             <end>83533333</end>
         </segment>
         <segment>
-            <id>Leaving camera #2</id>
+            <id>Leaving camera nr2</id>
             <start>83566667</start>
             <end>85766667</end>
         </segment>
@@ -123,17 +123,17 @@
             <end>88333333</end>
         </segment>
         <segment>
-            <id>Forest POV #4</id>
+            <id>Forest POV nr4</id>
             <start>91066667</start>
             <end>92766667</end>
         </segment>
         <segment>
-            <id>Leaving camera #3</id>
+            <id>Leaving camera nr3</id>
             <start>92800000</start>
             <end>96133333</end>
         </segment>
         <segment>
-            <id>Forest POV #5</id>
+            <id>Forest POV nr5</id>
             <start>96166667</start>
             <end>100200000</end>
         </segment>
