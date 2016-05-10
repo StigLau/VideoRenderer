@@ -25,7 +25,7 @@ public class CountNumberOfEligableImagesBetweenTimestampsCollector implements Im
         IContainer container = IContainer.make();
         int result = container.open(mediaFile, IContainer.Type.READ, null);
         if (result < 0)
-            throw new RuntimeException("Failed to open media file");
+            throw new RuntimeException("Failed to open media file " + mediaFile);
 
         IMediaReader mediaReader = ToolFactory.makeReader(container);
         try {

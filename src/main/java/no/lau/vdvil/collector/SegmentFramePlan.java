@@ -84,25 +84,63 @@ public class SegmentFramePlan implements Comparable {
         } else if(segment instanceof KnownNumberOfFramesSegment){
             logger.info("numberOfImages = {} id: {}", numberOfAvailableFrames, id);
 
-            long manipulatedFrames = 0;
-            for (int i = 1; i <= numberOfAvailableFrames; i++) {
-                long thisDuration = frameRateMillis * i;
+            int manipulatedFrames = 0;
+            long thisDuration = 0;
 
-                if (numberOfAvailableFrames > numberOfNeededBuildFrames) { // remove a / (a-b)
+
+            if (numberOfAvailableFrames > numberOfNeededBuildFrames) { // remove a / (a-b)
+                for (int i = 1; i <= numberOfAvailableFrames; i++) {
+                    thisDuration = frameRateMillis * i;
+
                     if(Math.round(i * (numberOfAvailableFrames-numberOfNeededBuildFrames) / numberOfAvailableFrames) > manipulatedFrames) {
                         manipulatedFrames++;
                     } else {
                         plans.add(createFrameRepresentation(id, segment, numberOfAvailableFrames, start, i, thisDuration));
                     }
-                } else if (numberOfAvailableFrames < numberOfNeededBuildFrames) { //(b-a)/a
-                    //For every collect, add 1
-                    plans.add(createFrameRepresentation(id, segment, numberOfAvailableFrames, start, i, thisDuration));
-                    //For additional
-                    if(Math.round(i * (numberOfNeededBuildFrames-numberOfAvailableFrames)/numberOfAvailableFrames) > manipulatedFrames) {
-                        plans.add(createFrameRepresentation(id, segment, numberOfAvailableFrames, start, i, thisDuration));
-                        manipulatedFrames++;
-                    }
                 }
+            } else if (numberOfAvailableFrames < numberOfNeededBuildFrames) { //(b-a)/a
+
+                long rest = numberOfNeededBuildFrames % numberOfAvailableFrames;
+
+                double partitions = Math.ceil((numberOfNeededBuildFrames - rest) / numberOfAvailableFrames) + 1; //The +1 is to ensure that we use all available partitions
+
+                double leftovers = numberOfAvailableFrames - Math.floor(numberOfNeededBuildFrames / partitions);
+
+                double leftoverPartitions = Math.floor(numberOfNeededBuildFrames / leftovers);
+
+
+
+
+                int usedLeftovers = 1;
+
+                for (int frameNr = 0; frameNr < numberOfNeededBuildFrames; frameNr++) {
+                    String status;
+
+                    if(frameNr % partitions == 0) {
+                        //result[frameNr] = frameNr + "_";
+
+                        manipulatedFrames++;
+                        thisDuration = frameRateMillis * manipulatedFrames;
+
+                        plans.add(createFrameRepresentation(id, segment, numberOfNeededBuildFrames, start, manipulatedFrames, thisDuration));
+                        status = " main";
+                    } else if(frameNr > usedLeftovers * leftoverPartitions) { //Evenly divide the rest frames
+                        //result[frameNr] = frameNr + "extra";
+
+                        manipulatedFrames++;
+                        thisDuration = frameRateMillis * manipulatedFrames;
+
+                        usedLeftovers ++;
+                        plans.add(createFrameRepresentation(id, segment, numberOfNeededBuildFrames, start, manipulatedFrames, thisDuration));
+                        status = " leftover";
+                    } else {
+                        plans.add(createFrameRepresentation(id, segment, numberOfNeededBuildFrames, start, frameNr, thisDuration));
+                        status = " copy";
+                    }
+                    logger.debug("frame: " + frameNr + " duration: " + "thisDuration = " + thisDuration + status);
+                }
+            } else {
+                logger.warn("What to do when the number of buildframes == availableframes!!?!");
             }
             logger.debug("{} numberOfAvailableFrames: {} numberOfNeededBuildFrames: {} ", segment.shortId(), numberOfAvailableFrames, numberOfNeededBuildFrames);
             if(numberOfAvailableFrames > numberOfNeededBuildFrames) {

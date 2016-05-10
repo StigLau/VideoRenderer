@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<komposition xmlns:xlink="http://www.w3.org/1999/xhtml">
+    <framerate>15</framerate>
+    <config>
+        <width>1280</width>
+        <height>720</height>
+        <framerate>30</framerate>
+        <extensionType>mp4</extensionType>
+    </config>
+    <beatpattern>
+        <fromBeat>128</fromBeat>
+        <toBeat>304</toBeat>
+        <masterBpm>130.42</masterBpm>
+    </beatpattern>
+    <segments>
+        <segment>
+            <id>Yellow skyline over houses, clouds moving away</id>
+            <start>0</start>
+            <duration>128</duration>
+        </segment>
+        <segment>
+            <id>0deland</id>
+            <start>128</start>
+            <duration>16</duration>
+        </segment>
+        <segment>
+            <id>Trolsk pond with yellow clouds passing left</id>
+            <start>144</start>
+            <duration>16</duration>
+        </segment>
+        <segment>
+            <id>Climbing mountain</id>
+            <start>160</start>
+            <duration>16</duration>
+        </segment>
+        <segment>
+            <id>Passing camera going left</id>
+            <start>176</start>
+            <duration>4</duration>
+        </segment>
+        <segment>
+            <id>Passing camera going left nr2</id>
+            <start>180</start>
+            <duration>4</duration>
+        </segment>
+        <segment>
+            <id>Magnificent view passing left</id>
+            <start>184</start>
+            <duration>8</duration>
+        </segment>
+        <segment>
+            <id>Leaving - camera on branch</id>
+            <start>200</start>
+            <duration>8</duration>
+        </segment>
+        <segment>
+            <id>Forest POV nr2</id>
+            <start>208</start>
+            <duration>8</duration>
+        </segment>
+        <segment>
+            <id>Forest POV nr3</id>
+            <start>216</start>
+            <duration>8</duration>
+        </segment>
+        <segment>
+            <id>Forest POV nr4</id>
+            <start>224</start>
+            <duration>8</duration>
+        </segment>
+        <segment>
+            <id>Passing camera going right</id>
+            <start>232</start>
+            <duration>8</duration>
+        </segment>
+        <segment>
+            <id>Approaching - camera on branch</id>
+            <start>240</start>
+            <duration>8</duration>
+        </segment>
+        <segment>
+            <id>Leaving - camera on branch</id>
+            <start>248</start>
+            <duration>8</duration>
+        </segment>
+        <segment>
+            <id>Approaching - Camera near wheel</id>
+            <start>256</start>
+            <duration>8</duration>
+        </segment>
+        <segment>
+            <id>Cycling away from camera left near tree</id>
+            <start>264</start>
+            <duration>8</duration>
+        </segment>
+        <segment>
+            <id>Magnificent view passing left</id>
+            <start>272</start>
+            <duration>8</duration>
+        </segment>
+        <segment>
+            <id>Magnificent view passing left nr2</id>
+            <start>280</start>
+            <duration>8</duration>
+        </segment>
+    </segments>
+
+    <sources>
+        <a type="audio" href="https://raw.githubusercontent.com/StigLau/VideoRenderer/master/src/test/resources/kompost/Space_Manoeuvres_-_Stage_One_(Original_Remix).dvl.xml" md5checksum="1e1d916da19a482d35784cd89f20b347">Space_Manoeuvres_-_Stage_One_(Original_Remix)</a>
+        <a type="video" href="https://raw.githubusercontent.com/StigLau/VideoRenderer/master/src/test/resources/kompost/Nerroversykling_paa_Nesodden_-_Gaupa_-_David_Gabrielsen.dvl.xml" md5checksum="6861f213995fb416fdf90bfebf1e375d">Nerroversykling_paa_Nesodden_-_Gaupa_-_David_Gabrielsen</a>
+        <a type="video" href="https://raw.githubusercontent.com/StigLau/VideoRenderer/master/src/test/resources/kompost/Bergen_In_Motion-Sigurd_Svidal_Randal.dvl.xml" md5checksum="2a63cd92c19be591d7482ecd43fc8354">Bergen_In_Motion-Sigurd_Svidal_Randal</a>
+    </sources>
+</komposition>
