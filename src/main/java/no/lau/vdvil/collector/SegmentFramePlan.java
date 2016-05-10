@@ -117,16 +117,12 @@ public class SegmentFramePlan implements Comparable {
                     String status;
 
                     if(frameNr % partitions == 0) {
-                        //result[frameNr] = frameNr + "_";
-
                         manipulatedFrames++;
                         thisDuration = frameRateMillis * manipulatedFrames;
 
                         plans.add(createFrameRepresentation(id, segment, numberOfNeededBuildFrames, start, manipulatedFrames, thisDuration));
                         status = " main";
                     } else if(frameNr > usedLeftovers * leftoverPartitions) { //Evenly divide the rest frames
-                        //result[frameNr] = frameNr + "extra";
-
                         manipulatedFrames++;
                         thisDuration = frameRateMillis * manipulatedFrames;
 
