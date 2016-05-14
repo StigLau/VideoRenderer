@@ -9,7 +9,7 @@
     </config>
     <beatpattern>
         <fromBeat>0</fromBeat>
-        <toBeat>16</toBeat>
+        <toBeat>384</toBeat>
         <masterBpm>120</masterBpm>
     </beatpattern>
     <segments>
@@ -85,6 +85,6 @@
     <sources>
         <a type="video" href="https://raw.githubusercontent.com/StigLau/VideoRenderer/master/src/test/resources/kompost/Bergen_In_Motion-Sigurd_Svidal_Randal.dvl.xml" md5checksum="2a63cd92c19be591d7482ecd43fc8354">Bergen_In_Motion-Sigurd_Svidal_Randal</a>
         <a type="video" href="https://raw.githubusercontent.com/StigLau/VideoRenderer/master/src/test/resources/kompost/A_quiet_place-Sigurd_Svidal_Randal.dvl.xml" md5checksum="e59f0b01f3973208e9dc62d3180895e3">A_quiet_place-Sigurd_Svidal_Randal</a>
-        <a type="audio" href="https://raw.githubusercontent.com/StigLau/VideoRenderer/master/src/test/resources/kompost/Clarian_Ver_(11_Am_Mix).dvl.xml" md5checksum="596945d08840c92ab3a1c5a371ffef9c">Clarian_Ver_(11_Am_Mix)</a>
+        <a type="audio" href="https://raw.githubusercontent.com/StigLau/VideoRenderer/master/src/test/resources/kompost/Clarian_Ver_(11_Am_Mix).dvl.xml" md5checksum="8a4d5cea5b651d82e9a66d6fd6e896f5">Clarian_Ver_(11_Am_Mix)</a>
     </sources>
 </komposition>
