@@ -79,6 +79,6 @@
     </segments>
     <sources>
         <a type="video" href="https://raw.githubusercontent.com/StigLau/VideoRenderer/master/src/test/resources/kompost/Breddeutvidelse_Birkebeineren_2016.kompo.xml" md5checksum="aa850e62943a7b68d9285df32171ab0d">Breddeutvidelse_Birkebeineren_2016</a>
-        <a type="audio" href="https://raw.githubusercontent.com/StigLau/VideoRenderer/master/src/test/resources/kompost/Clarian_Ver_(11_Am_Mix).dvl.xml" md5checksum="596945d08840c92ab3a1c5a371ffef9c">Clarian_Ver_(11_Am_Mix)</a>
+        <a type="audio" href="https://raw.githubusercontent.com/StigLau/VideoRenderer/master/src/test/resources/kompost/Clarian_Ver_(11_Am_Mix).dvl.xml" md5checksum="8a4d5cea5b651d82e9a66d6fd6e896f5">Clarian_Ver_(11_Am_Mix)</a>
     </sources>
 </komposition>
