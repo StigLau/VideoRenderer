@@ -68,8 +68,9 @@ public class CreateVideoFromScratchImages {
             log.error("Sometin happened :´(", e);
         }
         finally {
-            log.debug("Closing writer");
+            log.debug("Closing writer and cleaning up");
             writer.close();
+            System.gc();
         }
     }
 }
