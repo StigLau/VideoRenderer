@@ -37,6 +37,7 @@ public class CreateVideoFromScratchImages {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        long startTime = System.currentTimeMillis();
         final IMediaWriter writer = ToolFactory.makeWriter(buildPlan.ioFile());
         ToolFactory.setTurboCharged(true);
 
@@ -63,7 +64,11 @@ public class CreateVideoFromScratchImages {
                 }
                 totalSampleCount += sampleCount;
             }
-            log.info("Finished writing video {}", buildPlan.ioFile());
+
+            long now = System.currentTimeMillis();
+            log.info("before - now {} - {}", startTime, now);
+            long buildTime = (now - startTime) / 1000;
+            log.info("Finished writing video {} seconds - {}", buildTime, buildPlan.ioFile());
         }catch(Exception e) {
             log.error("Sometin happened :´(", e);
         }
