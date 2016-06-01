@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<komposition xmlns:xlink="http://www.w3.org/1999/xhtml">
+    <framerate>15</framerate>
+    <config>
+        <width>960</width>
+        <height>720</height>
+        <framerate>15</framerate>
+        <extensionType>mp4</extensionType>
+    </config>
+    <beatpattern>
+        <fromBeat>0</fromBeat>
+        <toBeat>64</toBeat>
+        <masterBpm>120</masterBpm>
+    </beatpattern>
+    <segments>
+        <segment>
+            <id>Not-so-pretty_tracks</id>
+            <start>0</start>
+            <duration>32</duration>
+        </segment>
+        <segment>
+            <id>The start</id>
+            <start>32</start>
+            <duration>32</duration>
+        </segment>
+        <segment>
+            <id>Bumpy</id>
+            <start>64</start>
+            <duration>32</duration>
+        </segment>
+
+        <segment>
+            <id>Thru forest until right turn</id>
+            <start>96</start>
+            <duration>32</duration>
+        </segment>
+
+        <segment>
+            <id>Meeting of man and machine</id>
+            <start>128</start>
+            <duration>32</duration>
+        </segment>
+
+        <segment>
+            <id>Sunny slope</id>
+            <start>160</start>
+            <duration>32</duration>
+        </segment>
+        <segment>
+            <id>Dark climb and right turn</id>
+            <start>192</start>
+            <duration>16</duration>
+        </segment>
+        <segment>
+            <id>Dark climb and right turn</id>
+            <start>208</start>
+            <duration>16</duration>
+        </segment>
+        <segment>
+            <id>Glaring sun and hut</id>
+            <start>224</start>
+            <duration>32</duration>
+        </segment>
+        <segment>
+            <id>Long dark forest climb</id>
+            <start>256</start>
+            <duration>64</duration>
+        </segment>
+        <segment>
+            <id>Lighter forest</id>
+            <start>320</start>
+            <duration>32</duration>
+        </segment>
+        <segment>
+            <id>Sun run and beyond</id>
+            <start>352</start>
+            <duration>32</duration>
+        </segment>
+    </segments>
+    <sources>
+        <a type="audio" href="https://raw.githubusercontent.com/StigLau/VideoRenderer/master/src/test/resources/kompost/Clarian_Ver_(11_Am_Mix).dvl.xml" md5checksum="8a4d5cea5b651d82e9a66d6fd6e896f5">Clarian_Ver_(11_Am_Mix)</a>
+        <a type="video" href="https://s3.amazonaws.com/dvl-test-music/snippets/3e7136107d87f39c00fc40e6d04c3412/Not-so-pretty_tracks_0___11000000.kompo.xml" md5checksum="b32a4072b5e235d89f441b824914680f">Not-so-pretty_tracks_0___11000000</a>
+        <a type="video" href="https://s3.amazonaws.com/dvl-test-music/snippets/3e7136107d87f39c00fc40e6d04c3412/The_start_34000000___64000000.kompo.xml" md5checksum="e9c3ac828edb20f8de63166d1678386c">The start_34000000___64000000</a>
+        <a type="video" href="https://s3.amazonaws.com/dvl-test-music/snippets/3e7136107d87f39c00fc40e6d04c3412/Bumpy_64000000___74000000.kompo.xml" md5checksum="3e28ebd23740b7dcb1053d264eb17355">Bumpy_64000000___74000000</a>
+        <a type="video" href="https://s3.amazonaws.com/dvl-test-music/snippets/3e7136107d87f39c00fc40e6d04c3412/Thru_forest_until_right_turn_74000000___145033333.kompo.xml" md5checksum="d944c086d2e3e7c24ee906a61526bdc8">Thru forest until right turn_74000000___145033333</a>
+        <a type="video" href="https://s3.amazonaws.com/dvl-test-music/snippets/3e7136107d87f39c00fc40e6d04c3412/Meeting_of_man_and_machine_145033333___201000000.kompo.xml" md5checksum="3d8e3d3ba25d69688d9be75bb2118bbe">Meeting of man and machine_145033333___201000000</a>
+        <a type="video" href="https://s3.amazonaws.com/dvl-test-music/snippets/3e7136107d87f39c00fc40e6d04c3412/Sunny_slope_201000000___234000000.kompo.xml" md5checksum="884618b74448fb683214195f5bf38382">Sunny slope_201000000___234000000</a>
+        <a type="video" href="https://s3.amazonaws.com/dvl-test-music/snippets/3e7136107d87f39c00fc40e6d04c3412/Dark_climb_and_right_turn_234000000___269000000.kompo.xml" md5checksum="">Dark climb and right turn_234000000___269000000</a>
+        <a type="video" href="https://s3.amazonaws.com/dvl-test-music/snippets/3e7136107d87f39c00fc40e6d04c3412/Glaring_sun_and_hut_269000000___311000000.kompo.xml" md5checksum="beff5c18ab5b3100b5ff56343d216fbb">Glaring sun and hut_269000000___311000000</a>
+        <a type="video" href="https://s3.amazonaws.com/dvl-test-music/snippets/3e7136107d87f39c00fc40e6d04c3412/Long_dark_forest_climb_311000000___413000000.kompo.xml" md5checksum="c1dae3378d0e094b683341f42505fed6">Long dark forest climb_311000000___413000000</a>
+        <a type="video" href="https://s3.amazonaws.com/dvl-test-music/snippets/3e7136107d87f39c00fc40e6d04c3412/Lighter_forest_413000000___502000000.kompo.xml" md5checksum="6efb558366041132c4129f2f131162cc">Lighter forest_413000000___502000000</a>
+        <a type="video" href="https://s3.amazonaws.com/dvl-test-music/snippets/3e7136107d87f39c00fc40e6d04c3412/Sun_run_and_beyond_502000000___525000000.kompo.xml" md5checksum="c2637774ce500efa201730ed88ff1dd9">Sun run and beyond_502000000___525000000</a>
+    </sources>
+</komposition>
