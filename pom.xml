@@ -84,8 +84,8 @@
     </build>
     <repositories>
         <repository>
-            <id>xuggle repo</id>
-            <url>http://xuggle.googlecode.com/svn/trunk/repo/share/java/</url>
+            <id>cantara-third-party</id>
+            <url>http://mvnrepo.cantara.no/content/repositories/thirdparty/</url>
         </repository>
         <!-- Needed for parent  -->
         <repository>
