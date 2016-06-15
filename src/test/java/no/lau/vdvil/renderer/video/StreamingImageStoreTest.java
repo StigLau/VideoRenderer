@@ -99,7 +99,7 @@ public class StreamingImageStoreTest {
         for (Plan plan : collectPlan) {
             collectFrameRepresentations.addAll(((SuperPlan)plan).getFrameRepresentations());
         }
-        assertEquals(372, collectFrameRepresentations.size());
+        assertEquals(372, buildPlan.getFrameRepresentations().size());
 
         assertEquals(0, buildPlan.getFrameRepresentations().get(0).timestamp);
         assertTrue(buildPlan.getFrameRepresentations().get(0).referenceId().contains("Flower fjord"));
