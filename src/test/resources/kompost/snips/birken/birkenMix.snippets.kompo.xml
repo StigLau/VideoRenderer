@@ -4,7 +4,7 @@
     <config>
         <width>960</width>
         <height>720</height>
-        <framerate>15</framerate>
+        <framerate>30</framerate>
         <extensionType>mp4</extensionType>
     </config>
     <beatpattern>
