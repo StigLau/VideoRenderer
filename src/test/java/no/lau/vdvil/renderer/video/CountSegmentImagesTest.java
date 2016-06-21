@@ -15,7 +15,7 @@ public class CountSegmentImagesTest {
         String testVideo = "/tmp/kompost/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time-Lapse_Adventure.mp4";
         VideoInfo.printProperties(VideoInfo.getVideoProperties(testVideo));
         long estimatedAmountOfImages = VideoInfo.getVideoProperties(testVideo).getDuration() / 46667;
-
+        System.out.println("NOTE - Counting number of pics in video can take some time!");
         //CountNumberOfEligableImagesBetweenTimestampsCollector collector = new CountNumberOfEligableImagesBetweenTimestampsCollector(10000000, 100000000, testVideo);
         CountNumberOfEligableImagesBetweenTimestampsCollector collector = new CountNumberOfEligableImagesBetweenTimestampsCollector(0, VideoInfo.getVideoProperties(testVideo).getDuration(), testVideo);
         try {
