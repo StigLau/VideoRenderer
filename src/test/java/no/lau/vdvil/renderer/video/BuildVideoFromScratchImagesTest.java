@@ -98,6 +98,7 @@ public class BuildVideoFromScratchImagesTest {
     }
 
     @Test
+    @Ignore
     public void extractImagesFromNorwayVideo() throws IOException, InterruptedException {
         Komposition buildKomposition =  new Komposition(124,
                 new VideoStillImageSegment("Dark lake", 0, 4),

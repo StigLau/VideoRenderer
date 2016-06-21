@@ -42,7 +42,7 @@ public class CountSegmentImagesTest {
 
     @Test
     public void countDarkLakeSnippet() throws MalformedURLException {
-        String testVideo = "/tmp/kompost/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time-Lapse_Adventure_Dark_lake_69375000___74000000.mp4";
+        String testVideo = "/tmp/kompost/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time-Lapse_Adventure_Dark_lake_69375000___4625000.mp4";
         VideoInfo.printProperties(VideoInfo.getVideoProperties(testVideo));
         CountNumberOfEligableImagesBetweenTimestampsCollector collector = new CountNumberOfEligableImagesBetweenTimestampsCollector(0, VideoInfo.getVideoProperties(testVideo).getDuration(), testVideo);
         try {
@@ -55,7 +55,7 @@ public class CountSegmentImagesTest {
 
     @Test
     public void countFlowerFjordSnippet() throws MalformedURLException {
-        String testVideo = "/tmp/kompost/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time-Lapse_Adventure_Flower_fjord_35500000___46250000.mp4";
+        String testVideo = "/tmp/kompost/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time-Lapse_Adventure_Flower_fjord_35500000___10750000.mp4";
         VideoInfo.printProperties(VideoInfo.getVideoProperties(testVideo));
         CountNumberOfEligableImagesBetweenTimestampsCollector collector = new CountNumberOfEligableImagesBetweenTimestampsCollector(0, VideoInfo.getVideoProperties(testVideo).getDuration(), testVideo);
         try {

@@ -9,7 +9,7 @@
     <parent>
         <groupId>no.cantara.emi</groupId>
         <artifactId>parent</artifactId>
-        <version>5</version>
+        <version>6</version>
     </parent>
 
     <scm>
@@ -78,6 +78,13 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-scm-plugin</artifactId>
+                <version>1.9.4</version>
+                <configuration>
+                    <tag>${project.artifactId}-${project.version}</tag>
                 </configuration>
             </plugin>
         </plugins>

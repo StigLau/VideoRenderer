@@ -71,13 +71,13 @@ public class BuildVideoFromStaticImagesAndVideoTest {
 
         fetchKompositionStillImages = new Komposition(128,
                 new StaticImagesSegment("Still Image Fun 1",
-                        "file:///Users/stiglau/utvikling/privat/VideoRenderer/src/test/resources/images/Cow_goes_moo.png",
-                        "file:///Users/stiglau/utvikling/privat/VideoRenderer/src/test/resources/images/What_the_fox_sed_-Mouse.png",
-                        "file:///Users/stiglau/utvikling/privat/VideoRenderer/src/test/resources/images/Slide_Blue_mountain_top_lake.png"
+                        getClass().getClassLoader().getResource("images/Cow_goes_moo.png").toString(),
+                        getClass().getClassLoader().getResource("images/What_the_fox_sed_-Mouse.png").toString(),
+                        getClass().getClassLoader().getResource("images/Slide_Blue_mountain_top_lake.png").toString()
                 ));
         fetchKompositionStillImages2 = new Komposition(128,
                 new StaticImagesSegment("Still Image Fun 2",
-                        "file:///Users/stiglau/utvikling/privat/VideoRenderer/src/test/resources/images/Slide_Blue_mountain_top_lake2.png"
+                        getClass().getClassLoader().getResource("images/Slide_Blue_mountain_top_lake2.png").toString()
                 ));
         fetchKompositionStillImages.storageLocation = new MediaFile(new URL("file://tmp/kompost"), 0f, -1f, "abc");
 
@@ -114,15 +114,16 @@ public class BuildVideoFromStaticImagesAndVideoTest {
     public void buildVideoFromStaticImagesAndVideo() throws IOException, InterruptedException {
         Komposition buildKomposition =  new Komposition(124,
                 new VideoStillImageSegment("Still Image Fun 1", 0, 24),
-                new VideoStillImageSegment("Still Image Fun 2", 24, 4),
+                new VideoStillImageSegment("Still Image Fun 2", 24, 4)/*,
+                new VideoStillImageSegment("Purple Mountains Clouds", 28, 4),
                 new VideoStillImageSegment("Dark lake", 28, 4).revert(),
 
                 new VideoStillImageSegment("Purple Mountains Clouds", 32, 4),
                 new VideoStillImageSegment("Slide Blue mountain top lake", 36, 8), //Forsøplet
                 new VideoStillImageSegment("Flower fjord", 44, 8),
-                new VideoStillImageSegment("Fjord like river", 52, 12)
+                new VideoStillImageSegment("Fjord like river", 52, 12)*/
         );//.filter(16, 16);
-        MediaFile mf = new MediaFile(new URL(result3), 0f, 128f, "dfd55528d85c8590d823cf69f414ae7c");
+        MediaFile mf = new MediaFile(new URL(result3), 0f, 128f, "de61f10fd514587355c0fb21cfdad337");
         buildKomposition.storageLocation = mf;
 
 
