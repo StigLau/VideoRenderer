@@ -101,4 +101,10 @@
             <url>https://mvnrepo.cantara.no/content/repositories/snapshots/</url>
         </repository>
     </repositories>
+    <distributionManagement>
+        <repository>
+            <id>cantara-releases</id>
+            <url>https://mvnrepo.cantara.no/content/repositories/releases/</url>
+        </repository>
+    </distributionManagement>
 </project>
