@@ -16,7 +16,6 @@
         <developerConnection>scm:git:ssh://git@github.com:StigLau/VideoRenderer.git</developerConnection>
         <connection>scm:git:ssh://git@github.com:StigLau/VideoRenderer.git</connection>
         <url>https://github.com/StigLau/VideoRenderer</url>
-      <tag>video-renderer-1.3.0</tag>
   </scm>
 
     <properties>
