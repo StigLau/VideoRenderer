@@ -89,7 +89,7 @@ public class StreamingImageStoreTest {
 
         List<Plan> collectPlan = planner.collectPlans();
         assertEquals(1, collectPlan.size());
-        List<SegmentFramePlan> collectFramePlans = new ArrayList<>();
+        List<SegmentWrapper> collectFramePlans = new ArrayList<>();
         for (Plan plan : collectPlan) {
             collectFramePlans.addAll(((SuperPlan) plan).getFramePlans());
         }
@@ -153,7 +153,7 @@ public class StreamingImageStoreTest {
 
         System.out.println("Need to know how many pics to retrieve (Preferrably in a planner) before proceeding!");
         Plan buildPlan = new TimeStampFixedSegmentPlan(segment, strippedResult.getFile());
-        long framerate = Math.round(new Double(1000000/24).doubleValue());
+        long framerate = Math.round((double) (1000000 / 24));
         System.out.println("Short wait to make sure collection thread starts before this (build).");
         Thread.sleep(2000);
         CreateVideoFromScratchImages.createVideo(buildPlan, imageStore, new VideoConfig(1280, 720, framerate));

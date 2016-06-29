@@ -1,7 +1,7 @@
 package no.lau.vdvil.renderer.video.creator;
 
 import no.lau.vdvil.collector.FrameRepresentation;
-import no.lau.vdvil.collector.SegmentFramePlan;
+import no.lau.vdvil.collector.SegmentWrapper;
 import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.renderer.video.stigs.ImageSampleInstruction;
@@ -88,7 +88,7 @@ public class ImageFileStore<TYPE> implements ImageStore<TYPE> {
                 .collect(Collectors.toList());
     }
 
-    public TYPE findImagesByFramePlan(SegmentFramePlan framePlan, FrameRepresentation frameRepresentation) {
+    public TYPE findImagesByFramePlan(SegmentWrapper framePlan, FrameRepresentation frameRepresentation) {
         throw new RuntimeException("Not implemented - go away!");
     }
 

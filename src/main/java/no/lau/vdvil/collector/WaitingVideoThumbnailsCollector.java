@@ -51,7 +51,7 @@ public class WaitingVideoThumbnailsCollector implements ImageCollector{
             mediaReader.addListener(new ImageSnapListener(collectPlan, imageStore));
 
             if(skipAhead && collectPlan instanceof SuperPlan) {
-                long startMs = ((TimeStampFixedImageSampleSegment) ((SuperPlan) collectPlan).getFramePlans().get(0).originalSegment).timestampStart;
+                long startMs = ((TimeStampFixedImageSampleSegment) ((SuperPlan) collectPlan).getFramePlans().get(0).segment()).timestampStart;
                 StrippedWaitingVideoThumbnailsCollector.seekToMs(container, startMs);
             }
             // read out the contents of the media file and

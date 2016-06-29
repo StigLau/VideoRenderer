@@ -47,8 +47,8 @@ public class KompositionPlanner {
             this.buildPlan = superPlan;
         }
 
-        for (SegmentFramePlan buildFramePlan : ((SuperPlan) this.buildPlan).getFramePlans()) {
-            Segment collectSegment = segmentIdCollectSegmentMap.get(buildFramePlan.originalSegment.shortId());
+        for (SegmentWrapper buildFramePlan : ((SuperPlan) this.buildPlan).getFramePlans()) {
+            Segment collectSegment = segmentIdCollectSegmentMap.get(buildFramePlan.segment().shortId());
             Komposition fetchKomposition = segmentFetchKompositionMap.get(collectSegment);
             collectPlans.add(new SuperPlan(collectSegment, buildFramePlan, fetchKomposition.storageLocation, finalFramerate, fetchKomposition.bpm));
         }
