@@ -2,16 +2,31 @@ package no.lau.vdvil.collector;
 
 import no.lau.vdvil.domain.Segment;
 
-import java.util.List;
+public class SegmentWrapper implements Comparable {
+    public final Segment segment;
+    public final SimpleCalculator frameCalculator;
+    public final long finalFramerate;
+    public final long frameRateMillis;
+    public final float bpm;
+    public final long numberOfNeededBuildFrames;
+    final String id;
+    public final long start;
 
-/**
- * @author Stig@Lau.no 10/05/15.
- */
+    public SegmentWrapper(Segment segment, float bpm, long finalFramerate, SimpleCalculator calculator) {
+        this.id = segment.id();
+        this.segment = segment;
+        this.frameCalculator = calculator;
+        this.bpm = bpm;
+        this.finalFramerate = finalFramerate;
+        frameRateMillis = 1000000/finalFramerate;
+        numberOfNeededBuildFrames = frameCalculator.buildRatio / frameRateMillis;
+        start = segment.startCalculated(this.bpm);
+        if(finalFramerate <= 0) {
+            throw new RuntimeException("framerate was " + finalFramerate);
+        }
+    }
 
-public interface SegmentWrapper {
-    List<FrameRepresentation> calculateFramesFromSegment();
-
-    Segment segment();
-
-    float bpm();
+    public int compareTo(Object other) {
+        return Long.compare(segment.start(), ((SegmentWrapper) other).segment.start());
+    }
 }

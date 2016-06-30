@@ -1,6 +1,8 @@
 package no.lau.vdvil.plan;
 
 import no.lau.vdvil.collector.*;
+import no.lau.vdvil.collector.plan.FramePlan;
+import no.lau.vdvil.collector.plan.SegmentFramePlanFactory;
 import no.lau.vdvil.domain.MediaFile;
 import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.domain.StaticImagesSegment;
@@ -16,26 +18,28 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan{
 
     Logger logger = LoggerFactory.getLogger(SuperPlan.class);
     final long lastTimeStamp;
-    final List<SegmentWrapper> framePlans = new ArrayList<>(); //TODO Note that frameplans contain BOTH build and collect frameplans!
+    final List<FramePlan> framePlans = new ArrayList<>(); //TODO Note that frameplans contain BOTH build and collect frameplans!
     List<FrameRepresentation> frameRepresentations = new ArrayList<>();
-    String collectId = "";
+    final String collectId;
     final MediaFile storageLocation;
     public URL audioLocation;
     Segment originalSegment;
 
-    public SuperPlan(Segment originalSegment, SegmentWrapper buildFramePlan, MediaFile storageLocation, long finalFramerate, float collectBpm) {
+    public SuperPlan(Segment originalSegment, FramePlan buildFramePlan, MediaFile storageLocation, long finalFramerate, float collectBpm) {
         this.originalSegment = originalSegment;
+        Segment buildSegment = buildFramePlan.wrapper().segment;
+        collectId = buildSegment.id();
+        float buildBpm = buildFramePlan.wrapper().bpm;
         this.storageLocation = storageLocation;
+        long buildCalculatedBpm = buildSegment.durationCalculated(buildBpm);
+        FramePlan framePlan = SegmentFramePlanFactory.createInstance(new SegmentWrapper(originalSegment, collectBpm, finalFramerate, new SimpleCalculator(originalSegment.durationCalculated(collectBpm), buildCalculatedBpm)));
+        framePlans.add(framePlan);
+        frameRepresentations.addAll(framePlan.calculateFramesFromSegment());
         if (originalSegment instanceof StaticImagesSegment) {
-            lastTimeStamp = calculateLastTimeStamp(Collections.singletonList(buildFramePlan.segment()), buildFramePlan.bpm());
+            lastTimeStamp = calculateLastTimeStamp(Collections.singletonList(buildSegment), buildBpm);
         } else {
             lastTimeStamp = calculateLastTimeStamp(Collections.singletonList(originalSegment), collectBpm);
         }
-        collectId = buildFramePlan.segment().id();
-        Segment buildSegment = buildFramePlan.segment();
-        SegmentWrapper framePlan = SegmentWrapperParent.chooseForMe(collectId, originalSegment, collectBpm, finalFramerate, new SimpleCalculator(originalSegment.durationCalculated(collectBpm), buildSegment.durationCalculated(buildFramePlan.bpm())));
-        framePlans.add(framePlan);
-        frameRepresentations.addAll(framePlan.calculateFramesFromSegment());
     }
 
     /**
@@ -44,9 +48,10 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan{
     @Deprecated
     public SuperPlan(List<Segment> buildSegments, MediaFile storageLocation, float buildBpm, long finalFramerate) {
         this.storageLocation = storageLocation;
+        this.collectId = "";
         lastTimeStamp = calculateLastTimeStamp(buildSegments, buildBpm);
         for (Segment buildSegment : buildSegments) {
-            SegmentWrapper framePlan = SegmentWrapperParent.chooseForMe(buildSegment.id(), buildSegment, buildBpm, finalFramerate, new SimpleCalculator(1, 1));
+            FramePlan framePlan = SegmentFramePlanFactory.createInstance(new SegmentWrapper(buildSegment, buildBpm, finalFramerate, new SimpleCalculator(1, 1)));
             framePlans.add(framePlan);
             frameRepresentations.addAll(framePlan.calculateFramesFromSegment());
             logger.info("Build: " + buildSegment.id());
@@ -56,8 +61,9 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan{
     public SuperPlan(List<Segment> buildSegments, MediaFile storageLocation, float buildBpm, long finalFramerate, Map<String, Segment> segmentIdCollectSegmentMap) {
         this.storageLocation = storageLocation;
         lastTimeStamp = calculateLastTimeStamp(buildSegments, buildBpm);
+        collectId = "";
         for (Segment buildSegment : buildSegments) {
-            FrameCalculator frameCalculator;
+            SimpleCalculator frameCalculator;
             { //Extract the Frame duration
                 Segment collectSegment = segmentIdCollectSegmentMap.get(buildSegment.shortId());
                 if(collectSegment == null) {
@@ -69,7 +75,7 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan{
                     frameCalculator = new SimpleCalculator(collectDuration, buildDuration);
                 }
             }
-            SegmentWrapper framePlan = SegmentWrapperParent.chooseForMe(buildSegment.id(), buildSegment, buildBpm, finalFramerate, frameCalculator);
+            FramePlan framePlan = SegmentFramePlanFactory.createInstance(new SegmentWrapper(buildSegment, buildBpm, finalFramerate, frameCalculator));
             framePlans.add(framePlan);
             frameRepresentations.addAll(framePlan.calculateFramesFromSegment());
             logger.info("Build: " + buildSegment.id());
@@ -114,7 +120,7 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan{
         return lastTimeStamp;
     }
 
-    public List<SegmentWrapper> getFramePlans() {
+    public List<FramePlan> getFramePlans() {
         return framePlans;
     }
 

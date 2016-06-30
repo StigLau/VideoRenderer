@@ -11,13 +11,15 @@ import no.lau.vdvil.renderer.video.stigs.TimeStampFixedImageSampleSegment;
  */
 public class SegmentFramePlanFactory {
 
-    public static FramePlan createInstance(SegmentWrapper wrapper ) {
+    public static FramePlan createInstance(SegmentWrapper wrapper) {
         if (wrapper.segment instanceof StaticImagesSegment) {
             return new StaticImagesFramePlan(wrapper);
-        } else if(wrapper.segment instanceof KnownNumberOfFramesSegment) {
+        } else if (wrapper.segment instanceof KnownNumberOfFramesSegment) {
             return new KnownNumberOfFramesPlan(wrapper);
-        } else if (wrapper.segment instanceof VideoStillImageSegment<?> || wrapper.segment instanceof TimeStampFixedImageSampleSegment) {
-            return new ElseWrapper(wrapper);
+        } else if (wrapper.segment instanceof VideoStillImageSegment<?>) {
+            return new VideoStillImagePlan(wrapper);
+        } else if (wrapper.segment instanceof TimeStampFixedImageSampleSegment) {
+            return new TimeStampFixedImageSamplePlan(wrapper);
         } else {
             return new ElseWrapper(wrapper);
         }

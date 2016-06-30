@@ -1,6 +1,7 @@
 package no.lau.vdvil.renderer.video;
 
 import no.lau.vdvil.collector.*;
+import no.lau.vdvil.collector.plan.FramePlan;
 import no.lau.vdvil.domain.MediaFile;
 import no.lau.vdvil.domain.VideoStillImageSegment;
 import no.lau.vdvil.domain.out.Komposition;
@@ -89,7 +90,7 @@ public class StreamingImageStoreTest {
 
         List<Plan> collectPlan = planner.collectPlans();
         assertEquals(1, collectPlan.size());
-        List<SegmentWrapper> collectFramePlans = new ArrayList<>();
+        List<FramePlan> collectFramePlans = new ArrayList<>();
         for (Plan plan : collectPlan) {
             collectFramePlans.addAll(((SuperPlan) plan).getFramePlans());
         }

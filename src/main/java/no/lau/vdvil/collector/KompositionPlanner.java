@@ -1,5 +1,6 @@
 package no.lau.vdvil.collector;
 
+import no.lau.vdvil.collector.plan.FramePlan;
 import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.plan.Plan;
@@ -47,8 +48,8 @@ public class KompositionPlanner {
             this.buildPlan = superPlan;
         }
 
-        for (SegmentWrapper buildFramePlan : ((SuperPlan) this.buildPlan).getFramePlans()) {
-            Segment collectSegment = segmentIdCollectSegmentMap.get(buildFramePlan.segment().shortId());
+        for (FramePlan buildFramePlan : ((SuperPlan) this.buildPlan).getFramePlans()) {
+            Segment collectSegment = segmentIdCollectSegmentMap.get(buildFramePlan.wrapper().segment.shortId());
             Komposition fetchKomposition = segmentFetchKompositionMap.get(collectSegment);
             collectPlans.add(new SuperPlan(collectSegment, buildFramePlan, fetchKomposition.storageLocation, finalFramerate, fetchKomposition.bpm));
         }
