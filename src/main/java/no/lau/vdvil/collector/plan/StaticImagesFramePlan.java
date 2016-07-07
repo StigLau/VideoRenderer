@@ -13,11 +13,13 @@ import java.util.List;
  */
 public class StaticImagesFramePlan implements FramePlan {
 
+    private final String collectId;
     final SegmentWrapper wrapper;
     final StaticImagesSegment segment;
     Logger logger = LoggerFactory.getLogger(getClass());
 
-    public StaticImagesFramePlan(SegmentWrapper wrapper) {
+    public StaticImagesFramePlan(String collectId, SegmentWrapper wrapper) {
+        this.collectId = collectId;
         this.wrapper = wrapper;
         this.segment = (StaticImagesSegment) wrapper.segment;
     }
@@ -46,7 +48,7 @@ public class StaticImagesFramePlan implements FramePlan {
 
             for (int i = 0;i < thisBucketSize ; i++, imageNr++) {
                 long thisDuration = wrapper.frameRateMillis * imageNr  ;
-                FrameRepresentation frame = Common.createFrameRepresentation(segment, framezz, wrapper.start, imageNr, thisDuration);
+                FrameRepresentation frame = Common.createFrameRepresentation(collectId, segment, framezz, wrapper.start, imageNr, thisDuration);
                 frame.setImageUrl(image);
                 logger.trace("Adding image #{}, {}", imageNr, frame);
                 plans.add(frame);

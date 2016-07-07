@@ -20,7 +20,6 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan{
     final long lastTimeStamp;
     final List<FramePlan> framePlans = new ArrayList<>(); //TODO Note that frameplans contain BOTH build and collect frameplans!
     List<FrameRepresentation> frameRepresentations = new ArrayList<>();
-    final String collectId;
     final MediaFile storageLocation;
     public URL audioLocation;
     Segment originalSegment;
@@ -28,11 +27,10 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan{
     public SuperPlan(Segment originalSegment, FramePlan buildFramePlan, MediaFile storageLocation, long finalFramerate, float collectBpm) {
         this.originalSegment = originalSegment;
         Segment buildSegment = buildFramePlan.wrapper().segment;
-        collectId = buildSegment.id();
         float buildBpm = buildFramePlan.wrapper().bpm;
         this.storageLocation = storageLocation;
         long buildCalculatedBpm = buildSegment.durationCalculated(buildBpm);
-        FramePlan framePlan = SegmentFramePlanFactory.createInstance(new SegmentWrapper(originalSegment, collectBpm, finalFramerate, new SimpleCalculator(originalSegment.durationCalculated(collectBpm), buildCalculatedBpm)));
+        FramePlan framePlan = SegmentFramePlanFactory.createInstance(buildSegment.id(), new SegmentWrapper(originalSegment, collectBpm, finalFramerate, new SimpleCalculator(originalSegment.durationCalculated(collectBpm), buildCalculatedBpm)));
         framePlans.add(framePlan);
         frameRepresentations.addAll(framePlan.calculateFramesFromSegment());
         if (originalSegment instanceof StaticImagesSegment) {
@@ -48,10 +46,9 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan{
     @Deprecated
     public SuperPlan(List<Segment> buildSegments, MediaFile storageLocation, float buildBpm, long finalFramerate) {
         this.storageLocation = storageLocation;
-        this.collectId = "";
         lastTimeStamp = calculateLastTimeStamp(buildSegments, buildBpm);
         for (Segment buildSegment : buildSegments) {
-            FramePlan framePlan = SegmentFramePlanFactory.createInstance(new SegmentWrapper(buildSegment, buildBpm, finalFramerate, new SimpleCalculator(1, 1)));
+            FramePlan framePlan = SegmentFramePlanFactory.createInstance(buildSegment.id(), new SegmentWrapper(buildSegment, buildBpm, finalFramerate, new SimpleCalculator(1, 1)));
             framePlans.add(framePlan);
             frameRepresentations.addAll(framePlan.calculateFramesFromSegment());
             logger.info("Build: " + buildSegment.id());
@@ -61,7 +58,6 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan{
     public SuperPlan(List<Segment> buildSegments, MediaFile storageLocation, float buildBpm, long finalFramerate, Map<String, Segment> segmentIdCollectSegmentMap) {
         this.storageLocation = storageLocation;
         lastTimeStamp = calculateLastTimeStamp(buildSegments, buildBpm);
-        collectId = "";
         for (Segment buildSegment : buildSegments) {
             SimpleCalculator frameCalculator;
             { //Extract the Frame duration
@@ -75,7 +71,7 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan{
                     frameCalculator = new SimpleCalculator(collectDuration, buildDuration);
                 }
             }
-            FramePlan framePlan = SegmentFramePlanFactory.createInstance(new SegmentWrapper(buildSegment, buildBpm, finalFramerate, frameCalculator));
+            FramePlan framePlan = SegmentFramePlanFactory.createInstance(buildSegment.id(), new SegmentWrapper(buildSegment, buildBpm, finalFramerate, frameCalculator));
             framePlans.add(framePlan);
             frameRepresentations.addAll(framePlan.calculateFramesFromSegment());
             logger.info("Build: " + buildSegment.id());
@@ -100,9 +96,8 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan{
     }
 
     @Override
-    @Deprecated //Use toString. This is no real id!
     public String id() {
-        return collectId;
+        return toString();
     }
 
     public String ioFile() {
@@ -126,10 +121,6 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan{
 
     public List<FrameRepresentation> getFrameRepresentations() {
         return frameRepresentations;
-    }
-
-    public String toString() {
-        return collectId;
     }
 
     public URL audioLocation() {

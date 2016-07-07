@@ -19,10 +19,6 @@ public class FrameRepresentation {
     URL imageUrl;
 
     public FrameRepresentation(long timestamp, String referenceId, Segment originalSegment) {
-        this(timestamp, referenceId, originalSegment, false);
-    }
-
-    public FrameRepresentation(long timestamp, String referenceId, Segment originalSegment, boolean isEmptyFrame) {
         this.timestamp = timestamp;
         this.referenceId = referenceId;
         this.originalSegment = originalSegment;

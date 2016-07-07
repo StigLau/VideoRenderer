@@ -13,8 +13,8 @@ import java.util.List;
  * @author stig@lau.no on 30/06/16.
  */
 class Common {
-    static FrameRepresentation createFrameRepresentation(Segment segment, long numberOfAvailableFrames, long start, int i, long thisDuration) {
-        FrameRepresentation frame = new FrameRepresentation(start + thisDuration, segment.id(), segment);
+    static FrameRepresentation createFrameRepresentation(String collectId, Segment segment, long numberOfAvailableFrames, long start, int i, long thisDuration) {
+        FrameRepresentation frame = new FrameRepresentation(start + thisDuration, collectId, segment);
         frame.numberOfFrames = numberOfAvailableFrames;
         frame.frameNr = i;
         return frame;
@@ -30,21 +30,18 @@ class Common {
         for (int i = 0; i < numberOfAvailableFrames; i++) {
             long thisDuration = frameRateMillis * i;
 
-            //Placing empty frames when there are too few collect images
-            boolean emptyFrame = true;
             if (segment instanceof TimeStampFixedImageSampleSegment) {
                 if (i > lastUsedFrame * (float) numberOfAvailableFrames / numberOfCollectFrames) {
-                    emptyFrame = false;
                     lastUsedFrame++;
                 }
             }
 
-            FrameRepresentation frame = new FrameRepresentation(start + thisDuration, segment.id(), segment, emptyFrame);
+            FrameRepresentation frame = new FrameRepresentation(start + thisDuration, segment.id(), segment);
             frame.numberOfFrames = numberOfAvailableFrames;
             frame.frameNr = i;
             plans.add(frame);
 
-            origLogger.trace(segment.id() + " #" + (i + 1) + " duration:" + thisDuration + " Used:" + emptyFrame);
+            origLogger.trace(segment.id() + " #" + (i + 1) + " duration:" + thisDuration);
         }
         return plans;
     }
