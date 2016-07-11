@@ -119,10 +119,7 @@ public class StreamingImageStoreTest {
     @Ignore //Test often fails!!
     public void testStreamingFromInVideoSource() throws InterruptedException, IOException {
         PipeDream<BufferedImage> imageStore = new PipeDream<>(200, 5000, 1000, 10);
-        ThreadedImageCollector collector = new ThreadedImageCollector();
-        for (Plan plan : planner.collectPlans()) {
-            collector.addCollector(new WaitingVideoThumbnailsCollector(plan, imageStore));
-        }
+        ThreadedImageCollector collector = new ThreadedImageCollector(planner.collectPlans(), plan -> new WaitingVideoThumbnailsCollector(plan, imageStore));
         new Thread(collector).start();
 
         System.out.println("Need to know how many pics to retrieve (Preferrably in a planner) before proceeding!");
@@ -148,9 +145,8 @@ public class StreamingImageStoreTest {
     public void testSegmentStrip() throws InterruptedException, IOException {
         PipeDream<BufferedImage> imageStore = new PipeDream<>(200, 5000, 1000, 10);
         TimeStampFixedImageSampleSegment segment = new TimeStampFixedImageSampleSegment("Flower fjord", 35500000, 46250000, 24);
-        ThreadedImageCollector collector = new ThreadedImageCollector();
-        collector.addCollector(new StrippedWaitingVideoThumbnailsCollector(segment,downmixedOriginalVideo, imageStore));
-        new Thread(collector).start();
+        new Thread(new ThreadedImageCollector(
+                new StrippedWaitingVideoThumbnailsCollector(segment,downmixedOriginalVideo, imageStore))).start();
 
         System.out.println("Need to know how many pics to retrieve (Preferrably in a planner) before proceeding!");
         Plan buildPlan = new TimeStampFixedSegmentPlan(segment, strippedResult.getFile());

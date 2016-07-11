@@ -2,6 +2,7 @@ package no.lau.vdvil.collector;
 
 import no.lau.vdvil.collector.plan.FramePlan;
 import no.lau.vdvil.domain.Segment;
+import no.lau.vdvil.domain.StaticImagesSegment;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.plan.Plan;
 import no.lau.vdvil.plan.SuperPlan;
@@ -13,8 +14,6 @@ import static no.lau.vdvil.renderer.video.KompositionUtil.performIdUniquenessChe
  * @author Stig@Lau.no 10/05/15.
  */
 public class KompositionPlanner {
-    //public final List<SegmentFramePlan> plans = new ArrayList<>();
-
     final List<Plan> collectPlans = new ArrayList<>();
     final Plan buildPlan;
     //Calculating last timestamp is to be done on each entity one is interested in
@@ -43,15 +42,25 @@ public class KompositionPlanner {
             segmentIdCollectSegmentMap.put(segment.shortId(), segment);
         }
         {
-            SuperPlan superPlan = new SuperPlan(buildSegments, buildKomposition.storageLocation, buildKomposition.bpm, finalFramerate, segmentIdCollectSegmentMap);
-            superPlan.audioLocation = audioLocation;
-            this.buildPlan = superPlan;
+            long lastTimeStamp = SuperPlan.calculateLastTimeStamp(buildKomposition.bpm, buildSegments);
+            this.buildPlan = new SuperPlan(lastTimeStamp, buildKomposition.storageLocation,
+                    SuperPlan.createCollectPlan(buildSegments, buildKomposition.bpm, finalFramerate, segmentIdCollectSegmentMap)).
+                    withAudioLocation(audioLocation);
         }
 
         for (FramePlan buildFramePlan : ((SuperPlan) this.buildPlan).getFramePlans()) {
             Segment collectSegment = segmentIdCollectSegmentMap.get(buildFramePlan.wrapper().segment.shortId());
             Komposition fetchKomposition = segmentFetchKompositionMap.get(collectSegment);
-            collectPlans.add(new SuperPlan(collectSegment, buildFramePlan, fetchKomposition.storageLocation, finalFramerate, fetchKomposition.bpm));
+            Segment buildSegment = buildFramePlan.wrapper().segment;
+
+            long lastTimeStamp;
+            if (collectSegment instanceof StaticImagesSegment) {
+                lastTimeStamp = SuperPlan.calculateEnd(buildKomposition.bpm, buildSegment);
+            } else {
+                lastTimeStamp = SuperPlan.calculateEnd(fetchKomposition.bpm, collectSegment);
+            }
+            collectPlans.add(new SuperPlan(lastTimeStamp, fetchKomposition.storageLocation,
+                    SuperPlan.createBuildPlan(collectSegment, buildFramePlan, finalFramerate, fetchKomposition.bpm)));
         }
     }
 

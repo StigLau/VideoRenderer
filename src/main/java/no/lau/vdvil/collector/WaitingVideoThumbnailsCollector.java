@@ -5,6 +5,7 @@ import com.xuggle.mediatool.MediaListenerAdapter;
 import com.xuggle.mediatool.ToolFactory;
 import com.xuggle.mediatool.event.IVideoPictureEvent;
 import com.xuggle.xuggler.IContainer;
+import no.lau.vdvil.plan.ImageCollectable;
 import no.lau.vdvil.plan.Plan;
 import no.lau.vdvil.plan.SuperPlan;
 import no.lau.vdvil.renderer.video.VideoExtractionFinished;
@@ -18,16 +19,16 @@ import java.util.List;
 public class WaitingVideoThumbnailsCollector implements ImageCollector{
 
     private Logger logger = LoggerFactory.getLogger(getClass());
-    private Plan collectPlan;
+    private ImageCollectable collectPlan;
     private final ImageStore<BufferedImage> imageStore;
 
     private final boolean skipAhead;
 
-    public WaitingVideoThumbnailsCollector(Plan collectPlan, ImageStore<BufferedImage> imageStore) {
+    public WaitingVideoThumbnailsCollector(ImageCollectable collectPlan, ImageStore<BufferedImage> imageStore) {
         this(collectPlan, imageStore, true);
     }
 
-    public WaitingVideoThumbnailsCollector(Plan collectPlan, ImageStore<BufferedImage> imageStore, boolean skipAhead) {
+    public WaitingVideoThumbnailsCollector(ImageCollectable collectPlan, ImageStore<BufferedImage> imageStore, boolean skipAhead) {
         this.collectPlan = collectPlan;
         this.imageStore = imageStore;
         this.skipAhead = skipAhead;

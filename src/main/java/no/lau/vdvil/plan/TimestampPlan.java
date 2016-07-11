@@ -1,25 +1,24 @@
 package no.lau.vdvil.plan;
 
 import no.lau.vdvil.collector.FrameRepresentation;
+import no.lau.vdvil.collector.ImageCollector;
+import no.lau.vdvil.collector.WaitingVideoThumbnailsCollector;
 import no.lau.vdvil.domain.Segment;
+import no.lau.vdvil.renderer.video.creator.ImageStore;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Todo Merge with SuperPlan!!!
- */
-public class TimestampPlan implements FrameRepresentationsPlan {
+public class TimestampPlan implements FrameRepresentationsPlan,  ImageCollectable{
 
     final long startTimeStamp;
     final long endTimeStamp;
     final String referenceId;
-    private final Segment segment;
 
     List<FrameRepresentation> frameRepresentations = new ArrayList<>();
     final String ioFile;
 
     public TimestampPlan(Segment segment, int framerate, String ioFile) {
-        this.segment = segment;
         this.startTimeStamp = segment.start();
         this.endTimeStamp = segment.start() + segment.duration();
         this.referenceId = segment.id();
@@ -55,11 +54,12 @@ public class TimestampPlan implements FrameRepresentationsPlan {
         return ioFile;
     }
 
+    public ImageCollector collector(ImageStore<BufferedImage> imageStore, int framerateMillis) {
+        return new WaitingVideoThumbnailsCollector(this, imageStore, true);
+    }
+
     public List<FrameRepresentation> getFrameRepresentations() {
         return frameRepresentations;
     }
 
-    public Segment originalSegment() {
-        return segment;
-    }
 }

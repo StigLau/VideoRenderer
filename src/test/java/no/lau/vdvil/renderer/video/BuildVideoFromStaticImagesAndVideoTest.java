@@ -127,7 +127,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
         buildKomposition.storageLocation = mf;
 
 
-        ImageStore<BufferedImage> imageStore = new PipeDream<>(30, 2500, 5000, 10);
+        ImageStore<BufferedImage> imageStore = new PipeDream<>(15, 2500, 5000, 10);
 
         List<Komposition> fetchKompositions = new ArrayList<>();
         fetchKompositions.add(fetchKompositionStillImages);
@@ -137,19 +137,8 @@ public class BuildVideoFromStaticImagesAndVideoTest {
 
         KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition, sobotaMp3, 24);
 
-        ThreadedImageCollector collector = new ThreadedImageCollector();
-        for (Plan plan : planner.collectPlans()) {
-            SuperPlan superPlan = (SuperPlan) plan;
-            if(superPlan.originalSegment() instanceof TimeStampFixedImageSampleSegment) {
-                collector.addCollector(new WaitingVideoThumbnailsCollector(plan, imageStore));
-            } else if(superPlan.originalSegment() instanceof StaticImagesSegment) {
-              collector.addCollector(new FromImageFileCollector(plan, imageStore, 41666));
-            } else {
-                logger.error("Not implemented collection type for {}", superPlan.originalSegment().getClass());
-            }
-        }
-
-        new Thread(collector).start();
+        new Thread(new ThreadedImageCollector(planner.collectPlans(),
+                plan -> plan.collector(imageStore, 41666))).start();
         Thread.sleep(5000);
         CreateVideoFromScratchImages.createVideo(planner.buildPlan(), imageStore, new VideoConfig(1280, 720, Math.round(1000000/24)));
 

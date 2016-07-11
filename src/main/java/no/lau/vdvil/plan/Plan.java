@@ -1,7 +1,6 @@
 package no.lau.vdvil.plan;
 
 import no.lau.vdvil.collector.FrameRepresentation;
-import no.lau.vdvil.domain.Segment;
 import java.util.List;
 
 /**
@@ -16,6 +15,4 @@ public interface Plan {
     String id();
 
     String ioFile();
-
-    Segment originalSegment();
 }

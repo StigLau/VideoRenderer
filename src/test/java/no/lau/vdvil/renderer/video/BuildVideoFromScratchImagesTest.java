@@ -1,12 +1,10 @@
 package no.lau.vdvil.renderer.video;
 
-import no.lau.vdvil.collector.KompositionPlanner;
-import no.lau.vdvil.collector.ThreadedImageCollector;
-import no.lau.vdvil.collector.WaitingVideoThumbnailsCollector;
+import no.lau.vdvil.collector.*;
 import no.lau.vdvil.domain.MediaFile;
 import no.lau.vdvil.domain.VideoStillImageSegment;
 import no.lau.vdvil.domain.out.Komposition;
-import no.lau.vdvil.plan.Plan;
+import no.lau.vdvil.plan.ImageCollectable;
 import no.lau.vdvil.renderer.video.config.VideoConfig;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
 import no.lau.vdvil.renderer.video.creator.PipeDream;
@@ -133,10 +131,7 @@ public class BuildVideoFromScratchImagesTest {
 
         KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition, sobotaMp3, 24);
 
-        ThreadedImageCollector collector = new ThreadedImageCollector();
-        for (Plan plan : planner.collectPlans()) {
-            collector.addCollector(new WaitingVideoThumbnailsCollector(plan, imageStore));
-        }
+        ThreadedImageCollector collector = new ThreadedImageCollector(planner.collectPlans(), plan -> new WaitingVideoThumbnailsCollector(plan, imageStore));
         new Thread(collector).start();
         Thread.sleep(2000);
         CreateVideoFromScratchImages.createVideo(planner.buildPlan(), imageStore, new VideoConfig(1280, 720, Math.round(1000000/24)));
@@ -169,10 +164,7 @@ public class BuildVideoFromScratchImagesTest {
         buildKomposition.storageLocation = mf;
         KompositionPlanner planner = new KompositionPlanner(Collections.singletonList(fetchKompositionNorway), buildKomposition, sobotaMp3, 15);
         PipeDream<BufferedImage> imageStore = new PipeDream<>();
-        ThreadedImageCollector imageCollector = new ThreadedImageCollector();
-        for (Plan plan : planner.collectPlans()) {
-            new WaitingVideoThumbnailsCollector(plan, imageStore);
-        }
+        ThreadedImageCollector imageCollector = new ThreadedImageCollector(planner.collectPlans(), item -> new WaitingVideoThumbnailsCollector(item, imageStore));
         new Thread(imageCollector).run();
         Thread.sleep(5000);
         CreateVideoFromScratchImages.createVideo(planner.buildPlan(), imageStore, config);
