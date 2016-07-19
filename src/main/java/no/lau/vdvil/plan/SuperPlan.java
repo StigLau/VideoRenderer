@@ -1,10 +1,7 @@
 package no.lau.vdvil.plan;
 
 import no.lau.vdvil.collector.*;
-import no.lau.vdvil.collector.plan.FramePlan;
-import no.lau.vdvil.collector.plan.KnownNumberOfFramesPlan;
-import no.lau.vdvil.collector.plan.SegmentFramePlanFactory;
-import no.lau.vdvil.collector.plan.StaticImagesFramePlan;
+import no.lau.vdvil.collector.plan.*;
 import no.lau.vdvil.domain.MediaFile;
 import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
@@ -73,14 +70,14 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan, ImageColl
         return segment.startCalculated(bpm) + segment.durationCalculated(bpm);
     }
 
-    public static FramePlan createBuildPlan(Segment originalSegment, FramePlan buildFramePlan, long finalFramerate, float collectBpm) {
+    public static FramePlan createCollectPlan(Segment originalSegment, FramePlan buildFramePlan, long finalFramerate, float collectBpm) {
         Segment buildSegment = buildFramePlan.wrapper().segment;
         float buildBpm = buildFramePlan.wrapper().bpm;
         long buildCalculatedBpm = buildSegment.durationCalculated(buildBpm);
         return SegmentFramePlanFactory.createInstance(buildSegment.id(), new SegmentWrapper(originalSegment, collectBpm, finalFramerate, new SimpleCalculator(originalSegment.durationCalculated(collectBpm), buildCalculatedBpm)));
     }
 
-    public static FramePlan[] createCollectPlan(List<Segment> buildSegments, float buildBpm, long finalFramerate, Map<String, Segment> segmentIdCollectSegmentMap) {
+    public static FramePlan[] createBuildPlan(List<Segment> buildSegments, float buildBpm, long finalFramerate, Map<String, Segment> segmentIdCollectSegmentMap) {
         List<FramePlan> framePlans = new ArrayList<>();
         for (Segment buildSegment : buildSegments) {
             SimpleCalculator frameCalculator;
@@ -110,7 +107,7 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan, ImageColl
 
     public ImageCollector collector(ImageStore<BufferedImage> imageStore, int framerateMillis) {
         for (FramePlan framePlan : framePlans) {
-            if(framePlan instanceof KnownNumberOfFramesPlan) {
+            if(framePlan instanceof KnownNumberOfFramesPlan || framePlan instanceof TimeStampFixedImageSamplePlan) {
                 return new WaitingVideoThumbnailsCollector(this, imageStore, true);
             } else if(framePlan instanceof StaticImagesFramePlan) {
                 return new FromImageFileCollector(this, imageStore, framerateMillis);
@@ -119,7 +116,7 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan, ImageColl
                 throw new RuntimeException("Not implemented collection type for " + framePlan.getClass());
             }
         }
-        throw new RuntimeException("I give up!!!!");
+        throw new RuntimeException("Should not happen!");
     }
 
     public URL audioLocation() {

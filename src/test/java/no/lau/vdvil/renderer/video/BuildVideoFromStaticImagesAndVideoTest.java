@@ -1,17 +1,12 @@
 package no.lau.vdvil.renderer.video;
 
-import no.lau.vdvil.collector.FromImageFileCollector;
 import no.lau.vdvil.collector.KompositionPlanner;
 import no.lau.vdvil.collector.ThreadedImageCollector;
-import no.lau.vdvil.collector.WaitingVideoThumbnailsCollector;
 import no.lau.vdvil.domain.MediaFile;
 import no.lau.vdvil.domain.StaticImagesSegment;
 import no.lau.vdvil.domain.VideoStillImageSegment;
 import no.lau.vdvil.domain.out.Komposition;
-import no.lau.vdvil.plan.Plan;
-import no.lau.vdvil.plan.SuperPlan;
 import no.lau.vdvil.renderer.video.config.VideoConfig;
-import no.lau.vdvil.renderer.video.creator.ImageStore;
 import no.lau.vdvil.renderer.video.creator.PipeDream;
 import no.lau.vdvil.renderer.video.stigs.TimeStampFixedImageSampleSegment;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -19,7 +14,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -27,7 +21,6 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-
 import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.junit.Assert.assertEquals;
@@ -113,8 +106,10 @@ public class BuildVideoFromStaticImagesAndVideoTest {
     @Test
     public void buildVideoFromStaticImagesAndVideo() throws IOException, InterruptedException {
         Komposition buildKomposition =  new Komposition(124,
-                new VideoStillImageSegment("Still Image Fun 1", 0, 24),
-                new VideoStillImageSegment("Still Image Fun 2", 24, 4)/*,
+                new VideoStillImageSegment("Still Image Fun 1", 0, 4),
+                new VideoStillImageSegment("Besseggen", 4, 4),
+                new VideoStillImageSegment("Still Image Fun 2", 8, 2)
+                /*,
                 new VideoStillImageSegment("Purple Mountains Clouds", 28, 4),
                 new VideoStillImageSegment("Dark lake", 28, 4).revert(),
 
@@ -123,11 +118,11 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new VideoStillImageSegment("Flower fjord", 44, 8),
                 new VideoStillImageSegment("Fjord like river", 52, 12)*/
         );//.filter(16, 16);
-        MediaFile mf = new MediaFile(new URL(result3), 0f, 128f, "de61f10fd514587355c0fb21cfdad337");
+        MediaFile mf = new MediaFile(new URL(result3), 0f, 128f, "a8ade23975b75c706139bcfcc192c5eb");
         buildKomposition.storageLocation = mf;
 
 
-        ImageStore<BufferedImage> imageStore = new PipeDream<>(15, 2500, 5000, 10);
+        PipeDream<BufferedImage> pipeDream = new PipeDream<>(110, 250, 500, 10);
 
         List<Komposition> fetchKompositions = new ArrayList<>();
         fetchKompositions.add(fetchKompositionStillImages);
@@ -138,12 +133,13 @@ public class BuildVideoFromStaticImagesAndVideoTest {
         KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition, sobotaMp3, 24);
 
         new Thread(new ThreadedImageCollector(planner.collectPlans(),
-                plan -> plan.collector(imageStore, 41666))).start();
-        Thread.sleep(5000);
-        CreateVideoFromScratchImages.createVideo(planner.buildPlan(), imageStore, new VideoConfig(1280, 720, Math.round(1000000/24)));
+                plan -> plan.collector(pipeDream, 41666))).start();
+        Thread.sleep(1000);
+        CreateVideoFromScratchImages.createVideo(planner.buildPlan(), pipeDream, new VideoConfig(1280, 720, Math.round(1000000/24)));
 
         logger.info("Storing file at {}", mf.fileName);
         assertEquals(mf.checksum, md5Checksum(mf.fileName));
+        pipeDream.printPipedreamSize();
     }
 
     public String md5Checksum(URL url) throws IOException {

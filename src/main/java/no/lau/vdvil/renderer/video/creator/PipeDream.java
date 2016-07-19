@@ -107,6 +107,9 @@ public class PipeDream<TYPE> implements ImageStore<TYPE> {
                 try {
                     logger.warn("PipeDream waiting for {} - {}", referenceId, numberOfRetryAttempts - retryNr);
                     Thread.sleep(waitPeriod);
+                    if(retryNr == numberOfRetryAttempts -1) {
+                        printPipedreamSize();
+                    }
                 } catch (InterruptedException e) {
 
                 }
@@ -121,6 +124,13 @@ public class PipeDream<TYPE> implements ImageStore<TYPE> {
         } catch (Exception e) {
             logger.error("Fuck? {}, {}", referenceId, e.getMessage());
             return null;
+        }
+    }
+
+    public void printPipedreamSize() {
+        logger.debug("PipeDream Buffer size: {}. Listing {} keys:", bufferSize, segmentImageList.size());
+        for (String segmentKey : segmentImageList.keySet()) {
+            logger.debug("Pipekey: {} - size: {}", segmentKey, segmentImageList.get(segmentKey).size());
         }
     }
 

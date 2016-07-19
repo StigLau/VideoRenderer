@@ -19,7 +19,7 @@ public class SegmentFramePlanFactory {
         } else if (wrapper.segment instanceof VideoStillImageSegment<?>) {
             return new VideoStillImagePlan(wrapper);
         } else if (wrapper.segment instanceof TimeStampFixedImageSampleSegment) {
-            return new TimeStampFixedImageSamplePlan(wrapper);
+            return new TimeStampFixedImageSamplePlan(collectId, wrapper);
         } else {
             return new ElseWrapper(wrapper);
         }

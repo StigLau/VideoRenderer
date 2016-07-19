@@ -44,7 +44,7 @@ public class KompositionPlanner {
         {
             long lastTimeStamp = SuperPlan.calculateLastTimeStamp(buildKomposition.bpm, buildSegments);
             this.buildPlan = new SuperPlan(lastTimeStamp, buildKomposition.storageLocation,
-                    SuperPlan.createCollectPlan(buildSegments, buildKomposition.bpm, finalFramerate, segmentIdCollectSegmentMap)).
+                    SuperPlan.createBuildPlan(buildSegments, buildKomposition.bpm, finalFramerate, segmentIdCollectSegmentMap)).
                     withAudioLocation(audioLocation);
         }
 
@@ -60,7 +60,7 @@ public class KompositionPlanner {
                 lastTimeStamp = SuperPlan.calculateEnd(fetchKomposition.bpm, collectSegment);
             }
             collectPlans.add(new SuperPlan(lastTimeStamp, fetchKomposition.storageLocation,
-                    SuperPlan.createBuildPlan(collectSegment, buildFramePlan, finalFramerate, fetchKomposition.bpm)));
+                    SuperPlan.createCollectPlan(collectSegment, buildFramePlan, finalFramerate, fetchKomposition.bpm)));
         }
     }
 
