@@ -106,9 +106,9 @@ public class BuildVideoFromStaticImagesAndVideoTest {
     @Test
     public void buildVideoFromStaticImagesAndVideo() throws IOException, InterruptedException {
         Komposition buildKomposition =  new Komposition(124,
-                new VideoStillImageSegment("Still Image Fun 1", 0, 4),
-                new VideoStillImageSegment("Besseggen", 4, 4),
-                new VideoStillImageSegment("Still Image Fun 2", 8, 2)
+                new VideoStillImageSegment("Still Image Fun 1", 0, 8),
+                new VideoStillImageSegment("Besseggen", 8, 8),
+                new VideoStillImageSegment("Still Image Fun 2", 16, 8)
                 /*,
                 new VideoStillImageSegment("Purple Mountains Clouds", 28, 4),
                 new VideoStillImageSegment("Dark lake", 28, 4).revert(),
@@ -118,17 +118,16 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new VideoStillImageSegment("Flower fjord", 44, 8),
                 new VideoStillImageSegment("Fjord like river", 52, 12)*/
         );//.filter(16, 16);
-        MediaFile mf = new MediaFile(new URL(result3), 0f, 128f, "a8ade23975b75c706139bcfcc192c5eb");
+        MediaFile mf = new MediaFile(new URL(result3), 0f, 128f, "0c5157a3e964d7d7e641e6f7aa3379b3");
         buildKomposition.storageLocation = mf;
 
 
-        PipeDream<BufferedImage> pipeDream = new PipeDream<>(110, 250, 500, 10);
+        PipeDream<BufferedImage> pipeDream = new PipeDream<>(60, 250, 500, 10);
 
         List<Komposition> fetchKompositions = new ArrayList<>();
         fetchKompositions.add(fetchKompositionStillImages);
         fetchKompositions.add(fetchKompositionStillImages2);
         fetchKompositions.add(fetchKompositionNorway);
-        //fetchKompositions.add(fetchKompositionSwing);
 
         KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition, sobotaMp3, 24);
 

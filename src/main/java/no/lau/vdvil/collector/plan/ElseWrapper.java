@@ -14,7 +14,7 @@ import java.util.List;
  * @author Stig@Lau.no
  * Wraps all the other implementations of Frame Plans
  */
-public class ElseWrapper implements FramePlan{
+class ElseWrapper implements FramePlan{
     final long numberOfAvailableFrames;
     private final SegmentWrapper wrapper;
     Logger logger = LoggerFactory.getLogger(getClass());
@@ -27,7 +27,7 @@ public class ElseWrapper implements FramePlan{
     }
 
     public List<FrameRepresentation> calculateFramesFromSegment() {
-        return Common.calculateFramesFromSegment(wrapper.segment, wrapper.start, wrapper.frameRateMillis, numberOfAvailableFrames, wrapper.frameCalculator, logger);
+        return Common.calculateFramesFromSegment(wrapper.segment.id(), wrapper.segment, wrapper.start, wrapper.frameRateMillis, numberOfAvailableFrames, wrapper.frameCalculator, logger);
     }
 
 

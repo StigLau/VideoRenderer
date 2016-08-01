@@ -22,7 +22,7 @@ public class VideoStillImagePlan implements FramePlan {
     }
 
     public List<FrameRepresentation> calculateFramesFromSegment() {
-        return Common.calculateFramesFromSegment(segment, wrapper.start, wrapper.frameRateMillis, numberOfAvailableFrames(), wrapper.frameCalculator, logger);
+        return Common.calculateFramesFromSegment(segment.id(), segment, wrapper.start, wrapper.frameRateMillis, numberOfAvailableFrames(), wrapper.frameCalculator, logger);
     }
 
     private long numberOfAvailableFrames() {

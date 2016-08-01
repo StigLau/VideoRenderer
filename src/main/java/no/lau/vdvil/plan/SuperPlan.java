@@ -127,4 +127,8 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan, ImageColl
         this.audioLocation = audioLocation;
         return this;
     }
+
+    public long lastTimeStamp() {
+        return lastTimeStamp;
+    }
 }

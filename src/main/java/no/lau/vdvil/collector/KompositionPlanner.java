@@ -62,6 +62,7 @@ public class KompositionPlanner {
             collectPlans.add(new SuperPlan(lastTimeStamp, fetchKomposition.storageLocation,
                     SuperPlan.createCollectPlan(collectSegment, buildFramePlan, finalFramerate, fetchKomposition.bpm)));
         }
+        no.lau.vdvil.collector.plan.Common.printStatus(buildPlan(), collectPlans());
     }
 
     private void verifyNonOverlappingSegments(List<Segment> segments) {

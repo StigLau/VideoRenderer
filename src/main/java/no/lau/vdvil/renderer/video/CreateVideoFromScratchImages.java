@@ -109,6 +109,7 @@ class VideoAdapter {
     BufferedImage previous = null;
 
     public void writeNextPacket(long clock, Plan buildPlan) {
+        logger.debug("Clock ping: " + clock);
         while (clock >= nextFrameTime) {
             boolean nextFrameTimeUpdated = false;
             logger.trace("Time to write packets at {}", clock);

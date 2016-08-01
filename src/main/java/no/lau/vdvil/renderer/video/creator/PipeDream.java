@@ -122,7 +122,7 @@ public class PipeDream<TYPE> implements ImageStore<TYPE> {
         return blockingQueue.poll(queueBlockWait, TimeUnit.MILLISECONDS);
             //return blockingQueue.take();
         } catch (Exception e) {
-            logger.error("Fuck? {}, {}", referenceId, e.getMessage());
+            logger.error("Could not fetch data from buffer {}. Errormessage: '{}'. Temp fix: increase buffer size.", referenceId, e.getMessage());
             return null;
         }
     }
@@ -137,7 +137,7 @@ public class PipeDream<TYPE> implements ImageStore<TYPE> {
     /**
      * With retries
      */
-    public synchronized List<TYPE> findImagesBySegmentId(String segmentId, int retries, int maxNrOfRetries) {
+    synchronized List<TYPE> findImagesBySegmentId(String segmentId, int retries, int maxNrOfRetries) {
         if(retries >= maxNrOfRetries) {
             throw new RuntimeException("Could not find " + segmentId + " in ImageStore");
         }
