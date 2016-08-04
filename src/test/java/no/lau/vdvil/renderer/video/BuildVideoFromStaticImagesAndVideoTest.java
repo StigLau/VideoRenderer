@@ -45,6 +45,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
 
     //HighRez
     VideoConfig config = new VideoConfig(1280, 720,DEFAULT_TIME_UNIT.convert(24, MILLISECONDS));
+    private VideoConfig config2 = new VideoConfig(1280, 720, Math.round(1000000/24));
     //Low Rez
     //Config config = new Config(320, 200,DEFAULT_TIME_UNIT.convert(15, MILLISECONDS));
     Logger logger = LoggerFactory.getLogger(BuildVideoFromStaticImagesAndVideoTest.class);
@@ -66,7 +67,8 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new StaticImagesSegment("Still Image Fun 1",
                         getClass().getClassLoader().getResource("images/Cow_goes_moo.png").toString(),
                         getClass().getClassLoader().getResource("images/What_the_fox_sed_-Mouse.png").toString(),
-                        getClass().getClassLoader().getResource("images/Slide_Blue_mountain_top_lake.png").toString()
+                        getClass().getClassLoader().getResource("images/Slide_Blue_mountain_top_lake.png").toString(),
+                        getClass().getClassLoader().getResource("images/Slide_Blue_mountain_top_lake2.png").toString()
                 ));
         fetchKompositionStillImages2 = new Komposition(128,
                 new StaticImagesSegment("Still Image Fun 2",
@@ -108,17 +110,11 @@ public class BuildVideoFromStaticImagesAndVideoTest {
         Komposition buildKomposition =  new Komposition(124,
                 new VideoStillImageSegment("Still Image Fun 1", 0, 8),
                 new VideoStillImageSegment("Besseggen", 8, 8),
-                new VideoStillImageSegment("Still Image Fun 2", 16, 8)
-                /*,
-                new VideoStillImageSegment("Purple Mountains Clouds", 28, 4),
-                new VideoStillImageSegment("Dark lake", 28, 4).revert(),
+                new VideoStillImageSegment("Still Image Fun 1", 16, 4),
+                new VideoStillImageSegment("Purple Mountains Clouds", 20, 12)
 
-                new VideoStillImageSegment("Purple Mountains Clouds", 32, 4),
-                new VideoStillImageSegment("Slide Blue mountain top lake", 36, 8), //Forsøplet
-                new VideoStillImageSegment("Flower fjord", 44, 8),
-                new VideoStillImageSegment("Fjord like river", 52, 12)*/
         );//.filter(16, 16);
-        MediaFile mf = new MediaFile(new URL(result3), 0f, 128f, "0c5157a3e964d7d7e641e6f7aa3379b3");
+        MediaFile mf = new MediaFile(new URL(result3), 0f, 128f, "0d584e0e2b0990b69f10778536c6461b");
         buildKomposition.storageLocation = mf;
 
 
@@ -134,11 +130,10 @@ public class BuildVideoFromStaticImagesAndVideoTest {
         new Thread(new ThreadedImageCollector(planner.collectPlans(),
                 plan -> plan.collector(pipeDream, 41666))).start();
         Thread.sleep(1000);
-        CreateVideoFromScratchImages.createVideo(planner.buildPlan(), pipeDream, new VideoConfig(1280, 720, Math.round(1000000/24)));
+        CreateVideoFromScratchImages.createVideo(planner.buildPlan(), pipeDream, config2);
 
         logger.info("Storing file at {}", mf.fileName);
         assertEquals(mf.checksum, md5Checksum(mf.fileName));
-        pipeDream.printPipedreamSize();
     }
 
     public String md5Checksum(URL url) throws IOException {

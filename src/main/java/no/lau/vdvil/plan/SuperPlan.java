@@ -19,6 +19,7 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan, ImageColl
     List<FrameRepresentation> frameRepresentations = new ArrayList<>();
     final MediaFile storageLocation;
     public URL audioLocation;
+    int imageDownloadCacheSize = 10; //Just a default to allow for more than one cached image
 
     public SuperPlan(long lastTimeStamp, MediaFile storageLocation, FramePlan... framePlans) {
         this.lastTimeStamp = lastTimeStamp;
@@ -110,7 +111,7 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan, ImageColl
             if(framePlan instanceof KnownNumberOfFramesPlan || framePlan instanceof TimeStampFixedImageSamplePlan) {
                 return new WaitingVideoThumbnailsCollector(this, imageStore, true);
             } else if(framePlan instanceof StaticImagesFramePlan) {
-                return new FromImageFileCollector(this, imageStore, framerateMillis);
+                return new FromImageFileCollector(this, imageStore, framerateMillis, imageDownloadCacheSize);
             } else {
                 //TODO Simplify the different possibilities and maby move it out
                 throw new RuntimeException("Not implemented collection type for " + framePlan.getClass());

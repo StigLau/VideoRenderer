@@ -11,6 +11,7 @@ public enum ExtensionType {
     flac ("flac"),
     dvl ("dvl.xml"),
     kompo ("kompo.xml"),
+    htmlImagelist ("htmlImagelist"),
     jpg ("jpg"),
     png ("png"),
     NONE ("");
@@ -26,7 +27,7 @@ public enum ExtensionType {
     }
 
     public boolean isVideo() {
-        return this == mp4 || this == webm;
+        return this == mp4 || this == webm || this == htmlImagelist;
     }
 
     public String toString() {
