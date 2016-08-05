@@ -128,7 +128,7 @@ class VideoAdapter {
                         theImage = previous;
                     }
 
-                    logger.trace("Flushing {}@image#{}\t{}/{} \t Clock:{} from from pipedream to video", frameRepresentation.referenceId(), imgid, frameRepresentation.frameNr + 1, frameRepresentation.numberOfFrames, nextFrameTime);
+                    logger.debug("Flushing {}@image#{}\t{}/{} \t Clock:{} from from pipedream to video", frameRepresentation.referenceId(), imgid, frameRepresentation.frameNr + 1, frameRepresentation.numberOfFrames, nextFrameTime);
                     frameRepresentation.use();
                     //In some circumstances, one must reuse the previous image
 

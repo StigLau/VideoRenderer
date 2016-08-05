@@ -6,6 +6,8 @@ import no.lau.vdvil.domain.StaticImagesSegment;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.plan.Plan;
 import no.lau.vdvil.plan.SuperPlan;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.util.*;
 import static no.lau.vdvil.renderer.video.KompositionUtil.performIdUniquenessCheck;
@@ -16,6 +18,7 @@ import static no.lau.vdvil.renderer.video.KompositionUtil.performIdUniquenessChe
 public class KompositionPlanner {
     final List<Plan> collectPlans = new ArrayList<>();
     final Plan buildPlan;
+    Logger logger = LoggerFactory.getLogger(getClass());
     //Calculating last timestamp is to be done on each entity one is interested in
 
 
@@ -23,6 +26,7 @@ public class KompositionPlanner {
         List<Segment> buildSegments = buildKomposition.segments;
         Collections.sort(buildSegments);
         verifyNonOverlappingSegments(buildSegments);
+        notifyOfGapsBetweenSegments(buildSegments);
 
         //Verify that all fetchSegments are unique
         for (Komposition fetchKomposition : fetchKompositions) {
@@ -75,6 +79,17 @@ public class KompositionPlanner {
             }
         }
     }
+
+    private void notifyOfGapsBetweenSegments(List<Segment> segments) {
+        long last = 0;
+        for (Segment segment : segments) {
+            if(segment.start() > last) {
+                logger.warn("Gap detected before segment {}", segment.id());
+            }
+            last = segment.start() + segment.duration();
+        }
+    }
+
 
     public List<Plan> collectPlans() {
         return collectPlans;
