@@ -29,7 +29,22 @@ public class CreateVideoFromScratchImages {
 
     final static int sampleCount = 1000;
 
+    /**
+     * Standard instantioator
+     */
     public static void createVideo(Plan buildPlan, ImageStore<BufferedImage> imageStore, VideoConfig config) {
+        try {
+            Thread.sleep(5000);//Sleep to avoid hanging bug when audio is available in cache!
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        createVideo(buildPlan, imageStore, config, ToolFactory.makeWriter(buildPlan.ioFile()), true);
+    }
+
+    /**
+     * Detailed instatiation
+     */
+    public static void createVideo(Plan buildPlan, ImageStore<BufferedImage> imageStore, VideoConfig config, IMediaWriter writer, boolean turboCharged) {
         log.info("Init");
         try {
             log.info("Just a short wait to make sure the writer starts as expected");
@@ -38,8 +53,7 @@ public class CreateVideoFromScratchImages {
             e.printStackTrace();
         }
         long startTime = System.currentTimeMillis();
-        final IMediaWriter writer = ToolFactory.makeWriter(buildPlan.ioFile());
-        ToolFactory.setTurboCharged(true);
+        ToolFactory.setTurboCharged(turboCharged);
 
         VideoAdapter videoAdapter = new VideoAdapter(config, writer, imageStore);
         //AudioStream must be added after videostream!

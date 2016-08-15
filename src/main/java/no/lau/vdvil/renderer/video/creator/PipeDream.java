@@ -81,7 +81,7 @@ public class PipeDream<TYPE> implements ImageStore<TYPE> {
         ImageRepresentation imageRepresentation = new ImageRepresentation(Long.toString(timeStamp), referenceId, frameRepresentation);
         imageRepresentation.image = instance;
         try {
-            logger.debug("Piping {}@{}\t{}/{} \t Clock: {} from source to PipeDream", frameRepresentation.referenceId(), timeStamp, frameRepresentation.frameNr +1, frameRepresentation.numberOfFrames, frameRepresentation.timestamp);
+            logger.debug("Piping img@{} {}@{}\t{}/{} \t Clock: {} from source to PipeDream", Integer.toHexString(instance.hashCode()), frameRepresentation.referenceId(), timeStamp, frameRepresentation.frameNr +1, frameRepresentation.numberOfFrames, frameRepresentation.timestamp);
 
             if (segmentImageList.containsKey(referenceId)) {
                 segmentImageList.get(referenceId).put(imageRepresentation);

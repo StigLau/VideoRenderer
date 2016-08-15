@@ -1,12 +1,16 @@
 package no.lau.vdvil.renderer.video;
 
+import com.xuggle.mediatool.PersistentWriter;
 import no.lau.vdvil.collector.KompositionPlanner;
 import no.lau.vdvil.collector.ThreadedImageCollector;
 import no.lau.vdvil.domain.MediaFile;
 import no.lau.vdvil.domain.StaticImagesSegment;
 import no.lau.vdvil.domain.VideoStillImageSegment;
 import no.lau.vdvil.domain.out.Komposition;
+import no.lau.vdvil.plan.Plan;
 import no.lau.vdvil.renderer.video.config.VideoConfig;
+import no.lau.vdvil.renderer.video.creator.ImageFileStore;
+import no.lau.vdvil.renderer.video.creator.ImageStore;
 import no.lau.vdvil.renderer.video.creator.PipeDream;
 import no.lau.vdvil.renderer.video.stigs.TimeStampFixedImageSampleSegment;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -20,6 +24,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -114,7 +119,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new VideoStillImageSegment("Purple Mountains Clouds", 20, 12)
 
         );//.filter(16, 16);
-        MediaFile mf = new MediaFile(new URL(result3), 0f, 128f, "0d584e0e2b0990b69f10778536c6461b");
+        MediaFile mf = new MediaFile(new URL(result3), 0f, 128f, "751e82fa611c2f9a5cee5ff60f747b9c");
         buildKomposition.storageLocation = mf;
 
 
@@ -135,6 +140,58 @@ public class BuildVideoFromStaticImagesAndVideoTest {
         logger.info("Storing file at {}", mf.fileName);
         assertEquals(mf.checksum, md5Checksum(mf.fileName));
     }
+
+    @Test
+    public void testStillImageCollection() throws IOException, InterruptedException {
+        Komposition buildKomposition =  new Komposition(124,
+                //new VideoStillImageSegment("Still Image Fun 1", 0, 8)
+                new VideoStillImageSegment("Besseggen", 0, 8)
+                , new VideoStillImageSegment("Purple Mountains Clouds", 8, 16)
+        );
+        MediaFile mf = new MediaFile(new URL(result3), 0f, 128f, "751e82fa611c2f9a5cee5ff60f747b9c");
+        buildKomposition.storageLocation = mf;
+
+        List<Komposition> fetchKompositions = new ArrayList<>();
+        fetchKompositions.add(fetchKompositionStillImages);
+        fetchKompositions.add(fetchKompositionNorway);
+
+        KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition, sobotaMp3, 24);
+
+        ImageStore<BufferedImage> pipeDream = new ImageFileStore<>(buildKomposition, "/tmp/snaps");
+        new ThreadedImageCollector(planner.collectPlans(),
+                plan -> plan.collector(pipeDream, -1)).run();
+        logger.info("Storing file at {}", mf.fileName);
+        assertEquals(mf.checksum, md5Checksum(mf.fileName));
+    }
+
+
+    @Test
+    public void extractStillImagesFromVideoWriter() throws IOException, InterruptedException {
+        Komposition buildKomposition =  new Komposition(124,
+                //new VideoStillImageSegment("Still Image Fun 1", 0, 8)
+                new VideoStillImageSegment("Besseggen", 0, 8)
+                , new VideoStillImageSegment("Purple Mountains Clouds", 8, 16)
+        );
+        MediaFile mf = new MediaFile(new URL(result3), 0f, 128f, "751e82fa611c2f9a5cee5ff60f747b9c");
+        buildKomposition.storageLocation = mf;
+
+        List<Komposition> fetchKompositions = new ArrayList<>();
+        fetchKompositions.add(fetchKompositionStillImages);
+        fetchKompositions.add(fetchKompositionNorway);
+
+        KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition, sobotaMp3, 24);
+
+        PipeDream<BufferedImage> pipeDream = new PipeDream<>(1000, 5000, 1000, 1);
+        for (Plan planIter : planner.collectPlans()) {
+            new Thread(new ThreadedImageCollector(Collections.singletonList(planIter),
+                    plan -> plan.collector(pipeDream, -1))).start();
+        }
+        CreateVideoFromScratchImages.createVideo(planner.buildPlan(), pipeDream, config2, PersistentWriter.create("/tmp/komposttest.mp4"), false);
+        logger.info("Storing file at {}", mf.fileName);
+        assertEquals(mf.checksum, md5Checksum(mf.fileName));
+        pipeDream.emptyCache();
+    }
+
 
     public String md5Checksum(URL url) throws IOException {
         return DigestUtils.md5Hex(url.openStream());

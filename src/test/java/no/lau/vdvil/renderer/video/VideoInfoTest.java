@@ -11,7 +11,7 @@ import static org.junit.Assert.assertEquals;
  * @author Stig Lau 24/03/15.
  */
 public class VideoInfoTest {
-    String filename = "/tmp/kompost/Worlds_Largest_Rope_Swing/Worlds_Largest_Rope_Swing.mp4";
+    String filename = "/tmp/kompost/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time-Lapse_Adventure.mp4";
 
     @Test
     public void findOutShit() {

@@ -52,7 +52,9 @@ public class WaitingVideoThumbnailsCollector implements ImageCollector{
             mediaReader.addListener(new ImageSnapListener(collectPlan, imageStore));
 
             if(skipAhead && collectPlan instanceof SuperPlan) {
-                long startMs = ((TimeStampFixedImageSampleSegment) ((SuperPlan) collectPlan).getFramePlans().get(0).wrapper().segment).timestampStart;
+                long backoffMs = 65000;
+                long startMs = ((TimeStampFixedImageSampleSegment) ((SuperPlan) collectPlan).getFramePlans().get(0).wrapper().segment).timestampStart - backoffMs;
+                startMs = startMs > 0 ? startMs : 0;
                 StrippedWaitingVideoThumbnailsCollector.seekToMs(container, startMs);
             }
             // read out the contents of the media file and
@@ -80,17 +82,34 @@ public class WaitingVideoThumbnailsCollector implements ImageCollector{
 
         public void onVideoPicture(IVideoPictureEvent event) {
             long timestamp = event.getTimeStamp();
-            BufferedImage newestImage = null;
+
             if (collectPlan.isFinishedProcessing(timestamp)) {
                 logger.trace("{} Finished collecting images", timestamp);
                 throw new VideoExtractionFinished("End of compilation");
-            } else {
-                newestImage = event.getImage();
             }
+            BufferedImage newestImage = event.getImage();
 
             List<FrameRepresentation> frames = collectPlan.whatToDoAt(timestamp);
+            if(frames.size() == 0) {
+                logger.debug("No frames found @{}. Throwing away img@{}", timestamp, Integer.toHexString(newestImage.hashCode()));
+                /* To look at the thrown away images
+                try {
+                    ImageIO.write(newestImage, "png", new File("/tmp/komposttest.mp4snaps/" + timestamp + "_thrownaway" + ".png"));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }*/
+            }
+            if(frames.size() > 1) {
+                logger.warn("Throwing away too many frames received - Frames:{} at @{}", frames.size()-1, timestamp);
+                for (int i = 0; i < frames.size(); i++) {
+                    FrameRepresentation frame = frames.get(i);
+                    if(i > 0) {
+                        logger.warn("Throwing frame {} {}", frame.frameNr, frame.timestamp);
+                    }
+                }
+            }
             for (FrameRepresentation frameRepresentation : frames) {
-                 logger.info("{} Collecting image {}#{}", timestamp, frameRepresentation.getSegmentShortId(), frameRepresentation.frameNr);
+                 logger.info("{} Collecting img@{} {}#{}", timestamp, Integer.toHexString(newestImage.hashCode()), frameRepresentation.getSegmentShortId(), frameRepresentation.frameNr);
                 writeImage(newestImage, timestamp, frameRepresentation);
             }
             if(frames.isEmpty()) {
