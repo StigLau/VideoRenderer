@@ -2,7 +2,7 @@
 <komposition>
     <reference>Some test media files</reference>
     <mediaFile>
-        <fileName>file:///Users/stiglau/utvikling/privat/VideoRenderer/src/test/resources/kompost/images/testImageList.csv</fileName>
+        <fileName>https://raw.githubusercontent.com/StigLau/VideoRenderer/master/src/test/resources/kompost/images/testImageList.csv</fileName>
         <startingOffset>-1</startingOffset>
         <checksum>2ff540bdb6a48a9cbfd1a410de00ca73</checksum>
         <extension>htmlImagelist</extension>
