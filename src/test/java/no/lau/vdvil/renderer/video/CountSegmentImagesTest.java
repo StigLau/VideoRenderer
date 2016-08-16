@@ -23,7 +23,7 @@ public class CountSegmentImagesTest {
         }catch (VideoExtractionFinished e) {
             //assertEquals(2162, collector.imagesCollected());
         }
-        assertEquals(7976, collector.imagesCollected());
+        assertEquals(7975, collector.imagesCollected());
     }
 
     @Test

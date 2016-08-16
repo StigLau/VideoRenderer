@@ -119,7 +119,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new VideoStillImageSegment("Purple Mountains Clouds", 20, 12)
 
         );//.filter(16, 16);
-        MediaFile mf = new MediaFile(new URL(result3), 0f, 128f, "751e82fa611c2f9a5cee5ff60f747b9c");
+        MediaFile mf = new MediaFile(new URL(result3), 0f, 128f, "7ea06f7a19fea1dfcefef1b6b30730b4");
         buildKomposition.storageLocation = mf;
 
 
@@ -148,7 +148,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new VideoStillImageSegment("Besseggen", 0, 8)
                 , new VideoStillImageSegment("Purple Mountains Clouds", 8, 16)
         );
-        MediaFile mf = new MediaFile(new URL(result3), 0f, 128f, "751e82fa611c2f9a5cee5ff60f747b9c");
+        MediaFile mf = new MediaFile(new URL(result3), 0f, 128f, "7ea06f7a19fea1dfcefef1b6b30730b4");
         buildKomposition.storageLocation = mf;
 
         List<Komposition> fetchKompositions = new ArrayList<>();
@@ -172,7 +172,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new VideoStillImageSegment("Besseggen", 0, 8)
                 , new VideoStillImageSegment("Purple Mountains Clouds", 8, 16)
         );
-        MediaFile mf = new MediaFile(new URL(result3), 0f, 128f, "751e82fa611c2f9a5cee5ff60f747b9c");
+        MediaFile mf = new MediaFile(new URL(result3), 0f, 128f, "7ea06f7a19fea1dfcefef1b6b30730b4");
         buildKomposition.storageLocation = mf;
 
         List<Komposition> fetchKompositions = new ArrayList<>();
