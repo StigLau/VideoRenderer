@@ -7,11 +7,14 @@ import com.xuggle.xuggler.IContainer;
 import com.xuggle.xuggler.IPacket;
 import com.xuggle.xuggler.IStreamCoder;
 import no.lau.vdvil.collector.FrameRepresentation;
+import no.lau.vdvil.domain.TransitionSegment;
 import no.lau.vdvil.plan.AudioPlan;
 import no.lau.vdvil.plan.Plan;
+import no.lau.vdvil.plan.SuperPlan;
+import no.lau.vdvil.renderer.video.builder.GenericBuilder;
 import no.lau.vdvil.renderer.video.config.VideoConfig;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
-import no.lau.vdvil.renderer.video.store.ImageRepresentation;
+import no.lau.vdvil.renderer.video.builder.ImageCrossFader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.awt.image.BufferedImage;
@@ -107,11 +110,16 @@ class VideoAdapter {
     long nextFrameTime = 0;
 
     final ImageStore<BufferedImage> imageStore;
+    //Todo take this in as a param somehow
+    final ImageCrossFader fader ;
+    final GenericBuilder builder;
 
 
     public VideoAdapter(VideoConfig config, IMediaWriter writer, ImageStore<BufferedImage> imageStore) {
         this.writer = writer;
         this.imageStore = imageStore;
+        this.fader = new ImageCrossFader(imageStore);
+        this.builder = new GenericBuilder(imageStore);
         this.width = config.width;
         this.height = config.height;
         this.frameRate = config.framerate();
@@ -120,7 +128,6 @@ class VideoAdapter {
         writer.addVideoStream(videoStreamIndex, videoStreamId, width, height);
 
     }
-    BufferedImage previous = null;
 
     public void writeNextPacket(long clock, Plan buildPlan) {
         logger.debug("Clock ping: " + clock);
@@ -128,31 +135,19 @@ class VideoAdapter {
             boolean nextFrameTimeUpdated = false;
             logger.trace("Time to write packets at {}", clock);
             List<FrameRepresentation> frameRepresentations = buildPlan.whatToDoAt(nextFrameTime);
-            for (FrameRepresentation frameRepresentation : frameRepresentations) {
-                ImageRepresentation imageRep = imageStore.getNextImageRepresentation(frameRepresentation.referenceId());
+            if(frameRepresentations.size() > 0) {
+                List<TransitionSegment> transitionSegment = ImageCrossFader.extractTransitionSegment(nextFrameTime, (SuperPlan) buildPlan);
 
-                if (imageRep != null || previous != null) {
-                    String imgid;
-                    BufferedImage theImage;
-                    if(imageRep != null) {
-                        imgid= String.valueOf(imageRep.frameRepresentation.frameNr);
-                        theImage = (BufferedImage) imageRep.image;
-                    } else {
-                        imgid = "UNKNOWN IMAGE DUE TO NULL";
-                        theImage = previous;
-                    }
-
-                    logger.debug("Flushing {}@image#{}\t{}/{} \t Clock:{} from from pipedream to video", frameRepresentation.referenceId(), imgid, frameRepresentation.frameNr + 1, frameRepresentation.numberOfFrames, nextFrameTime);
-                    frameRepresentation.use();
-                    //In some circumstances, one must reuse the previous image
-
+                if (frameRepresentations.size() >= 2 && !transitionSegment.isEmpty()) { //transitionSegment != null) {
+                    BufferedImage theImage = fader.perform(transitionSegment.get(0), frameRepresentations);
                     writer.encodeVideo(videoStreamIndex, theImage, nextFrameTime, DEFAULT_TIME_UNIT);
-                    previous = theImage;
-                } else {
-                    logger.error("OMG OMG!!! Imagerep was null after waiting 10 seconds!! - {} - {}/{} is this related to division rest error?" + frameRepresentation.referenceId(), frameRepresentation.frameNr, frameRepresentation.numberOfFrames);
+                } else if (frameRepresentations.size() > 0) {
+                    BufferedImage theImage = builder.build(nextFrameTime, frameRepresentations);
+                    writer.encodeVideo(videoStreamIndex, theImage, nextFrameTime, DEFAULT_TIME_UNIT);
+                    //TODO Other implementation
+                    nextFrameTime += frameRate / frameRepresentations.size();
+                    nextFrameTimeUpdated = true;
                 }
-                nextFrameTime += frameRate / frameRepresentations.size();
-                nextFrameTimeUpdated = true;
             }
             if(!nextFrameTimeUpdated) {
                 nextFrameTime += frameRate;

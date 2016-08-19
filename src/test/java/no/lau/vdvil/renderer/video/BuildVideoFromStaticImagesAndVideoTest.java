@@ -5,6 +5,7 @@ import no.lau.vdvil.collector.KompositionPlanner;
 import no.lau.vdvil.collector.ThreadedImageCollector;
 import no.lau.vdvil.domain.MediaFile;
 import no.lau.vdvil.domain.StaticImagesSegment;
+import no.lau.vdvil.domain.TransitionSegment;
 import no.lau.vdvil.domain.VideoStillImageSegment;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.plan.Plan;
@@ -46,7 +47,10 @@ public class BuildVideoFromStaticImagesAndVideoTest {
     Komposition fetchKompositionStillImages;
     Komposition fetchKompositionStillImages2;
 
-    private String result3 = "file:///tmp/from_scratch_images_test_3.mp4";
+    private String result1 = "file:///tmp/from_scratch_images_test_1.mp4";
+    private String result3a = "file:///tmp/from_scratch_images_test_3a.mp4";
+    private String result3b = "file:///tmp/from_scratch_images_test_3b.mp4";
+    private String result3c = "file:///tmp/from_scratch_images_test_3c.mp4";
 
     //HighRez
     VideoConfig config = new VideoConfig(1280, 720,DEFAULT_TIME_UNIT.convert(24, MILLISECONDS));
@@ -119,7 +123,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new VideoStillImageSegment("Purple Mountains Clouds", 20, 12)
 
         );//.filter(16, 16);
-        MediaFile mf = new MediaFile(new URL(result3), 0f, 128f, "7ea06f7a19fea1dfcefef1b6b30730b4");
+        MediaFile mf = new MediaFile(new URL(result1), 0f, 128f, "7ea06f7a19fea1dfcefef1b6b30730b4");
         buildKomposition.storageLocation = mf;
 
 
@@ -148,7 +152,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new VideoStillImageSegment("Besseggen", 0, 8)
                 , new VideoStillImageSegment("Purple Mountains Clouds", 8, 16)
         );
-        MediaFile mf = new MediaFile(new URL(result3), 0f, 128f, "7ea06f7a19fea1dfcefef1b6b30730b4");
+        MediaFile mf = new MediaFile(new URL(result3a), 0f, 128f, "7ea06f7a19fea1dfcefef1b6b30730b4");
         buildKomposition.storageLocation = mf;
 
         List<Komposition> fetchKompositions = new ArrayList<>();
@@ -172,7 +176,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new VideoStillImageSegment("Besseggen", 0, 8)
                 , new VideoStillImageSegment("Purple Mountains Clouds", 8, 16)
         );
-        MediaFile mf = new MediaFile(new URL(result3), 0f, 128f, "7ea06f7a19fea1dfcefef1b6b30730b4");
+        MediaFile mf = new MediaFile(new URL(result3b), 0f, 128f, "7ea06f7a19fea1dfcefef1b6b30730b4");
         buildKomposition.storageLocation = mf;
 
         List<Komposition> fetchKompositions = new ArrayList<>();
@@ -192,6 +196,35 @@ public class BuildVideoFromStaticImagesAndVideoTest {
         pipeDream.emptyCache();
     }
 
+    @Test
+    public void segmentTransitions() throws IOException, InterruptedException {
+        Komposition buildKomposition =  new Komposition(124,
+                new TransitionSegment("Besseggen", "Purple Mountains Clouds", 0, 16),
+                new VideoStillImageSegment("Besseggen", 0, 16),
+                new VideoStillImageSegment("Purple Mountains Clouds", 0, 16)
+
+        );//.filter(16, 16);
+        MediaFile mf = new MediaFile(new URL(result3c), 0f, 128f, "7513cd7b9a9be791e6ac804ba033dbbb");
+        buildKomposition.storageLocation = mf;
+
+
+        PipeDream<BufferedImage> pipeDream = new PipeDream<>(1000, 250, 500, 10);
+
+        List<Komposition> fetchKompositions = new ArrayList<>();
+        fetchKompositions.add(fetchKompositionStillImages);
+        fetchKompositions.add(fetchKompositionStillImages2);
+        fetchKompositions.add(fetchKompositionNorway);
+
+        KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition, sobotaMp3, 24);
+
+        new Thread(new ThreadedImageCollector(planner.collectPlans(),
+                plan -> plan.collector(pipeDream, 41666))).start();
+        Thread.sleep(1000);
+        CreateVideoFromScratchImages.createVideo(planner.buildPlan(), pipeDream, config2);
+
+        logger.info("Storing file at {}", mf.fileName);
+        assertEquals(mf.checksum, md5Checksum(mf.fileName));
+    }
 
     public String md5Checksum(URL url) throws IOException {
         return DigestUtils.md5Hex(url.openStream());
