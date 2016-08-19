@@ -3,6 +3,7 @@ package no.lau.vdvil.collector;
 import no.lau.vdvil.collector.plan.FramePlan;
 import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.domain.StaticImagesSegment;
+import no.lau.vdvil.domain.TransitionSegment;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.plan.Plan;
 import no.lau.vdvil.plan.SuperPlan;
@@ -14,6 +15,7 @@ import static no.lau.vdvil.renderer.video.KompositionUtil.performIdUniquenessChe
 
 /**
  * @author Stig@Lau.no 10/05/15.
+ * This is where the magic happens
  */
 public class KompositionPlanner {
     final List<Plan> collectPlans = new ArrayList<>();
@@ -25,7 +27,7 @@ public class KompositionPlanner {
     public KompositionPlanner(List<Komposition> fetchKompositions, Komposition buildKomposition, URL audioLocation, long finalFramerate) {
         List<Segment> buildSegments = buildKomposition.segments;
         Collections.sort(buildSegments);
-        verifyNonOverlappingSegments(buildSegments);
+        //verifyNonOverlappingSegments(buildSegments); //TODO Open this again!!!!1
         notifyOfGapsBetweenSegments(buildSegments);
 
         //Verify that all fetchSegments are unique
@@ -60,6 +62,8 @@ public class KompositionPlanner {
             long lastTimeStamp;
             if (collectSegment instanceof StaticImagesSegment) {
                 lastTimeStamp = SuperPlan.calculateEnd(buildKomposition.bpm, buildSegment);
+            } else if(buildSegment instanceof TransitionSegment) {
+                continue; //This is a build instruction and not collect segment
             } else {
                 lastTimeStamp = SuperPlan.calculateEnd(fetchKomposition.bpm, collectSegment);
             }

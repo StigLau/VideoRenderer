@@ -4,10 +4,13 @@ import no.lau.vdvil.collector.*;
 import no.lau.vdvil.collector.plan.*;
 import no.lau.vdvil.domain.MediaFile;
 import no.lau.vdvil.domain.Segment;
+import no.lau.vdvil.domain.TransitionSegment;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Stig@Lau.no
@@ -21,6 +24,8 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan, ImageColl
     public URL audioLocation;
     int imageDownloadCacheSize = 10; //Just a default to allow for more than one cached image
 
+    final Map<String, FramePlan> metaPlanLookup;
+
     public SuperPlan(long lastTimeStamp, MediaFile storageLocation, FramePlan... framePlans) {
         this.lastTimeStamp = lastTimeStamp;
         this.framePlans = framePlans;
@@ -29,6 +34,7 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan, ImageColl
         for (FramePlan framePlan : framePlans) {
             frameRepresentations.addAll(framePlan.calculateFramesFromSegment());
         }
+        metaPlanLookup = buildMetaPlanLookup(framePlans);
     }
 
     @Override
@@ -36,13 +42,22 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan, ImageColl
         return timestamp > lastTimeStamp;
     }
 
-    @Override
     public List<FrameRepresentation> whatToDoAt(long timestamp) {
+        return whatToDoAt(timestamp, true);
+    }
+
+    List<FrameRepresentation> whatToDoAt(long timestamp, boolean careAboutUsed) {
         List<FrameRepresentation> foundFrames = new ArrayList<>();
         for (FrameRepresentation frameRepresentation : frameRepresentations) {
-            if(!frameRepresentation.used && frameRepresentation.timestamp <= timestamp) {
-                frameRepresentation.use();
-                foundFrames.add(frameRepresentation);
+            if(frameRepresentation.timestamp <= timestamp) {
+                if(careAboutUsed) {
+                    if (!frameRepresentation.used) {
+                        frameRepresentation.use();
+                        foundFrames.add(frameRepresentation);
+                    }
+                } else {
+                    foundFrames.add(frameRepresentation);
+                }
             }
         }
         return foundFrames;
@@ -84,7 +99,9 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan, ImageColl
             SimpleCalculator frameCalculator;
             { //Extract the Frame duration
                 Segment collectSegment = segmentIdCollectSegmentMap.get(buildSegment.shortId());
-                if(collectSegment == null) {
+                if(buildSegment instanceof TransitionSegment) {
+                    frameCalculator = new SimpleCalculator(1, 1); //Don't care about this calculator
+                } else if(collectSegment == null) {
                     throw new RuntimeException("Could not find buildSegment with id: " + buildSegment.shortId()+" in collectSegmentList " + segmentIdCollectSegmentMap.keySet());
                 } else {
                     long collectDuration = collectSegment.durationCalculated(buildBpm);
@@ -131,5 +148,23 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan, ImageColl
 
     public long lastTimeStamp() {
         return lastTimeStamp;
+    }
+
+    public Collection<FramePlan> getMetaPlansAt(long timestamp) {
+        return whatToDoAt(timestamp, false).stream().map(
+                frameRepresentation -> metaPlanLookup.get(frameRepresentation.referenceId())
+        ).collect(Collectors.toSet());
+    }
+
+    private static Map<String, FramePlan> buildMetaPlanLookup(FramePlan... framePlans) {
+        Map<String, FramePlan> planRef = new HashMap<>();
+        for (FramePlan framePlan : framePlans) {
+            if(framePlan.wrapper().segment instanceof TransitionSegment) {
+                for (Object reference : ((TransitionSegment) framePlan.wrapper().segment).references()) {
+                    planRef.put((String) reference, framePlan);
+                }
+            }
+        }
+        return planRef;
     }
 }
