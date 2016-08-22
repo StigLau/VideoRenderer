@@ -15,9 +15,11 @@ import no.lau.vdvil.renderer.video.builder.GenericBuilder;
 import no.lau.vdvil.renderer.video.config.VideoConfig;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
 import no.lau.vdvil.renderer.video.builder.ImageCrossFader;
+import no.lau.vdvil.renderer.video.stigs.TimeStampFixedImageSampleSegment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.awt.image.BufferedImage;
+import java.util.Collections;
 import java.util.List;
 import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
 
@@ -136,12 +138,14 @@ class VideoAdapter {
             logger.trace("Time to write packets at {}", clock);
             List<FrameRepresentation> frameRepresentations = buildPlan.whatToDoAt(nextFrameTime);
             if(frameRepresentations.size() > 0) {
-                List<TransitionSegment> transitionSegment = ImageCrossFader.extractTransitionSegment(nextFrameTime, (SuperPlan) buildPlan);
+                List<TransitionSegment> transitionSegment = buildPlan instanceof SuperPlan ?
+                        ImageCrossFader.extractTransitionSegment(nextFrameTime, (SuperPlan) buildPlan):
+                        Collections.EMPTY_LIST;
 
                 if (frameRepresentations.size() >= 2 && !transitionSegment.isEmpty()) { //transitionSegment != null) {
                     BufferedImage theImage = fader.perform(transitionSegment.get(0), frameRepresentations);
                     writer.encodeVideo(videoStreamIndex, theImage, nextFrameTime, DEFAULT_TIME_UNIT);
-                } else if (frameRepresentations.size() > 0) {
+                } else if (buildPlan instanceof SuperPlan || frameRepresentations.size() > 0) {
                     BufferedImage theImage = builder.build(nextFrameTime, frameRepresentations);
                     writer.encodeVideo(videoStreamIndex, theImage, nextFrameTime, DEFAULT_TIME_UNIT);
                     //TODO Other implementation
