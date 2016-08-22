@@ -164,8 +164,6 @@ public class BuildVideoFromStaticImagesAndVideoTest {
         ImageStore<BufferedImage> pipeDream = new ImageFileStore<>(buildKomposition, "/tmp/snaps");
         new ThreadedImageCollector(planner.collectPlans(),
                 plan -> plan.collector(pipeDream, -1)).run();
-        logger.info("Storing file at {}", mf.fileName);
-        assertEquals(mf.checksum, md5Checksum(mf.fileName));
     }
 
 
@@ -191,8 +189,6 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                     plan -> plan.collector(pipeDream, -1))).start();
         }
         CreateVideoFromScratchImages.createVideo(planner.buildPlan(), pipeDream, config2, PersistentWriter.create("/tmp/komposttest.mp4"), false);
-        logger.info("Storing file at {}", mf.fileName);
-        assertEquals(mf.checksum, md5Checksum(mf.fileName));
         pipeDream.emptyCache();
     }
 
