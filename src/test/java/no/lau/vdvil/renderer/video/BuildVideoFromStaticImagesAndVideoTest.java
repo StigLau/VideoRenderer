@@ -194,12 +194,17 @@ public class BuildVideoFromStaticImagesAndVideoTest {
 
     @Test
     public void segmentTransitions() throws IOException, InterruptedException {
+        /* The original test
+        VideoStillImageSegment first = new VideoStillImageSegment("Besseggen", 0, 16);
+        VideoStillImageSegment second = new VideoStillImageSegment("Purple Mountains Clouds", 0, 16);
         Komposition buildKomposition =  new Komposition(124,
-                new TransitionSegment("Besseggen", "Purple Mountains Clouds", 0, 16),
-                new VideoStillImageSegment("Besseggen", 0, 16),
-                new VideoStillImageSegment("Purple Mountains Clouds", 0, 16)
+                new TransitionSegment(first, second, 0, 16), first, second);//.filter(16, 16);
+        */
+        VideoStillImageSegment first = new VideoStillImageSegment("Besseggen", 0, 12);
+        VideoStillImageSegment second = new VideoStillImageSegment("Purple Mountains Clouds", 8, 12);
+        Komposition buildKomposition =  new Komposition(124,
+                new TransitionSegment(first, second, 8, 4), first, second);//.filter(16, 16);
 
-        );//.filter(16, 16);
         MediaFile mf = new MediaFile(new URL(result3c), 0f, 128f, "7513cd7b9a9be791e6ac804ba033dbbb");
         buildKomposition.storageLocation = mf;
 
