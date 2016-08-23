@@ -142,15 +142,32 @@ class VideoAdapter {
                         ImageCrossFader.extractTransitionSegment(nextFrameTime, (SuperPlan) buildPlan):
                         Collections.EMPTY_LIST;
 
-                if (frameRepresentations.size() >= 2 && !transitionSegment.isEmpty()) { //transitionSegment != null) {
+
+                //Ugly hack to check if we should wait if we get no previous usage of frames
+                if(frameRepresentations.size() == 1 && !transitionSegment.isEmpty()) {
+                    logger.trace("Waiting to fetch images from two transition-images!");
+                }
+
+
+
+                else if (frameRepresentations.size() >= 2 && !transitionSegment.isEmpty()
+                 && !frameRepresentations.get(0).referenceId().equals(frameRepresentations.get(1).referenceId())) { //transitionSegment != null) {
+                    System.out.println("Weeee, crossover!!!1");
                     BufferedImage theImage = fader.perform(transitionSegment.get(0), frameRepresentations);
                     writer.encodeVideo(videoStreamIndex, theImage, nextFrameTime, DEFAULT_TIME_UNIT);
+                    for (FrameRepresentation frameRepresentation : frameRepresentations) {
+                        frameRepresentation.use();
+                    }
                 } else if (buildPlan instanceof SuperPlan || frameRepresentations.size() > 0) {
+                    System.out.println("Else 2");
                     BufferedImage theImage = builder.build(nextFrameTime, frameRepresentations);
                     writer.encodeVideo(videoStreamIndex, theImage, nextFrameTime, DEFAULT_TIME_UNIT);
                     //TODO Other implementation
                     nextFrameTime += frameRate / frameRepresentations.size();
                     nextFrameTimeUpdated = true;
+                    for (FrameRepresentation frameRepresentation : frameRepresentations) {
+                        frameRepresentation.use();
+                    }
                 }
             }
             if(!nextFrameTimeUpdated) {

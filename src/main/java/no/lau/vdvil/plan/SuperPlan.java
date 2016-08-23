@@ -3,6 +3,7 @@ package no.lau.vdvil.plan;
 import no.lau.vdvil.collector.*;
 import no.lau.vdvil.collector.plan.*;
 import no.lau.vdvil.domain.MediaFile;
+import no.lau.vdvil.domain.MetaSegment;
 import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.domain.TransitionSegment;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
@@ -52,7 +53,6 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan, ImageColl
             if(frameRepresentation.timestamp <= timestamp) {
                 if(careAboutUsed) {
                     if (!frameRepresentation.used) {
-                        frameRepresentation.use();
                         foundFrames.add(frameRepresentation);
                     }
                 } else {
@@ -159,7 +159,7 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan, ImageColl
     private static Map<String, FramePlan> buildMetaPlanLookup(FramePlan... framePlans) {
         Map<String, FramePlan> planRef = new HashMap<>();
         for (FramePlan framePlan : framePlans) {
-            if(framePlan.wrapper().segment instanceof TransitionSegment) {
+            if(framePlan.wrapper().segment instanceof MetaSegment) {
                 for (Object reference : ((TransitionSegment) framePlan.wrapper().segment).references()) {
                     planRef.put((String) reference, framePlan);
                 }

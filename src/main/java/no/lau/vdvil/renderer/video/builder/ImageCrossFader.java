@@ -45,14 +45,13 @@ public class ImageCrossFader {
             frameRepresentation.use();
         }
 
-        //Todo use the buildPlan to calculate the progress
         float progress = (float)(imageRepIn.frameRepresentation.frameNr +1) / imageRepIn.frameRepresentation.numberOfFrames;
         return crossfade((BufferedImage) imageRepIn.image, (BufferedImage) imageRepOut.image, progress);
     }
 
-    public static List<TransitionSegment> extractTransitionSegment(long clock, SuperPlan buildPlan) {
+    public static List<TransitionSegment> extractTransitionSegment(long timestamp, SuperPlan buildPlan) {
         List<TransitionSegment> foundSegments = new ArrayList<>();
-        for (FramePlan plan : buildPlan.getMetaPlansAt(clock)) {
+        for (FramePlan plan : buildPlan.getMetaPlansAt(timestamp)) {
             if (plan != null && plan.wrapper().segment instanceof TransitionSegment) {
                 foundSegments.add((TransitionSegment) plan.wrapper().segment);
             }
