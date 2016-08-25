@@ -2,7 +2,6 @@ package no.lau.vdvil.collector.plan;
 
 import no.lau.vdvil.collector.FrameRepresentation;
 import no.lau.vdvil.collector.SegmentWrapper;
-import no.lau.vdvil.domain.VideoStillImageSegment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,15 +13,13 @@ import java.util.List;
 public class VideoStillImagePlan implements FramePlan {
     Logger logger = LoggerFactory.getLogger(getClass());
     final SegmentWrapper wrapper;
-    private final VideoStillImageSegment segment;
 
     public VideoStillImagePlan(SegmentWrapper wrapper) {
         this.wrapper = wrapper;
-        this.segment = (VideoStillImageSegment) wrapper.segment;
     }
 
     public List<FrameRepresentation> calculateFramesFromSegment() {
-        return Common.calculateFramesFromSegment(segment.id(), segment, wrapper.start, wrapper.frameRateMillis, numberOfAvailableFrames(), wrapper.frameCalculator, logger);
+        return Common.calculateFramesFromSegment(wrapper.segment.id(), wrapper.segment, wrapper.start, wrapper.frameRateMillis, numberOfAvailableFrames(), wrapper.frameCalculator, logger);
     }
 
     private long numberOfAvailableFrames() {

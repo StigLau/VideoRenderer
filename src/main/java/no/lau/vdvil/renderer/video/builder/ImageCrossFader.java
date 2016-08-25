@@ -45,8 +45,14 @@ public class ImageCrossFader {
             frameRepresentation.use();
         }
 
-        float progress = (float)(imageRepIn.frameRepresentation.frameNr +1) / imageRepIn.frameRepresentation.numberOfFrames;
-        return crossfade((BufferedImage) imageRepIn.image, (BufferedImage) imageRepOut.image, progress);
+        //Extract build framerepresentation
+        for (FrameRepresentation crossover : frameRepresentations) {
+            if(transitionSegment.id().equals(crossover.referenceId())) {
+                float progress = (float)(crossover.frameNr +1) / crossover.numberOfFrames;
+                return crossfade((BufferedImage) imageRepIn.image, (BufferedImage) imageRepOut.image, progress);
+            }
+        }
+        throw new RuntimeException("Didn't find a transitionsegment for crossfading");
     }
 
     public static List<TransitionSegment> extractTransitionSegment(long timestamp, SuperPlan buildPlan) {
@@ -66,5 +72,37 @@ public class ImageCrossFader {
         g2d.setComposite(AlphaComposite.SrcOver.derive(alpha));
         g2d.drawImage(outImage, 0, 0, null);
         return inImage;
+    }
+
+    /**
+     * Find metaSegments related to framerepresentatives
+     * TODO simplify this implementation
+     */
+    public List<TransitionSegment> containsMetaSegment(List<FrameRepresentation> frameRepresentations, List<TransitionSegment> transitionSegments) {
+        List<TransitionSegment> metasegmentsFound = new ArrayList<>();
+
+        for (TransitionSegment segment : transitionSegments) {
+            for (FrameRepresentation frameRepresentation : frameRepresentations) {
+                if(segment.id().equals(frameRepresentation.referenceId())) {
+                    metasegmentsFound.add(segment);
+                }
+            }
+        }
+        List<TransitionSegment> filteredSegments = new ArrayList<>();
+
+        for (TransitionSegment segment : metasegmentsFound) {
+            int framesFound = 0;
+            for (Object idref : segment.references()) {
+                for (FrameRepresentation frameRepresentation : frameRepresentations) {
+                    if (frameRepresentation.referenceId().equals(idref)) {
+                        framesFound++;
+                    }
+                }
+                if(framesFound == segment.references().size() ) {
+                    filteredSegments.add(segment);
+                }
+            }
+        }
+        return filteredSegments;
     }
 }

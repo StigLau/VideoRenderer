@@ -20,7 +20,7 @@ public class SegmentWrapper implements Comparable {
         this.finalFramerate = finalFramerate;
         frameRateMillis = 1000000/finalFramerate;
         numberOfNeededBuildFrames = frameCalculator.buildRatio / frameRateMillis;
-        start = segment.startCalculated(this.bpm);
+        start = (long) (frameRateMillis * (float) Math.ceil((double) segment.startCalculated(this.bpm) / frameRateMillis));
         if(finalFramerate <= 0) {
             throw new RuntimeException("framerate was " + finalFramerate);
         }

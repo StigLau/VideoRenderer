@@ -1,6 +1,7 @@
 package no.lau.vdvil.renderer.video;
 
 import com.xuggle.mediatool.PersistentWriter;
+import no.lau.vdvil.collector.FrameRepresentation;
 import no.lau.vdvil.collector.KompositionPlanner;
 import no.lau.vdvil.collector.ThreadedImageCollector;
 import no.lau.vdvil.domain.MediaFile;
@@ -9,6 +10,7 @@ import no.lau.vdvil.domain.TransitionSegment;
 import no.lau.vdvil.domain.VideoStillImageSegment;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.plan.Plan;
+import no.lau.vdvil.plan.SuperPlan;
 import no.lau.vdvil.renderer.video.config.VideoConfig;
 import no.lau.vdvil.renderer.video.creator.ImageFileStore;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
@@ -24,9 +26,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.junit.Assert.assertEquals;
@@ -123,7 +123,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new VideoStillImageSegment("Purple Mountains Clouds", 20, 12)
 
         );//.filter(16, 16);
-        MediaFile mf = new MediaFile(new URL(result1), 0f, 128f, "7ea06f7a19fea1dfcefef1b6b30730b4");
+        MediaFile mf = new MediaFile(new URL(result1), 0f, 128f, "57d546b5bf3356503b202a698f9a4441");
         buildKomposition.storageLocation = mf;
 
 
@@ -193,30 +193,58 @@ public class BuildVideoFromStaticImagesAndVideoTest {
     }
 
     @Test
-    public void segmentTransitions() throws IOException, InterruptedException {
-        /* The original test
-        VideoStillImageSegment first = new VideoStillImageSegment("Besseggen", 0, 16);
-        VideoStillImageSegment second = new VideoStillImageSegment("Purple Mountains Clouds", 0, 16);
-        Komposition buildKomposition =  new Komposition(124,
-                new TransitionSegment(first, second, 0, 16), first, second);//.filter(16, 16);
-        */
+    public void countPlanningResult() throws IOException, InterruptedException {
         VideoStillImageSegment first = new VideoStillImageSegment("Besseggen", 0, 12);
         VideoStillImageSegment second = new VideoStillImageSegment("Purple Mountains Clouds", 8, 12);
-        Komposition buildKomposition =  new Komposition(124,
-                new TransitionSegment(first, second, 8, 4), first, second);//.filter(16, 16);
-
-        MediaFile mf = new MediaFile(new URL(result3c), 0f, 128f, "7513cd7b9a9be791e6ac804ba033dbbb");
-        buildKomposition.storageLocation = mf;
-
-
-        PipeDream<BufferedImage> pipeDream = new PipeDream<>(1000, 250, 500, 10);
-
+        Komposition buildKomposition = new Komposition(124,
+                new TransitionSegment(first, second, 8, 4), first, second);
         List<Komposition> fetchKompositions = new ArrayList<>();
         fetchKompositions.add(fetchKompositionStillImages);
         fetchKompositions.add(fetchKompositionStillImages2);
         fetchKompositions.add(fetchKompositionNorway);
 
         KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition, sobotaMp3, 24);
+        Map<Long, List<FrameRepresentation>> representations = new TreeMap<>();
+        for (FrameRepresentation rep : ((SuperPlan) planner.buildPlan()).getFrameRepresentations()) {
+            if(representations.containsKey(rep.timestamp)) {
+                representations.get(rep.timestamp).add(rep);
+            } else {
+                List<FrameRepresentation> newList  = new ArrayList<>();
+                newList.add(rep);
+                representations.put(rep.timestamp, newList);
+            }
+        }
+        assertEquals(232, representations.size());
+        assertEquals(1, representations.get(3833272L).size());
+        assertEquals(3, representations.get(3874938L).size());
+        assertEquals(3, representations.get(5749908L).size());
+        assertEquals(1, representations.get(5791574L).size());
+    }
+
+    @Test
+    public void segmentTransitions() throws IOException, InterruptedException {
+        VideoStillImageSegment first = new VideoStillImageSegment("Besseggen", 0, 12);
+        VideoStillImageSegment second = new VideoStillImageSegment("Purple Mountains Clouds", 8, 12);
+        VideoStillImageSegment third = new VideoStillImageSegment("Besseggen", 16, 12);
+        Komposition buildKomposition =  new Komposition(124,
+                new TransitionSegment(first, second, 8, 4),
+                new TransitionSegment(second, third, 16, 4),
+                first,
+                second,
+                third);
+        MediaFile mf = new MediaFile(new URL(result3c), 0f, 128f, "2e2b598f9f3f6a82617dc51f0747e615");
+        buildKomposition.storageLocation = mf;
+
+        PipeDream<BufferedImage> pipeDream = new PipeDream<>(1000, 250, 500, 10);
+        List<Komposition> fetchKompositions = new ArrayList<>();
+        fetchKompositions.add(fetchKompositionStillImages);
+        fetchKompositions.add(fetchKompositionStillImages2);
+        fetchKompositions.add(fetchKompositionNorway);
+
+        KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition, sobotaMp3, 24);
+
+
+        printImageRepresentationImages(planner);
 
         new Thread(new ThreadedImageCollector(planner.collectPlans(),
                 plan -> plan.collector(pipeDream, 41666))).start();
@@ -225,6 +253,25 @@ public class BuildVideoFromStaticImagesAndVideoTest {
 
         logger.info("Storing file at {}", mf.fileName);
         assertEquals(mf.checksum, md5Checksum(mf.fileName));
+    }
+
+    private void printImageRepresentationImages(KompositionPlanner planner) {
+        Map<Long, List<FrameRepresentation>> reps = new TreeMap<>();
+        for (FrameRepresentation rep : ((SuperPlan) planner.buildPlan()).getFrameRepresentations()) {
+            if(reps.containsKey(rep.timestamp)) {
+                reps.get(rep.timestamp).add(rep);
+            } else {
+                List<FrameRepresentation> gots  = new ArrayList<>();
+                gots.add(rep);
+                reps.put(rep.timestamp, gots);
+            }
+        }
+        for (Long tstamp : reps.keySet()) {
+            System.out.println(tstamp + " \t" + reps.get(tstamp).size());
+            if(reps.get(tstamp).size() > 1) {
+                System.out.println("Crossfading");
+            }
+        }
     }
 
     public String md5Checksum(URL url) throws IOException {
