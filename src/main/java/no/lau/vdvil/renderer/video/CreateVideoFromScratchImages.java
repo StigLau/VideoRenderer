@@ -15,7 +15,6 @@ import no.lau.vdvil.renderer.video.builder.GenericBuilder;
 import no.lau.vdvil.renderer.video.config.VideoConfig;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
 import no.lau.vdvil.renderer.video.builder.ImageCrossFader;
-import no.lau.vdvil.renderer.video.stigs.TimeStampFixedImageSampleSegment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.awt.image.BufferedImage;
@@ -138,28 +137,22 @@ class VideoAdapter {
             logger.trace("Time to write packets at {}", clock);
             List<FrameRepresentation> frameRepresentations = buildPlan.whatToDoAt(nextFrameTime);
             if(frameRepresentations.size() > 0) {
-                List<TransitionSegment> transitionSegment = buildPlan instanceof SuperPlan ?
+                List<TransitionSegment> transitionSegments = buildPlan instanceof SuperPlan ?
                         ImageCrossFader.extractTransitionSegment(nextFrameTime, (SuperPlan) buildPlan):
                         Collections.EMPTY_LIST;
 
-
-                //Ugly hack to check if we should wait if we get no previous usage of frames
-                if(frameRepresentations.size() == 1 && !transitionSegment.isEmpty()) {
-                    logger.trace("Waiting to fetch images from two transition-images!");
-                }
-
-
-
-                else if (frameRepresentations.size() >= 2 && !transitionSegment.isEmpty()
-                 && !frameRepresentations.get(0).referenceId().equals(frameRepresentations.get(1).referenceId())) { //transitionSegment != null) {
-                    System.out.println("Weeee, crossover!!!1");
-                    BufferedImage theImage = fader.perform(transitionSegment.get(0), frameRepresentations);
-                    writer.encodeVideo(videoStreamIndex, theImage, nextFrameTime, DEFAULT_TIME_UNIT);
-                    for (FrameRepresentation frameRepresentation : frameRepresentations) {
-                        frameRepresentation.use();
+                List<TransitionSegment> applicableTransitionSegments = fader.containsMetaSegment(frameRepresentations, transitionSegments);
+                if (applicableTransitionSegments.size() >= 1) {
+                    for (TransitionSegment segment : applicableTransitionSegments) {
+                        logger.trace("Performing crossover");
+                        BufferedImage theImage = fader.perform(segment, frameRepresentations);
+                        writer.encodeVideo(videoStreamIndex, theImage, nextFrameTime, DEFAULT_TIME_UNIT);
+                        for (FrameRepresentation frameRepresentation : frameRepresentations) {
+                            frameRepresentation.use();
+                        }
                     }
                 } else if (buildPlan instanceof SuperPlan || frameRepresentations.size() > 0) {
-                    System.out.println("Else 2");
+                    logger.trace("Normal building video");
                     BufferedImage theImage = builder.build(nextFrameTime, frameRepresentations);
                     writer.encodeVideo(videoStreamIndex, theImage, nextFrameTime, DEFAULT_TIME_UNIT);
                     //TODO Other implementation

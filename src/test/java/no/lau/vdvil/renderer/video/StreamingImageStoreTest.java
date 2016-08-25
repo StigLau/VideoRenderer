@@ -111,7 +111,7 @@ public class StreamingImageStoreTest {
         assertEquals(15458086, buildPlan.getFrameRepresentations().get(372-1).timestamp);
 
         //The collect timestamp should not start at 0
-        assertEquals(35500000, collectFrameRepresentations.get(0).timestamp);
+        assertEquals(35541096, collectFrameRepresentations.get(0).timestamp);
 
     }
 
