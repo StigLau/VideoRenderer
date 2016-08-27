@@ -7,18 +7,17 @@ import com.xuggle.xuggler.IContainer;
 import com.xuggle.xuggler.IPacket;
 import com.xuggle.xuggler.IStreamCoder;
 import no.lau.vdvil.collector.FrameRepresentation;
-import no.lau.vdvil.domain.TransitionSegment;
 import no.lau.vdvil.plan.AudioPlan;
 import no.lau.vdvil.plan.Plan;
-import no.lau.vdvil.plan.SuperPlan;
 import no.lau.vdvil.renderer.video.builder.GenericBuilder;
+import no.lau.vdvil.renderer.video.builder.ImageBuilder;
 import no.lau.vdvil.renderer.video.config.VideoConfig;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
 import no.lau.vdvil.renderer.video.builder.ImageCrossFader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.awt.image.BufferedImage;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
 
@@ -111,19 +110,16 @@ class VideoAdapter {
     long nextFrameTime = 0;
 
     final ImageStore<BufferedImage> imageStore;
-    //Todo take this in as a param somehow
-    final ImageCrossFader fader ;
-    final GenericBuilder builder;
+    final List<ImageBuilder> builders;
 
 
     public VideoAdapter(VideoConfig config, IMediaWriter writer, ImageStore<BufferedImage> imageStore) {
         this.writer = writer;
         this.imageStore = imageStore;
-        this.fader = new ImageCrossFader(imageStore);
-        this.builder = new GenericBuilder(imageStore);
-        this.width = config.width;
         this.height = config.height;
         this.frameRate = config.framerate();
+        this.width = config.width;
+        builders = Arrays.asList(new ImageCrossFader(imageStore), new GenericBuilder(imageStore));
 
         // add audio and video streams
         writer.addVideoStream(videoStreamIndex, videoStreamId, width, height);
@@ -133,39 +129,25 @@ class VideoAdapter {
     public void writeNextPacket(long clock, Plan buildPlan) {
         logger.debug("Clock ping: " + clock);
         while (clock >= nextFrameTime) {
-            boolean nextFrameTimeUpdated = false;
             logger.trace("Time to write packets at {}", clock);
             List<FrameRepresentation> frameRepresentations = buildPlan.whatToDoAt(nextFrameTime);
             if(frameRepresentations.size() > 0) {
-                List<TransitionSegment> transitionSegments = buildPlan instanceof SuperPlan ?
-                        ImageCrossFader.extractTransitionSegment(nextFrameTime, (SuperPlan) buildPlan):
-                        Collections.EMPTY_LIST;
-
-                List<TransitionSegment> applicableTransitionSegments = fader.containsMetaSegment(frameRepresentations, transitionSegments);
-                if (applicableTransitionSegments.size() >= 1) {
-                    for (TransitionSegment segment : applicableTransitionSegments) {
-                        logger.trace("Performing crossover");
-                        BufferedImage theImage = fader.perform(segment, frameRepresentations);
-                        writer.encodeVideo(videoStreamIndex, theImage, nextFrameTime, DEFAULT_TIME_UNIT);
-                        for (FrameRepresentation frameRepresentation : frameRepresentations) {
-                            frameRepresentation.use();
+                boolean frameSuccess = false;
+                for (ImageBuilder builder : builders) {
+                    if (!frameSuccess) {
+                        try {
+                            builder.build(buildPlan, frameRepresentations, nextFrameTime,
+                                    theImage -> writer.encodeVideo(videoStreamIndex, theImage, nextFrameTime, DEFAULT_TIME_UNIT));
+                            logger.info("Building succeded {}", builder);
+                            frameSuccess = true;
+                        } catch (Exception e) {
+                            //If building with builder fails
+                            logger.warn("Building failed {}", builder);
                         }
-                    }
-                } else if (buildPlan instanceof SuperPlan || frameRepresentations.size() > 0) {
-                    logger.trace("Normal building video");
-                    BufferedImage theImage = builder.build(nextFrameTime, frameRepresentations);
-                    writer.encodeVideo(videoStreamIndex, theImage, nextFrameTime, DEFAULT_TIME_UNIT);
-                    //TODO Other implementation
-                    nextFrameTime += frameRate / frameRepresentations.size();
-                    nextFrameTimeUpdated = true;
-                    for (FrameRepresentation frameRepresentation : frameRepresentations) {
-                        frameRepresentation.use();
                     }
                 }
             }
-            if(!nextFrameTimeUpdated) {
-                nextFrameTime += frameRate;
-            }
+            nextFrameTime += frameRate;
         }
     }
 }

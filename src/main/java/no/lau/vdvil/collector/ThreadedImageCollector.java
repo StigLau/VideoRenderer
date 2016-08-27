@@ -18,7 +18,7 @@ public class ThreadedImageCollector implements Runnable{
 
     public void run() {
         for (ImageCollector collector : collectors) {
-            collector.runSingle();
+            collector.run();
         }
         logger.info("Finished collecting");
     }

@@ -3,25 +3,31 @@ package no.lau.vdvil.renderer.video.builder;
 import no.lau.vdvil.collector.FrameRepresentation;
 import no.lau.vdvil.collector.plan.FramePlan;
 import no.lau.vdvil.domain.TransitionSegment;
+import no.lau.vdvil.plan.Plan;
 import no.lau.vdvil.plan.SuperPlan;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
 import no.lau.vdvil.renderer.video.store.ImageRepresentation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * @author Stig@Lau.no 18/08/16.
  * Simple implementation of a crossfader
  */
-public class ImageCrossFader {
+public class ImageCrossFader implements ImageBuilder {
 
     private final ImageStore<BufferedImage> imageStore;
 
-    //Cached representation of this and/or previous
+    //Cached representation of this and/or cachedImage
     ImageRepresentation imageRepIn = null;
     ImageRepresentation imageRepOut = null;
+    Logger logger = LoggerFactory.getLogger(getClass());
+    List<String> approvedRepresentationIds = new ArrayList<>();
 
     public ImageCrossFader(ImageStore<BufferedImage> imageStore) {
         this.imageStore = imageStore;
@@ -72,6 +78,26 @@ public class ImageCrossFader {
         g2d.setComposite(AlphaComposite.SrcOver.derive(alpha));
         g2d.drawImage(outImage, 0, 0, null);
         return inImage;
+    }
+
+    public void build(Plan buildPlan, List<FrameRepresentation> frameRepresentations, long nextFrameTime, VideoWriter writeCallback) throws Exception {
+        List<TransitionSegment> transitionSegments = buildPlan instanceof SuperPlan ?
+                ImageCrossFader.extractTransitionSegment(nextFrameTime, (SuperPlan) buildPlan):
+                Collections.EMPTY_LIST;
+
+        List<TransitionSegment> applicableTransitionSegments = containsMetaSegment(frameRepresentations, transitionSegments);
+        if (applicableTransitionSegments.size() >= 1) {
+            for (TransitionSegment segment : applicableTransitionSegments) {
+                logger.trace("Performing crossover");
+                BufferedImage theImage = perform(segment, frameRepresentations);
+                writeCallback.write(theImage);
+                for (FrameRepresentation frameRepresentation : frameRepresentations) {
+                    frameRepresentation.use();
+                }
+            }
+            return;
+        }
+        throw new Exception("Could not process frame with this builder");
     }
 
     /**

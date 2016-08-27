@@ -20,7 +20,7 @@ public class CountNumberOfEligableImagesBetweenTimestampsCollector implements Im
         this.counter = new ImageCounter(startMs, endMs);
     }
 
-    public void runSingle() {
+    public void run() {
         long start = System.currentTimeMillis();
         IContainer container = IContainer.make();
         int result = container.open(mediaFile, IContainer.Type.READ, null);
