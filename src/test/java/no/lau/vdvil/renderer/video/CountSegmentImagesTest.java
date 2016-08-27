@@ -18,11 +18,9 @@ public class CountSegmentImagesTest {
         System.out.println("NOTE - Counting number of pics in video can take some time!");
         //CountNumberOfEligableImagesBetweenTimestampsCollector collector = new CountNumberOfEligableImagesBetweenTimestampsCollector(10000000, 100000000, testVideo);
         CountNumberOfEligableImagesBetweenTimestampsCollector collector = new CountNumberOfEligableImagesBetweenTimestampsCollector(0, VideoInfo.getVideoProperties(testVideo).getDuration(), testVideo);
-        try {
-            collector.runSingle();
-        }catch (VideoExtractionFinished e) {
-            //assertEquals(2162, collector.imagesCollected());
-        }
+
+        collector.run();
+
         assertEquals(7975, collector.imagesCollected());
     }
 
@@ -32,7 +30,7 @@ public class CountSegmentImagesTest {
         VideoInfo.printProperties(VideoInfo.getVideoProperties(testVideo));
         CountNumberOfEligableImagesBetweenTimestampsCollector collector = new CountNumberOfEligableImagesBetweenTimestampsCollector(69375000, 74000000, testVideo);
         try {
-            collector.runSingle();
+            collector.run();
         }catch (VideoExtractionFinished e) {
         }
         //This is the amount of images that were collected using the same parameters as the snippet collector method
@@ -45,10 +43,7 @@ public class CountSegmentImagesTest {
         String testVideo = "/tmp/kompost/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time-Lapse_Adventure_Dark_lake_69375000___4625000.mp4";
         VideoInfo.printProperties(VideoInfo.getVideoProperties(testVideo));
         CountNumberOfEligableImagesBetweenTimestampsCollector collector = new CountNumberOfEligableImagesBetweenTimestampsCollector(0, VideoInfo.getVideoProperties(testVideo).getDuration(), testVideo);
-        try {
-            collector.runSingle();
-        }catch (VideoExtractionFinished e) {
-        }
+        collector.run();
         //This is the amount of images actually extractable from the snippet!!!! Compare 101 to the original expectation 113!
         assertEquals(101, collector.imagesCollected());
     }
@@ -58,10 +53,7 @@ public class CountSegmentImagesTest {
         String testVideo = "/tmp/kompost/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time-Lapse_Adventure_Flower_fjord_35500000___10750000.mp4";
         VideoInfo.printProperties(VideoInfo.getVideoProperties(testVideo));
         CountNumberOfEligableImagesBetweenTimestampsCollector collector = new CountNumberOfEligableImagesBetweenTimestampsCollector(0, VideoInfo.getVideoProperties(testVideo).getDuration(), testVideo);
-        try {
-            collector.runSingle();
-        }catch (VideoExtractionFinished e) {
-        }
+        collector.run();
         //This is the amount of images actually extractable from the snippet!!!! Compare 101 to the original expectation 113!
         assertEquals(248, collector.imagesCollected());
     }

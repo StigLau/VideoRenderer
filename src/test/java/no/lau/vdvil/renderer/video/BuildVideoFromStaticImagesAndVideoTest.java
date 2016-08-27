@@ -1,14 +1,13 @@
 package no.lau.vdvil.renderer.video;
 
 import com.xuggle.mediatool.PersistentWriter;
-import no.lau.vdvil.collector.FrameRepresentation;
-import no.lau.vdvil.collector.KompositionPlanner;
-import no.lau.vdvil.collector.ThreadedImageCollector;
+import no.lau.vdvil.collector.*;
 import no.lau.vdvil.domain.MediaFile;
 import no.lau.vdvil.domain.StaticImagesSegment;
 import no.lau.vdvil.domain.TransitionSegment;
 import no.lau.vdvil.domain.VideoStillImageSegment;
 import no.lau.vdvil.domain.out.Komposition;
+import no.lau.vdvil.plan.ImageCollectable;
 import no.lau.vdvil.plan.Plan;
 import no.lau.vdvil.plan.SuperPlan;
 import no.lau.vdvil.renderer.video.config.VideoConfig;
@@ -27,8 +26,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.*;
-import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -53,7 +52,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
     private String result3c = "file:///tmp/from_scratch_images_test_3c.mp4";
 
     //HighRez
-    VideoConfig config = new VideoConfig(1280, 720,DEFAULT_TIME_UNIT.convert(24, MILLISECONDS));
+    //VideoConfig config = new VideoConfig(1280, 720,DEFAULT_TIME_UNIT.convert(24, MILLISECONDS));
     private VideoConfig config2 = new VideoConfig(1280, 720, Math.round(1000000/24));
     //Low Rez
     //Config config = new Config(320, 200,DEFAULT_TIME_UNIT.convert(15, MILLISECONDS));
@@ -152,8 +151,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new VideoStillImageSegment("Besseggen", 0, 8)
                 , new VideoStillImageSegment("Purple Mountains Clouds", 8, 16)
         );
-        MediaFile mf = new MediaFile(new URL(result3a), 0f, 128f, "7ea06f7a19fea1dfcefef1b6b30730b4");
-        buildKomposition.storageLocation = mf;
+        buildKomposition.storageLocation = new MediaFile(new URL(result3a), 0f, 128f, "7ea06f7a19fea1dfcefef1b6b30730b4");
 
         List<Komposition> fetchKompositions = new ArrayList<>();
         fetchKompositions.add(fetchKompositionStillImages);
@@ -174,8 +172,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new VideoStillImageSegment("Besseggen", 0, 8)
                 , new VideoStillImageSegment("Purple Mountains Clouds", 8, 16)
         );
-        MediaFile mf = new MediaFile(new URL(result3b), 0f, 128f, "7ea06f7a19fea1dfcefef1b6b30730b4");
-        buildKomposition.storageLocation = mf;
+        buildKomposition.storageLocation = new MediaFile(new URL(result3b), 0f, 128f, "7ea06f7a19fea1dfcefef1b6b30730b4");
 
         List<Komposition> fetchKompositions = new ArrayList<>();
         fetchKompositions.add(fetchKompositionStillImages);
@@ -235,7 +232,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
         MediaFile mf = new MediaFile(new URL(result3c), 0f, 128f, "2e2b598f9f3f6a82617dc51f0747e615");
         buildKomposition.storageLocation = mf;
 
-        PipeDream<BufferedImage> pipeDream = new PipeDream<>(1000, 250, 500, 10);
+        PipeDream<BufferedImage> pipeDream = new PipeDream<>(30, 250, 500, 10);
         List<Komposition> fetchKompositions = new ArrayList<>();
         fetchKompositions.add(fetchKompositionStillImages);
         fetchKompositions.add(fetchKompositionStillImages2);
@@ -246,8 +243,11 @@ public class BuildVideoFromStaticImagesAndVideoTest {
 
         printImageRepresentationImages(planner);
 
-        new Thread(new ThreadedImageCollector(planner.collectPlans(),
-                plan -> plan.collector(pipeDream, 41666))).start();
+        CollectorWrapper callback = plan -> plan.collector(pipeDream, config2.framerate());
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        for (Plan plan : planner.collectPlans()) {
+            executor.execute(callback.callBack((ImageCollectable) plan));
+        }
         Thread.sleep(1000);
         CreateVideoFromScratchImages.createVideo(planner.buildPlan(), pipeDream, config2);
 
@@ -267,14 +267,14 @@ public class BuildVideoFromStaticImagesAndVideoTest {
             }
         }
         for (Long tstamp : reps.keySet()) {
-            System.out.println(tstamp + " \t" + reps.get(tstamp).size());
+            logger.info(tstamp + " \t" + reps.get(tstamp).size());
             if(reps.get(tstamp).size() > 1) {
-                System.out.println("Crossfading");
+                logger.info("Crossfading");
             }
         }
     }
 
-    public String md5Checksum(URL url) throws IOException {
+    String md5Checksum(URL url) throws IOException {
         return DigestUtils.md5Hex(url.openStream());
     }
 }
