@@ -27,7 +27,6 @@ public class ImageCrossFader implements ImageBuilder {
     ImageRepresentation imageRepIn = null;
     ImageRepresentation imageRepOut = null;
     Logger logger = LoggerFactory.getLogger(getClass());
-    List<String> approvedRepresentationIds = new ArrayList<>();
 
     public ImageCrossFader(ImageStore<BufferedImage> imageStore) {
         this.imageStore = imageStore;
