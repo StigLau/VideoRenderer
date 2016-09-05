@@ -1,8 +1,8 @@
-<?xml version=1.0 encoding=UTF-8?>
+<?xml version="1.0" encoding="UTF-8"?>
 <komposition>
     <reference>3e088b08b01e96291f1585b3e15df931</reference>
     <mediaFile>
-        <fileName>https://s3.amazonaws.com/kompost/dvl-test/Clarian_Ver_\(11_Am_Mix\).mp3</fileName\>
+        <fileName>https://s3.amazonaws.com/kompost/dvl-test/Clarian_Ver_(11_Am_Mix).mp3</fileName>
         <startingOffset>0</startingOffset>
         <checksum>ee8a9400f41365164f9847d27d4a7279</checksum>
         <extension>mp3</extension>
