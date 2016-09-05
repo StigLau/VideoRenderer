@@ -4,7 +4,7 @@
     <mediaFile>
         <fileName>https://raw.githubusercontent.com/StigLau/VideoRenderer/master/src/test/resources/kompost/images/blackimage.csv</fileName>
         <startingOffset>-1</startingOffset>
-        <checksum>asd123</checksum>
+        <checksum>81a6ef92b678120d6050e330468f028b</checksum>
         <extension>htmlImagelist</extension>
     </mediaFile>
     <bpm>-1</bpm>
