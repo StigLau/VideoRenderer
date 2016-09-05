@@ -35,6 +35,7 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan, ImageColl
         for (FramePlan framePlan : framePlans) {
             frameRepresentations.addAll(framePlan.calculateFramesFromSegment());
         }
+        Collections.sort(frameRepresentations);
         metaPlanLookup = buildMetaPlanLookup(framePlans);
     }
 

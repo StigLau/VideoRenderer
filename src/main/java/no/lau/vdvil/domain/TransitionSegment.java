@@ -3,9 +3,9 @@ package no.lau.vdvil.domain;
 import no.lau.vdvil.renderer.video.creator.filter.FilterableSegment;
 import no.lau.vdvil.renderer.video.creator.filter.ListFilter;
 import no.lau.vdvil.renderer.video.creator.filter.ListModificator;
-
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Stig@Lau.no 07/04/15.
@@ -13,17 +13,13 @@ import java.util.List;
  */
 public class TransitionSegment<TYPE> extends SuperSegment implements FilterableSegment<TYPE>, MovableSegment, MetaSegment {
 
-    final Segment startSegment;
-    final Segment endSegment;
+    public List<Segment> segments;
+    ListModificator modificator = new ListModificator();
 
     public TransitionSegment(Segment startSegment, Segment endSegment, int start, int duration) {
         super("Transition: " + startSegment + " - " + endSegment, start,  duration);
-
-        this.startSegment = startSegment;
-        this.endSegment = endSegment;
+        segments = Arrays.asList(startSegment, endSegment);
     }
-
-    ListModificator modificator = new ListModificator();
 
     public TransitionSegment filter(ListFilter... filters) {
         this.modificator = new ListModificator(filters);
@@ -39,6 +35,11 @@ public class TransitionSegment<TYPE> extends SuperSegment implements FilterableS
     }
 
     public List<String> references() {
-        return Arrays.asList(startSegment.id(), endSegment.id());
+        return segments.stream().map(Segment::id).collect(Collectors.toList());
+    }
+
+
+    public void moveSegment(long segmentTimeMovement) {
+        start += segmentTimeMovement;
     }
 }

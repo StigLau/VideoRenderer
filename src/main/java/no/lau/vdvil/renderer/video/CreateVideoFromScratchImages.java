@@ -140,8 +140,11 @@ class VideoAdapter {
                                     theImage -> writer.encodeVideo(videoStreamIndex, theImage, nextFrameTime, DEFAULT_TIME_UNIT));
                             logger.info("Building succeded {}", builder);
                             frameSuccess = true;
+                        } catch (NullPointerException e) {
+                            logger.error(e.getMessage(), e);
                         } catch (Exception e) {
                             //If building with builder fails
+                            logger.trace(e.getMessage(), e);
                             logger.warn("Building failed {}", builder);
                         }
                     }
