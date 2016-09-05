@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <komposition>
-    <reference>Some test media files</reference>
+    <reference>Black image</reference>
     <mediaFile>
         <fileName>https://raw.githubusercontent.com/StigLau/VideoRenderer/master/src/test/resources/kompost/images/blackimage.csv</fileName>
         <startingOffset>-1</startingOffset>
