@@ -7,7 +7,7 @@ import java.net.URL;
 /**
  * @author Stig@Lau.no 12.05.2015.
  */
-public class FrameRepresentation {
+public class FrameRepresentation implements Comparable{
     public final long timestamp;
     public boolean used;
     private String referenceId;
@@ -38,7 +38,7 @@ public class FrameRepresentation {
     }
 
     public String toString() {
-        return originalSegment.id() + " " + timestamp + "_" + referenceId;
+        return "@" + timestamp + " " + originalSegment.id() + " - " + referenceId;
     }
 
     public String getSegmentShortId(){
@@ -55,5 +55,10 @@ public class FrameRepresentation {
         } catch (MalformedURLException e) {
             throw new RuntimeException("Naugty imageURL " + imageUrl);
         }
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return ((Long)this.timestamp).compareTo(((FrameRepresentation)o).timestamp);
     }
 }
