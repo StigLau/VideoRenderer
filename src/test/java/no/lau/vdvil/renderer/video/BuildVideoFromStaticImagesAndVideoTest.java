@@ -7,6 +7,7 @@ import no.lau.vdvil.domain.StaticImagesSegment;
 import no.lau.vdvil.domain.TransitionSegment;
 import no.lau.vdvil.domain.VideoStillImageSegment;
 import no.lau.vdvil.domain.out.Komposition;
+import no.lau.vdvil.domain.utils.KompositionUtils;
 import no.lau.vdvil.plan.ImageCollectable;
 import no.lau.vdvil.plan.Plan;
 import no.lau.vdvil.plan.SuperPlan;
@@ -241,7 +242,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
         KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition, sobotaMp3, 24);
 
 
-        printImageRepresentationImages(planner);
+        KompositionUtils.printImageRepresentationImages(planner);
 
         CollectorWrapper callback = plan -> plan.collector(pipeDream, config2.framerate());
         ExecutorService executor = Executors.newFixedThreadPool(2);
@@ -253,25 +254,6 @@ public class BuildVideoFromStaticImagesAndVideoTest {
 
         logger.info("Storing file at {}", mf.fileName);
         assertEquals(mf.checksum, md5Checksum(mf.fileName));
-    }
-
-    private void printImageRepresentationImages(KompositionPlanner planner) {
-        Map<Long, List<FrameRepresentation>> reps = new TreeMap<>();
-        for (FrameRepresentation rep : ((SuperPlan) planner.buildPlan()).getFrameRepresentations()) {
-            if(reps.containsKey(rep.timestamp)) {
-                reps.get(rep.timestamp).add(rep);
-            } else {
-                List<FrameRepresentation> gots  = new ArrayList<>();
-                gots.add(rep);
-                reps.put(rep.timestamp, gots);
-            }
-        }
-        for (Long tstamp : reps.keySet()) {
-            logger.info(tstamp + " \t" + reps.get(tstamp).size());
-            if(reps.get(tstamp).size() > 1) {
-                logger.info("Crossfading");
-            }
-        }
     }
 
     String md5Checksum(URL url) throws IOException {
