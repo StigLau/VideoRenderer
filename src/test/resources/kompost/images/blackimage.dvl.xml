@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <komposition>
-    <reference>Some test media files</reference>
+    <reference>Black image</reference>
     <mediaFile>
         <fileName>https://raw.githubusercontent.com/StigLau/VideoRenderer/master/src/test/resources/kompost/images/blackimage.csv</fileName>
         <startingOffset>-1</startingOffset>
-        <checksum>81a6ef92b678120d6050e330468f028b</checksum>
+        <checksum>cf362ff46187cba58660da37f9b6f82e</checksum>
         <extension>htmlImagelist</extension>
     </mediaFile>
     <bpm>-1</bpm>
