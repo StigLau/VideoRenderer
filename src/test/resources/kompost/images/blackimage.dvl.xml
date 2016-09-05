@@ -2,15 +2,15 @@
 <komposition>
     <reference>Some test media files</reference>
     <mediaFile>
-        <fileName>https://raw.githubusercontent.com/StigLau/VideoRenderer/master/src/test/resources/kompost/images/testImageList.csv</fileName>
+        <fileName>https://raw.githubusercontent.com/StigLau/VideoRenderer/master/src/test/resources/kompost/images/blackimage.csv</fileName>
         <startingOffset>-1</startingOffset>
-        <checksum>2ff540bdb6a48a9cbfd1a410de00ca73</checksum>
+        <checksum>asd123</checksum>
         <extension>htmlImagelist</extension>
     </mediaFile>
     <bpm>-1</bpm>
     <segments>
         <segment>
-            <id>Some test mediafiles</id>
+            <id>blackimage</id>
             <start>0</start>
             <end>64</end>
         </segment>
