@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<komposition>
+    <reference>jz16whitesingle</reference>
+    <mediaFile>
+        <fileName>https://raw.githubusercontent.com/StigLau/VideoRenderer/master/src/test/resources/kompost/images/jz16whitesingle.csv</fileName>
+        <startingOffset>-1</startingOffset>
+        <checksum>notthereyet</checksum>
+        <extension>htmlImagelist</extension>
+    </mediaFile>
+    <bpm>-1</bpm>
+    <segments>
+        <segment>
+            <id>jz16whitesingle</id>
+            <start>0</start>
+            <end>64</end>
+        </segment>
+    </segments>
+</komposition>
