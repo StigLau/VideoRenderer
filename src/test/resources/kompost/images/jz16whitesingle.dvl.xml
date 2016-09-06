@@ -4,7 +4,7 @@
     <mediaFile>
         <fileName>https://raw.githubusercontent.com/StigLau/VideoRenderer/master/src/test/resources/kompost/images/jz16whitesingle.csv</fileName>
         <startingOffset>-1</startingOffset>
-        <checksum>notthereyet</checksum>
+        <checksum>74938ce1333c3de31857ff2522a43513</checksum>
         <extension>htmlImagelist</extension>
     </mediaFile>
     <bpm>-1</bpm>
