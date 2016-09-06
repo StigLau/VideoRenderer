@@ -2,7 +2,7 @@
 <komposition>
     <reference>JavaZone logos</reference>
     <mediaFile>
-        <fileName>https://raw.githubusercontent.com/StigLau/VideoRenderer/master/src/test/resources/kompost/images/javazone_images.dvl.xml</fileName>
+        <fileName>https://raw.githubusercontent.com/StigLau/VideoRenderer/master/src/test/resources/kompost/images/javazone_logos.csv</fileName>
         <startingOffset>-1</startingOffset>
         <checksum>be6936a821290435386976cf93e0866a</checksum>
         <extension>htmlImagelist</extension>
