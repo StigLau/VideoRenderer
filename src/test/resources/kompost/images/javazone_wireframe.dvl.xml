@@ -4,7 +4,7 @@
     <mediaFile>
         <fileName>https://raw.githubusercontent.com/StigLau/VideoRenderer/master/src/test/resources/kompost/images/javazone_wireframe.csv</fileName>
         <startingOffset>-1</startingOffset>
-        <checksum>wireframe</checksum>
+        <checksum>f1c769d84da2311dd9984ce23bb51fe5</checksum>
         <extension>htmlImagelist</extension>
     </mediaFile>
     <bpm>-1</bpm>
