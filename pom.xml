@@ -103,9 +103,9 @@
             <url>https://mvnrepo.cantara.no/content/repositories/releases/</url>
         </repository>
         <repository>
-            <id>cantara-snapshots</id>
-            <name>Cantara Snapshot Repository</name>
-            <url>https://mvnrepo.cantara.no/content/repositories/snapshots/</url>
+            <id>Kompo-releases</id>
+            <name>Cantara Release Repository</name>
+            <url>https://s3-eu-west-1.amazonaws.com/kompo-repo/releases/</url>
         </repository>
     </repositories>
     <distributionManagement>
