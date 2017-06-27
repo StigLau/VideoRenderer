@@ -30,7 +30,7 @@
         </segment>
     </segments>
     <sources>
-        <a type="video" href="https://raw.githubusercontent.com/StigLau/VideoRenderer/master/src/test/resources/kompost/Bergen_In_Motion-Sigurd_Svidal_Randal.dvl.xml" md5checksum="2a63cd92c19be591d7482ecd43fc8354">Bergen_In_Motion-Sigurd_Svidal_Randal</a>
+        <a type="video" href="https://raw.githubusercontent.com/StigLau/VideoRenderer/master/src/test/resources/kompost/Bergen_In_Motion-Sigurd_Svidal_Randal.dvl.xml" md5checksum="826a1a94a6745e18bec8a3045bcf0084">Bergen_In_Motion-Sigurd_Svidal_Randal</a>
         <a type="video" href="https://raw.githubusercontent.com/StigLau/VideoRenderer/master/src/test/resources/kompost/A_quiet_place-Sigurd_Svidal_Randal.dvl.xml" md5checksum="fd715cebc1d6e39873c669cd842507a5">A_quiet_place-Sigurd_Svidal_Randal</a>
         <a type="video" href="https://raw.githubusercontent.com/StigLau/VideoRenderer/master/src/test/resources/kompost/images/TestImages.dvl.xml" md5checksum="26310126c01df99090434cbfe65a9e3d">Test still images</a>
         <a type="audio" href="https://raw.githubusercontent.com/StigLau/VideoRenderer/master/src/test/resources/kompost/Clarian_Ver_(11_Am_Mix).dvl.xml" md5checksum="8a4d5cea5b651d82e9a66d6fd6e896f5">Clarian_Ver_(11_Am_Mix)</a>
