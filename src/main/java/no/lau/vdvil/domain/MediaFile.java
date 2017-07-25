@@ -6,6 +6,7 @@ import java.net.URL;
  * @author Stig@Lau.no 07/04/15.
  */
 public class MediaFile {
+    public String id;
     public final URL fileName;
     public final Float startingOffset;
     public final String checksum;

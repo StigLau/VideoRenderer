@@ -11,7 +11,7 @@ public enum ExtensionType {
     flac ("flac"),
     dvl ("dvl.xml"),
     kompo ("kompo.xml"),
-    htmlImagelist ("htmlImagelist"),
+    htmlImagelist ("htmlimagelist"),
     jpg ("jpg"),
     png ("png"),
     NONE ("");

@@ -6,17 +6,6 @@
     <version>1.7.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <parent>
-        <groupId>no.cantara.emi</groupId>
-        <artifactId>parent</artifactId>
-        <version>6</version>
-    </parent>
-
-    <scm>
-        <developerConnection>scm:git:ssh://git@github.com:StigLau/VideoRenderer.git</developerConnection>
-        <connection>scm:git:ssh://git@github.com:StigLau/VideoRenderer.git</connection>
-        <url>https://github.com/StigLau/VideoRenderer</url>
-  </scm>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
