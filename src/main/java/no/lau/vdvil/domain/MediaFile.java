@@ -9,13 +9,14 @@ public class MediaFile {
     public String id;
     public final URL fileName;
     public final Float startingOffset;
-    public final String checksum;
+    public final String checksums;
     public final Float bpm;
+    public String extension;
 
-    public MediaFile(URL url, Float startingOffsetInMillis, Float bpm, String checksum) {
+    public MediaFile(URL url, Float startingOffsetInMillis, Float bpm, String checksums) {
         this.fileName = url;
         this.startingOffset = startingOffsetInMillis;
         this.bpm = bpm;
-        this.checksum = checksum;
+        this.checksums = checksums;
     }
 }

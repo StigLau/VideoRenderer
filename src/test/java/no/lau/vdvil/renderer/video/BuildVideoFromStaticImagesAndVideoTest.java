@@ -142,7 +142,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
         CreateVideoFromScratchImages.createVideo(planner.buildPlan(), pipeDream, config2);
 
         logger.info("Storing file at {}", mf.fileName);
-        assertEquals(mf.checksum, md5Checksum(mf.fileName));
+        assertEquals(mf.checksums, md5Checksum(mf.fileName));
     }
 
     @Test
@@ -253,7 +253,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
         CreateVideoFromScratchImages.createVideo(planner.buildPlan(), pipeDream, config2);
 
         logger.info("Storing file at {}", mf.fileName);
-        assertEquals(mf.checksum, md5Checksum(mf.fileName));
+        assertEquals(mf.checksums, md5Checksum(mf.fileName));
     }
 
     String md5Checksum(URL url) throws IOException {

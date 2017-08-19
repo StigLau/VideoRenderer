@@ -143,7 +143,7 @@ public class BuildVideoFromScratchImagesTest {
         CreateVideoFromScratchImages.createVideo(planner.buildPlan(), imageStore, new VideoConfig(1280, 720, Math.round(1000000/24)));
 
         logger.info("Storing file at {}", mf.fileName);
-        assertEquals(mf.checksum, md5Checksum(mf.fileName));
+        assertEquals(mf.checksums, md5Checksum(mf.fileName));
     }
 
     public String md5Checksum(URL url) throws IOException {
@@ -174,6 +174,6 @@ public class BuildVideoFromScratchImagesTest {
         new Thread(imageCollector).run();
         Thread.sleep(5000);
         CreateVideoFromScratchImages.createVideo(planner.buildPlan(), imageStore, config);
-        assertEquals(mf.checksum, md5Checksum(mf.fileName));
+        assertEquals(mf.checksums, md5Checksum(mf.fileName));
     }
 }
