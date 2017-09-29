@@ -83,7 +83,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new StaticImagesSegment("Still Image Fun 2",
                         getClass().getClassLoader().getResource("images/Slide_Blue_mountain_top_lake2.png").toString()
                 ));
-        fetchKompositionStillImages.storageLocation = new MediaFile(new URL("file://tmp/kompost"), 0f, -1f, "abc");
+        fetchKompositionStillImages.storageLocation = new MediaFile(new URL("file://tmp/kompost"), 0l, -1f, "abc");
 
         fetchKompositionNorway = new Komposition(128,
                 new TimeStampFixedImageSampleSegment("Purple Mountains Clouds", 7541667, 19750000, 8),
@@ -101,7 +101,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new TimeStampFixedImageSampleSegment("Seaside houses Panorama", 102000000, 107125000, 8),
                 new TimeStampFixedImageSampleSegment("Bergen movement", 107500000, 112750000, 8)
         );
-        fetchKompositionNorway.storageLocation= new MediaFile(downmixedOriginalVideo, 0f, -1f, "abc");
+        fetchKompositionNorway.storageLocation= new MediaFile(downmixedOriginalVideo, 0l, -1f, "abc");
 
         fetchKompositionSwing = new Komposition(128,
                 new TimeStampFixedImageSampleSegment("Red bridge", 2919583, 6047708, 8),
@@ -111,7 +111,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new TimeStampFixedImageSampleSegment("Smile girl, smile", 34034000, 34993292, 15),
                 new TimeStampFixedImageSampleSegment("Swing through bridge with mountain smile", 45128417, 46713333, 8)
         );
-        fetchKompositionSwing.storageLocation = new MediaFile(theSwingVideo, 0f, 120F, "abc123");
+        fetchKompositionSwing.storageLocation = new MediaFile(theSwingVideo, 0l, 120F, "abc123");
     }
 
     @Test
@@ -123,7 +123,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new VideoStillImageSegment("Purple Mountains Clouds", 20, 12)
 
         );//.filter(16, 16);
-        MediaFile mf = new MediaFile(new URL(result1), 0f, 128f, "57d546b5bf3356503b202a698f9a4441");
+        MediaFile mf = new MediaFile(new URL(result1), 0l, 128f, "57d546b5bf3356503b202a698f9a4441");
         buildKomposition.storageLocation = mf;
 
 
@@ -152,7 +152,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new VideoStillImageSegment("Besseggen", 0, 8)
                 , new VideoStillImageSegment("Purple Mountains Clouds", 8, 16)
         );
-        buildKomposition.storageLocation = new MediaFile(new URL(result3a), 0f, 128f, "7ea06f7a19fea1dfcefef1b6b30730b4");
+        buildKomposition.storageLocation = new MediaFile(new URL(result3a), 0l, 128f, "7ea06f7a19fea1dfcefef1b6b30730b4");
 
         List<Komposition> fetchKompositions = new ArrayList<>();
         fetchKompositions.add(fetchKompositionStillImages);
@@ -173,7 +173,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new VideoStillImageSegment("Besseggen", 0, 8)
                 , new VideoStillImageSegment("Purple Mountains Clouds", 8, 16)
         );
-        buildKomposition.storageLocation = new MediaFile(new URL(result3b), 0f, 128f, "7ea06f7a19fea1dfcefef1b6b30730b4");
+        buildKomposition.storageLocation = new MediaFile(new URL(result3b), 0l, 128f, "7ea06f7a19fea1dfcefef1b6b30730b4");
 
         List<Komposition> fetchKompositions = new ArrayList<>();
         fetchKompositions.add(fetchKompositionStillImages);
@@ -230,7 +230,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 first,
                 second,
                 third);
-        MediaFile mf = new MediaFile(new URL(result3c), 0f, 128f, "2e2b598f9f3f6a82617dc51f0747e615");
+        MediaFile mf = new MediaFile(new URL(result3c), 0l, 128f, "2e2b598f9f3f6a82617dc51f0747e615");
         buildKomposition.storageLocation = mf;
 
         PipeDream<BufferedImage> pipeDream = new PipeDream<>(30, 250, 500, 10);

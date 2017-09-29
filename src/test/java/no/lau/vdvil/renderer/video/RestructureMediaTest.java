@@ -48,7 +48,7 @@ public class RestructureMediaTest {
 
         Komposition buildKomposition =  new Komposition(128);
                 //new VideoStillImageSegment("inst1", 8, 7, ((ImageSampleInstruction)fetchKomposition.segments.get(0)).collectedImages()));
-        buildKomposition.storageLocation = new MediaFile(new URL("file:///tmp/from_pix_with_xuggle.mp4"), 0f, 128f, "dunno yet");
+        buildKomposition.storageLocation = new MediaFile(new URL("file:///tmp/from_pix_with_xuggle.mp4"), 0l, 128f, "dunno yet");
 
 
         new VideoImageStitcher().createVideo(downmixedOriginalVideo,  buildKomposition, snapshotFileStorage);
@@ -65,7 +65,7 @@ public class RestructureMediaTest {
 
         Komposition buildKomposition =  new Komposition(128,
                 new ImageSampleInstruction("inst1", 0, 32, 2));// new Instruction("inst1", 0, 32, fetchKomposition.segments.get(0)));
-        buildKomposition.storageLocation = new MediaFile(new URL("file:///tmp/from_pics_with_jcodec.mp4"), 0f, 128f, "dunno yet");
+        buildKomposition.storageLocation = new MediaFile(new URL("file:///tmp/from_pics_with_jcodec.mp4"), 0l, 128f, "dunno yet");
 
 
         Mp4FromPicsCreator.SequenceEncoder.createVideo(buildKomposition, 25);

@@ -8,12 +8,12 @@ import java.net.URL;
 public class MediaFile {
     public String id;
     public final URL fileName;
-    public final Float startingOffset;
+    public final Long startingOffset;
     public final String checksums;
     public final Float bpm;
     public String extension;
 
-    public MediaFile(URL url, Float startingOffsetInMillis, Float bpm, String checksums) {
+    public MediaFile(URL url, Long startingOffsetInMillis, Float bpm, String checksums) {
         this.fileName = url;
         this.startingOffset = startingOffsetInMillis;
         this.bpm = bpm;
