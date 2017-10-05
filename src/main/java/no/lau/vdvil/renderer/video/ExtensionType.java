@@ -9,9 +9,9 @@ public enum ExtensionType {
     mp4 ("mp4"),
     webm ("webm"),
     flac ("flac"),
-    dvl ("dvl.xml"),
-    kompo ("kompo.xml"),
-    htmlImagelist ("htmlImagelist"),
+    dvl ("dvl.json"),
+    kompo ("kompo.json"),
+    htmlImagelist ("htmlimagelist"),
     jpg ("jpg"),
     png ("png"),
     NONE ("");

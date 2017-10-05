@@ -34,7 +34,7 @@ public class WaitingVideoThumbnailsCollector implements ImageCollector{
         this.skipAhead = skipAhead;
     }
 
-    public void runSingle() {
+    public void run() {
         logger.info("Starting capture {}", collectPlan.id());
         long start = System.currentTimeMillis();
 

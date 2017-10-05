@@ -1,0 +1,33 @@
+{
+  "_id": "f628a16ab655b3c7a267127a0e9c4c63",
+  "_rev": "1-a368fb3de7218e30f2289658e61cfc2b",
+  "komposition": {
+    "reference": "99958baec79f84f8218dc3fbc3ce9904",
+    "fileSizeChecksum": 43782507,
+    "config": {
+      "width": 1280,
+      "height": 720,
+      "framerate": 24000,
+      "extensionType": "mp4",
+      "duration": 143290000
+    },
+    "mediaFile": {
+      "fileName": "https://www.youtube.com/watch?v=CSdmqIbdLVY",
+      "startingOffset": -1,
+      "checksum": "214b78c423fb3eb8d208697604eec57c",
+      "bpm": -2
+    },
+    "beatpattern": {
+      "fromBeat": 0,
+      "toBeat": 128,
+      "masterBpm": 160
+    },
+    "segments": {
+      "segment": {
+        "id": "Betty boop",
+        "start": 1,
+        "end": 12
+      }
+    }
+  }
+}

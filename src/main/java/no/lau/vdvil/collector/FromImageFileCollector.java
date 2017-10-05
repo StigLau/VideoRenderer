@@ -27,7 +27,7 @@ public class FromImageFileCollector implements ImageCollector{
     }
 
 
-    public void runSingle() {
+    public void run() {
         logger.info("Starting capture {}", collectPlan.id());
 
         long startFrame = 0;

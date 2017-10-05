@@ -23,7 +23,7 @@ public class CombineAudioAndVideoTest {
         String inputAudioFilePath = "/tmp/The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix.mp3";
 
         Komposition komposition = new Komposition(128);
-        komposition.storageLocation = new MediaFile(new URL("file:///tmp/some-timelapse.mp4"), 0f, 128f, "checksuym");
+        komposition.storageLocation = new MediaFile(new URL("file:///tmp/some-timelapse.mp4"), 0l, 128f, "checksuym");
         AudioVideoConcatenator.concatenateAudioAndVideo(inputAudioFilePath, inputVideoFilePath, komposition.storageLocation.fileName.getFile(), new VideoConfig(360, 480, 15));
     }
 }

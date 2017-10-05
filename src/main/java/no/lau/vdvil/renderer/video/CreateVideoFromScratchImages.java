@@ -9,12 +9,15 @@ import com.xuggle.xuggler.IStreamCoder;
 import no.lau.vdvil.collector.FrameRepresentation;
 import no.lau.vdvil.plan.AudioPlan;
 import no.lau.vdvil.plan.Plan;
+import no.lau.vdvil.renderer.video.builder.GenericBuilder;
+import no.lau.vdvil.renderer.video.builder.ImageBuilder;
 import no.lau.vdvil.renderer.video.config.VideoConfig;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
-import no.lau.vdvil.renderer.video.store.ImageRepresentation;
+import no.lau.vdvil.renderer.video.builder.ImageCrossFader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 import java.util.List;
 import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
 
@@ -34,7 +37,7 @@ public class CreateVideoFromScratchImages {
      */
     public static void createVideo(Plan buildPlan, ImageStore<BufferedImage> imageStore, VideoConfig config) {
         try {
-            Thread.sleep(5000);//Sleep to avoid hanging bug when audio is available in cache!
+            Thread.sleep(000);//Sleep to avoid hanging bug when audio is available in cache!
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -107,56 +110,47 @@ class VideoAdapter {
     long nextFrameTime = 0;
 
     final ImageStore<BufferedImage> imageStore;
+    final List<ImageBuilder> builders;
 
 
     public VideoAdapter(VideoConfig config, IMediaWriter writer, ImageStore<BufferedImage> imageStore) {
         this.writer = writer;
         this.imageStore = imageStore;
-        this.width = config.width;
         this.height = config.height;
         this.frameRate = config.framerate();
+        this.width = config.width;
+        builders = Arrays.asList(new ImageCrossFader(imageStore), new GenericBuilder(imageStore));
 
         // add audio and video streams
         writer.addVideoStream(videoStreamIndex, videoStreamId, width, height);
 
     }
-    BufferedImage previous = null;
 
     public void writeNextPacket(long clock, Plan buildPlan) {
         logger.debug("Clock ping: " + clock);
         while (clock >= nextFrameTime) {
-            boolean nextFrameTimeUpdated = false;
             logger.trace("Time to write packets at {}", clock);
             List<FrameRepresentation> frameRepresentations = buildPlan.whatToDoAt(nextFrameTime);
-            for (FrameRepresentation frameRepresentation : frameRepresentations) {
-                ImageRepresentation imageRep = imageStore.getNextImageRepresentation(frameRepresentation.referenceId());
-
-                if (imageRep != null || previous != null) {
-                    String imgid;
-                    BufferedImage theImage;
-                    if(imageRep != null) {
-                        imgid= String.valueOf(imageRep.frameRepresentation.frameNr);
-                        theImage = (BufferedImage) imageRep.image;
-                    } else {
-                        imgid = "UNKNOWN IMAGE DUE TO NULL";
-                        theImage = previous;
+            if(frameRepresentations.size() > 0) {
+                boolean frameSuccess = false;
+                for (ImageBuilder builder : builders) {
+                    if (!frameSuccess) {
+                        try {
+                            builder.build(buildPlan, frameRepresentations, nextFrameTime,
+                                    theImage -> writer.encodeVideo(videoStreamIndex, theImage, nextFrameTime, DEFAULT_TIME_UNIT));
+                            logger.info("Building succeded {}", builder);
+                            frameSuccess = true;
+                        } catch (NullPointerException e) {
+                            logger.error(e.getMessage(), e);
+                        } catch (Exception e) {
+                            //If building with builder fails
+                            logger.trace(e.getMessage(), e);
+                            logger.warn("Building failed {}", builder);
+                        }
                     }
-
-                    logger.debug("Flushing {}@image#{}\t{}/{} \t Clock:{} from from pipedream to video", frameRepresentation.referenceId(), imgid, frameRepresentation.frameNr + 1, frameRepresentation.numberOfFrames, nextFrameTime);
-                    frameRepresentation.use();
-                    //In some circumstances, one must reuse the previous image
-
-                    writer.encodeVideo(videoStreamIndex, theImage, nextFrameTime, DEFAULT_TIME_UNIT);
-                    previous = theImage;
-                } else {
-                    logger.error("OMG OMG!!! Imagerep was null after waiting 10 seconds!! - {} - {}/{} is this related to division rest error?" + frameRepresentation.referenceId(), frameRepresentation.frameNr, frameRepresentation.numberOfFrames);
                 }
-                nextFrameTime += frameRate / frameRepresentations.size();
-                nextFrameTimeUpdated = true;
             }
-            if(!nextFrameTimeUpdated) {
-                nextFrameTime += frameRate;
-            }
+            nextFrameTime += frameRate;
         }
     }
 }

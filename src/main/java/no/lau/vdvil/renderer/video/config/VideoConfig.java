@@ -12,7 +12,7 @@ public class VideoConfig implements Config {
     public final int width;
     public final int height;
     public final long framerate;
-    final ExtensionType extensionType;
+    final ExtensionType extension;
     long duration;
 
     /**
@@ -22,19 +22,19 @@ public class VideoConfig implements Config {
         this.width = width;
         this.height = height;
         this.framerate = framerate;
-        this.extensionType = ExtensionType.mp4;
+        this.extension = ExtensionType.mp4;
     }
 
-    public VideoConfig(int width, int height, long framerate, ExtensionType extensionType) {
+    public VideoConfig(int width, int height, long framerate, ExtensionType extension) {
         this.width = width;
         this.height = height;
         this.framerate = framerate;
-        this.extensionType = extensionType;
+        this.extension = extension;
     }
 
 
     public ExtensionType extensionType() {
-        return extensionType;
+        return extension;
     }
 
     public int framerate() {

@@ -3,20 +3,9 @@
 
     <groupId>no.lau.vdvil</groupId>
     <artifactId>video-renderer</artifactId>
-    <version>1.6.1-SNAPSHOT</version>
+    <version>1.8.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <parent>
-        <groupId>no.cantara.emi</groupId>
-        <artifactId>parent</artifactId>
-        <version>6</version>
-    </parent>
-
-    <scm>
-        <developerConnection>scm:git:ssh://git@github.com:StigLau/VideoRenderer.git</developerConnection>
-        <connection>scm:git:ssh://git@github.com:StigLau/VideoRenderer.git</connection>
-        <url>https://github.com/StigLau/VideoRenderer</url>
-  </scm>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -103,9 +92,9 @@
             <url>https://mvnrepo.cantara.no/content/repositories/releases/</url>
         </repository>
         <repository>
-            <id>cantara-snapshots</id>
-            <name>Cantara Snapshot Repository</name>
-            <url>https://mvnrepo.cantara.no/content/repositories/snapshots/</url>
+            <id>Kompo-releases</id>
+            <name>Cantara Release Repository</name>
+            <url>https://s3-eu-west-1.amazonaws.com/kompo-repo/releases/</url>
         </repository>
     </repositories>
     <distributionManagement>

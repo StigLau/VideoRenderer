@@ -5,6 +5,7 @@ import no.lau.vdvil.domain.MediaFile;
 import no.lau.vdvil.domain.VideoStillImageSegment;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.plan.ImageCollectable;
+import no.lau.vdvil.plan.Plan;
 import no.lau.vdvil.renderer.video.config.VideoConfig;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
 import no.lau.vdvil.renderer.video.creator.PipeDream;
@@ -26,6 +27,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.junit.Assert.assertEquals;
@@ -82,7 +85,7 @@ public class BuildVideoFromScratchImagesTest {
                 new TimeStampFixedImageSampleSegment("Seaside houses Panorama", 102000000, 107125000, 8),
                 new TimeStampFixedImageSampleSegment("Bergen movement", 107500000, 112750000, 8)
         );
-        fetchKompositionNorway.storageLocation= new MediaFile(downmixedOriginalVideo, 0f, -1f, "abc");
+        fetchKompositionNorway.storageLocation= new MediaFile(downmixedOriginalVideo, 0l, -1f, "abc");
 
         fetchKompositionSwing = new Komposition(128,
                 new TimeStampFixedImageSampleSegment("Red bridge", 2919583, 6047708, 8),
@@ -92,7 +95,7 @@ public class BuildVideoFromScratchImagesTest {
                 new TimeStampFixedImageSampleSegment("Smile girl, smile", 34034000, 34993292, 15),
                 new TimeStampFixedImageSampleSegment("Swing through bridge with mountain smile", 45128417, 46713333, 8)
         );
-        fetchKompositionSwing.storageLocation = new MediaFile(theSwingVideo, 0f, 120F, "abc123");
+        fetchKompositionSwing.storageLocation = new MediaFile(theSwingVideo, 0l, 120F, "abc123");
     }
 
     @Test
@@ -119,7 +122,7 @@ public class BuildVideoFromScratchImagesTest {
                 new VideoStillImageSegment("Smile girl, smile", 80, 8),
                 new VideoStillImageSegment("Swing out from bridge", 88, 12)
         ).filter(16, 16);
-        MediaFile mf = new MediaFile(new URL(result2), 0f, 128f, "194cab04161712a4f07d995d7736c347");
+        MediaFile mf = new MediaFile(new URL(result2), 0l, 128f, "194cab04161712a4f07d995d7736c347");
         buildKomposition.storageLocation = mf;
 
 
@@ -131,13 +134,16 @@ public class BuildVideoFromScratchImagesTest {
 
         KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition, sobotaMp3, 24);
 
-        ThreadedImageCollector collector = new ThreadedImageCollector(planner.collectPlans(), plan -> new WaitingVideoThumbnailsCollector(plan, imageStore));
-        new Thread(collector).start();
+        CollectorWrapper callback = plan -> new WaitingVideoThumbnailsCollector(plan, imageStore);
+        ExecutorService collector = Executors.newFixedThreadPool(1);
+        for (Plan plan : planner.collectPlans()) {
+            collector.execute(callback.callBack((ImageCollectable) plan));
+        }
         Thread.sleep(2000);
         CreateVideoFromScratchImages.createVideo(planner.buildPlan(), imageStore, new VideoConfig(1280, 720, Math.round(1000000/24)));
 
         logger.info("Storing file at {}", mf.fileName);
-        assertEquals(mf.checksum, md5Checksum(mf.fileName));
+        assertEquals(mf.checksums, md5Checksum(mf.fileName));
     }
 
     public String md5Checksum(URL url) throws IOException {
@@ -160,7 +166,7 @@ public class BuildVideoFromScratchImagesTest {
                 new VideoStillImageSegment("Dark lake", 16, 8)
         );
 
-        MediaFile mf = new MediaFile(new URL(result3), 0f, 128f, "0362c495e294bac76458ca56cdee20ee");
+        MediaFile mf = new MediaFile(new URL(result3), 0l, 128f, "0362c495e294bac76458ca56cdee20ee");
         buildKomposition.storageLocation = mf;
         KompositionPlanner planner = new KompositionPlanner(Collections.singletonList(fetchKompositionNorway), buildKomposition, sobotaMp3, 15);
         PipeDream<BufferedImage> imageStore = new PipeDream<>();
@@ -168,6 +174,6 @@ public class BuildVideoFromScratchImagesTest {
         new Thread(imageCollector).run();
         Thread.sleep(5000);
         CreateVideoFromScratchImages.createVideo(planner.buildPlan(), imageStore, config);
-        assertEquals(mf.checksum, md5Checksum(mf.fileName));
+        assertEquals(mf.checksums, md5Checksum(mf.fileName));
     }
 }

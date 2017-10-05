@@ -1,13 +1,16 @@
 package no.lau.vdvil.renderer.video;
 
 import com.xuggle.mediatool.PersistentWriter;
-import no.lau.vdvil.collector.KompositionPlanner;
-import no.lau.vdvil.collector.ThreadedImageCollector;
+import no.lau.vdvil.collector.*;
 import no.lau.vdvil.domain.MediaFile;
 import no.lau.vdvil.domain.StaticImagesSegment;
+import no.lau.vdvil.domain.TransitionSegment;
 import no.lau.vdvil.domain.VideoStillImageSegment;
 import no.lau.vdvil.domain.out.Komposition;
+import no.lau.vdvil.domain.utils.KompositionUtils;
+import no.lau.vdvil.plan.ImageCollectable;
 import no.lau.vdvil.plan.Plan;
+import no.lau.vdvil.plan.SuperPlan;
 import no.lau.vdvil.renderer.video.config.VideoConfig;
 import no.lau.vdvil.renderer.video.creator.ImageFileStore;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
@@ -23,11 +26,9 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -46,10 +47,13 @@ public class BuildVideoFromStaticImagesAndVideoTest {
     Komposition fetchKompositionStillImages;
     Komposition fetchKompositionStillImages2;
 
-    private String result3 = "file:///tmp/from_scratch_images_test_3.mp4";
+    private String result1 = "file:///tmp/from_scratch_images_test_1.mp4";
+    private String result3a = "file:///tmp/from_scratch_images_test_3a.mp4";
+    private String result3b = "file:///tmp/from_scratch_images_test_3b.mp4";
+    private String result3c = "file:///tmp/from_scratch_images_test_3c.mp4";
 
     //HighRez
-    VideoConfig config = new VideoConfig(1280, 720,DEFAULT_TIME_UNIT.convert(24, MILLISECONDS));
+    //VideoConfig config = new VideoConfig(1280, 720,DEFAULT_TIME_UNIT.convert(24, MILLISECONDS));
     private VideoConfig config2 = new VideoConfig(1280, 720, Math.round(1000000/24));
     //Low Rez
     //Config config = new Config(320, 200,DEFAULT_TIME_UNIT.convert(15, MILLISECONDS));
@@ -79,7 +83,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new StaticImagesSegment("Still Image Fun 2",
                         getClass().getClassLoader().getResource("images/Slide_Blue_mountain_top_lake2.png").toString()
                 ));
-        fetchKompositionStillImages.storageLocation = new MediaFile(new URL("file://tmp/kompost"), 0f, -1f, "abc");
+        fetchKompositionStillImages.storageLocation = new MediaFile(new URL("file://tmp/kompost"), 0l, -1f, "abc");
 
         fetchKompositionNorway = new Komposition(128,
                 new TimeStampFixedImageSampleSegment("Purple Mountains Clouds", 7541667, 19750000, 8),
@@ -97,7 +101,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new TimeStampFixedImageSampleSegment("Seaside houses Panorama", 102000000, 107125000, 8),
                 new TimeStampFixedImageSampleSegment("Bergen movement", 107500000, 112750000, 8)
         );
-        fetchKompositionNorway.storageLocation= new MediaFile(downmixedOriginalVideo, 0f, -1f, "abc");
+        fetchKompositionNorway.storageLocation= new MediaFile(downmixedOriginalVideo, 0l, -1f, "abc");
 
         fetchKompositionSwing = new Komposition(128,
                 new TimeStampFixedImageSampleSegment("Red bridge", 2919583, 6047708, 8),
@@ -107,7 +111,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new TimeStampFixedImageSampleSegment("Smile girl, smile", 34034000, 34993292, 15),
                 new TimeStampFixedImageSampleSegment("Swing through bridge with mountain smile", 45128417, 46713333, 8)
         );
-        fetchKompositionSwing.storageLocation = new MediaFile(theSwingVideo, 0f, 120F, "abc123");
+        fetchKompositionSwing.storageLocation = new MediaFile(theSwingVideo, 0l, 120F, "abc123");
     }
 
     @Test
@@ -119,7 +123,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new VideoStillImageSegment("Purple Mountains Clouds", 20, 12)
 
         );//.filter(16, 16);
-        MediaFile mf = new MediaFile(new URL(result3), 0f, 128f, "7ea06f7a19fea1dfcefef1b6b30730b4");
+        MediaFile mf = new MediaFile(new URL(result1), 0l, 128f, "57d546b5bf3356503b202a698f9a4441");
         buildKomposition.storageLocation = mf;
 
 
@@ -138,7 +142,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
         CreateVideoFromScratchImages.createVideo(planner.buildPlan(), pipeDream, config2);
 
         logger.info("Storing file at {}", mf.fileName);
-        assertEquals(mf.checksum, md5Checksum(mf.fileName));
+        assertEquals(mf.checksums, md5Checksum(mf.fileName));
     }
 
     @Test
@@ -148,8 +152,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new VideoStillImageSegment("Besseggen", 0, 8)
                 , new VideoStillImageSegment("Purple Mountains Clouds", 8, 16)
         );
-        MediaFile mf = new MediaFile(new URL(result3), 0f, 128f, "7ea06f7a19fea1dfcefef1b6b30730b4");
-        buildKomposition.storageLocation = mf;
+        buildKomposition.storageLocation = new MediaFile(new URL(result3a), 0l, 128f, "7ea06f7a19fea1dfcefef1b6b30730b4");
 
         List<Komposition> fetchKompositions = new ArrayList<>();
         fetchKompositions.add(fetchKompositionStillImages);
@@ -160,8 +163,6 @@ public class BuildVideoFromStaticImagesAndVideoTest {
         ImageStore<BufferedImage> pipeDream = new ImageFileStore<>(buildKomposition, "/tmp/snaps");
         new ThreadedImageCollector(planner.collectPlans(),
                 plan -> plan.collector(pipeDream, -1)).run();
-        logger.info("Storing file at {}", mf.fileName);
-        assertEquals(mf.checksum, md5Checksum(mf.fileName));
     }
 
 
@@ -172,8 +173,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new VideoStillImageSegment("Besseggen", 0, 8)
                 , new VideoStillImageSegment("Purple Mountains Clouds", 8, 16)
         );
-        MediaFile mf = new MediaFile(new URL(result3), 0f, 128f, "7ea06f7a19fea1dfcefef1b6b30730b4");
-        buildKomposition.storageLocation = mf;
+        buildKomposition.storageLocation = new MediaFile(new URL(result3b), 0l, 128f, "7ea06f7a19fea1dfcefef1b6b30730b4");
 
         List<Komposition> fetchKompositions = new ArrayList<>();
         fetchKompositions.add(fetchKompositionStillImages);
@@ -187,13 +187,76 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                     plan -> plan.collector(pipeDream, -1))).start();
         }
         CreateVideoFromScratchImages.createVideo(planner.buildPlan(), pipeDream, config2, PersistentWriter.create("/tmp/komposttest.mp4"), false);
-        logger.info("Storing file at {}", mf.fileName);
-        assertEquals(mf.checksum, md5Checksum(mf.fileName));
         pipeDream.emptyCache();
     }
 
+    @Test
+    public void countPlanningResult() throws IOException, InterruptedException {
+        VideoStillImageSegment first = new VideoStillImageSegment("Besseggen", 0, 12);
+        VideoStillImageSegment second = new VideoStillImageSegment("Purple Mountains Clouds", 8, 12);
+        Komposition buildKomposition = new Komposition(124,
+                new TransitionSegment(first, second, 8, 4), first, second);
+        List<Komposition> fetchKompositions = new ArrayList<>();
+        fetchKompositions.add(fetchKompositionStillImages);
+        fetchKompositions.add(fetchKompositionStillImages2);
+        fetchKompositions.add(fetchKompositionNorway);
 
-    public String md5Checksum(URL url) throws IOException {
+        KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition, sobotaMp3, 24);
+        Map<Long, List<FrameRepresentation>> representations = new TreeMap<>();
+        for (FrameRepresentation rep : ((SuperPlan) planner.buildPlan()).getFrameRepresentations()) {
+            if(representations.containsKey(rep.timestamp)) {
+                representations.get(rep.timestamp).add(rep);
+            } else {
+                List<FrameRepresentation> newList  = new ArrayList<>();
+                newList.add(rep);
+                representations.put(rep.timestamp, newList);
+            }
+        }
+        assertEquals(232, representations.size());
+        assertEquals(1, representations.get(3833272L).size());
+        assertEquals(3, representations.get(3874938L).size());
+        assertEquals(3, representations.get(5749908L).size());
+        assertEquals(1, representations.get(5791574L).size());
+    }
+
+    @Test
+    public void segmentTransitions() throws IOException, InterruptedException {
+        VideoStillImageSegment first = new VideoStillImageSegment("Besseggen", 0, 12);
+        VideoStillImageSegment second = new VideoStillImageSegment("Purple Mountains Clouds", 8, 12);
+        VideoStillImageSegment third = new VideoStillImageSegment("Besseggen", 16, 12);
+        Komposition buildKomposition =  new Komposition(124,
+                new TransitionSegment(first, second, 8, 4),
+                new TransitionSegment(second, third, 16, 4),
+                first,
+                second,
+                third);
+        MediaFile mf = new MediaFile(new URL(result3c), 0l, 128f, "2e2b598f9f3f6a82617dc51f0747e615");
+        buildKomposition.storageLocation = mf;
+
+        PipeDream<BufferedImage> pipeDream = new PipeDream<>(30, 250, 500, 10);
+        List<Komposition> fetchKompositions = new ArrayList<>();
+        fetchKompositions.add(fetchKompositionStillImages);
+        fetchKompositions.add(fetchKompositionStillImages2);
+        fetchKompositions.add(fetchKompositionNorway);
+
+        KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition, sobotaMp3, 24);
+
+
+        KompositionUtils.printImageRepresentationImages(planner);
+
+        CollectorWrapper callback = plan -> plan.collector(pipeDream, config2.framerate());
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        for (Plan plan : planner.collectPlans()) {
+            executor.execute(callback.callBack((ImageCollectable) plan));
+        }
+        Thread.sleep(1000);
+        CreateVideoFromScratchImages.createVideo(planner.buildPlan(), pipeDream, config2);
+
+        logger.info("Storing file at {}", mf.fileName);
+        assertEquals(mf.checksums, md5Checksum(mf.fileName));
+    }
+
+    String md5Checksum(URL url) throws IOException {
         return DigestUtils.md5Hex(url.openStream());
     }
 }
