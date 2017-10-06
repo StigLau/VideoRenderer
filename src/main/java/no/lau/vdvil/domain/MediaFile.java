@@ -7,7 +7,7 @@ import java.net.URL;
  */
 public class MediaFile {
     public String id;
-    public final URL fileName;
+    public URL fileName;
     public final Long startingOffset;
     public final String checksums;
     public final Float bpm;

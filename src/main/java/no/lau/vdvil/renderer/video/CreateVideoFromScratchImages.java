@@ -37,7 +37,7 @@ public class CreateVideoFromScratchImages {
      */
     public static void createVideo(Plan buildPlan, ImageStore<BufferedImage> imageStore, VideoConfig config) {
         try {
-            Thread.sleep(000);//Sleep to avoid hanging bug when audio is available in cache!
+            Thread.sleep(5000);//Sleep to avoid hanging bug when audio is available in cache!
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
