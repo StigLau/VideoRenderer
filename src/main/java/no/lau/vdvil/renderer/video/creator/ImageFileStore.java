@@ -34,11 +34,7 @@ public class ImageFileStore<TYPE> implements ImageStore<TYPE> {
     public ImageFileStore(Komposition komposition, String outputFilePrefix) {
         this.komposition = komposition;
         this.outputFilePrefix = outputFilePrefix;
-
-        File destinationFolder = new File(outputFilePrefix);
-        if(!destinationFolder.exists() && !destinationFolder.mkdirs()) {
-            throw new RuntimeException("Could not create " + outputFilePrefix);
-        }
+        ensureFolderExists(outputFilePrefix);
     }
 
     public List<TYPE> getImageAt(Long timeStamp, Komposition komposition) {
@@ -60,6 +56,7 @@ public class ImageFileStore<TYPE> implements ImageStore<TYPE> {
 
     public void store(TYPE image, Long timeStamp, FrameRepresentation frameRepresentation) {
         String segmentId = frameRepresentation.referenceId();
+        ensureFolderExists(outputFilePrefix);
         String outputFilename = outputFilePrefix + "/" + frameRepresentation.getSegmentShortId() + "_" + timeStamp + ".png";
         if(image == null) {
             logger.debug("No image to write at {}", timeStamp);
@@ -139,5 +136,12 @@ public class ImageFileStore<TYPE> implements ImageStore<TYPE> {
         }
         logger.debug("Did not find image at timestamp {}", timeStamp);
         return null;
+    }
+
+    private void ensureFolderExists(String storageFileFolder) {
+        File destinationFolder = new File(storageFileFolder);
+        if(!destinationFolder.exists() && !destinationFolder.mkdirs()) {
+            throw new RuntimeException("Could not create " + storageFileFolder);
+        }
     }
 }
