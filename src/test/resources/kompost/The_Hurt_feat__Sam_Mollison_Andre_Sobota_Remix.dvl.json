@@ -1,0 +1,59 @@
+{
+  "_id": "The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix",
+  "type": "",
+  "bpm": 125,
+  "_rev": "3-a3d358f27bdd2f07afb365a0e5aca71d",
+  "beatpattern": {
+    "frombeat": 0,
+    "tobeat": 0,
+    "masterbpm": 0
+  },
+  "segments": [
+    {
+      "id": "Outro",
+      "start": 640,
+      "duration": 128,
+      "end": 768
+    },
+    {
+      "id": "Refrain2",
+      "start": 512,
+      "duration": 128,
+      "end": 640
+    },
+    {
+      "id": "Verse2",
+      "start": 384,
+      "duration": 128,
+      "end": 512
+    },
+    {
+      "id": "Verse1",
+      "start": 128,
+      "duration": 128,
+      "end": 256
+    },
+    {
+      "id": "Refrain1",
+      "start": 256,
+      "duration": 102,
+      "end": 358
+    },
+    {
+      "id": "Intro",
+      "start": 0,
+      "duration": 128,
+      "end": 128
+    }
+  ],
+  "sources": [
+    {
+      "id": "The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix",
+      "url": "https://s3.amazonaws.com/dvl-test-music/music/The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix.mp3",
+      "startingOffset": 0,
+      "checksums": "eb20387d0f0f26f1c6381c3270aa3873",
+      "extension": "mp3",
+      "mediatype": "audio"
+    }
+  ]
+}
