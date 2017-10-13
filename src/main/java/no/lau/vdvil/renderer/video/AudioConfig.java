@@ -23,7 +23,7 @@ public class AudioConfig implements Config {
         this.framerate = framerate;
     }
 
-    public ExtensionType extensionType() {
+    public ExtensionType extension() {
         return extensionType;
     }
 

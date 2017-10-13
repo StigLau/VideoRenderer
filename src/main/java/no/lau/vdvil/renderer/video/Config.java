@@ -5,7 +5,7 @@ package no.lau.vdvil.renderer.video;
  */
 public interface Config {
 
-    ExtensionType extensionType();
+    ExtensionType extension();
     int framerate();
     long duration();
 }

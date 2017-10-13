@@ -33,7 +33,7 @@ public class VideoConfig implements Config {
     }
 
 
-    public ExtensionType extensionType() {
+    public ExtensionType extension() {
         return extension;
     }
 
