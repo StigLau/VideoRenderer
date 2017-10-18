@@ -79,11 +79,11 @@ public class KompositionUtils {
         List<BufferedImage> buff = new ArrayList<>();
         for (int frame = 0; ; frame++) {
             long timestamp = findTimeStamp(frame, frameRate, komposition);
-            System.out.println("Timestamp: " + timestamp);
+            logger.info("Timestamp: " + timestamp);
 
             List<BufferedImage> images = imageStore.getImageAt(timestamp, komposition);
             if(!images.isEmpty()) {
-                System.out.println("Found images: " + images.size());
+                logger.info("Found images: " + images.size());
                 buff.addAll(images);
             }
             if(isFinishedProcessing(komposition.segments, findTimeStamp(frame, frameRate, komposition), komposition.bpm)) {

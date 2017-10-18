@@ -12,10 +12,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import static no.lau.vdvil.domain.utils.KompositionUtils.durationMillis;
 import static no.lau.vdvil.domain.utils.KompositionUtils.fromMillis;
@@ -42,11 +39,11 @@ public class ImageFileStore<TYPE> implements ImageStore<TYPE> {
                 .filter(instruction -> {
                     long start = fromMillis(instruction, komposition);
                     long end = fromMillis(instruction, komposition) + durationMillis(instruction, komposition);
-                    System.out.println("Timestamp - Komposition Starts at " + start + " : " + end );
+                    logger.info("Timestamp - Komposition Starts at {} : {}", start, end );
                     return start <= timeStamp && end >= timeStamp;
                 })
                 .map(instruction -> extractImage(timeStamp, instruction))
-                .filter(instance -> instance != null)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 

@@ -2,10 +2,14 @@ package no.lau.vdvil.renderer.video.creator;
 
 import com.xuggle.mediatool.MediaToolAdapter;
 import com.xuggle.mediatool.event.IAudioSamplesEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.ShortBuffer;
 
 class AudioModifyerMediaTool extends MediaToolAdapter {
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     // the amount to adjust the volume by
     private double mVolume;
@@ -16,7 +20,7 @@ class AudioModifyerMediaTool extends MediaToolAdapter {
 
     @Override
     public void onAudioSamples(IAudioSamplesEvent event) {
-        System.out.println("event = " + event);
+        logger.info("event = " + event);
         // get the raw audio bytes and adjust it's value
         ShortBuffer buffer = event.getAudioSamples().getByteBuffer().asShortBuffer();
 

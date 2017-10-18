@@ -48,7 +48,7 @@ public class AudioVideoConcatenator {
                 // audio packet
                 IAudioSamples samples = IAudioSamples.make(512, coderAudio.getChannels(), IAudioSamples.Format.FMT_S32);
                 coderAudio.decodeAudio(samples, packetaudio, 0);
-                System.out.println("samples.getPts() = " + samples.getPts());
+                log.info("samples.getPts() = " + samples.getPts());
                 if (samples.isComplete())
                     mWriter.encodeAudio(1, samples);
             }

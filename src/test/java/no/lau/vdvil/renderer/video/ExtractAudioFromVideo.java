@@ -57,7 +57,6 @@ public class ExtractAudioFromVideo {
                         mediaWriter.addAudioStream(0, 0, myChannels, mySampleRate);
                     }
                     mediaWriter.encodeAudio(0, event.getAudioSamples());
-                    //System.out.println(event.getTimeStamp() / 1000);
                 }
             }
 
