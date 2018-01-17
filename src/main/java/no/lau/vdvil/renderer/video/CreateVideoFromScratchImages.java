@@ -17,6 +17,10 @@ import no.lau.vdvil.renderer.video.builder.ImageCrossFader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
 import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
@@ -36,10 +40,14 @@ public class CreateVideoFromScratchImages {
      * Standard instantioator
      */
     public static void createVideo(Plan buildPlan, ImageStore<BufferedImage> imageStore, VideoConfig config) {
+        Path parentDir = Paths.get(buildPlan.ioFile()).getParent();
         try {
+            Files.createDirectories(parentDir); //Create non-existant mature parent folder
             Thread.sleep(5000);//Sleep to avoid hanging bug when audio is available in cache!
         } catch (InterruptedException e) {
             e.printStackTrace();
+        } catch (IOException e) {
+            log.error("Could not create directory {}", parentDir, e);
         }
         createVideo(buildPlan, imageStore, config, ToolFactory.makeWriter(buildPlan.ioFile()), true);
     }
