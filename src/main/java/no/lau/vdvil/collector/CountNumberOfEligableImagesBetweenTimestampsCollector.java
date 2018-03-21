@@ -8,12 +8,17 @@ import com.xuggle.xuggler.IContainer;
 import no.lau.vdvil.renderer.video.VideoExtractionFinished;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.nio.file.Path;
 
 public class CountNumberOfEligableImagesBetweenTimestampsCollector implements ImageCollector {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
     private final String mediaFile;
     ImageCounter counter;
+
+    public CountNumberOfEligableImagesBetweenTimestampsCollector(long startMs, long endMs, Path mediaFile) {
+        this(startMs, endMs, mediaFile.toString());
+    }
 
     public CountNumberOfEligableImagesBetweenTimestampsCollector(long startMs, long endMs, String mediaFile) {
         this.mediaFile = mediaFile;

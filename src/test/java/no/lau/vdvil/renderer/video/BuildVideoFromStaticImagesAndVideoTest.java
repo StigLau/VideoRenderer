@@ -123,7 +123,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new VideoStillImageSegment("Purple Mountains Clouds", 20, 12)
 
         );//.filter(16, 16);
-        MediaFile mf = new MediaFile(new URL(result1), 0l, 128f, "57d546b5bf3356503b202a698f9a4441");
+        MediaFile mf = new MediaFile(new URL(result1), 0l, 128f, "2bb5bbd66a59e6eda2ee6bc3efb7c3b7");
         buildKomposition.storageLocation = mf;
 
 
@@ -230,7 +230,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 first,
                 second,
                 third);
-        MediaFile mf = new MediaFile(new URL(result3c), 0l, 128f, "2e2b598f9f3f6a82617dc51f0747e615");
+        MediaFile mf = new MediaFile(new URL(result3c), 0l, 128f, "07895f679b71a180c099979df84ab882");
         buildKomposition.storageLocation = mf;
 
         PipeDream<BufferedImage> pipeDream = new PipeDream<>(30, 250, 500, 10);

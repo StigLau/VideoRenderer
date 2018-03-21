@@ -153,9 +153,11 @@ class VideoAdapter {
                         } catch (Exception e) {
                             //If building with builder fails
                             logger.trace(e.getMessage(), e);
-                            logger.warn("Building failed {}", builder);
                         }
                     }
+                }
+                if(!frameSuccess && frameRepresentations.size() <= 1) {
+                    logger.warn("Building failed {} - {}", frameRepresentations.get(0).referenceId(), nextFrameTime);
                 }
             }
             nextFrameTime += frameRate;

@@ -6,6 +6,7 @@ import com.xuggle.xuggler.IStream;
 import com.xuggle.xuggler.IStreamCoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.nio.file.Path;
 
 public class VideoInfo {
 	
@@ -13,8 +14,12 @@ public class VideoInfo {
     
     private static Logger logger = LoggerFactory.getLogger(VideoInfo.class);
 
+	public static IContainer getVideoProperties(Path asFilePath) {
+	    return getVideoProperties(asFilePath.toString());
+    }
+
 	public static IContainer getVideoProperties(String filename) {
-		
+
 		// first we create a Xuggler container object
 		IContainer container = IContainer.make();
 		
