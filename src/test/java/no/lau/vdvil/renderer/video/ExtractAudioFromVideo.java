@@ -8,17 +8,23 @@ import com.xuggle.mediatool.event.IOpenCoderEvent;
 import com.xuggle.xuggler.ICodec;
 import com.xuggle.xuggler.IContainer;
 import com.xuggle.xuggler.IStreamCoder;
+import java.io.IOException;
+import java.nio.file.Path;
+import static no.lau.vdvil.domain.utils.KompositionUtils.fetchRemoteFile;
 
 /**
  * copied from the netz
  */
 public class ExtractAudioFromVideo {
-    public static void main(String[] args) {
-        String filename = "/tmp/kompost/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time-Lapse_Adventure.mp4";
-        IContainer props = VideoInfo.getVideoProperties(filename);
+
+    static String norwayRemoteUrl = "https://s3.amazonaws.com/dvl-test-music/test-data/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time-Lapse_Adventure.mp4";
+
+    public static void main(String[] args) throws IOException {
+        Path testVideoNorwayTimeLapseLocalStorage = fetchRemoteFile("/tmp/komposttest/", norwayRemoteUrl);
+        IContainer props = VideoInfo.getVideoProperties(testVideoNorwayTimeLapseLocalStorage);
         VideoInfo.printProperties(props);
 
-        convert(filename, "/tmp/jalla.mp3");
+        convert(testVideoNorwayTimeLapseLocalStorage.toString(), "/tmp/jalla.mp3");
     }
 
     public static void convert(String from, final String to) {

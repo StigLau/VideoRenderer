@@ -23,12 +23,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import static no.lau.vdvil.domain.utils.KompositionUtils.fetchRemoteFile;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -52,6 +52,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
     private String result3b = "file:///tmp/from_scratch_images_test_3b.mp4";
     private String result3c = "file:///tmp/from_scratch_images_test_3c.mp4";
 
+    String norwayRemoteUrl = "https://s3.amazonaws.com/dvl-test-music/test-data/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time-Lapse_Adventure.mp4";
     //HighRez
     //VideoConfig config = new VideoConfig(1280, 720,DEFAULT_TIME_UNIT.convert(24, MILLISECONDS));
     private VideoConfig config2 = new VideoConfig(1280, 720, Math.round(1000000/24));
@@ -60,12 +61,12 @@ public class BuildVideoFromStaticImagesAndVideoTest {
     Logger logger = LoggerFactory.getLogger(BuildVideoFromStaticImagesAndVideoTest.class);
 
     @Before
-    public void setUp() throws MalformedURLException {
+    public void setUp() throws IOException {
         //Low Rez
         //downmixedOriginalVideo = Paths.get("/tmp/320_NORWAY-A_Time-Lapse_Adventure.mp4").toUri().toURL();
         //theSwingVideo = Paths.get("/tmp/320_Worlds_Largest_Rope_Swing.mp4").toUri().toURL();
         //HighRez
-        downmixedOriginalVideo = Paths.get("/tmp/kompost/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time-Lapse_Adventure.mp4").toUri().toURL();
+        downmixedOriginalVideo = fetchRemoteFile("/tmp/komposttest/", norwayRemoteUrl).toUri().toURL();
         theSwingVideo = Paths.get("/tmp/kompost/Worlds_Largest_Rope_Swing/Worlds_Largest_Rope_Swing.mp4").toUri().toURL();
 
         snapshotFileStorage = Paths.get("/tmp/snaps/CLMD-The_Stockholm_Syndrome_320/").toUri().toURL();
