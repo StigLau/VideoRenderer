@@ -23,6 +23,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,6 +32,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static no.lau.vdvil.renderer.video.TestData.fetch;
+import static no.lau.vdvil.renderer.video.TestData.norwayRemoteUrl;
+import static no.lau.vdvil.renderer.video.TestData.sobotaMp3RemoteUrl;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -38,11 +42,11 @@ import static org.junit.Assert.assertEquals;
  */
 public class BuildVideoFromScratchImagesTest {
 
-    URL downmixedOriginalVideo;
+    Path downmixedOriginalVideo;
     URL theSwingVideo;
     URL snapshotFileStorage;
 
-    URL sobotaMp3;
+    Path sobotaMp3;
 
     Komposition fetchKompositionNorway;
     Komposition fetchKompositionSwing;
@@ -62,12 +66,12 @@ public class BuildVideoFromScratchImagesTest {
         //Low Rez
         //downmixedOriginalVideo = Paths.get("/tmp/320_NORWAY-A_Time-Lapse_Adventure.mp4").toUri().toURL();
         //theSwingVideo = Paths.get("/tmp/320_Worlds_Largest_Rope_Swing.mp4").toUri().toURL();
+        downmixedOriginalVideo = fetch(norwayRemoteUrl);
         //HighRez
-        downmixedOriginalVideo = Paths.get("/tmp/kompost/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time-Lapse_Adventure.mp4").toUri().toURL();
         theSwingVideo = Paths.get("/tmp/kompost/Worlds_Largest_Rope_Swing/Worlds_Largest_Rope_Swing.mp4").toUri().toURL();
 
         snapshotFileStorage = Paths.get("/tmp/snaps/CLMD-The_Stockholm_Syndrome_320/").toUri().toURL();
-        sobotaMp3 = Paths.get("/tmp/kompost/The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix/The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix.mp3").toUri().toURL();
+        sobotaMp3 = fetch(sobotaMp3RemoteUrl);
 
         fetchKompositionNorway = new Komposition(128,
                 new TimeStampFixedImageSampleSegment("Purple Mountains Clouds", 7541667, 19750000, 8),
@@ -85,7 +89,7 @@ public class BuildVideoFromScratchImagesTest {
                 new TimeStampFixedImageSampleSegment("Seaside houses Panorama", 102000000, 107125000, 8),
                 new TimeStampFixedImageSampleSegment("Bergen movement", 107500000, 112750000, 8)
         );
-        fetchKompositionNorway.storageLocation= new MediaFile(downmixedOriginalVideo, 0l, -1f, "abc");
+        fetchKompositionNorway.storageLocation= new MediaFile(downmixedOriginalVideo.toUri().toURL(), 0l, -1f, "abc");
 
         fetchKompositionSwing = new Komposition(128,
                 new TimeStampFixedImageSampleSegment("Red bridge", 2919583, 6047708, 8),
@@ -132,7 +136,7 @@ public class BuildVideoFromScratchImagesTest {
         fetchKompositions.add(fetchKompositionNorway);
         fetchKompositions.add(fetchKompositionSwing);
 
-        KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition, sobotaMp3, 24);
+        KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition, sobotaMp3.toUri().toURL(), 24);
 
         CollectorWrapper callback = plan -> new WaitingVideoThumbnailsCollector(plan, imageStore);
         ExecutorService collector = Executors.newFixedThreadPool(1);
@@ -168,7 +172,7 @@ public class BuildVideoFromScratchImagesTest {
 
         MediaFile mf = new MediaFile(new URL(result3), 0l, 128f, "0362c495e294bac76458ca56cdee20ee");
         buildKomposition.storageLocation = mf;
-        KompositionPlanner planner = new KompositionPlanner(Collections.singletonList(fetchKompositionNorway), buildKomposition, sobotaMp3, 15);
+        KompositionPlanner planner = new KompositionPlanner(Collections.singletonList(fetchKompositionNorway), buildKomposition, sobotaMp3.toUri().toURL(), 15);
         PipeDream<BufferedImage> imageStore = new PipeDream<>();
         ThreadedImageCollector imageCollector = new ThreadedImageCollector(planner.collectPlans(), item -> new WaitingVideoThumbnailsCollector(item, imageStore));
         new Thread(imageCollector).run();

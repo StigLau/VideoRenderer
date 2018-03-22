@@ -10,17 +10,15 @@ import com.xuggle.xuggler.IContainer;
 import com.xuggle.xuggler.IStreamCoder;
 import java.io.IOException;
 import java.nio.file.Path;
-import static no.lau.vdvil.domain.utils.KompositionUtils.fetchRemoteFile;
+import static no.lau.vdvil.renderer.video.TestData.fetch;
+import static no.lau.vdvil.renderer.video.TestData.norwayRemoteUrl;
 
 /**
  * copied from the netz
  */
 public class ExtractAudioFromVideo {
-
-    static String norwayRemoteUrl = "https://s3.amazonaws.com/dvl-test-music/test-data/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time-Lapse_Adventure.mp4";
-
     public static void main(String[] args) throws IOException {
-        Path testVideoNorwayTimeLapseLocalStorage = fetchRemoteFile("/tmp/komposttest/", norwayRemoteUrl);
+        Path testVideoNorwayTimeLapseLocalStorage = fetch(norwayRemoteUrl);
         IContainer props = VideoInfo.getVideoProperties(testVideoNorwayTimeLapseLocalStorage);
         VideoInfo.printProperties(props);
 

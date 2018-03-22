@@ -28,7 +28,9 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import static no.lau.vdvil.domain.utils.KompositionUtils.fetchRemoteFile;
+import static no.lau.vdvil.renderer.video.TestData.fetch;
+import static no.lau.vdvil.renderer.video.TestData.norwayRemoteUrl;
+import static no.lau.vdvil.renderer.video.TestData.sobotaMp3RemoteUrl;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -52,7 +54,6 @@ public class BuildVideoFromStaticImagesAndVideoTest {
     private String result3b = "file:///tmp/from_scratch_images_test_3b.mp4";
     private String result3c = "file:///tmp/from_scratch_images_test_3c.mp4";
 
-    String norwayRemoteUrl = "https://s3.amazonaws.com/dvl-test-music/test-data/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time-Lapse_Adventure.mp4";
     //HighRez
     //VideoConfig config = new VideoConfig(1280, 720,DEFAULT_TIME_UNIT.convert(24, MILLISECONDS));
     private VideoConfig config2 = new VideoConfig(1280, 720, Math.round(1000000/24));
@@ -66,11 +67,11 @@ public class BuildVideoFromStaticImagesAndVideoTest {
         //downmixedOriginalVideo = Paths.get("/tmp/320_NORWAY-A_Time-Lapse_Adventure.mp4").toUri().toURL();
         //theSwingVideo = Paths.get("/tmp/320_Worlds_Largest_Rope_Swing.mp4").toUri().toURL();
         //HighRez
-        downmixedOriginalVideo = fetchRemoteFile("/tmp/komposttest/", norwayRemoteUrl).toUri().toURL();
+        downmixedOriginalVideo = fetch(norwayRemoteUrl).toUri().toURL();
         theSwingVideo = Paths.get("/tmp/kompost/Worlds_Largest_Rope_Swing/Worlds_Largest_Rope_Swing.mp4").toUri().toURL();
 
         snapshotFileStorage = Paths.get("/tmp/snaps/CLMD-The_Stockholm_Syndrome_320/").toUri().toURL();
-        sobotaMp3 = Paths.get("/tmp/kompost/The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix/The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix.mp3").toUri().toURL();
+        sobotaMp3 = fetch(sobotaMp3RemoteUrl).toUri().toURL();
 
 
         fetchKompositionStillImages = new Komposition(128,

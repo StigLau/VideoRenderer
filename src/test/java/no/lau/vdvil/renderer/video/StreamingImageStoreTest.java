@@ -16,11 +16,13 @@ import org.junit.Ignore;
 import org.junit.Test;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import static no.lau.vdvil.renderer.video.TestData.fetch;
+import static no.lau.vdvil.renderer.video.TestData.norwayRemoteUrl;
+import static no.lau.vdvil.renderer.video.TestData.sobotaMp3RemoteUrl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -38,12 +40,12 @@ public class StreamingImageStoreTest {
     MediaFile resultingMediaFile;
 
     @Before
-    public void setUp() throws MalformedURLException {
-        downmixedOriginalVideo = Paths.get("/tmp/kompost/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time-Lapse_Adventure.mp4").toUri().toURL();
+    public void setUp() throws IOException {
+        downmixedOriginalVideo = fetch(norwayRemoteUrl).toUri().toURL();
         theSwingVideo = Paths.get("/tmp/kompost/Worlds_Largest_Rope_Swing/Worlds_Largest_Rope_Swing.mp4").toUri().toURL();
         result4 = Paths.get("/tmp/from_scratch_images_test_v4.mp4").toUri().toURL();
         strippedResult = Paths.get("/tmp/streamingImagesStrippedResult.mp4").toUri().toURL();
-        sobotaMp3 = Paths.get("/tmp/kompost/The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix/The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix.mp3").toUri().toURL();
+        sobotaMp3 = fetch(sobotaMp3RemoteUrl).toUri().toURL();
 
         Komposition fetchKompositionNorway = new Komposition(128,
                 new TimeStampFixedImageSampleSegment("Purple Mountains Clouds", 7541667, 19750000, 8),
@@ -116,7 +118,7 @@ public class StreamingImageStoreTest {
     }
 
     @Test
-    @Ignore //Test often fails!!
+    //@Ignore //Test often fails!!
     public void testStreamingFromInVideoSource() throws InterruptedException, IOException {
         PipeDream<BufferedImage> imageStore = new PipeDream<>(200, 5000, 1000, 10);
         ThreadedImageCollector collector = new ThreadedImageCollector(planner.collectPlans(), plan -> new WaitingVideoThumbnailsCollector(plan, imageStore));
@@ -127,7 +129,7 @@ public class StreamingImageStoreTest {
         CreateVideoFromScratchImages.createVideo(planner.buildPlan(),imageStore,new VideoConfig(480, 260, 6000));
         assertEquals(372, ((SuperPlan)planner.buildPlan()).getFrameRepresentations().stream().filter(frame -> frame.used).count());
 
-        assertEquals(1, ((SuperPlan) planner.collectPlans().get(0)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
+        assertEquals(258, ((SuperPlan) planner.collectPlans().get(0)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
         /*
         assertEquals(258, ((SuperPlan) planner.collectPlans().get(1)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
         assertEquals(258, ((SuperPlan) planner.collectPlans().get(2)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
@@ -137,7 +139,7 @@ public class StreamingImageStoreTest {
         assertEquals(384, ((SuperPlan) planner.collectPlans().get(6)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
         assertEquals(96, ((SuperPlan) planner.collectPlans().get(7)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
         */
-        assertEquals("c4a19e060441a17351abfd9dc7e469a4", md5Checksum(resultingMediaFile.fileName)); //Note something wrong with the result - it doesnt move!!?!
+        assertEquals("663da0cfbb7e0fe98300cbbb07bdd6b3", md5Checksum(resultingMediaFile.fileName)); //Note something wrong with the result - it doesnt move!!?!
     }
 
     @Test
