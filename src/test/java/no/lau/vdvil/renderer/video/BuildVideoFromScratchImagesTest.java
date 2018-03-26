@@ -103,7 +103,6 @@ public class BuildVideoFromScratchImagesTest {
     }
 
     @Test
-    @Ignore
     public void extractImagesFromNorwayVideo() throws IOException, InterruptedException {
         Komposition buildKomposition =  new Komposition(124,
                 new VideoStillImageSegment("Dark lake", 0, 4),
@@ -126,7 +125,7 @@ public class BuildVideoFromScratchImagesTest {
                 new VideoStillImageSegment("Smile girl, smile", 80, 8),
                 new VideoStillImageSegment("Swing out from bridge", 88, 12)
         ).filter(16, 16);
-        MediaFile mf = new MediaFile(new URL(result2), 0l, 128f, "194cab04161712a4f07d995d7736c347");
+        MediaFile mf = new MediaFile(new URL(result2), 0l, 128f, "7aa709f7caff0446a4a9aa2865f4efd2");
         buildKomposition.storageLocation = mf;
 
 
