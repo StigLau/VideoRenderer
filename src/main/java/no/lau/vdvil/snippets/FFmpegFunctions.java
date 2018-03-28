@@ -19,7 +19,7 @@ public class FFmpegFunctions {
 
     private static Logger logger = LoggerFactory.getLogger(FFmpegFunctions.class);
 
-    static String performFFMPEG(String command) throws IOException {
+    public static String performFFMPEG(String command) throws IOException {
         //Make sure destination folder has been created!
         logger.info("Running command: {}", command);
 

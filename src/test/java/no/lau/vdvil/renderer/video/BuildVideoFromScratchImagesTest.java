@@ -26,6 +26,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -39,6 +40,8 @@ import static no.lau.vdvil.renderer.video.TestData.sobotaMp3RemoteUrl;
 import static no.lau.vdvil.renderer.video.ImageBuilderWrapper.createVideoPart;
 import static no.lau.vdvil.renderer.video.ImageBuilderWrapper.imageStore;
 import static no.lau.vdvil.snippets.FFmpegFunctions.concatVideoSnippets;
+import static no.lau.vdvil.snippets.FFmpegFunctions.countNumberOfFrames;
+import static no.lau.vdvil.snippets.FFmpegFunctions.performFFMPEG;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -73,13 +76,15 @@ public class BuildVideoFromScratchImagesTest {
         //downmixedOriginalVideo = Paths.get("/tmp/320_NORWAY-A_Time-Lapse_Adventure.mp4").toUri().toURL();
         //theSwingVideo = Paths.get("/tmp/320_Worlds_Largest_Rope_Swing.mp4").toUri().toURL();
         downmixedOriginalVideo = fetch(norwayRemoteUrl);
+        sobotaMp3 = fetch(sobotaMp3RemoteUrl);
+
         //HighRez
         theSwingVideo = Paths.get("/tmp/kompost/Worlds_Largest_Rope_Swing/Worlds_Largest_Rope_Swing.mp4").toUri().toURL();
 
         snapshotFileStorage = Paths.get("/tmp/snaps/CLMD-The_Stockholm_Syndrome_320/").toUri().toURL();
         sobotaMp3 = fetch(sobotaMp3RemoteUrl);
 
-        fetchKompositionNorway = new Komposition(128,
+        fetchKompositionNorway = new Komposition(125,
                 new TimeStampFixedImageSampleSegment("Purple Mountains Clouds", 7541667, 19750000, 8),
                 new TimeStampFixedImageSampleSegment("Besseggen", 21250000, 27625000, 2),
                 new TimeStampFixedImageSampleSegment("Norway showing", 30166667, 34541667, 4),
@@ -107,7 +112,7 @@ public class BuildVideoFromScratchImagesTest {
         );
         fetchKompositionSwing.storageLocation = new MediaFile(theSwingVideo, 0l, 120F, "abc123");
 
-        baseKomposition =  new Komposition(124,
+        baseKomposition =  new Komposition(125,
                 new VideoStillImageSegment("Dark lake", 0, 4),
                 new VideoStillImageSegment("Dark lake", 4, 4).revert(),
                 new VideoStillImageSegment("Dark lake", 8, 8).revert(),
@@ -132,8 +137,8 @@ public class BuildVideoFromScratchImagesTest {
 
     @Test
     public void extractImagesFromNorwayVideo() throws IOException, InterruptedException {
-        Komposition buildKomposition = baseKomposition.filter(16, 16);
-        MediaFile mf = new MediaFile(new URL(result2), 0l, 128f, "7aa709f7caff0446a4a9aa2865f4efd2");
+        Komposition buildKomposition = baseKomposition.filter(24, 16);
+        MediaFile mf = new MediaFile(new URL(result2), 0l, 125f, "7aa709f7caff0446a4a9aa2865f4efd2");
         buildKomposition.storageLocation = mf;
 
         List<Komposition> fetchKompositions = new ArrayList<>();
@@ -147,45 +152,71 @@ public class BuildVideoFromScratchImagesTest {
         for (Plan plan : planner.collectPlans()) {
             collector.execute(callback.callBack((ImageCollectable) plan));
         }
-        Thread.sleep(2000);
         CreateVideoFromScratchImages.createVideo(planner.buildPlan(), imageStore, new VideoConfig(1280, 720, Math.round(1000000 / 24)));
     }
 
     @Test
-    public void testConcatStuff() throws IOException {
-        concatVideoSnippets(
-                Paths.get("/tmp/endRez.mp4"),
-                Paths.get("/tmp/as0.mp4"),
-                Paths.get("/tmp/as1.mp4"),
-                Paths.get("/tmp/as2.mp4"),
-                Paths.get("/tmp/as3.mp4"),
-                Paths.get("/tmp/as4.mp4")
-        );
-    }
-
-
-    @Test
     @Ignore
     public void testBuildingMinimally() throws IOException, InterruptedException {
-
         VideoConfig videoConfig = new VideoConfig(1280, 720, Math.round(1000000/24));
         URL muzik = sobotaMp3.toUri().toURL();
-        ;
+
         List<Komposition> fetchKompositions = new ArrayList<>();
         fetchKompositions.add(fetchKompositionNorway);
         fetchKompositions.add(fetchKompositionSwing);
 
-        for (int i = 0; i < baseKomposition.segments.size(); i++) {
+        for (int i = 0; i < 10; i++) {
             Segment seg = baseKomposition.segments.get(i);
             Komposition buildKomposition1 = baseKomposition.filter(seg.start(), seg.duration());
-            buildKomposition1.storageLocation = new MediaFile(Paths.get("/tmp/as"+i+".mp4"), 0l, 128f, "7aa709f7caff0446a4a9aa2865f4efd2");
-            createVideoPart(videoConfig, fetchKompositions, buildKomposition1, muzik);
+            buildKomposition1.storageLocation = new MediaFile(Paths.get("/tmp/as"+i+".mp4"), 0l, 125f, "7aa709f7caff0446a4a9aa2865f4efd2");
+            createVideoPart(videoConfig, fetchKompositions, buildKomposition1, muzik, false);
         }
         //logger.info("Storing file at {}", mf.fileName);
         //assertEquals(mf.checksums, md5Checksum(mf.fileName));
     }
 
+    @Test
+    public void testCountNumberOfFrames() throws IOException {
+        System.out.println(44 + 44+90 + 90 + 79 + 10+ 90 + 44 + 90 );
+        assertEquals(44, countNumberOfFrames(Paths.get("/tmp/as0.mp4")));
+        assertEquals(44, countNumberOfFrames(Paths.get("/tmp/as1.mp4")));
+        assertEquals(90, countNumberOfFrames(Paths.get("/tmp/as2.mp4")));
+        assertEquals(90, countNumberOfFrames(Paths.get("/tmp/as3.mp4")));
+        assertEquals(79, countNumberOfFrames(Paths.get("/tmp/as4.mp4")));
+        assertEquals(10, countNumberOfFrames(Paths.get("/tmp/as5.mp4")));
+        assertEquals(90, countNumberOfFrames(Paths.get("/tmp/as6.mp4")));
+        assertEquals(44, countNumberOfFrames(Paths.get("/tmp/as7.mp4")));
+        assertEquals(90, countNumberOfFrames(Paths.get("/tmp/as8.mp4")));
+        assertEquals(598, countNumberOfFrames(Paths.get("/tmp/endRez.mp4")));
+    }
 
+    @Test
+    @Ignore
+    public void testConcatStuff() throws IOException {
+        concatVideoSnippets(
+                Paths.get("/tmp/endRez.mp4")
+//                , Paths.get("/tmp/as0.mp4")
+//                , Paths.get("/tmp/as1.mp4")
+//                , Paths.get("/tmp/as2.mp4")
+//                , Paths.get("/tmp/as3.mp4")
+                , Paths.get("/tmp/as4.mp4")
+                , Paths.get("/tmp/as5.mp4")
+                , Paths.get("/tmp/as6.mp4")
+//                , Paths.get("/tmp/as7.mp4")
+//                , Paths.get("/tmp/as8.mp4")
+        );
+    }
+
+    @Test
+    //@Ignore
+    public void combiningVideoWithAudio() throws IOException {
+        Path target = Paths.get("/tmp/rezWithZound.mp4");
+        if(Files.exists(target)) {
+            Files.delete(target);
+        }
+        String asd = performFFMPEG("ffmpeg -i /tmp/endRez.mp4 -i "+sobotaMp3.toAbsolutePath().toString()+" -c:v copy -c:a aac -strict experimental " + target.toString());
+        System.out.println(asd);
+    }
 
     public String md5Checksum(URL url) throws IOException {
         return DigestUtils.md5Hex(url.openStream());
@@ -222,13 +253,13 @@ public class BuildVideoFromScratchImagesTest {
 class ImageBuilderWrapper {
     static ImageStore<BufferedImage> imageStore = new PipeDream<>(250, 1000, 5000, 10);
 
-    static void createVideoPart(VideoConfig videoConfig, List<Komposition> fetchKompositions, Komposition buildKomposition, URL musicUrl) {
+    static void createVideoPart(VideoConfig videoConfig, List<Komposition> fetchKompositions, Komposition buildKomposition, URL musicUrl, boolean useAudio) {
         KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition, musicUrl, 24);
         CollectorWrapper callback = plan -> new WaitingVideoThumbnailsCollector(plan, imageStore);
         ExecutorService collector = Executors.newFixedThreadPool(1);
         for (Plan plan : planner.collectPlans()) {
             collector.execute(callback.callBack((ImageCollectable) plan));
         }
-        CreateVideoFromScratchImages.createVideo(planner.buildPlan(), imageStore, videoConfig);
+        CreateVideoFromScratchImages.createVideo(planner.buildPlan(), imageStore, videoConfig, useAudio);
     }
 }

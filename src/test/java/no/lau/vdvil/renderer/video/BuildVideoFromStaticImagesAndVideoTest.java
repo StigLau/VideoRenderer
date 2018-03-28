@@ -188,7 +188,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
             new Thread(new ThreadedImageCollector(Collections.singletonList(planIter),
                     plan -> plan.collector(pipeDream, -1))).start();
         }
-        CreateVideoFromScratchImages.createVideo(planner.buildPlan(), pipeDream, config2, PersistentWriter.create("/tmp/komposttest.mp4"), false);
+        CreateVideoFromScratchImages.createVideo(planner.buildPlan(), pipeDream, config2, PersistentWriter.create("/tmp/komposttest.mp4"), false, true);
         pipeDream.emptyCache();
     }
 

@@ -40,6 +40,10 @@ public class CreateVideoFromScratchImages {
      * Standard instantioator
      */
     public static void createVideo(Plan buildPlan, ImageStore<BufferedImage> imageStore, VideoConfig config) {
+        createVideo(buildPlan, imageStore, config, true);
+    }
+
+    public static void createVideo(Plan buildPlan, ImageStore<BufferedImage> imageStore, VideoConfig config, boolean allowAudio) {
         Path parentDir = Paths.get(buildPlan.ioFile()).getParent();
         try {
             Files.createDirectories(parentDir); //Create non-existant mature parent folder
@@ -49,13 +53,13 @@ public class CreateVideoFromScratchImages {
         } catch (IOException e) {
             log.error("Could not create directory {}", parentDir, e);
         }
-        createVideo(buildPlan, imageStore, config, ToolFactory.makeWriter(buildPlan.ioFile()), true);
+        createVideo(buildPlan, imageStore, config, ToolFactory.makeWriter(buildPlan.ioFile()), true, allowAudio);
     }
 
     /**
      * Detailed instatiation
      */
-    public static void createVideo(Plan buildPlan, ImageStore<BufferedImage> imageStore, VideoConfig config, IMediaWriter writer, boolean turboCharged) {
+    public static void createVideo(Plan buildPlan, ImageStore<BufferedImage> imageStore, VideoConfig config, IMediaWriter writer, boolean turboCharged, boolean allowAudio) {
         log.info("Init");
         try {
             log.info("Just a short wait to make sure the writer starts as expected");
@@ -70,7 +74,7 @@ public class CreateVideoFromScratchImages {
         //AudioStream must be added after videostream!
 
         AudioAdapter audioAdapter = null;
-        if(buildPlan instanceof AudioPlan) {
+        if(buildPlan instanceof AudioPlan && allowAudio) {
             audioAdapter = new AudioAdapter(((AudioPlan)buildPlan).audioLocation().getFile(), writer);
         }
 
@@ -84,7 +88,7 @@ public class CreateVideoFromScratchImages {
                 // while the clock time exceeds the time of the next video frame,
                 // get and encode the next video frame
                 videoAdapter.writeNextPacket(clock, buildPlan);
-                if(buildPlan instanceof AudioPlan) {
+                if(buildPlan instanceof AudioPlan && allowAudio) {
                     audioAdapter.writeNextPacket(clock, buildPlan);
                 }
                 totalSampleCount += sampleCount;
