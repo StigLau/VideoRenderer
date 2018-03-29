@@ -69,7 +69,7 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan, ImageColl
     }
 
     public String ioFile() {
-        return storageLocation.fileName.toString();
+        return storageLocation.getFileName().toString();
     }
 
     public static long calculateLastTimeStamp(float bpm, List<Segment> segments) {

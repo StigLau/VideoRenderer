@@ -115,7 +115,7 @@ public class Mp4FromPicsCreator {
         }
 
         public static void createVideo(Komposition komposition, int frameRate) throws Exception {
-            SequenceEncoder encoder = new SequenceEncoder(new File(komposition.storageLocation.fileName.getFile()));
+            SequenceEncoder encoder = new SequenceEncoder(new File(komposition.storageLocation.getFileName().getFile()));
             try {
                 KompositionUtils.streamImages(komposition, frameRate)
                         .forEach(image -> encodeImage(image, encoder));

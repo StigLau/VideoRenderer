@@ -138,7 +138,7 @@ public class StreamingImageStoreTest {
         assertEquals(384, ((SuperPlan) planner.collectPlans().get(6)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
         assertEquals(96, ((SuperPlan) planner.collectPlans().get(7)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
         */
-        assertEquals("663da0cfbb7e0fe98300cbbb07bdd6b3", md5Checksum(resultingMediaFile.fileName)); //Note something wrong with the result - it doesnt move!!?!
+        assertEquals("663da0cfbb7e0fe98300cbbb07bdd6b3", md5Checksum(resultingMediaFile.getFileName())); //Note something wrong with the result - it doesnt move!!?!
     }
 
     @Test
@@ -156,7 +156,7 @@ public class StreamingImageStoreTest {
         Thread.sleep(2000);
         CreateVideoFromScratchImages.createVideo(buildPlan, imageStore, new VideoConfig(1280, 720, framerate));
         //assertEquals(111, ((SuperPlan)planner.buildPlan()).getFrameRepresentations().stream().filter(frame -> frame.used).count());
-        assertEquals("5156c7b907707065aa281e63065b4c37", md5Checksum(resultingMediaFile.fileName));
+        assertEquals("5156c7b907707065aa281e63065b4c37", md5Checksum(resultingMediaFile.getFileName()));
     }
 
 

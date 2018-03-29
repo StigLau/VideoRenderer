@@ -24,6 +24,6 @@ public class CombineAudioAndVideoTest {
 
         Komposition komposition = new Komposition(128);
         komposition.storageLocation = new MediaFile(new URL("file:///tmp/some-timelapse.mp4"), 0l, 128f, "checksuym");
-        AudioVideoConcatenator.concatenateAudioAndVideo(inputAudioFilePath, inputVideoFilePath, komposition.storageLocation.fileName.getFile(), new VideoConfig(360, 480, 15));
+        AudioVideoConcatenator.concatenateAudioAndVideo(inputAudioFilePath, inputVideoFilePath, komposition.storageLocation.getFileName().getFile(), new VideoConfig(360, 480, 15));
     }
 }

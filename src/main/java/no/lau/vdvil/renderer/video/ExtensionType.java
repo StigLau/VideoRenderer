@@ -22,6 +22,10 @@ public enum ExtensionType {
         this.stringValue = stringValue;
     }
 
+    public static ExtensionType typify(String name) {
+        return ExtensionType.valueOf(name.replace(".xml", "").replace(".json", ""));
+    }
+
     public boolean isAudio() {
         return this == aac || this == mp3 || this == flac;
     }

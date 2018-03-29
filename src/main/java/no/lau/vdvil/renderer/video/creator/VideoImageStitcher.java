@@ -20,7 +20,7 @@ public class VideoImageStitcher {
 
     public void createVideo(String inputFile, Komposition komposition, String outputFilePrefix) {
         IMediaReader mediaReader = ToolFactory.makeReader(inputFile);
-        String outFile = komposition.storageLocation.fileName.getFile();
+        String outFile = komposition.storageLocation.getFileName().getFile();
         IMediaWriter mediaWriter = ToolFactory.makeWriter(outFile, mediaReader);
         try {
             // configure it to generate BufferImages
