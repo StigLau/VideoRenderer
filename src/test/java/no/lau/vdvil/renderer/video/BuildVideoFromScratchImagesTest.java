@@ -8,17 +8,15 @@ import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.plan.ImageCollectable;
 import no.lau.vdvil.plan.Plan;
 import no.lau.vdvil.renderer.video.config.VideoConfig;
-import no.lau.vdvil.renderer.video.creator.ImageStore;
 import no.lau.vdvil.renderer.video.creator.PipeDream;
 import no.lau.vdvil.renderer.video.creator.filter.PercentageSplitter;
 import no.lau.vdvil.renderer.video.creator.filter.Reverter;
 import no.lau.vdvil.renderer.video.creator.filter.TaktSplitter;
+import no.lau.vdvil.renderer.video.creator.VideoBuilderWrapper;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -33,8 +31,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static no.lau.vdvil.renderer.video.ImageBuilderWrapper.createVideoPart;
-import static no.lau.vdvil.renderer.video.ImageBuilderWrapper.imageStore;
 import static no.lau.vdvil.renderer.video.TestData.*;
 import static no.lau.vdvil.renderer.video.TestData.norwayBaseKomposition;
 import static no.lau.vdvil.snippets.FFmpegFunctions.concatVideoSnippets;
@@ -56,12 +52,16 @@ public class BuildVideoFromScratchImagesTest {
 
     //HighRez
     VideoConfig config = new VideoConfig(1280, 720,DEFAULT_TIME_UNIT.convert(24, MILLISECONDS));
+    PipeDream imageStore;
+    VideoBuilderWrapper videoBuilder;
     //Low Rez
     //Config config = new Config(320, 200,DEFAULT_TIME_UNIT.convert(15, MILLISECONDS));
 
     @Before
     public void setUp() throws MalformedURLException {
         sobotaMp3 = fetch(sobotaMp3RemoteUrl);
+        imageStore = new PipeDream(250, 1000, 5000, 10);
+        videoBuilder = new VideoBuilderWrapper(imageStore);
     }
 
     @Test
@@ -95,7 +95,7 @@ public class BuildVideoFromScratchImagesTest {
             Segment seg = norwayBaseKomposition().segments.get(i);
             Komposition buildKomposition1 = norwayBaseKomposition().filter(seg.start(), seg.duration());
             buildKomposition1.storageLocation = MediaFile.createEmptyMediaFile(seg, buildKomposition1.bpm, ExtensionType.mp4);
-            createVideoPart(videoConfig, fetchKompositions, buildKomposition1, muzik, false);
+            videoBuilder.createVideoPart(videoConfig, fetchKompositions, buildKomposition1, muzik, false);
         }
         //logger.info("Storing file at {}", mf.fileName);
         //assertEquals(mf.checksums, md5Checksum(mf.fileName));
@@ -110,7 +110,7 @@ public class BuildVideoFromScratchImagesTest {
         Segment seg = baseKomposition.segments.get(5);
         Komposition buildKomposition1 = baseKomposition.filter(seg.start(), seg.duration());
         buildKomposition1.storageLocation = new MediaFile(Paths.get("/tmp/norway10.mp4"), 0l, 125f, "7aa709f7caff0446a4a9aa2865f4efd2");
-        createVideoPart(videoConfig, Collections.singletonList(fetchNorwayDVL()), buildKomposition1, muzik, false);
+        videoBuilder.createVideoPart(videoConfig, Collections.singletonList(fetchNorwayDVL()), buildKomposition1, muzik, false);
         assertEquals(10, countNumberOfFrames(Paths.get("/tmp/norway10.mp4"))); //TODO Test with 12 FRAMESSS!!!!!
 
         //logger.info("Storing file at {}", mf.fileName);
@@ -194,19 +194,5 @@ public class BuildVideoFromScratchImagesTest {
         Thread.sleep(5000);
         CreateVideoFromScratchImages.createVideo(planner.buildPlan(), imageStore, config);
         assertEquals(mf.getChecksums(), md5Checksum(mf.getFileName()));
-    }
-}
-
-class ImageBuilderWrapper {
-    static ImageStore<BufferedImage> imageStore = new PipeDream<>(250, 1000, 5000, 10);
-
-    static void createVideoPart(VideoConfig videoConfig, List<Komposition> fetchKompositions, Komposition buildKomposition, URL musicUrl, boolean useAudio) {
-        KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition, musicUrl, 24);
-        CollectorWrapper callback = plan -> new WaitingVideoThumbnailsCollector(plan, imageStore);
-        ExecutorService collector = Executors.newFixedThreadPool(1);
-        for (Plan plan : planner.collectPlans()) {
-            collector.execute(callback.callBack((ImageCollectable) plan));
-        }
-        CreateVideoFromScratchImages.createVideo(planner.buildPlan(), imageStore, videoConfig, useAudio);
     }
 }
