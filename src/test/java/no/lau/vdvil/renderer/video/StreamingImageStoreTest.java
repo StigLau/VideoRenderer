@@ -53,7 +53,6 @@ public class StreamingImageStoreTest {
                 new TimeStampFixedImageSampleSegment("Dark lake", 69375000, 74000000, 100)
         );
         fetchKompositionNorway.storageLocation = new MediaFile(downmixedOriginalVideo, 0l, 120F, "abc");
-        //fetchKompositionNorway.framerate = 15;
 
         Komposition fetchKompositionSwing = new Komposition(128,
                 new TimeStampFixedImageSampleSegment("Red bridge", 2919583, 6047708, 8),

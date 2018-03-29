@@ -39,4 +39,9 @@ public class Komposition {
         List<Segment> filteredSegments = filterByTime(segments, start, duration);
         return new Komposition(bpm, filteredSegments);
     }
+
+    public Komposition applyStorageLocation(MediaFile mediaFile) {
+        storageLocation = mediaFile;
+        return this;
+    }
 }
