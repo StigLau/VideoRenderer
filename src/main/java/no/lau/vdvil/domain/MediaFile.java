@@ -1,6 +1,5 @@
 package no.lau.vdvil.domain;
 
-import no.lau.vdvil.renderer.video.ExtensionType;
 import org.slf4j.LoggerFactory;
 import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
@@ -23,17 +22,6 @@ public class MediaFile {
     public final Float bpm;
     public String extension;
 
-
-    public MediaFile(Path path, Long startingOffsetInMillis, Float bpm, String checksums) {
-        try {
-            this.fileName = path.toUri().toURL();
-        } catch (Exception e) {
-            System.out.println("Fsck " +  e.getMessage());
-        }
-        this.startingOffset = startingOffsetInMillis;
-        this.bpm = bpm;
-        this.checksums = checksums;
-    }
 
     public MediaFile(URL url, Long startingOffsetInMillis, Float bpm, String checksums) {
         this.fileName = url;
@@ -81,11 +69,5 @@ public class MediaFile {
             }
         }
         return checksums;
-    }
-
-    public static MediaFile createEmptyMediaFile(Segment segment, Float bpm, ExtensionType extension) throws IOException {
-        String segmentId = segment.shortId().replace(" ", "_") + "-" + segment.start() + ":" + segment.duration() + "-" + bpm + "_bpm_";
-        Path file = Files.createTempFile(segmentId, "." +extension.name());
-        return new MediaFile(file, -0l, bpm, "");
     }
 }

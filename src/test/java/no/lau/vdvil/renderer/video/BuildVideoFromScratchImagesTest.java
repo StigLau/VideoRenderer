@@ -92,7 +92,7 @@ public class BuildVideoFromScratchImagesTest {
         for (int i = 0; i < 1; i++) {
             Segment seg = norwayBaseKomposition().segments.get(i);
             Komposition buildKomposition1 = norwayBaseKomposition().filter(seg.start(), seg.duration());
-            buildKomposition1.storageLocation = MediaFile.createEmptyMediaFile(seg, buildKomposition1.bpm, ExtensionType.mp4);
+            buildKomposition1.storageLocation = new MediaFile(Files.createTempFile("testFile", ".mp4").toUri().toURL(), -1l, -1f, "");
             videoBuilder.createVideoPart(videoConfig, fetchKompositions, buildKomposition1, muzik, false);
         }
         //logger.info("Storing file at {}", mf.fileName);
@@ -107,7 +107,7 @@ public class BuildVideoFromScratchImagesTest {
 
         Segment seg = baseKomposition.segments.get(5);
         Komposition buildKomposition1 = baseKomposition.filter(seg.start(), seg.duration());
-        buildKomposition1.storageLocation = new MediaFile(Paths.get("/tmp/norway10.mp4"), 0l, 125f, "7aa709f7caff0446a4a9aa2865f4efd2");
+        buildKomposition1.storageLocation = new MediaFile(Paths.get("/tmp/norway10.mp4").toUri().toURL(), 0l, 125f, "7aa709f7caff0446a4a9aa2865f4efd2");
         videoBuilder.createVideoPart(videoConfig, Collections.singletonList(fetchNorwayDVL()), buildKomposition1, muzik, false);
         assertEquals(10, countNumberOfFrames(Paths.get("/tmp/norway10.mp4"))); //TODO Test with 12 FRAMESSS!!!!!
 
