@@ -42,6 +42,10 @@ public class MediaFile {
         this.checksums = checksums;
     }
 
+    public void setFileName(URL fileName) {
+        this.fileName = fileName;
+    }
+
     public URL getFileName() {
         if(fileName == null) {
             String tempFileId = id + "_"+ bpm;
@@ -56,28 +60,32 @@ public class MediaFile {
     }
 
     public String getChecksums() {
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] digest = md.digest(Files.readAllBytes(Paths.get(fileName.toURI())));
-            String fileHash = DatatypeConverter
-                    .printHexBinary(digest).toLowerCase();
-            if(checksums != null && !checksums.isEmpty()) {
-                if(checksums.contains(fileHash)) {
-                    // already contains fileHash
+        if(checksums == null || checksums.isEmpty()) {
+            try {
+                MessageDigest md = MessageDigest.getInstance("MD5");
+                byte[] digest = md.digest(Files.readAllBytes(Paths.get(fileName.toURI())));
+                String fileHash = DatatypeConverter
+                        .printHexBinary(digest).toLowerCase();
+                if (checksums != null && !checksums.isEmpty()) {
+                    if (checksums.contains(fileHash)) {
+                        // already contains fileHash
+                    } else {
+                        checksums += ", " + fileHash;
+                    }
                 } else {
-                    checksums += ", " + fileHash;
+                    checksums = fileHash;
                 }
-            } else{
-                checksums = fileHash;
+
+            } catch (NoSuchAlgorithmException | IOException | URISyntaxException e) {
+                LoggerFactory.getLogger(getClass()).error("Error when creating checksum for {}", id, e);
             }
-        } catch (NoSuchAlgorithmException | IOException | URISyntaxException e) {
-            LoggerFactory.getLogger(getClass()).error("Error when creating checksum for {}", id, e);
         }
         return checksums;
     }
 
     public static MediaFile createEmptyMediaFile(Segment segment, Float bpm, ExtensionType extension) throws IOException {
-        Path file = Files.createTempFile(segment.id() + "-" + segment.start() + ":" + segment.duration() + "-" + bpm + "_bpm_", "." +extension.name());
+        String segmentId = segment.shortId().replace(" ", "_") + "-" + segment.start() + ":" + segment.duration() + "-" + bpm + "_bpm_";
+        Path file = Files.createTempFile(segmentId, "." +extension.name());
         return new MediaFile(file, -0l, bpm, "");
     }
 }

@@ -8,7 +8,6 @@ import no.lau.vdvil.plan.ImageCollectable;
 import no.lau.vdvil.plan.Plan;
 import no.lau.vdvil.renderer.video.CreateVideoFromScratchImages;
 import no.lau.vdvil.renderer.video.config.VideoConfig;
-import no.lau.vdvil.renderer.video.creator.ImageStore;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.List;

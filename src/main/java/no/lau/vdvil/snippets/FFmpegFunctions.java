@@ -94,6 +94,13 @@ public class FFmpegFunctions {
         logger.info(performFFMPEG(concatCommand));
     }
 
+    public static String combineAudioAndVideo(Path inputVideo, Path music, Path target) throws IOException {
+        if(Files.exists(target)) {
+            Files.delete(target);
+        }
+        return performFFMPEG("ffmpeg -i "+inputVideo.toString()+" -i "+music.toString()+" -c:v copy -c:a aac -strict experimental " + target.toString());
+    }
+
     //Docker alternative: docker run --entrypoint='ffprobe' jrottenberg/ffmpeg
     public static long countNumberOfFrames(Path destinationFile) throws IOException {
         String command = "ffprobe -v error -count_frames -select_streams v:0 -show_entries stream=nb_read_frames -of default=nokey=1:noprint_wrappers=1 " + destinationFile.toString();

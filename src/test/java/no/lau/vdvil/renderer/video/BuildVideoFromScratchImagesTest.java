@@ -33,9 +33,7 @@ import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static no.lau.vdvil.renderer.video.TestData.*;
 import static no.lau.vdvil.renderer.video.TestData.norwayBaseKomposition;
-import static no.lau.vdvil.snippets.FFmpegFunctions.concatVideoSnippets;
-import static no.lau.vdvil.snippets.FFmpegFunctions.countNumberOfFrames;
-import static no.lau.vdvil.snippets.FFmpegFunctions.performFFMPEG;
+import static no.lau.vdvil.snippets.FFmpegFunctions.*;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -157,12 +155,10 @@ public class BuildVideoFromScratchImagesTest {
     @Test
     //@Ignore
     public void combiningVideoWithAudio() throws IOException {
+        Path inputVideo = Paths.get("/tmp/endRez.mp4");
+        Path music = sobotaMp3.toAbsolutePath();
         Path target = Paths.get("/tmp/rezWithZound.mp4");
-        if(Files.exists(target)) {
-            Files.delete(target);
-        }
-        String asd = performFFMPEG("ffmpeg -i /tmp/endRez.mp4 -i "+sobotaMp3.toAbsolutePath().toString()+" -c:v copy -c:a aac -strict experimental " + target.toString());
-        System.out.println(asd);
+        System.out.println(combineAudioAndVideo(inputVideo, music, target));
     }
 
     public String md5Checksum(URL url) throws IOException {
