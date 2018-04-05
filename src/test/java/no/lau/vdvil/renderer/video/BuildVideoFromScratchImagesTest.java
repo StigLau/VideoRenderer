@@ -13,6 +13,7 @@ import no.lau.vdvil.renderer.video.creator.filter.PercentageSplitter;
 import no.lau.vdvil.renderer.video.creator.filter.Reverter;
 import no.lau.vdvil.renderer.video.creator.filter.TaktSplitter;
 import no.lau.vdvil.renderer.video.creator.VideoBuilderWrapper;
+import no.lau.vdvil.snippets.FFmpegFunctions;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -190,5 +191,24 @@ public class BuildVideoFromScratchImagesTest {
         Thread.sleep(5000);
         CreateVideoFromScratchImages.createVideo(planner.buildPlan(), imageStore, config);
         assertEquals(mf.getChecksums(), md5Checksum(mf.getFileName()));
+    }
+
+    @Test
+    public void testSnippingStuff() throws IOException {
+        Path testFile = Paths.get("/tmp/testur/myTestFile.mp4");
+        FFmpegFunctions.snippetSplitter(fetch(norwayRemoteUrl).toString(), 56222833, 60477083, testFile);
+        assertEquals(103, countNumberOfFrames(testFile));
+
+    }
+
+    @Test
+    public void testSnippingStuffBergen() throws IOException {
+        Path origFile = fetch(bergenRemoteUrl);
+        Path testFile = Paths.get("/tmp/testur/myTestFile2.mp4");
+        FFmpegFunctions.snippetSplitter(origFile.toString(), 56222833, 60477083, testFile);
+        assertEquals("144930000/6044789", FFmpegFunctions.fetchFrameInfo(origFile));
+        assertEquals("24000/1001", FFmpegFunctions.fetchFrameInfo(testFile));
+        assertEquals(102, countNumberOfFrames(testFile));
+
     }
 }

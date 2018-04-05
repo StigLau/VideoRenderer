@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FFmpegFunctions {
@@ -101,9 +103,28 @@ public class FFmpegFunctions {
         return performFFMPEG("ffmpeg -i "+inputVideo.toString()+" -i "+music.toString()+" -c:v copy -c:a aac -strict experimental " + target.toString());
     }
 
+    public static void snippetSplitter(String downloadUrl, long timestampStart, long timestampEnd, Path destinationFile) throws IOException {
+        logger.info("Performing modifications on {}", destinationFile);
+        List<List<String>> props = new ArrayList<>();
+        props.add(Arrays.asList("-i", downloadUrl));
+        props.add(Arrays.asList("-ss", humanReadablePeriod(timestampStart)));
+        props.add(Arrays.asList("-t", humanReadablePeriod(timestampEnd - timestampStart)));
+        //props.add(Arrays.asList("-r", "24")); //24 frames per second
+        props.add(Arrays.asList("-an")); //No Audio
+        FFmpegFunctions.perform(props, destinationFile);
+        logger.info("Finished converting {}", destinationFile);
+    }
+
     //Docker alternative: docker run --entrypoint='ffprobe' jrottenberg/ffmpeg
     public static long countNumberOfFrames(Path destinationFile) throws IOException {
-        String command = "ffprobe -v error -count_frames -select_streams v:0 -show_entries stream=nb_read_frames -of default=nokey=1:noprint_wrappers=1 " + destinationFile.toString();
+        String additionalCommands = "-show_entries stream=nb_read_frames -count_frames ";
+        String command = "ffprobe -v error -select_streams v:0 -of default=noprint_wrappers=1:nokey=1 " + additionalCommands  + destinationFile.toString();
         return Long.parseLong(performFFMPEG(command).trim());
+    }
+
+    public static String fetchFrameInfo(Path destinationFile) throws IOException {
+        String additionalCommands = "-show_entries stream=avg_frame_rate ";
+        String command = "ffprobe -v error -select_streams v:0 -of default=noprint_wrappers=1:nokey=1 " + additionalCommands + destinationFile.toString();
+        return performFFMPEG(command).trim();
     }
 }

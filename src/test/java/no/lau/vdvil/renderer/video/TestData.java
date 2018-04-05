@@ -13,6 +13,7 @@ import static no.lau.vdvil.domain.utils.KompositionUtils.fetchRemoteFile;
 public class TestData {
 
     public static String norwayRemoteUrl = "https://s3.amazonaws.com/dvl-test-music/test-data/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time-Lapse_Adventure.mp4";
+    public static String bergenRemoteUrl = "https://s3.amazonaws.com/dvl-test-music/test-data/Bergen_In_Motion-Sigurd_Svidal_Randal/Bergen_In_Motion-Sigurd_Svidal_Randal.mp4";
     public static String sobotaMp3RemoteUrl = "https://s3.amazonaws.com/dvl-test-music/music/The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix.mp3";
     public static String norwayDarkLakeRemoteUrl = "https://s3.amazonaws.com/dvl-test-music/test-data/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time-Lapse_Adventure_Dark_lake_69375000___74000000.mp4";
     public static String norwayFlowerFjordRemoteUrl = "https://s3.amazonaws.com/dvl-test-music/test-data/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time-Lapse_Adventure_Flower_fjord_35500000___46250000.mp4";
