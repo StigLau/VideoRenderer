@@ -5,6 +5,7 @@ import no.lau.vdvil.collector.KompositionPlanner;
 import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.plan.SuperPlan;
+import no.lau.vdvil.renderer.video.ExtensionType;
 import no.lau.vdvil.renderer.video.creator.ImageFileStore;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
 import no.lau.vdvil.renderer.video.stigs.ImageSampleInstruction;
@@ -155,4 +156,17 @@ public class KompositionUtils {
         return resultingLocalPath;
     }
 
+    public static Path createTempFile(String descriptiveName, ExtensionType extensionType) throws IOException {
+        return Files.createTempFile(descriptiveName, "." + extensionType.name());
+    }
+
+    public static Path createTempFiles(ExtensionType extensionType, Path[] snippets) throws IOException {
+        Path fileList = createTempFile("fileList", extensionType);
+        String strung = "";
+        for (Path snipppet : snippets) {
+            strung += "file '" + snipppet.toString() + "'\n";
+        }
+        Files.write(fileList, strung.getBytes());
+        return fileList;
+    }
 }

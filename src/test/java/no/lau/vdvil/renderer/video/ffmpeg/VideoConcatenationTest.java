@@ -11,12 +11,18 @@ import net.bramp.ffmpeg.probe.FFmpegProbeResult;
 import net.bramp.ffmpeg.probe.FFmpegStream;
 import net.bramp.ffmpeg.progress.Progress;
 import net.bramp.ffmpeg.progress.ProgressListener;
+import no.lau.vdvil.renderer.video.ExtensionType;
+import no.lau.vdvil.snippets.ImprovedFFMpegFunctions;
 import org.junit.Test;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
+import static no.lau.vdvil.renderer.video.TestData.*;
+import static no.lau.vdvil.snippets.FFmpegFunctions.combineAudioAndVideo;
+import static no.lau.vdvil.snippets.ImprovedFFMpegFunctions.concatVideoSnippets;
+import static no.lau.vdvil.snippets.ImprovedFFMpegFunctions.countNumberOfFrames;
+import static org.junit.Assert.assertEquals;
 
 public class VideoConcatenationTest {
     FFprobe ffprobe = new FFprobe("/usr/local/bin/ffprobe");
@@ -79,5 +85,21 @@ public class VideoConcatenationTest {
         });
 
         job.run();
+    }
+
+    @Test
+    public void testBuildingStuffWithImprovedFffmpegFunctions() throws IOException {
+        Path snippet = ImprovedFFMpegFunctions.snippetSplitter(fetch(norwayRemoteUrl).toString(), 56222833, 60477083, ExtensionType.mp4);
+        assertEquals(104, countNumberOfFrames(snippet));
+        Path snippet2 = ImprovedFFMpegFunctions.snippetSplitter(fetch(norwayRemoteUrl).toString(), 90477083, 90477083+5008300, ExtensionType.mp4);
+        assertEquals(141, countNumberOfFrames(snippet2));
+
+        Path noSoundConcatenation  = concatVideoSnippets(ExtensionType.mp4, snippet, snippet2);
+        assertEquals(245, countNumberOfFrames(noSoundConcatenation));
+        //Path combinedWithSound = Paths.get("/tmp/jalla.mp4");
+        Path combinedWithSound  = combineAudioAndVideo(noSoundConcatenation, fetch(sobotaMp3RemoteUrl).toAbsolutePath());
+
+        System.out.println("Our result is at " + combinedWithSound);
+        assertEquals(245, countNumberOfFrames(combinedWithSound));
     }
 }

@@ -1,5 +1,6 @@
 package no.lau.vdvil.snippets;
 
+import no.lau.vdvil.renderer.video.ExtensionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
@@ -10,6 +11,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import static no.lau.vdvil.domain.utils.KompositionUtils.createTempFile;
+import static no.lau.vdvil.domain.utils.KompositionUtils.createTempFiles;
 
 public class FFmpegFunctions {
     //References
@@ -82,25 +85,19 @@ public class FFmpegFunctions {
         return hours + ":" + minutes + ":" + seconds + "." + millis;
     }
 
-    public static void concatVideoSnippets(Path resultingFile, Path... snippets) throws IOException {
-        Path fileList = Files.createTempFile("fileList", "." + "txt");
-        String strung = "";
-        for (Path snipppet : snippets) {
-            strung += "file '" + snipppet.toString() + "'\n";
-        }
-        Files.write(fileList, strung.getBytes());
-        Files.deleteIfExists(resultingFile);
-        //String concatCommand = "docker run jrottenberg/ffmpeg -f concat -safe 0 -i "+fileList.toString()+" -c copy " + resultingFile.toString();
+    public static Path concatVideoSnippets(ExtensionType extensionType, Path... snippets) throws IOException {
+        Path resultingFile = createTempFile("video_and_audio_combination", extensionType);
+        Path fileList = createTempFiles(extensionType, snippets);
         String concatCommand = "ffmpeg -f concat -safe 0 -i "+fileList.toString()+" -c copy " + resultingFile.toString();
-
         logger.info(performFFMPEG(concatCommand));
+        return resultingFile;
     }
 
-    public static String combineAudioAndVideo(Path inputVideo, Path music, Path target) throws IOException {
-        if(Files.exists(target)) {
-            Files.delete(target);
-        }
-        return performFFMPEG("ffmpeg -i "+inputVideo.toString()+" -i "+music.toString()+" -c:v copy -c:a aac -strict experimental " + target.toString());
+    public static Path combineAudioAndVideo(Path inputVideo, Path music) throws IOException {
+        Path target = createTempFile("videoAudioConcat", ExtensionType.mp4);
+        Files.delete(target);
+        logger.info(performFFMPEG("ffmpeg -i "+inputVideo.toString()+" -i "+music.toString()+" -c:v copy -c:a aac -strict experimental " + target.toString()));
+        return target;
     }
 
     public static void snippetSplitter(String downloadUrl, long timestampStart, long timestampEnd, Path destinationFile) throws IOException {

@@ -56,6 +56,12 @@
             <version>0.1.5</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>net.bramp.ffmpeg</groupId>
+            <artifactId>ffmpeg</artifactId>
+            <version>0.6.2</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

@@ -139,13 +139,12 @@ public class BuildVideoFromScratchImagesTest {
     @Test
     @Ignore
     public void testConcatStuff() throws IOException {
-        concatVideoSnippets(
-                Paths.get("/tmp/endRez.mp4")
+        concatVideoSnippets(ExtensionType.mp4,
 //                , Paths.get("/tmp/as0.mp4")
 //                , Paths.get("/tmp/as1.mp4")
 //                , Paths.get("/tmp/as2.mp4")
 //                , Paths.get("/tmp/as3.mp4")
-                , Paths.get("/tmp/as4.mp4")
+                Paths.get("/tmp/as4.mp4")
                 , Paths.get("/tmp/as5.mp4")
                 , Paths.get("/tmp/as6.mp4")
 //                , Paths.get("/tmp/as7.mp4")
@@ -158,8 +157,8 @@ public class BuildVideoFromScratchImagesTest {
     public void combiningVideoWithAudio() throws IOException {
         Path inputVideo = Paths.get("/tmp/endRez.mp4");
         Path music = sobotaMp3.toAbsolutePath();
-        Path target = Paths.get("/tmp/rezWithZound.mp4");
-        System.out.println(combineAudioAndVideo(inputVideo, music, target));
+        Path target = combineAudioAndVideo(inputVideo, music);
+        System.out.println(target);
     }
 
     public String md5Checksum(URL url) throws IOException {
