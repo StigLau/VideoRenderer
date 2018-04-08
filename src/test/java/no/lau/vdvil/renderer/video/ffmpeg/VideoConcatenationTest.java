@@ -12,7 +12,6 @@ import net.bramp.ffmpeg.probe.FFmpegStream;
 import net.bramp.ffmpeg.progress.Progress;
 import net.bramp.ffmpeg.progress.ProgressListener;
 import no.lau.vdvil.renderer.video.ExtensionType;
-import no.lau.vdvil.snippets.ImprovedFFMpegFunctions;
 import org.junit.Test;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -20,8 +19,7 @@ import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 import static no.lau.vdvil.renderer.video.TestData.*;
 import static no.lau.vdvil.snippets.FFmpegFunctions.combineAudioAndVideo;
-import static no.lau.vdvil.snippets.ImprovedFFMpegFunctions.concatVideoSnippets;
-import static no.lau.vdvil.snippets.ImprovedFFMpegFunctions.countNumberOfFrames;
+import static no.lau.vdvil.snippets.ImprovedFFMpegFunctions.*;
 import static org.junit.Assert.assertEquals;
 
 public class VideoConcatenationTest {
@@ -89,9 +87,9 @@ public class VideoConcatenationTest {
 
     @Test
     public void testBuildingStuffWithImprovedFffmpegFunctions() throws IOException {
-        Path snippet = ImprovedFFMpegFunctions.snippetSplitter(fetch(norwayRemoteUrl).toString(), 56222833, 60477083, ExtensionType.mp4);
+        Path snippet = snippetSplitter(fetch(norwayRemoteUrl), 56222833, 60477083);
         assertEquals(104, countNumberOfFrames(snippet));
-        Path snippet2 = ImprovedFFMpegFunctions.snippetSplitter(fetch(norwayRemoteUrl).toString(), 90477083, 90477083+5008300, ExtensionType.mp4);
+        Path snippet2 = snippetSplitter(fetch(norwayRemoteUrl), 90477083, 90477083+5008300);
         assertEquals(141, countNumberOfFrames(snippet2));
 
         Path noSoundConcatenation  = concatVideoSnippets(ExtensionType.mp4, snippet, snippet2);
@@ -101,5 +99,14 @@ public class VideoConcatenationTest {
 
         System.out.println("Our result is at " + combinedWithSound);
         assertEquals(245, countNumberOfFrames(combinedWithSound));
+    }
+
+    @Test
+    public void testSnippingStuffBergen() throws IOException {
+        Path origFile = fetch(bergenRemoteUrl);
+        Path snippet = snippetSplitter(origFile, 56222833, 60477083);
+        assertEquals(102, ffmpegStreamInfo(snippet).nb_frames);
+        assertEquals("144930000/6044789", ffmpegStreamInfo(origFile).avg_frame_rate.toString());
+        assertEquals("24000/1001", ffmpegStreamInfo(snippet).avg_frame_rate.toString());
     }
 }

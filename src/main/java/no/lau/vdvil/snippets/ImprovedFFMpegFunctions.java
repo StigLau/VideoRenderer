@@ -35,10 +35,11 @@ public class ImprovedFFMpegFunctions {
         }
     }
 
-    public static Path snippetSplitter(String downloadUrl, long timestampStart, long timestampEnd, ExtensionType extensionType) throws IOException {
+    public static Path snippetSplitter(Path downloadUrl, long timestampStart, long timestampEnd) throws IOException {
+        ExtensionType extensionType = ExtensionType.typify(getFileExtension(downloadUrl));
         Path destinationFile = createTempFile("snippet", extensionType);
         FFmpegBuilder builder = new FFmpegBuilder()
-                .setInput(downloadUrl)
+                .setInput(downloadUrl.toString())
                 .addExtraArgs("-ss", humanReadablePeriod(timestampStart))
                 .addExtraArgs("-t", humanReadablePeriod(timestampEnd - timestampStart))
                 .addOutput(destinationFile.toString())
@@ -47,6 +48,29 @@ public class ImprovedFFMpegFunctions {
         executor.createJob(builder).run();
         return destinationFile;
     }
+
+    public static FFmpegFormat getFormatInfo(Path target) throws IOException {
+        FFmpegProbeResult probeResult = ffprobe.probe(target.toString());
+        FFmpegFormat format = probeResult.getFormat();
+        System.out.format("%nFile: '%s' ; Format: '%s' ; Duration: %.3fs",
+                format.filename,
+                format.format_long_name,
+                format.duration
+        );
+        return format;
+    }
+
+    public static FFmpegStream ffmpegStreamInfo(Path target) throws IOException {
+        FFmpegProbeResult probeResult = ffprobe.probe(target.toString());
+        FFmpegStream stream = probeResult.getStreams().get(0);
+        System.out.format("%nCodec: '%s' ; Width: %dpx ; Height: %dpx",
+                stream.codec_long_name,
+                stream.width,
+                stream.height
+        );
+        return stream;
+    }
+
 
     //Docker alternative: docker run --entrypoint='ffprobe' jrottenberg/ffmpeg
     public static long countNumberOfFrames(Path destinationFile) throws IOException {
@@ -103,5 +127,12 @@ public class ImprovedFFMpegFunctions {
                 .done();
         executor.createJob(builder).run();
         return target;
+    }
+
+    private static String getFileExtension(Path path) {
+        String fileName = path.toFile().getName();
+        if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
+            return fileName.substring(fileName.lastIndexOf(".")+1);
+        else return "";
     }
 }
