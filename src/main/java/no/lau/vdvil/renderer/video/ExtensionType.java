@@ -23,7 +23,7 @@ public enum ExtensionType {
     }
 
     public static ExtensionType typify(String name) {
-        return ExtensionType.valueOf(name.replace(".xml", "").replace(".json", ""));
+        return ExtensionType.valueOf(name.toLowerCase().replace(".xml", "").replace(".json", ""));
     }
 
     public boolean isAudio() {

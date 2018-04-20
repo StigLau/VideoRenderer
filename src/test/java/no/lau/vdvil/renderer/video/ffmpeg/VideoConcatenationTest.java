@@ -11,11 +11,11 @@ import net.bramp.ffmpeg.probe.FFmpegProbeResult;
 import net.bramp.ffmpeg.probe.FFmpegStream;
 import net.bramp.ffmpeg.progress.Progress;
 import net.bramp.ffmpeg.progress.ProgressListener;
-import no.lau.vdvil.renderer.video.ExtensionType;
+import no.lau.vdvil.renderer.video.TestData;
+import no.lau.vdvil.snippets.FFmpegFunctions;
 import org.junit.Test;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 import static no.lau.vdvil.renderer.video.TestData.*;
 import static no.lau.vdvil.snippets.FFmpegFunctions.combineAudioAndVideo;
@@ -25,14 +25,14 @@ import static org.junit.Assert.assertEquals;
 public class VideoConcatenationTest {
     FFprobe ffprobe = new FFprobe("/usr/local/bin/ffprobe");
     FFmpeg ffmpeg = new FFmpeg("/usr/local/bin/ffmpeg");
-    Path mp4File = Paths.get("/tmp/kompost/Flurries_on_roadside_einer_56222833___60477083/Flurries_on_roadside_einer_56222833___60477083.mp4");
+    Path norwayDarkLakeLocalStorage = fetch(TestData.norwayDarkLakeRemoteUrl);
 
     public VideoConcatenationTest() throws IOException {
     }
 
     @Test
     public void testProbingFile() throws IOException {
-        FFmpegProbeResult probeResult = ffprobe.probe(mp4File.toString());
+        FFmpegProbeResult probeResult = ffprobe.probe(norwayDarkLakeLocalStorage.toString());
 
         FFmpegFormat format = probeResult.getFormat();
         System.out.format("%nFile: '%s' ; Format: '%s' ; Duration: %.3fs",
@@ -49,11 +49,10 @@ public class VideoConcatenationTest {
         );
     }
 
-
     @Test
     public void testDoingStuff() throws IOException {
         FFmpegExecutor executor = new FFmpegExecutor(ffmpeg, ffprobe);
-        FFmpegProbeResult in = ffprobe.probe(mp4File.toString());
+        FFmpegProbeResult in = ffprobe.probe(norwayDarkLakeLocalStorage.toString());
 
         FFmpegBuilder builder = new FFmpegBuilder()
                 .setInput(in) // Or filename
@@ -92,7 +91,7 @@ public class VideoConcatenationTest {
         Path snippet2 = snippetSplitter(fetch(norwayRemoteUrl), 90477083, 90477083+5008300);
         assertEquals(141, countNumberOfFrames(snippet2));
 
-        Path noSoundConcatenation  = concatVideoSnippets(ExtensionType.mp4, snippet, snippet2);
+        Path noSoundConcatenation  = concatVideoSnippets(snippet, snippet2);
         assertEquals(245, countNumberOfFrames(noSoundConcatenation));
         //Path combinedWithSound = Paths.get("/tmp/jalla.mp4");
         Path combinedWithSound  = combineAudioAndVideo(noSoundConcatenation, fetch(sobotaMp3RemoteUrl).toAbsolutePath());
@@ -108,5 +107,9 @@ public class VideoConcatenationTest {
         assertEquals(102, ffmpegStreamInfo(snippet).nb_frames);
         assertEquals("144930000/6044789", ffmpegStreamInfo(origFile).avg_frame_rate.toString());
         assertEquals("24000/1001", ffmpegStreamInfo(snippet).avg_frame_rate.toString());
+        //Double snippetDuration = ffmpegFormatInfo(snippet).duration;
+
+        System.out.println("Rez: " + FFmpegFunctions.stretchSnippet(snippet, 5));
+        //System.out.println("Rez: " + ImprovedFFMpegFunctions.stretchSnippet(snippet, 5));
     }
 }

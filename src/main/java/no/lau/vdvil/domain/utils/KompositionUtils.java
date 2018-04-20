@@ -157,7 +157,9 @@ public class KompositionUtils {
     }
 
     public static Path createTempFile(String descriptiveName, ExtensionType extensionType) throws IOException {
-        return Files.createTempFile(descriptiveName, "." + extensionType.name());
+        Path tempfile = Files.createTempFile(descriptiveName, "." + extensionType.name());
+        Files.deleteIfExists(tempfile);
+        return tempfile;
     }
 
     public static Path createTempFiles(ExtensionType extensionType, Path[] snippets) throws IOException {

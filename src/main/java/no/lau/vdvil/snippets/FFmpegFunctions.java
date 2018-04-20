@@ -95,7 +95,6 @@ public class FFmpegFunctions {
 
     public static Path combineAudioAndVideo(Path inputVideo, Path music) throws IOException {
         Path target = createTempFile("videoAudioConcat", ExtensionType.mp4);
-        Files.delete(target);
         logger.info(performFFMPEG("ffmpeg -i "+inputVideo.toString()+" -i "+music.toString()+" -c:v copy -c:a aac -strict experimental " + target.toString()));
         return target;
     }
@@ -110,6 +109,20 @@ public class FFmpegFunctions {
         props.add(Arrays.asList("-an")); //No Audio
         FFmpegFunctions.perform(props, destinationFile);
         logger.info("Finished converting {}", destinationFile);
+    }
+
+    public static Path stretchSnippet(Path inputVideo, double targetDuration) throws IOException {
+        ExtensionType extensionType = ExtensionType.typify(ImprovedFFMpegFunctions.getFileExtension(inputVideo));
+        Path destinationFile = createTempFile("stretched", extensionType);
+
+        double snippetDuration = ImprovedFFMpegFunctions.ffmpegFormatInfo(inputVideo).duration;
+        float percentageChange = (float) (targetDuration / snippetDuration);
+
+        List<List<String>> props = new ArrayList<>();
+        props.add(Arrays.asList("-i", inputVideo.toString()));
+        props.add(Arrays.asList("-filter:v setpts="+percentageChange+"*PTS"));
+        logger.info(perform(props, destinationFile));
+        return destinationFile;
     }
 
     //Docker alternative: docker run --entrypoint='ffprobe' jrottenberg/ffmpeg
