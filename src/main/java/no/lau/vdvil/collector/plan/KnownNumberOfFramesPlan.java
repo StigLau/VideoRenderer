@@ -98,4 +98,8 @@ public class KnownNumberOfFramesPlan implements FramePlan {
     public SegmentWrapper wrapper() {
         return wrapper;
     }
+
+    public String getCollectId() {
+        return collectId;
+    }
 }
