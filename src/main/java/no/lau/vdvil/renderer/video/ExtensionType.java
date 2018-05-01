@@ -16,6 +16,7 @@ public enum ExtensionType {
     htmlImagelist ("htmlimagelist"),
     jpg ("jpg"),
     png ("png"),
+    txt ("txt"),
     NONE ("");
 
     private final String stringValue;
