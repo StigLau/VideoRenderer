@@ -117,7 +117,8 @@ public class ImprovedFFMpegFunctions {
         }
         ExtensionType extensionType = ExtensionType.typify(getFileExtension(snippets[0]));
         Path target = createTempFile("video_and_audio_combination", extensionType);
-        Path fileList = createTempFiles(extensionType, snippets);
+        Path fileList = createTempFiles(ExtensionType.txt, snippets);
+        logger.info("Storing snippet list: {}", fileList);
 
         FFmpegBuilder builder = new FFmpegBuilder()
                 .setInput(fileList.toString())
