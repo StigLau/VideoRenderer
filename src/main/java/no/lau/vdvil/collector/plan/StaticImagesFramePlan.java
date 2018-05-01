@@ -60,4 +60,9 @@ public class StaticImagesFramePlan implements FramePlan {
     public SegmentWrapper wrapper() {
         return wrapper;
     }
+
+    @Override
+    public String getId() {
+        return collectId;
+    }
 }

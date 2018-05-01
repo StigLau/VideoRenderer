@@ -22,6 +22,9 @@ public class KompositionPlanner {
     final Plan buildPlan;
     Logger logger = LoggerFactory.getLogger(getClass());
     //Calculating last timestamp is to be done on each entity one is interested in
+    //Internal maps
+    private final Map<Segment, Komposition> segmentFetchKompositionMap;
+    private final Map<String, Segment> segmentIdCollectSegmentMap;
 
 
     public KompositionPlanner(List<Komposition> fetchKompositions, Komposition buildKomposition, URL audioLocation, long finalFramerate) {
@@ -36,14 +39,14 @@ public class KompositionPlanner {
         }
 
         //Conveniencemap Segment <--> komposition
-        Map<Segment, Komposition> segmentFetchKompositionMap = new HashMap<>();
+        segmentFetchKompositionMap = new HashMap<>();
         for (Komposition fetchKomposition : fetchKompositions) {
             for (Segment segment : fetchKomposition.segments) {
                 segmentFetchKompositionMap.put(segment, fetchKomposition);
             }
         }
         //Conveniencemap SegmentId <--> Segment
-        Map<String, Segment> segmentIdCollectSegmentMap = new HashMap<>();
+        segmentIdCollectSegmentMap = new HashMap<>();
         for (Segment segment : segmentFetchKompositionMap.keySet()) {
             segmentIdCollectSegmentMap.put(segment.shortId(), segment);
         }
@@ -101,6 +104,14 @@ public class KompositionPlanner {
 
     public Plan buildPlan() {
         return buildPlan;
+    }
+
+    public Map<Segment, Komposition> getSegmentFetchKompositionMap() {
+        return segmentFetchKompositionMap;
+    }
+
+    public Map<String, Segment> getSegmentIdCollectSegmentMap() {
+     return segmentIdCollectSegmentMap;
     }
 }
 

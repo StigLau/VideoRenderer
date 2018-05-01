@@ -1,5 +1,7 @@
 package no.lau.vdvil.renderer.video;
 
+import org.slf4j.LoggerFactory;
+
 /**
  * @author Stig@Lau.no
  */
@@ -17,13 +19,19 @@ public enum ExtensionType {
     NONE ("");
 
     private final String stringValue;
+    static org.slf4j.Logger logger = LoggerFactory.getLogger(ExtensionType.class);
 
     ExtensionType(String stringValue) {
         this.stringValue = stringValue;
     }
 
     public static ExtensionType typify(String name) {
-        return ExtensionType.valueOf(name.toLowerCase().replace(".xml", "").replace(".json", ""));
+        try {
+            return ExtensionType.valueOf(name.toLowerCase().replace(".xml", "").replace(".json", ""));
+        } catch (IllegalArgumentException ex) {
+            logger.error("Could not parse extension type of value: {}", name);
+            return NONE;
+        }
     }
 
     public boolean isAudio() {

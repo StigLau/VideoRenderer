@@ -99,7 +99,7 @@ public class KnownNumberOfFramesPlan implements FramePlan {
         return wrapper;
     }
 
-    public String getCollectId() {
+    public String getId() {
         return collectId;
     }
 }

@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * @author Stig@Lau.no on 30/06/16.
  */
-public class TimeStampFixedImageSamplePlan implements FramePlan {
+public class TimeStampFixedImageSamplePlan implements FramePlan{
     private final String collectId;
     private final SegmentWrapper wrapper;
     private final TimeStampFixedImageSampleSegment segment;
@@ -32,5 +32,9 @@ public class TimeStampFixedImageSamplePlan implements FramePlan {
 
     public SegmentWrapper wrapper() {
         return wrapper;
+    }
+
+    public String getId() {
+        return collectId;
     }
 }

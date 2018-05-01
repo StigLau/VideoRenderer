@@ -12,4 +12,6 @@ public interface FramePlan {
     List<FrameRepresentation> calculateFramesFromSegment();
 
     SegmentWrapper wrapper();
+
+    String getId();
 }

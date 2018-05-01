@@ -29,4 +29,9 @@ public class VideoStillImagePlan implements FramePlan {
     public SegmentWrapper wrapper() {
         return wrapper;
     }
+
+    @Override
+    public String getId() {
+        return toString();
+    }
 }

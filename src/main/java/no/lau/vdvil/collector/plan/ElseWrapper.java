@@ -2,12 +2,8 @@ package no.lau.vdvil.collector.plan;
 
 import no.lau.vdvil.collector.FrameRepresentation;
 import no.lau.vdvil.collector.SegmentWrapper;
-import no.lau.vdvil.collector.SimpleCalculator;
-import no.lau.vdvil.domain.Segment;
-import no.lau.vdvil.renderer.video.stigs.TimeStampFixedImageSampleSegment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,6 +30,11 @@ class ElseWrapper implements FramePlan{
 
     public SegmentWrapper wrapper() {
         return wrapper;
+    }
+
+    @Override
+    public String getId() {
+        return toString();
     }
 }
 
