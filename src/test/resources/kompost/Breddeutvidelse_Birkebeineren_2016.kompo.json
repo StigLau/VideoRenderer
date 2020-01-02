@@ -1,0 +1,101 @@
+{
+    "_id": "Breddeutvidelse_Birkebeineren_2016",
+    "_rev": "1-369a25291d77c2ee3bc44a60d0b2432f",
+    "type": "Video",
+    "bpm": 0,
+    "beatpattern": {
+        "frombeat": 0,
+        "tobeat": 0,
+        "masterbpm": 0
+    },
+    "segments": [
+        {
+            "id": "Sun run and beyond",
+            "sourceid": "",
+            "start": 502000000,
+            "duration": 23000000,
+            "end": 525000000
+        },
+        {
+            "id": "Lighter forest",
+            "sourceid": "",
+            "start": 413000000,
+            "duration": 89000000,
+            "end": 502000000
+        },
+        {
+            "id": "Long dark forest climb",
+            "sourceid": "",
+            "start": 311000000,
+            "duration": 102000000,
+            "end": 413000000
+        },
+        {
+            "id": "Glaring sun and hut",
+            "sourceid": "",
+            "start": 269000000,
+            "duration": 42000000,
+            "end": 311000000
+        },
+        {
+            "id": "Dark climb and right turn",
+            "sourceid": "",
+            "start": 234000000,
+            "duration": 35000000,
+            "end": 269000000
+        },
+        {
+            "id": "Sunny slope",
+            "sourceid": "",
+            "start": 201000000,
+            "duration": 33000000,
+            "end": 234000000
+        },
+        {
+            "id": "Meeting of man and machine",
+            "sourceid": "",
+            "start": 145033333,
+            "duration": 55966667,
+            "end": 201000000
+        },
+        {
+            "id": "Thru forest until right turn",
+            "sourceid": "",
+            "start": 74000000,
+            "duration": 71033333,
+            "end": 145033333
+        },
+        {
+            "id": "Bumpy",
+            "sourceid": "",
+            "start": 64000000,
+            "duration": 10000000,
+            "end": 74000000
+        },
+        {
+            "id": "The start",
+            "sourceid": "",
+            "start": 34000000,
+            "duration": 30000000,
+            "end": 64000000
+        },
+        {
+            "id": "Not-so-pretty_tracks",
+            "sourceid": "http://jalla1",
+            "start": 0,
+            "duration": 11000000,
+            "end": 11000000
+        }
+    ],
+    "sources": [
+        {
+            "id": "Breddeutvidelse_Birken",
+            "url": "https://www.youtube.com/watch?v=Vczri7uY0CY",
+            "startingOffset": 0,
+            "checksums": "13d95eec5fded41ecebd91d81b75fd54",
+            "extension": "mp4",
+            "mediatype": "video",
+            "snippet": false
+        }
+    ]
+}
