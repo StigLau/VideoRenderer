@@ -1,7 +1,6 @@
 package no.lau.vdvil.domain;
 
 import org.slf4j.LoggerFactory;
-import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -52,8 +51,7 @@ public class MediaFile {
             try {
                 MessageDigest md = MessageDigest.getInstance("MD5");
                 byte[] digest = md.digest(Files.readAllBytes(Paths.get(fileName.toURI())));
-                String fileHash = DatatypeConverter
-                        .printHexBinary(digest).toLowerCase();
+                String fileHash = byteArrayToHex(digest).toLowerCase();
                 if (checksums != null && !checksums.isEmpty()) {
                     if (checksums.contains(fileHash)) {
                         // already contains fileHash
@@ -69,5 +67,12 @@ public class MediaFile {
             }
         }
         return checksums;
+    }
+
+    public static String byteArrayToHex(byte[] a) {
+        StringBuilder sb = new StringBuilder(a.length * 2);
+        for(byte b: a)
+            sb.append(String.format("%02x", b));
+        return sb.toString();
     }
 }
