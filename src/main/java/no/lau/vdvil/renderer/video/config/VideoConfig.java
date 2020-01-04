@@ -17,6 +17,9 @@ public class VideoConfig implements Config {
 
     /**
      * Standard, simplified constructor
+     * @param width video width
+     * @param height video heigth
+     * @param framerate video framerate
      */
     public VideoConfig(int width, int height, long framerate) {
         this.width = width;

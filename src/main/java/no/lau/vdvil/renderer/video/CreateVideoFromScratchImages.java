@@ -38,6 +38,9 @@ public class CreateVideoFromScratchImages {
 
     /**
      * Standard instantioator
+      * @param buildPlan the build plan
+     * @param imageStore temp storage
+     * @param config video config
      */
     public static void createVideo(Plan buildPlan, ImageStore<BufferedImage> imageStore, VideoConfig config) {
         createVideo(buildPlan, imageStore, config, true);
@@ -58,6 +61,12 @@ public class CreateVideoFromScratchImages {
 
     /**
      * Detailed instatiation
+      * @param buildPlan plan from which to build
+     * @param imageStore the image store
+     * @param config video config
+     * @param writer video writer
+     * @param turboCharged lolz, dunno
+     * @param allowAudio if not using audio
      */
     public static void createVideo(Plan buildPlan, ImageStore<BufferedImage> imageStore, VideoConfig config, IMediaWriter writer, boolean turboCharged, boolean allowAudio) {
         log.info("Init");

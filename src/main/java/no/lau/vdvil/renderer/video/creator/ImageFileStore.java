@@ -18,6 +18,7 @@ import static no.lau.vdvil.domain.utils.KompositionUtils.durationMillis;
 import static no.lau.vdvil.domain.utils.KompositionUtils.fromMillis;
 
 /**
+ * Image storage. Go figure
  * @author Stig@Lau.no 23/03/15.
  */
 public class ImageFileStore<TYPE> implements ImageStore<TYPE> {
@@ -93,6 +94,8 @@ public class ImageFileStore<TYPE> implements ImageStore<TYPE> {
 
     /**
      * The fileStore doesn't need to monitor number of files in cache at this stage
+     * @param segmentId segment ID
+     * @return whether its ready
      */
     public boolean readyForNewImage(String segmentId) {
         return true;

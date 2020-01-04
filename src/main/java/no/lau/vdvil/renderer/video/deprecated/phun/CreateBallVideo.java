@@ -25,8 +25,8 @@ public class CreateBallVideo {
 
     /**
      * Create and display a number of bouncing balls on the
+     * @param outFile file to write to
      */
-
     public static void createBallsVideo(String outFile) {
         log.info("<init>");
         // the number of balls to bounce around

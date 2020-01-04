@@ -11,6 +11,7 @@ public class KompositionUtil {
 
     /**
      * Perform uniqueness check on Segment ID
+     * @param segments Segments to base off of
      */
     public static void performIdUniquenessCheck(List<Segment> segments) {
         List<String> seenBeforeInSegmentIds = new ArrayList<>();
@@ -29,6 +30,10 @@ public class KompositionUtil {
 
     /**
      * Used for structuring the segments into  multiple lists of segments that are neatly following each other.
+     * @param inSegments incoming segments
+     * @param bpm BPM
+     * @param resultSegments Ending segments
+     * @returnlist of segment lists
      */
     static List<List<Segment>> alignSegments(List<Segment> inSegments, float bpm, List<List<Segment>> resultSegments) {
         long current = 0;
