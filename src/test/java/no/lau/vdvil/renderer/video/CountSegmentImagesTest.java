@@ -6,6 +6,7 @@ import java.io.*;
 import java.nio.file.Path;
 import static no.lau.vdvil.renderer.video.TestData.fetch;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Stig@Lau.no
@@ -16,25 +17,26 @@ public class CountSegmentImagesTest {
     Path norwayFlowerFjordLocalStorage = fetch(TestData.norwayFlowerFjordRemoteUrl);
 
     @Test
-    public void countNr2() throws IOException {
+    public void countNr2() {
         VideoInfo.printProperties(VideoInfo.getVideoProperties(testVideoNorwayTimeLapseLocalStorage));
         long estimatedAmountOfImages = VideoInfo.getVideoProperties(testVideoNorwayTimeLapseLocalStorage).getDuration() / 46667;
         System.out.println("NOTE - Counting number of pics in video can take some time!");
-        //CountNumberOfEligableImagesBetweenTimestampsCollector collector = new CountNumberOfEligableImagesBetweenTimestampsCollector(10000000, 100000000, testVideo);
         CountNumberOfEligableImagesBetweenTimestampsCollector collector = new CountNumberOfEligableImagesBetweenTimestampsCollector(0, VideoInfo.getVideoProperties(testVideoNorwayTimeLapseLocalStorage).getDuration(), testVideoNorwayTimeLapseLocalStorage);
 
         collector.run();
-
-        assertEquals(7975, collector.imagesCollected());
+        long imagesFound = collector.imagesCollected();
+        assertTrue("Images " + imagesFound, 7950 < imagesFound );
+        assertTrue("Images " + imagesFound, imagesFound < 8000);
     }
 
     @Test
-    public void countDarkLakeForYourself() throws IOException {
+    public void countDarkLakeForYourself() {
         VideoInfo.printProperties(VideoInfo.getVideoProperties(testVideoNorwayTimeLapseLocalStorage));
         CountNumberOfEligableImagesBetweenTimestampsCollector collector = new CountNumberOfEligableImagesBetweenTimestampsCollector(69375000, 74000000, testVideoNorwayTimeLapseLocalStorage);
         try {
             collector.run();
         }catch (VideoExtractionFinished e) {
+            //This is ok
         }
         //This is the amount of images that were collected using the same parameters as the snippet collector method
         //Use SnipTest.testSegmentStrip to create the snippet!
@@ -42,12 +44,14 @@ public class CountSegmentImagesTest {
     }
 
     @Test
-    public void countDarkLakeSnippet() throws IOException {
+    public void countDarkLakeSnippet() {
         VideoInfo.printProperties(VideoInfo.getVideoProperties(norwayDarkLakeLocalStorage));
         CountNumberOfEligableImagesBetweenTimestampsCollector collector = new CountNumberOfEligableImagesBetweenTimestampsCollector(0, VideoInfo.getVideoProperties(norwayDarkLakeLocalStorage).getDuration(), norwayDarkLakeLocalStorage);
         collector.run();
         //This is the amount of images actually extractable from the snippet!!!! Compare 101 to the original expectation 113!
-        assertEquals(101, collector.imagesCollected());
+        long imagesFound = collector.imagesCollected();
+        assertTrue("Images " + imagesFound, 95 <= imagesFound);
+        assertTrue("Images " + imagesFound, imagesFound <= 110);
     }
 
     @Test
@@ -56,7 +60,9 @@ public class CountSegmentImagesTest {
         CountNumberOfEligableImagesBetweenTimestampsCollector collector = new CountNumberOfEligableImagesBetweenTimestampsCollector(0, VideoInfo.getVideoProperties(norwayFlowerFjordLocalStorage).getDuration(), norwayFlowerFjordLocalStorage);
         collector.run();
         //This is the amount of images actually extractable from the snippet!!!! Compare 101 to the original expectation 113!
-        assertEquals(248, collector.imagesCollected());
+        long imagesFound = collector.imagesCollected();
+        assertTrue("Images " + imagesFound, 240 <= imagesFound);
+        assertTrue("Images " + imagesFound, imagesFound < 250);
     }
 }
 
