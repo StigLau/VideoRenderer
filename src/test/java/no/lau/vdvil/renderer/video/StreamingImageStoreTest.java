@@ -138,7 +138,7 @@ public class StreamingImageStoreTest {
         assertEquals(384, ((SuperPlan) planner.collectPlans().get(6)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
         assertEquals(96, ((SuperPlan) planner.collectPlans().get(7)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
         */
-        assertEquals("663da0cfbb7e0fe98300cbbb07bdd6b3", md5Checksum(resultingMediaFile.getFileName())); //Note something wrong with the result - it doesnt move!!?!
+        assertEquals("74a7aedb2e450e1c38ff99a7f7bd5ad3", md5Checksum(resultingMediaFile.getFileName())); //Note something wrong with the result - it doesnt move!!?!
     }
 
     @Test
