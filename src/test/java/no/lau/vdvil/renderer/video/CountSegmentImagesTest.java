@@ -25,8 +25,9 @@ public class CountSegmentImagesTest {
 
         collector.run();
         long imagesFound = collector.imagesCollected();
-        assertTrue("Images " + imagesFound, 7950 < imagesFound );
-        assertTrue("Images " + imagesFound, imagesFound < 8000);
+        System.out.println("imagesFound = " + imagesFound);
+        assertTrue("Images " + imagesFound, 6805 < imagesFound );
+        assertTrue("Images " + imagesFound, imagesFound < 7000);
     }
 
     @Test
