@@ -27,7 +27,7 @@ public class CountSegmentImagesTest {
         long imagesFound = collector.imagesCollected();
         System.out.println("imagesFound = " + imagesFound);
         assertTrue("Images " + imagesFound, 6805 < imagesFound );
-        assertTrue("Images " + imagesFound, imagesFound < 7000);
+        assertTrue("Images " + imagesFound, imagesFound < 8200);
     }
 
     @Test
@@ -56,7 +56,7 @@ public class CountSegmentImagesTest {
     }
 
     @Test
-    public void countFlowerFjordSnippet() throws IOException {
+    public void countFlowerFjordSnippet() {
         VideoInfo.printProperties(VideoInfo.getVideoProperties(norwayFlowerFjordLocalStorage));
         CountNumberOfEligableImagesBetweenTimestampsCollector collector = new CountNumberOfEligableImagesBetweenTimestampsCollector(0, VideoInfo.getVideoProperties(norwayFlowerFjordLocalStorage).getDuration(), norwayFlowerFjordLocalStorage);
         collector.run();

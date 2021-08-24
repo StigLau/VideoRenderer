@@ -58,7 +58,7 @@ public class FFmpegFunctions {
     public static String perform(List<List<String>> paramList, Path destinationFile) throws IOException {
         Files.createDirectories((destinationFile.getParent()));
         Files.deleteIfExists(destinationFile);
-        String command = createCommand(paramList) + " " + destinationFile.toString();
+        String command = createCommand(paramList) + " " + destinationFile;
         return performFFMPEG(command);
     }
 
@@ -120,7 +120,7 @@ public class FFmpegFunctions {
 
         List<List<String>> props = new ArrayList<>();
         props.add(Arrays.asList("-i", inputVideo.toString()));
-        props.add(Arrays.asList("-filter:v setpts="+percentageChange+"*PTS"));
+        props.add(Arrays.asList("-filter:v \"setpts="+percentageChange+"*PTS\""));
         logger.info(perform(props, destinationFile));
         return destinationFile;
     }

@@ -3,7 +3,7 @@
 
     <groupId>no.lau.vdvil</groupId>
     <artifactId>video-renderer</artifactId>
-    <version>1.9.5</version>
+    <version>1.9.6</version>
     <packaging>jar</packaging>
 
 
@@ -26,19 +26,19 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.25</version>
+            <version>1.7.32</version>
         </dependency>
 
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>1.9</version>
+            <version>1.15</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -84,7 +84,7 @@
     <scm>
         <connection>scm:git:ssh://github.com/StigLau/VideoRenderer.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/StigLau/VideoRenderer.git</developerConnection>
-        <url>http://github.com/StigLau/VideoRenderer</url>
+        <url>https://github.com/StigLau/VideoRenderer</url>
       <tag>HEAD</tag>
   </scm>
 </project>
