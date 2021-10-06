@@ -25,10 +25,27 @@ public class ImprovedFFMpegFunctions {
     static FFmpegExecutor executor;
 
 
+    public static String ffmpegLocation() {
+        return envOrDefault("ffmpeg", "/usr/local/bin/ffmpeg");
+    }
+
+    public static String ffprobeLocation() {
+        return envOrDefault("ffprobe", "/usr/local/bin/ffprobe");
+    }
+
+    private static String envOrDefault(String envName, String defaultPath) {
+        String envPath = System.getenv(envName);
+        if (envPath == null || envPath.isEmpty())
+            return defaultPath;
+        else
+            return envPath;
+    }
+
+
     static {
         try {
-            ffmpeg = new FFmpeg("/usr/local/bin/ffmpeg");
-            ffprobe = new FFprobe("/usr/local/bin/ffprobe");
+            ffmpeg = new FFmpeg(ffmpegLocation());
+            ffprobe = new FFprobe(ffprobeLocation());
             executor = new FFmpegExecutor(ffmpeg, ffprobe);
         } catch (IOException e) {
             throw new RuntimeException("Could not start FFMPEG or FFProbe", e);

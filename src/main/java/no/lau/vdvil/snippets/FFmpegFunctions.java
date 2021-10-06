@@ -26,7 +26,7 @@ public class FFmpegFunctions {
 
     public static String performFFMPEG(String command) throws IOException {
         //Make sure destination folder has been created!
-        logger.info("Running command: {}", command);
+        logger.info("Running command: '{}'", command);
 
         Process p = Runtime.getRuntime().exec(command);
 
@@ -63,7 +63,7 @@ public class FFmpegFunctions {
     }
 
     private static String createCommand(List<List<String>> paramList) {
-        String command = "ffmpeg";
+        String command = ImprovedFFMpegFunctions.ffmpegLocation();
         //String command = "docker run jrottenberg/ffmpeg";
         for (List<String> params : paramList) {
             command += " " + String.join(" ", params);
@@ -88,14 +88,14 @@ public class FFmpegFunctions {
     public static Path concatVideoSnippets(ExtensionType extensionType, Path... snippets) throws IOException {
         Path resultingFile = createTempFile("video_and_audio_combination", extensionType);
         Path fileList = createTempFiles(extensionType, snippets);
-        String concatCommand = "ffmpeg -f concat -safe 0 -i "+fileList.toString()+" -c copy " + resultingFile.toString();
+        String concatCommand = ImprovedFFMpegFunctions.ffmpegLocation() + " -f concat -safe 0 -i "+fileList.toString()+" -c copy " + resultingFile.toString();
         logger.info(performFFMPEG(concatCommand));
         return resultingFile;
     }
 
     public static Path combineAudioAndVideo(Path inputVideo, Path music) throws IOException {
         Path target = createTempFile("videoAudioConcat", ExtensionType.mp4);
-        logger.info(performFFMPEG("ffmpeg -i "+inputVideo.toString()+" -i "+music.toString()+" -c:v copy -c:a aac -strict experimental " + target.toString()));
+        logger.info(performFFMPEG(ImprovedFFMpegFunctions.ffmpegLocation() + " -i "+inputVideo.toString()+" -i "+music.toString()+" -c:v copy -c:a aac -strict experimental " + target.toString()));
         return target;
     }
 
@@ -120,7 +120,9 @@ public class FFmpegFunctions {
 
         List<List<String>> props = new ArrayList<>();
         props.add(Arrays.asList("-i", inputVideo.toString()));
-        props.add(Arrays.asList("-filter:v \"setpts="+percentageChange+"*PTS\""));
+        props.add(Arrays.asList("-filter:v setpts="+percentageChange+"*PTS"));
+        //        props.add(Arrays.asList("-filter:v \"setpts="+percentageChange+"*PTS\" -vcodec copy -acodec copy -movflags " ));
+
         logger.info(perform(props, destinationFile));
         return destinationFile;
     }
@@ -128,13 +130,13 @@ public class FFmpegFunctions {
     //Docker alternative: docker run --entrypoint='ffprobe' jrottenberg/ffmpeg
     public static long countNumberOfFrames(Path destinationFile) throws IOException {
         String additionalCommands = "-show_entries stream=nb_read_frames -count_frames ";
-        String command = "ffprobe -v error -select_streams v:0 -of default=noprint_wrappers=1:nokey=1 " + additionalCommands  + destinationFile.toString();
+        String command = ImprovedFFMpegFunctions.ffprobeLocation() + " -v error -select_streams v:0 -of default=noprint_wrappers=1:nokey=1 " + additionalCommands  + destinationFile.toString();
         return Long.parseLong(performFFMPEG(command).trim());
     }
 
     public static String fetchFrameInfo(Path destinationFile) throws IOException {
         String additionalCommands = "-show_entries stream=avg_frame_rate ";
-        String command = "ffprobe -v error -select_streams v:0 -of default=noprint_wrappers=1:nokey=1 " + additionalCommands + destinationFile.toString();
+        String command = ImprovedFFMpegFunctions.ffprobeLocation() + " -v error -select_streams v:0 -of default=noprint_wrappers=1:nokey=1 " + additionalCommands + destinationFile.toString();
         return performFFMPEG(command).trim();
     }
 }
