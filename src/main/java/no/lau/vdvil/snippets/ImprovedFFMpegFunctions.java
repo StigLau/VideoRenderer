@@ -4,6 +4,7 @@ import net.bramp.ffmpeg.FFmpeg;
 import net.bramp.ffmpeg.FFmpegExecutor;
 import net.bramp.ffmpeg.FFprobe;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
+import net.bramp.ffmpeg.job.FFmpegJob;
 import net.bramp.ffmpeg.probe.FFmpegFormat;
 import net.bramp.ffmpeg.probe.FFmpegProbeResult;
 import net.bramp.ffmpeg.probe.FFmpegStream;
@@ -11,6 +12,7 @@ import no.lau.vdvil.renderer.video.ExtensionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.Path;
 import static no.lau.vdvil.domain.utils.KompositionUtils.createTempFile;
 import static no.lau.vdvil.domain.utils.KompositionUtils.createTempFiles;
@@ -106,6 +108,36 @@ public class ImprovedFFMpegFunctions {
         return stream;
     }
 
+    public static String detectSceneChanges(Path target, double ratio) throws IOException {
+        FFmpegBuilder builder = (new FFmpegBuilder()).setInput(target.toString()).addExtraArgs(new String[]{"-filter:v ", "\"select='gt(scene,0.1)',showinfo\""}).addOutput("/tmp/heia.txt").done();
+        FFmpegJob job = executor.createJob(builder);
+        job.run();
+        return "some results";
+    }
+
+    public static String detectSceneChangesProbe(Path target, double ratio) throws IOException {
+        String file = "/tmp/komposttest/Bergen_In_Motion-Sigurd_Svidal_Randal.mp4";
+        String doStuff = "ffprobe -show_frames -of compact=p=0 -f lavfi \"movie=/tmp/komposttest/Bergen_In_Motion-Sigurd_Svidal_Randal.mp4,select=gt(scene\\,0.4)";
+        String doStuff3 = "ffprobe -show_frames -of compact=p=0 -f lavfi \"movie=/tmp/komposttest/Bergen_In_Motion-Sigurd_Svidal_Randal.mp4,select=gt(scene\\,0.4)\"";
+        String doStuff2 = "ffmpeg -i /tmp/komposttest/Bergen_In_Motion-Sigurd_Svidal_Randal.mp4 -vf select='gt(scene\\,0.4)',scale=160:120,tile -frames:v 1 preview.png";
+        String doStuff4 = "ffmpeg -i " + file + "  -filter:v \"select='gt(scene,0.4)',showinfo\" -f null - 2> /tmp/ffout";
+        String doStuff5 = "ffmpeg -i " + file + " -filter:v \"select='gt(scene,0.4)',showinfo\" -f null - 2> /tmp/ffout";
+        String doStuff6 = "ffmpeg -i " + file + " -filter:v \"select='gt(scene,0.4)',showinfo\" -f null ffout";
+        Process asd = Runtime.getRuntime().exec(doStuff6);
+        try {
+            asd.waitFor();
+        } catch (InterruptedException var12) {
+            var12.printStackTrace();
+        }
+
+        PrintStream var10000 = System.out;
+        String var10001 = new String(asd.getInputStream().readAllBytes());
+        var10000.println("InputStream " + var10001);
+        var10000 = System.out;
+        var10001 = new String(asd.getErrorStream().readAllBytes());
+        var10000.println("ErrorStream " + var10001);
+        return new String(asd.getInputStream().readAllBytes());
+    }
 
     //Docker alternative: docker run --entrypoint='ffprobe' jrottenberg/ffmpeg
     public static long countNumberOfFrames(Path destinationFile) throws IOException {
