@@ -38,6 +38,9 @@ public class FFmpegFunctions {
         String result = "";
         while ((s = stdInput.readLine()) != null) {
             result+= s + "\n";
+            //Printing to console, to keep end user updated
+            System.out.print(s + "\r");
+            System.out.print(s);
         }
 
         BufferedReader stdError = new BufferedReader(new
