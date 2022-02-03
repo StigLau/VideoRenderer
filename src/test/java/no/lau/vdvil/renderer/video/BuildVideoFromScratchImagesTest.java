@@ -166,7 +166,7 @@ public class BuildVideoFromScratchImagesTest {
     }
 
     public String md5Checksum(URL url) throws IOException {
-        return DigestUtils.md5Hex(url.openStream());
+        return DigestUtils.md5Hex(url.openStream().readAllBytes());
     }
 
     @Test

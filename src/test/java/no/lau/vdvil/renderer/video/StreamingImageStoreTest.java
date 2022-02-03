@@ -55,7 +55,7 @@ public class StreamingImageStoreTest {
                 new TimeStampFixedImageSampleSegment("Flower fjord", 35500000, 46250000, 24),
                 new TimeStampFixedImageSampleSegment("Dark lake", 69375000, 74000000, 100)
         );
-        fetchKompositionNorway.storageLocation = new MediaFile(downmixedOriginalVideo, 0l, 120F, "abc");
+        fetchKompositionNorway.storageLocation = new MediaFile(downmixedOriginalVideo, 0L, 120F, "abc");
 
         Komposition fetchKompositionSwing = new Komposition(128,
                 new TimeStampFixedImageSampleSegment("Red bridge", 2919583, 6047708, 8),
@@ -65,7 +65,7 @@ public class StreamingImageStoreTest {
                 new TimeStampFixedImageSampleSegment("Smile girl, smile", 34200833, 34993292, 8),
                 new TimeStampFixedImageSampleSegment("Swing through bridge with mountain smile", 45128417, 46713333, 8)
         );
-        fetchKompositionSwing.storageLocation = new MediaFile(theSwingVideo, 0l, 120F, "abc");
+        fetchKompositionSwing.storageLocation = new MediaFile(theSwingVideo, 0L, 120F, "abc");
         //fetchKompositionSwing.framerate=60;
 
         List<Komposition> fetchKompositions = new ArrayList<>();
@@ -77,7 +77,7 @@ public class StreamingImageStoreTest {
                 new VideoStillImageSegment("Flower fjord", 0, 32)
         );
         buildKomposition.framerate = 24;
-        buildKomposition.storageLocation = new MediaFile(result4, 0l, 128f, "0e7d51d26f573386c229b772d126754a");
+        buildKomposition.storageLocation = new MediaFile(result4, 0L, 128f, "0e7d51d26f573386c229b772d126754a");
         this.resultingMediaFile = buildKomposition.storageLocation;
         planner = new KompositionPlanner(fetchKompositions, buildKomposition, sobotaMp3, 24);//<!-- Here is the key!
     }
@@ -121,7 +121,7 @@ public class StreamingImageStoreTest {
 
     @Test
     @Ignore //Test often fails!!
-    public void testStreamingFromInVideoSource() throws InterruptedException, IOException {
+    public void testStreamingFromInVideoSource() throws InterruptedException {
         PipeDream<BufferedImage> imageStore = new PipeDream<>(200, 5000, 1000, 10);
         ThreadedImageCollector collector = new ThreadedImageCollector(planner.collectPlans(), plan -> new WaitingVideoThumbnailsCollector(plan, imageStore));
         new Thread(collector).start();
@@ -146,7 +146,7 @@ public class StreamingImageStoreTest {
 
     @Test
     @Ignore //Segment strip doesnt stop
-    public void testSegmentStrip() throws InterruptedException, IOException {
+    public void testSegmentStrip() throws InterruptedException {
         PipeDream<BufferedImage> imageStore = new PipeDream<>(200, 5000, 1000, 10);
         TimeStampFixedImageSampleSegment segment = new TimeStampFixedImageSampleSegment("Flower fjord", 35500000, 46250000, 24);
         new Thread(new ThreadedImageCollector(
@@ -162,10 +162,12 @@ public class StreamingImageStoreTest {
         assertEquals("5156c7b907707065aa281e63065b4c37", md5Checksum(resultingMediaFile.getFileName()));
     }
 
-
-
-    public String md5Checksum(URL url) throws IOException {
-        return DigestUtils.md5Hex(url.openStream());
+    public String md5Checksum(URL url)  {
+        try {
+            return DigestUtils.md5Hex(url.openStream().readAllBytes());
+        } catch (Exception e) {
+            throw new RuntimeException("Shit didn't go all that well");
+        }
     }
 }
 

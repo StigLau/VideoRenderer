@@ -151,7 +151,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
     }
 
     @Test
-    public void testStillImageCollection() throws IOException, InterruptedException {
+    public void testStillImageCollection() throws IOException {
         Komposition buildKomposition =  new Komposition(124,
                 //new VideoStillImageSegment("Still Image Fun 1", 0, 8)
                 new VideoStillImageSegment("Besseggen", 0, 8)
@@ -235,7 +235,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 first,
                 second,
                 third);
-        MediaFile mf = new MediaFile(new URL(result3c), 0l, 128f, "1d8cb85c8d873a58fbcfcb6ef146cab5");
+        MediaFile mf = new MediaFile(new URL(result3c), 0L, 128f, "1d8cb85c8d873a58fbcfcb6ef146cab5");
         buildKomposition.storageLocation = mf;
 
         PipeDream<BufferedImage> pipeDream = new PipeDream<>(30, 250, 500, 10);
@@ -262,6 +262,6 @@ public class BuildVideoFromStaticImagesAndVideoTest {
     }
 
     String md5Checksum(URL url) throws IOException {
-        return DigestUtils.md5Hex(url.openStream());
+        return DigestUtils.md5Hex(url.openStream().readAllBytes());
     }
 }
