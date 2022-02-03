@@ -9,7 +9,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <test.exlusion></test.exlusion>
+        <test.exlusion/>
     </properties>
 
     <dependencies>
@@ -57,7 +57,7 @@
     </dependencies>
     <profiles>
         <profile>
-            <id>exlude-integration-tests</id>
+            <id>ex-integration</id>
             <properties>
                 <test.exlusion>IntegrationTest</test.exlusion>
             </properties>
@@ -77,7 +77,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-scm-plugin</artifactId>
-                <version>1.9.4</version>
+                <version>1.11.2</version>
                 <configuration>
                     <tag>${project.artifactId}-${project.version}</tag>
                 </configuration>

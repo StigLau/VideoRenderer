@@ -12,7 +12,7 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
-      - run: mvn --batch-mode --update-snapshots verify -P exlude-integration-tests
+      - run: mvn --batch-mode --update-snapshots verify -P ex-integration
       - run: mkdir staging && cp target/*.jar staging
       - uses: actions/upload-artifact@v2
         with:
