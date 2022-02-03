@@ -70,8 +70,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>9</source>
-                    <target>9</target>
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -102,6 +102,13 @@
         <connection>scm:git:ssh://github.com/StigLau/VideoRenderer.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/StigLau/VideoRenderer.git</developerConnection>
         <url>https://github.com/StigLau/VideoRenderer</url>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub StigLau Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/StigLau/VideoRenderer</url>
+        </repository>
+    </distributionManagement>
 </project>

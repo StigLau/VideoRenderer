@@ -120,7 +120,7 @@ public class StreamingImageStoreTest {
     }
 
     @Test
-    //@Ignore //Test often fails!!
+    @Ignore //Test often fails!!
     public void testStreamingFromInVideoSource() throws InterruptedException, IOException {
         PipeDream<BufferedImage> imageStore = new PipeDream<>(200, 5000, 1000, 10);
         ThreadedImageCollector collector = new ThreadedImageCollector(planner.collectPlans(), plan -> new WaitingVideoThumbnailsCollector(plan, imageStore));
