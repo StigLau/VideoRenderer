@@ -5,6 +5,7 @@ import no.lau.vdvil.domain.MediaFile;
 import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.domain.VideoStillImageSegment;
 import no.lau.vdvil.domain.out.Komposition;
+import no.lau.vdvil.IntegrationTest;
 import no.lau.vdvil.plan.ImageCollectable;
 import no.lau.vdvil.plan.Plan;
 import no.lau.vdvil.renderer.video.config.VideoConfig;
@@ -18,6 +19,8 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -40,6 +43,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author Stig@Lau.no 11/04/15.
  */
+@Category(IntegrationTest.class)
 public class BuildVideoFromScratchImagesTest {
 
 
