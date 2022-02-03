@@ -1,8 +1,8 @@
 package no.lau.vdvil.renderer.video;
 
 import no.lau.vdvil.collector.CountNumberOfEligableImagesBetweenTimestampsCollector;
+import no.lau.vdvil.IntegrationTest;
 import org.junit.Test;
-import java.io.*;
 import java.nio.file.Path;
 import static no.lau.vdvil.renderer.video.TestData.fetch;
 import static org.junit.Assert.assertEquals;
@@ -11,6 +11,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author Stig@Lau.no
  */
+//@Category(IntegrationTest.class)
 public class CountSegmentImagesTest {
     Path testVideoNorwayTimeLapseLocalStorage = fetch(TestData.norwayRemoteUrl);
     Path norwayDarkLakeLocalStorage = fetch(TestData.norwayDarkLakeRemoteUrl);
@@ -62,8 +63,8 @@ public class CountSegmentImagesTest {
         collector.run();
         //This is the amount of images actually extractable from the snippet!!!! Compare 101 to the original expectation 113!
         long imagesFound = collector.imagesCollected();
-        assertTrue("Images " + imagesFound, 240 <= imagesFound);
-        assertTrue("Images " + imagesFound, imagesFound < 250);
+        assertTrue("Expecting more than 240 images. Found " + imagesFound, 240 <= imagesFound);
+        assertTrue("Expecting less than 255 images. Found " + imagesFound, imagesFound < 255);
     }
 }
 

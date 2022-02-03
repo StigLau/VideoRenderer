@@ -1,5 +1,6 @@
 package no.lau.vdvil.renderer.video;
 
+import no.lau.vdvil.IntegrationTest;
 import no.lau.vdvil.collector.*;
 import no.lau.vdvil.collector.plan.FramePlan;
 import no.lau.vdvil.domain.MediaFile;
@@ -14,6 +15,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
@@ -29,6 +31,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author Stig@Lau.no 24/04/15.
  */
+@Category(IntegrationTest.class)
 public class StreamingImageStoreTest {
 
     URL downmixedOriginalVideo;

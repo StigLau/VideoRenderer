@@ -11,9 +11,12 @@ import net.bramp.ffmpeg.probe.FFmpegProbeResult;
 import net.bramp.ffmpeg.probe.FFmpegStream;
 import net.bramp.ffmpeg.progress.Progress;
 import net.bramp.ffmpeg.progress.ProgressListener;
+import no.lau.vdvil.IntegrationTest;
 import no.lau.vdvil.renderer.video.TestData;
 import no.lau.vdvil.snippets.FFmpegFunctions;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
@@ -22,6 +25,7 @@ import static no.lau.vdvil.snippets.FFmpegFunctions.combineAudioAndVideo;
 import static no.lau.vdvil.snippets.ImprovedFFMpegFunctions.*;
 import static org.junit.Assert.assertEquals;
 
+@Category(IntegrationTest.class)
 public class VideoConcatenationTest {
     FFprobe ffprobe = new FFprobe("/usr/local/bin/ffprobe");
     FFmpeg ffmpeg = new FFmpeg("/usr/local/bin/ffmpeg");

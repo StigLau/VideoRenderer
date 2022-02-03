@@ -27,6 +27,7 @@ import java.util.stream.Stream;
 /**
  * @author Stig@Lau.no 08/04/15.
  */
+@Deprecated
 public class KompositionUtils {
     public static Logger logger = LoggerFactory.getLogger(KompositionUtils.class);
 
