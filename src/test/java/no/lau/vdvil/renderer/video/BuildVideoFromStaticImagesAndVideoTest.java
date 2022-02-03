@@ -8,6 +8,7 @@ import no.lau.vdvil.domain.TransitionSegment;
 import no.lau.vdvil.domain.VideoStillImageSegment;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.domain.utils.KompositionUtils;
+import no.lau.vdvil.IntegrationTest;
 import no.lau.vdvil.plan.ImageCollectable;
 import no.lau.vdvil.plan.Plan;
 import no.lau.vdvil.plan.SuperPlan;
@@ -19,6 +20,7 @@ import no.lau.vdvil.renderer.video.stigs.TimeStampFixedImageSampleSegment;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.awt.image.BufferedImage;
@@ -36,6 +38,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author Stig@Lau.no 11/04/15.
  */
+@Category(IntegrationTest.class)
 public class BuildVideoFromStaticImagesAndVideoTest {
 
     URL downmixedOriginalVideo;
