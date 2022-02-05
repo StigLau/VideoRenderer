@@ -1,23 +1,19 @@
 name: Publish to github repo
 
 on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'Package release version'
-        required: true
-
+  release:
+    types: [created]
 jobs:
-  build-and-publish:
+  publish:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
-      - name: Set up JDK 11
+      - name: Release repository Stiglau/VideoRenderer
         uses: actions/setup-java@v2
         with:
           java-version: '11'
           distribution: 'adopt'
-      - run: mvn --batch-mode --update-snapshots verify source:jar deploy -P ex-integration
+      - publishing
+        run: mvn --batch-mode source:jar deploy -P ex-integration
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
