@@ -13,7 +13,7 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
-      - publishing
+      - name: publishing
         run: mvn --batch-mode source:jar deploy -P ex-integration
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
