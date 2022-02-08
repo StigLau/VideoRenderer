@@ -8,7 +8,6 @@ import no.lau.vdvil.domain.TransitionSegment;
 import no.lau.vdvil.domain.VideoStillImageSegment;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.domain.utils.KompositionUtils;
-import no.lau.vdvil.IntegrationTest;
 import no.lau.vdvil.plan.ImageCollectable;
 import no.lau.vdvil.plan.Plan;
 import no.lau.vdvil.plan.SuperPlan;
@@ -18,9 +17,9 @@ import no.lau.vdvil.renderer.video.creator.ImageStore;
 import no.lau.vdvil.renderer.video.creator.PipeDream;
 import no.lau.vdvil.renderer.video.stigs.TimeStampFixedImageSampleSegment;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.awt.image.BufferedImage;
@@ -33,12 +32,12 @@ import java.util.concurrent.Executors;
 import static no.lau.vdvil.renderer.video.TestData.fetch;
 import static no.lau.vdvil.renderer.video.TestData.norwayRemoteUrl;
 import static no.lau.vdvil.renderer.video.TestData.sobotaMp3RemoteUrl;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Stig@Lau.no 11/04/15.
  */
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class BuildVideoFromStaticImagesAndVideoTest {
 
     URL downmixedOriginalVideo;
@@ -64,7 +63,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
     //Config config = new Config(320, 200,DEFAULT_TIME_UNIT.convert(15, MILLISECONDS));
     Logger logger = LoggerFactory.getLogger(BuildVideoFromStaticImagesAndVideoTest.class);
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         //Low Rez
         //downmixedOriginalVideo = Paths.get("/tmp/320_NORWAY-A_Time-Lapse_Adventure.mp4").toUri().toURL();

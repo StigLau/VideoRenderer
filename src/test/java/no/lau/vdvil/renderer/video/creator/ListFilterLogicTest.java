@@ -3,12 +3,12 @@ package no.lau.vdvil.renderer.video.creator;
 import no.lau.vdvil.renderer.video.creator.filter.PercentageSplitter;
 import no.lau.vdvil.renderer.video.creator.filter.Reverter;
 import no.lau.vdvil.renderer.video.creator.filter.TaktSplitter;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Stig@Lau.no 23/04/15.
@@ -16,7 +16,7 @@ import static org.junit.Assert.assertEquals;
 public class ListFilterLogicTest {
 
     List<String> testList;
-    @Before
+    @BeforeEach
     public void setUp() {
         testList = new ArrayList<>();
         for (int i = 0; i < 9; i++) {

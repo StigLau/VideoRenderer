@@ -1,14 +1,14 @@
 package no.lau.vdvil.renderer.video.shrinker;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Stig@Lau.no 07/04/15.
  */
 public class MediaConvertorTest {
     @Test
-    @Ignore //Download first
+    @Disabled //Download first
     public void testConverting() {
         Integer WIDTH = 320;
         Integer HEIGHT = 240;

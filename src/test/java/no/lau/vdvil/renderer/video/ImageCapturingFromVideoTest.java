@@ -5,11 +5,11 @@ import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.renderer.video.creator.ImageFileStore;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
 import no.lau.vdvil.renderer.video.stigs.ImageSampleInstruction;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Stig Lau 16/03/15.
@@ -18,7 +18,7 @@ public class ImageCapturingFromVideoTest {
 
     private Logger logger = LoggerFactory.getLogger(ImageCapturingFromVideoTest.class);
 
-    @Ignore //TODO Find a input file which works
+    @Disabled //TODO Find a input file which works
     @Test
     public void testCapturing() {
         String inputFilename = "/tmp/from_scratch_images_test_3c.mp4";

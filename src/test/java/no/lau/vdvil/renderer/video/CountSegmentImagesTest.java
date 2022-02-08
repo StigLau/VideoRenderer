@@ -1,17 +1,16 @@
 package no.lau.vdvil.renderer.video;
 
 import no.lau.vdvil.collector.CountNumberOfEligableImagesBetweenTimestampsCollector;
-import no.lau.vdvil.IntegrationTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import java.nio.file.Path;
 import static no.lau.vdvil.renderer.video.TestData.fetch;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Stig@Lau.no
  */
-//@Category(IntegrationTest.class)
+//@Tag("IntegrationTest")
 public class CountSegmentImagesTest {
     Path testVideoNorwayTimeLapseLocalStorage = fetch(TestData.norwayRemoteUrl);
     Path norwayDarkLakeLocalStorage = fetch(TestData.norwayDarkLakeRemoteUrl);
@@ -27,8 +26,8 @@ public class CountSegmentImagesTest {
         collector.run();
         long imagesFound = collector.imagesCollected();
         System.out.println("imagesFound = " + imagesFound);
-        assertTrue("Images " + imagesFound, 6805 < imagesFound );
-        assertTrue("Images " + imagesFound, imagesFound < 8200);
+        assertTrue(6805 < imagesFound, "Images " + imagesFound);
+        assertTrue(imagesFound < 8200, "Images " + imagesFound);
     }
 
     @Test
@@ -52,8 +51,8 @@ public class CountSegmentImagesTest {
         collector.run();
         //This is the amount of images actually extractable from the snippet!!!! Compare 101 to the original expectation 113!
         long imagesFound = collector.imagesCollected();
-        assertTrue("Images " + imagesFound, 95 <= imagesFound);
-        assertTrue("Images " + imagesFound, imagesFound <= 110);
+        assertTrue(95 <= imagesFound, "Images " + imagesFound);
+        assertTrue(imagesFound <= 110, "Images " + imagesFound);
     }
 
     @Test
@@ -63,8 +62,8 @@ public class CountSegmentImagesTest {
         collector.run();
         //This is the amount of images actually extractable from the snippet!!!! Compare 101 to the original expectation 113!
         long imagesFound = collector.imagesCollected();
-        assertTrue("Expecting more than 240 images. Found " + imagesFound, 240 <= imagesFound);
-        assertTrue("Expecting less than 255 images. Found " + imagesFound, imagesFound < 255);
+        assertTrue(240 <= imagesFound, "Expecting more than 240 images. Found " + imagesFound);
+        assertTrue(imagesFound < 255, "Expecting less than 255 images. Found " + imagesFound);
     }
 }
 

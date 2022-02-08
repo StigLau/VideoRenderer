@@ -1,6 +1,5 @@
 package no.lau.vdvil.renderer.video;
 
-import no.lau.vdvil.IntegrationTest;
 import no.lau.vdvil.collector.*;
 import no.lau.vdvil.collector.plan.FramePlan;
 import no.lau.vdvil.domain.MediaFile;
@@ -12,10 +11,10 @@ import no.lau.vdvil.renderer.video.config.VideoConfig;
 import no.lau.vdvil.renderer.video.creator.PipeDream;
 import no.lau.vdvil.renderer.video.stigs.TimeStampFixedImageSampleSegment;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
@@ -25,13 +24,13 @@ import java.util.List;
 import static no.lau.vdvil.renderer.video.TestData.fetch;
 import static no.lau.vdvil.renderer.video.TestData.norwayRemoteUrl;
 import static no.lau.vdvil.renderer.video.TestData.sobotaMp3RemoteUrl;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Stig@Lau.no 24/04/15.
  */
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class StreamingImageStoreTest {
 
     URL downmixedOriginalVideo;
@@ -42,7 +41,7 @@ public class StreamingImageStoreTest {
     KompositionPlanner planner;
     MediaFile resultingMediaFile;
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         downmixedOriginalVideo = fetch(norwayRemoteUrl).toUri().toURL();
         theSwingVideo = Paths.get("/tmp/kompost/Worlds_Largest_Rope_Swing/Worlds_Largest_Rope_Swing.mp4").toUri().toURL();
@@ -120,7 +119,7 @@ public class StreamingImageStoreTest {
     }
 
     @Test
-    @Ignore //Test often fails!!
+    @Disabled //Test often fails!!
     public void testStreamingFromInVideoSource() throws InterruptedException {
         PipeDream<BufferedImage> imageStore = new PipeDream<>(200, 5000, 1000, 10);
         ThreadedImageCollector collector = new ThreadedImageCollector(planner.collectPlans(), plan -> new WaitingVideoThumbnailsCollector(plan, imageStore));
@@ -145,7 +144,7 @@ public class StreamingImageStoreTest {
     }
 
     @Test
-    @Ignore //Segment strip doesnt stop
+    @Disabled //Segment strip doesnt stop
     public void testSegmentStrip() throws InterruptedException {
         PipeDream<BufferedImage> imageStore = new PipeDream<>(200, 5000, 1000, 10);
         TimeStampFixedImageSampleSegment segment = new TimeStampFixedImageSampleSegment("Flower fjord", 35500000, 46250000, 24);
