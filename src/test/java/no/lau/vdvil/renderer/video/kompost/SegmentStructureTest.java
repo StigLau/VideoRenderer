@@ -7,7 +7,7 @@ import no.lau.vdvil.renderer.video.creator.filter.PercentageSplitter;
 import no.lau.vdvil.renderer.video.creator.filter.Reverter;
 import no.lau.vdvil.renderer.video.creator.filter.TaktSplitter;
 import no.lau.vdvil.renderer.video.stigs.TimeStampFixedImageSampleSegment;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 import static no.lau.vdvil.renderer.video.KompositionUtil.performIdUniquenessCheck;

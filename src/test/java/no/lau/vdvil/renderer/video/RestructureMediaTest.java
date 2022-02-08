@@ -8,11 +8,11 @@ import no.lau.vdvil.renderer.video.creator.ImageStore;
 import no.lau.vdvil.renderer.video.creator.VideoImageStitcher;
 import no.lau.vdvil.renderer.video.stigs.ImageSampleInstruction;
 import no.lau.vdvil.renderer.video.testout.deprecated.Mp4FromPicsCreator;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import java.net.MalformedURLException;
 import java.net.URL;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Stig@Lau.no 08/02/15.
@@ -37,7 +37,7 @@ public class RestructureMediaTest {
     }
 
     @Test
-    @Ignore //Download first
+    @Disabled //Download first
     public void buildWithXuggle() throws MalformedURLException {
         Komposition fetchKomposition = new Komposition(128,
                 new ImageSampleInstruction("First capture sequence", 64, 64, 2),
@@ -55,7 +55,7 @@ public class RestructureMediaTest {
     }
 
     @Test
-    @Ignore //Download first
+    @Disabled //Download first
     public void buildWithJCodec() throws Exception {
         Komposition fetchKomposition = new Komposition(128,
                 new ImageSampleInstruction("First capture sequence", 64, 64, 2),

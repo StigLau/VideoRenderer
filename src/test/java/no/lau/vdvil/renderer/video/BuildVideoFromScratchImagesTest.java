@@ -5,7 +5,7 @@ import no.lau.vdvil.domain.MediaFile;
 import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.domain.VideoStillImageSegment;
 import no.lau.vdvil.domain.out.Komposition;
-import no.lau.vdvil.IntegrationTest;
+
 import no.lau.vdvil.plan.ImageCollectable;
 import no.lau.vdvil.plan.Plan;
 import no.lau.vdvil.renderer.video.config.VideoConfig;
@@ -16,14 +16,13 @@ import no.lau.vdvil.renderer.video.creator.filter.TaktSplitter;
 import no.lau.vdvil.renderer.video.creator.VideoBuilderWrapper;
 import no.lau.vdvil.snippets.FFmpegFunctions;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -38,12 +37,12 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static no.lau.vdvil.renderer.video.TestData.*;
 import static no.lau.vdvil.renderer.video.TestData.norwayBaseKomposition;
 import static no.lau.vdvil.snippets.FFmpegFunctions.*;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Stig@Lau.no 11/04/15.
  */
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class BuildVideoFromScratchImagesTest {
 
 
@@ -60,8 +59,8 @@ public class BuildVideoFromScratchImagesTest {
     //Low Rez
     //Config config = new Config(320, 200,DEFAULT_TIME_UNIT.convert(15, MILLISECONDS));
 
-    @Before
-    public void setUp() throws MalformedURLException {
+    @BeforeEach
+    public void setUp() {
         sobotaMp3 = fetch(sobotaMp3RemoteUrl);
         imageStore = new PipeDream(250, 1000, 5000, 10);
         videoBuilder = new VideoBuilderWrapper(imageStore);
@@ -86,7 +85,7 @@ public class BuildVideoFromScratchImagesTest {
     }
 
     @Test
-    //@Ignore
+    //@Disabled
     public void testBuildingMinimally() throws IOException, InterruptedException {
         VideoConfig videoConfig = new VideoConfig(1280, 720, Math.round(1000000/24));
         URL muzik = sobotaMp3.toUri().toURL();
@@ -121,7 +120,7 @@ public class BuildVideoFromScratchImagesTest {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testCountNumberOfFrames() throws IOException {
 
         assertEquals(182, countNumberOfFrames(Paths.get("/tmp/from_scratch_images_test_2.mp4")));
@@ -141,7 +140,7 @@ public class BuildVideoFromScratchImagesTest {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testConcatStuff() throws IOException {
         concatVideoSnippets(ExtensionType.mp4,
 //                , Paths.get("/tmp/as0.mp4")
@@ -157,7 +156,7 @@ public class BuildVideoFromScratchImagesTest {
     }
 
     @Test
-    //@Ignore
+    //@Disabled
     public void combiningVideoWithAudio() throws IOException {
         Path inputVideo = Paths.get("/tmp/endRez.mp4");
         Path music = sobotaMp3.toAbsolutePath();
@@ -170,7 +169,7 @@ public class BuildVideoFromScratchImagesTest {
     }
 
     @Test
-    @Ignore //Not working yet
+    @Disabled //Not working yet
     public void specificVideoCompositionTest() throws IOException, InterruptedException {
 
         int bpm = 124;

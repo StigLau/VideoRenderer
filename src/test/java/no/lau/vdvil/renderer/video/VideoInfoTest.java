@@ -2,13 +2,13 @@ package no.lau.vdvil.renderer.video;
 
 import com.xuggle.xuggler.IContainer;
 import com.xuggle.xuggler.IStreamCoder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
 import java.io.IOException;
 import java.nio.file.Path;
 import static no.lau.vdvil.renderer.video.TestData.fetch;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Stig Lau 24/03/15.

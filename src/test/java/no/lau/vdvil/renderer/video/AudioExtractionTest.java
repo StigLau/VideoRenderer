@@ -5,8 +5,8 @@ import com.xuggle.mediatool.IMediaWriter;
 import com.xuggle.mediatool.ToolFactory;
 import com.xuggle.xuggler.ICodec;
 import com.xuggle.xuggler.IContainer;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Stig@Lau.no 18/01/15.
@@ -18,7 +18,7 @@ public class AudioExtractionTest {
     String outfile = "/tmp/an4.mp3";
 
     @Test
-    @Ignore //Download first
+    @Disabled //Download first
     public void testExtractingAudion() {
         VideoInfo videoInfo = new VideoInfo();
         IContainer container = videoInfo.getVideoProperties(inFile);
