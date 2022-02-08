@@ -1,9 +1,8 @@
 name: Publish to github repo
-
-#on: [push]
-on:
-  release:
-    types: [created]
+on: [push]
+#on:
+#  release:
+#    types: [created]
 jobs:
   publish:
     runs-on: ubuntu-latest
