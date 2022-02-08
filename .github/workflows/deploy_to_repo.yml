@@ -28,5 +28,5 @@ jobs:
           git config user.email "<>"
       - name: commit new version
         run: |
-          git commit -m "Bumped version to next snapshot"
+          git commit pom.xml -m "Bumped version to next snapshot"
           git push origin master
