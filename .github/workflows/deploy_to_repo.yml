@@ -18,7 +18,7 @@ jobs:
           echo "Bumping release version from SNAPSHOT"
           mvn build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.incrementalVersion}
           echo "Performing release"
-          mvn --batch-mode mvn source:jar deploy -P ex-integration
+          mvn --batch-mode source:jar deploy -P ex-integration
           echo "Bumping release version to next SNAPSHOT"
           mvn build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion}-SNAPSHOT
         env:
