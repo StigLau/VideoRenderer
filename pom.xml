@@ -37,15 +37,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jcodec</groupId>
-            <artifactId>jcodec</artifactId>
-            <version>0.1.6</version> <!-- beware of many braking changes later -->
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>no.lau.vdvil</groupId>
             <artifactId>common-utils</artifactId>
-            <version>0.18</version>
+            <version>0.18.0</version>
         </dependency>
 
         <dependency>
