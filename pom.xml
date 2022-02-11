@@ -45,7 +45,7 @@
         <dependency>
             <groupId>no.lau.vdvil</groupId>
             <artifactId>common-utils</artifactId>
-            <version>0.18-SNAPSHOT</version>
+            <version>0.18</version>
         </dependency>
 
         <dependency>
