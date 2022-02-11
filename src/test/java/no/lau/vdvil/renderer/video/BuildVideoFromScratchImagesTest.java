@@ -1,5 +1,6 @@
 package no.lau.vdvil.renderer.video;
 
+import no.lau.MD5;
 import no.lau.vdvil.collector.*;
 import no.lau.vdvil.domain.MediaFile;
 import no.lau.vdvil.domain.Segment;
@@ -15,7 +16,6 @@ import no.lau.vdvil.renderer.video.creator.filter.Reverter;
 import no.lau.vdvil.renderer.video.creator.filter.TaktSplitter;
 import no.lau.vdvil.renderer.video.creator.VideoBuilderWrapper;
 import no.lau.vdvil.snippets.FFmpegFunctions;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -165,7 +165,7 @@ public class BuildVideoFromScratchImagesTest {
     }
 
     public String md5Checksum(URL url) throws IOException {
-        return DigestUtils.md5Hex(url.openStream().readAllBytes());
+        return MD5.md5Hex(url.openStream().readAllBytes());
     }
 
     @Test

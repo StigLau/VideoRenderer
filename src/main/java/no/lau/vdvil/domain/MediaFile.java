@@ -1,5 +1,6 @@
 package no.lau.vdvil.domain;
 
+import no.lau.MD5;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -7,8 +8,6 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.Files;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * @author Stig@Lau.no 07/04/15.
@@ -49,9 +48,7 @@ public class MediaFile {
     public String getChecksums() {
         if(checksums == null || checksums.isEmpty()) {
             try {
-                MessageDigest md = MessageDigest.getInstance("MD5");
-                byte[] digest = md.digest(Files.readAllBytes(Paths.get(fileName.toURI())));
-                String fileHash = byteArrayToHex(digest).toLowerCase();
+                String fileHash = MD5.md5Hex(Files.readAllBytes(Paths.get(fileName.toURI()))).toLowerCase();
                 if (checksums != null && !checksums.isEmpty()) {
                     if (checksums.contains(fileHash)) {
                         // already contains fileHash
@@ -62,7 +59,7 @@ public class MediaFile {
                     checksums = fileHash;
                 }
 
-            } catch (NoSuchAlgorithmException | IOException | URISyntaxException e) {
+            } catch (IOException | URISyntaxException e) {
                 LoggerFactory.getLogger(getClass()).error("Error when creating checksum for {}", id, e);
             }
         }

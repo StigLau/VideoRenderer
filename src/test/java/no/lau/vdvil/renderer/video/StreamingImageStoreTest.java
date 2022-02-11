@@ -10,7 +10,7 @@ import no.lau.vdvil.plan.SuperPlan;
 import no.lau.vdvil.renderer.video.config.VideoConfig;
 import no.lau.vdvil.renderer.video.creator.PipeDream;
 import no.lau.vdvil.renderer.video.stigs.TimeStampFixedImageSampleSegment;
-import org.apache.commons.codec.digest.DigestUtils;
+import no.lau.MD5;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -163,7 +163,7 @@ public class StreamingImageStoreTest {
 
     public String md5Checksum(URL url)  {
         try {
-            return DigestUtils.md5Hex(url.openStream().readAllBytes());
+            return MD5.md5Hex(url.openStream().readAllBytes());
         } catch (Exception e) {
             throw new RuntimeException("Shit didn't go all that well");
         }
