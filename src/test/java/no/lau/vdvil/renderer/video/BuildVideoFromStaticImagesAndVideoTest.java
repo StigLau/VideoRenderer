@@ -16,7 +16,6 @@ import no.lau.vdvil.renderer.video.creator.ImageFileStore;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
 import no.lau.vdvil.renderer.video.creator.PipeDream;
 import no.lau.vdvil.renderer.video.stigs.TimeStampFixedImageSampleSegment;
-import no.lau.MD5;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
@@ -29,6 +28,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import static no.lau.vdvil.domain.MediaFile.md5Hex;
 import static no.lau.vdvil.renderer.video.TestData.fetch;
 import static no.lau.vdvil.renderer.video.TestData.norwayRemoteUrl;
 import static no.lau.vdvil.renderer.video.TestData.sobotaMp3RemoteUrl;
@@ -261,6 +261,6 @@ public class BuildVideoFromStaticImagesAndVideoTest {
     }
 
     String md5Checksum(URL url) throws IOException {
-        return MD5.md5Hex(url.openStream().readAllBytes());
+        return md5Hex(url.openStream().readAllBytes());
     }
 }

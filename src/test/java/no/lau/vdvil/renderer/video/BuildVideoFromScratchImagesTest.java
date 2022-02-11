@@ -1,6 +1,5 @@
 package no.lau.vdvil.renderer.video;
 
-import no.lau.MD5;
 import no.lau.vdvil.collector.*;
 import no.lau.vdvil.domain.MediaFile;
 import no.lau.vdvil.domain.Segment;
@@ -34,6 +33,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static no.lau.vdvil.domain.MediaFile.md5Hex;
 import static no.lau.vdvil.renderer.video.TestData.*;
 import static no.lau.vdvil.renderer.video.TestData.norwayBaseKomposition;
 import static no.lau.vdvil.snippets.FFmpegFunctions.*;
@@ -165,7 +165,7 @@ public class BuildVideoFromScratchImagesTest {
     }
 
     public String md5Checksum(URL url) throws IOException {
-        return MD5.md5Hex(url.openStream().readAllBytes());
+        return md5Hex(url.openStream().readAllBytes());
     }
 
     @Test

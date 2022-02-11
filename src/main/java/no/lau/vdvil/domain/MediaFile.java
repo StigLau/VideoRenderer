@@ -1,13 +1,15 @@
 package no.lau.vdvil.domain;
 
-import no.lau.MD5;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.Files;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * @author Stig@Lau.no 07/04/15.
@@ -48,7 +50,7 @@ public class MediaFile {
     public String getChecksums() {
         if(checksums == null || checksums.isEmpty()) {
             try {
-                String fileHash = MD5.md5Hex(Files.readAllBytes(Paths.get(fileName.toURI()))).toLowerCase();
+                String fileHash = md5Hex(Files.readAllBytes(Paths.get(fileName.toURI()))).toLowerCase();
                 if (checksums != null && !checksums.isEmpty()) {
                     if (checksums.contains(fileHash)) {
                         // already contains fileHash
@@ -71,5 +73,28 @@ public class MediaFile {
         for(byte b: a)
             sb.append(String.format("%02x", b));
         return sb.toString();
+    }
+
+    public static String md5Hex(byte[] input) {
+        try {
+            // Static getInstance method is called with hashing MD5
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] messageDigest = md.digest(input);
+
+            // Convert byte array into signum representation
+            BigInteger no = new BigInteger(1, messageDigest);
+
+            // Convert message digest into hex value
+            StringBuilder hashtext = new StringBuilder(no.toString(16));
+            while (hashtext.length() < 32) {
+                hashtext.insert(0, "0");
+            }
+            return hashtext.toString();
+        }
+
+        // For specifying wrong message digest algorithms
+        catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

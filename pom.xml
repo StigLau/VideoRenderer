@@ -37,12 +37,6 @@
         </dependency>
 
         <dependency>
-            <groupId>no.lau.vdvil</groupId>
-            <artifactId>common-utils</artifactId>
-            <version>0.18.0</version>
-        </dependency>
-
-        <dependency>
             <groupId>net.bramp.ffmpeg</groupId>
             <artifactId>ffmpeg</artifactId>
             <version>0.6.2</version>
