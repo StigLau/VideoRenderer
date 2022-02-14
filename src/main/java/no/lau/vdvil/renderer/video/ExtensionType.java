@@ -9,6 +9,7 @@ public enum ExtensionType {
     aac ("aac"),
     mp3 ("mp3"),
     mp4 ("mp4"),
+    m4a ("m4a"),
     webm ("webm"),
     flac ("flac"),
     dvl ("dvl.json"),
@@ -40,7 +41,7 @@ public enum ExtensionType {
     }
 
     public boolean isVideo() {
-        return this == mp4 || this == webm || this == htmlImagelist;
+        return this == mp4 || this == webm || this == m4a || this == htmlImagelist;
     }
 
     public String toString() {
