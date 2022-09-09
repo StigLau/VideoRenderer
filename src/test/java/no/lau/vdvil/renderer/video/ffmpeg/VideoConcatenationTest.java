@@ -13,6 +13,7 @@ import net.bramp.ffmpeg.progress.Progress;
 import net.bramp.ffmpeg.progress.ProgressListener;
 import no.lau.vdvil.renderer.video.TestData;
 import no.lau.vdvil.snippets.FFmpegFunctions;
+import no.lau.vdvil.snippets.ImprovedFFMpegFunctions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
 
@@ -26,8 +27,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Tag("IntegrationTest")
 public class VideoConcatenationTest {
-    FFprobe ffprobe = new FFprobe("/usr/local/bin/ffprobe");
-    FFmpeg ffmpeg = new FFmpeg("/usr/local/bin/ffmpeg");
+    FFprobe ffprobe = new FFprobe(ImprovedFFMpegFunctions.ffprobeLocation());
+    FFmpeg ffmpeg = new FFmpeg(ImprovedFFMpegFunctions.ffmpegLocation());
     Path norwayDarkLakeLocalStorage = fetch(TestData.norwayDarkLakeRemoteUrl);
 
     public VideoConcatenationTest() throws IOException {

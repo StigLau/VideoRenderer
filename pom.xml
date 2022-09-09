@@ -3,7 +3,7 @@
 
     <groupId>no.lau.vdvil</groupId>
     <artifactId>video-renderer</artifactId>
-    <version>1.10.8-SNAPSHOT</version>
+    <version>1.11.0</version>
     <packaging>jar</packaging>
 
 

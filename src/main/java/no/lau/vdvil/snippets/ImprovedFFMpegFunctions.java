@@ -35,7 +35,7 @@ public class ImprovedFFMpegFunctions {
         return envOrDefault("ffprobe", "/usr/local/bin/ffprobe");
     }
 
-    private static String envOrDefault(String envName, String defaultPath) {
+    static String envOrDefault(String envName, String defaultPath) {
         String envPath = System.getenv(envName);
         if (envPath == null || envPath.isEmpty())
             return defaultPath;
