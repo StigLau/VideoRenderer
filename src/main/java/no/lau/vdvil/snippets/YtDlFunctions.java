@@ -11,7 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 
-import static no.lau.vdvil.snippets.ImprovedFFMpegFunctions.envOrDefault;
+import static no.lau.CommonFunctions.envOrDefault;
 
 public class YtDlFunctions {
 
