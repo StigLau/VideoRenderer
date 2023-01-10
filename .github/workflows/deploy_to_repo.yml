@@ -21,12 +21,12 @@ jobs:
         run: mvn --batch-mode source:jar deploy -Pex-integration
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#      - name: Bumping release version to next SNAPSHOT
-#        run: |
-#          mvn build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion}-SNAPSHOT
-#          git config user.name "GitHub Actions Bot"
-#          git config user.email "<>"
-#          git commit pom.xml -m "Bumped version to next snapshot"
-#          git push origin master
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Bumping release version to next SNAPSHOT
+        run: |
+          mvn build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion}-SNAPSHOT
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+          git commit pom.xml -m "Bumped version to next snapshot"
+          git push origin master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
