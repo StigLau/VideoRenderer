@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author Stig@Lau.no 11/04/15.
  */
 @Tag("IntegrationTest")
-public class BuildVideoFromScratchImagesTest {
+class BuildVideoFromScratchImagesTest {
 
 
     Path sobotaMp3;
@@ -67,7 +67,7 @@ public class BuildVideoFromScratchImagesTest {
     }
 
     @Test
-    public void extractImagesFromNorwayVideo() throws IOException, InterruptedException {
+    void extractImagesFromNorwayVideo() throws IOException, InterruptedException {
         Komposition buildKomposition = norwayBaseKomposition().filter(24, 16);
         buildKomposition.storageLocation = new MediaFile(new URL(result2), 0l, 125f, "7aa709f7caff0446a4a9aa2865f4efd2");
 
@@ -86,7 +86,7 @@ public class BuildVideoFromScratchImagesTest {
 
     @Test
     //@Disabled
-    public void testBuildingMinimally() throws IOException, InterruptedException {
+    void testBuildingMinimally() throws IOException, InterruptedException {
         VideoConfig videoConfig = new VideoConfig(1280, 720, Math.round(1000000/24));
         URL muzik = sobotaMp3.toUri().toURL();
 
@@ -104,7 +104,7 @@ public class BuildVideoFromScratchImagesTest {
     }
 
     @Test
-    public void testBuildingOnlyNorwayShowing12Frames() throws IOException, InterruptedException {
+    void testBuildingOnlyNorwayShowing12Frames() throws IOException, InterruptedException {
         VideoConfig videoConfig = new VideoConfig(1280, 720, Math.round(1000000 / 24));
         Komposition baseKomposition = norwayBaseKomposition();
         URL muzik = sobotaMp3.toUri().toURL();
@@ -121,7 +121,7 @@ public class BuildVideoFromScratchImagesTest {
 
     @Test
     @Disabled
-    public void testCountNumberOfFrames() throws IOException {
+    void testCountNumberOfFrames() throws IOException {
 
         assertEquals(182, countNumberOfFrames(Paths.get("/tmp/from_scratch_images_test_2.mp4")));
         assertEquals(182, countNumberOfFrames(Paths.get("/tmp/from_scratch_images_with_sound.mp4")));
@@ -141,8 +141,8 @@ public class BuildVideoFromScratchImagesTest {
 
     @Test
     @Disabled
-    public void testConcatStuff() throws IOException {
-        concatVideoSnippets(ExtensionType.mp4,
+    void testConcatStuff() throws IOException {
+        Path result = concatVideoSnippets(ExtensionType.mp4,
 //                , Paths.get("/tmp/as0.mp4")
 //                , Paths.get("/tmp/as1.mp4")
 //                , Paths.get("/tmp/as2.mp4")
@@ -153,11 +153,13 @@ public class BuildVideoFromScratchImagesTest {
 //                , Paths.get("/tmp/as7.mp4")
 //                , Paths.get("/tmp/as8.mp4")
         );
+        System.out.println("result.getFileName() = " + result.getFileName());
+        System.out.println("Files.size(result) = " + Files.size(result));
     }
 
     @Test
     //@Disabled
-    public void combiningVideoWithAudio() throws IOException {
+    void combiningVideoWithAudio() throws IOException {
         Path inputVideo = Paths.get("/tmp/endRez.mp4");
         Path music = sobotaMp3.toAbsolutePath();
         Path target = combineAudioAndVideo(inputVideo, music);
@@ -170,7 +172,7 @@ public class BuildVideoFromScratchImagesTest {
 
     @Test
     @Disabled //Not working yet
-    public void specificVideoCompositionTest() throws IOException, InterruptedException {
+    void specificVideoCompositionTest() throws IOException, InterruptedException {
 
         int bpm = 124;
         Komposition buildKomposition =  new Komposition(bpm,
@@ -196,7 +198,7 @@ public class BuildVideoFromScratchImagesTest {
     }
 
     @Test
-    public void testSnippingStuff() throws IOException {
+    void testSnippingStuff() throws IOException {
         Path testFile = Paths.get("/tmp/testur/myTestFile.mp4");
         FFmpegFunctions.snippetSplitter(fetch(norwayRemoteUrl).toString(), 56222833, 60477083, testFile);
         assertEquals(103, countNumberOfFrames(testFile));
@@ -204,7 +206,7 @@ public class BuildVideoFromScratchImagesTest {
     }
 
     @Test
-    public void testSnippingStuffBergen() throws IOException {
+    void testSnippingStuffBergen() throws IOException {
         Path origFile = fetch(bergenRemoteUrl);
         Path testFile = Paths.get("/tmp/testur/myTestFile2.mp4");
         FFmpegFunctions.snippetSplitter(origFile.toString(), 56222833, 60477083, testFile);

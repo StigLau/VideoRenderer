@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import static no.lau.vdvil.domain.utils.KompositionUtils.createTempFile;
 import static no.lau.vdvil.domain.utils.KompositionUtils.createTempFiles;
 
@@ -88,12 +89,36 @@ public class FFmpegFunctions {
         return hours + ":" + minutes + ":" + seconds + "." + millis;
     }
 
-    public static Path concatVideoSnippets(ExtensionType extensionType, Path... snippets) throws IOException {
+    public static Path oldConcatVideoSnippets(ExtensionType extensionType, Path... snippets) throws IOException {
         Path resultingFile = createTempFile("video_and_audio_combination", extensionType);
         Path fileList = createTempFiles(extensionType, snippets);
         String concatCommand = ImprovedFFMpegFunctions.ffmpegLocation() + " -f concat -safe 0 -i "+fileList.toString()+" -c copy " + resultingFile.toString();
         logger.info(performFFMPEG(concatCommand));
         return resultingFile;
+    }
+
+    public static Path concatVideoSnippets(ExtensionType extensionType, Path... snippets) throws IOException {
+        Path resultingFile = createTempFile("video_and_audio_combination", extensionType);
+        logger.info("Concatenating files into {}", resultingFile);
+        List<String> convertedSnippets = Arrays.stream(snippets)
+            .map(path -> convertVideoTypes(ExtensionType.ts, path).toString())
+            .collect(Collectors.toList());
+        String concatCommand = ImprovedFFMpegFunctions.ffmpegLocation() + " -i \"concat:"+String.join("|", convertedSnippets)+"\" -c copy " + resultingFile.toString();
+        logger.info(performFFMPEG(concatCommand));
+        return resultingFile;
+    }
+
+    static Path convertVideoTypes(ExtensionType extensionType, Path snippet) {
+        try {
+            Path convertedTempFile = createKompostTempFile(extensionType);
+            String concatCommand =
+                ImprovedFFMpegFunctions.ffmpegLocation() + " -i " + snippet.toString() + " -c copy "
+                    + convertedTempFile;
+            logger.debug(performFFMPEG(concatCommand));
+            return convertedTempFile;
+        } catch (Exception e) {
+            throw new RuntimeException("Error:"+e.getMessage() + " converting file, " + snippet + " to " + extensionType, e);
+        }
     }
 
     public static Path combineAudioAndVideo(Path inputVideo, Path music) throws IOException {
@@ -141,5 +166,12 @@ public class FFmpegFunctions {
         String additionalCommands = "-show_entries stream=avg_frame_rate ";
         String command = ImprovedFFMpegFunctions.ffprobeLocation() + " -v error -select_streams v:0 -of default=noprint_wrappers=1:nokey=1 " + additionalCommands + destinationFile.toString();
         return performFFMPEG(command).trim();
+    }
+
+    public static Path createKompostTempFile(ExtensionType extensionType) throws IOException {
+        Path tempfile = Files.createTempFile(Path.of("/tmp"), "tmp", "." + extensionType.name());
+        Files.deleteIfExists(tempfile);
+        tempfile.toFile().deleteOnExit();
+        return tempfile;
     }
 }
