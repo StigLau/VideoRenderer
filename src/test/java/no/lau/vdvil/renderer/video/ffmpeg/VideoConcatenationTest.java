@@ -26,7 +26,7 @@ import static no.lau.vdvil.snippets.ImprovedFFMpegFunctions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Tag("IntegrationTest")
-public class VideoConcatenationTest {
+class VideoConcatenationTest {
     FFprobe ffprobe = new FFprobe(ImprovedFFMpegFunctions.ffprobeLocation());
     FFmpeg ffmpeg = new FFmpeg(ImprovedFFMpegFunctions.ffmpegLocation());
     Path norwayDarkLakeLocalStorage = fetch(TestData.norwayDarkLakeRemoteUrl);
@@ -35,7 +35,7 @@ public class VideoConcatenationTest {
     }
 
     @Test
-    public void testProbingFile() throws IOException {
+    void testProbingFile() throws IOException {
         FFmpegProbeResult probeResult = ffprobe.probe(norwayDarkLakeLocalStorage.toString());
 
         FFmpegFormat format = probeResult.getFormat();
@@ -54,7 +54,7 @@ public class VideoConcatenationTest {
     }
 
     @Test
-    public void testDoingStuff() throws IOException {
+    void testDoingStuff() throws IOException {
         FFmpegExecutor executor = new FFmpegExecutor(ffmpeg, ffprobe);
         FFmpegProbeResult in = ffprobe.probe(norwayDarkLakeLocalStorage.toString());
 
@@ -89,12 +89,14 @@ public class VideoConcatenationTest {
     }
 
     @Test
-    public void testBuildingStuffWithImprovedFffmpegFunctions() throws IOException {
+    void testBuildingStuffWithImprovedFffmpegFunctions() throws IOException {
         Path snippet = snippetSplitter(fetch(norwayRemoteUrl), 56222833, 60477083);
         assertEquals(104, countNumberOfFrames(snippet));
         Path snippet2 = snippetSplitter(fetch(norwayRemoteUrl), 90477083, 90477083+5008300);
         assertEquals(141, countNumberOfFrames(snippet2));
 
+        //TODO Implement
+        //Path noSoundConcatenation  = FFmpegFunctions.protocolConcatVideoSnippets(ExtensionType.mp4, snippet, snippet2);
         Path noSoundConcatenation  = concatVideoSnippets(snippet, snippet2);
         assertEquals(245, countNumberOfFrames(noSoundConcatenation));
         //Path combinedWithSound = Paths.get("/tmp/jalla.mp4");
@@ -105,7 +107,7 @@ public class VideoConcatenationTest {
     }
 
     @Test
-    public void testSnippingStuffBergen() throws IOException {
+    void testSnippingStuffBergen() throws IOException {
         Path origFile = fetch(bergenRemoteUrl);
         Path snippet = snippetSplitter(origFile, 56222833, 60477083);
         assertEquals(102, ffmpegStreamInfo(snippet).nb_frames);

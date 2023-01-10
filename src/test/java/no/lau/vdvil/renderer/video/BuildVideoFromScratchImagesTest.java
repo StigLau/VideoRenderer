@@ -142,7 +142,7 @@ class BuildVideoFromScratchImagesTest {
     @Test
     @Disabled
     void testConcatStuff() throws IOException {
-        Path result = concatVideoSnippets(ExtensionType.mp4,
+        Path result = protocolConcatVideoSnippets(ExtensionType.mp4,
 //                , Paths.get("/tmp/as0.mp4")
 //                , Paths.get("/tmp/as1.mp4")
 //                , Paths.get("/tmp/as2.mp4")

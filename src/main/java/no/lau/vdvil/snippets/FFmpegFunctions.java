@@ -89,28 +89,30 @@ public class FFmpegFunctions {
         return hours + ":" + minutes + ":" + seconds + "." + millis;
     }
 
-    public static Path oldConcatVideoSnippets(ExtensionType extensionType, Path... snippets) throws IOException {
+    public static Path concatVideoSnippets(ExtensionType extensionType, Path... snippets) throws IOException {
         Path resultingFile = createTempFile("video_and_audio_combination", extensionType);
         Path fileList = createTempFiles(extensionType, snippets);
         String concatCommand = ImprovedFFMpegFunctions.ffmpegLocation() + " -f concat -safe 0 -i "+fileList.toString()+" -c copy " + resultingFile.toString();
         logger.info(performFFMPEG(concatCommand));
         return resultingFile;
     }
-
-    public static Path concatVideoSnippets(ExtensionType extensionType, Path... snippets) throws IOException {
-        Path resultingFile = createTempFile("video_and_audio_combination", extensionType);
+/**
+ * https://trac.ffmpeg.org/wiki/Concatenate#protocol
+ */
+    public static Path protocolConcatVideoSnippets(ExtensionType extensionType, Path... snippets) throws IOException {
+        Path resultingFile = createKompostTempFile("video_and_audio_combination", extensionType);
         logger.info("Concatenating files into {}", resultingFile);
         List<String> convertedSnippets = Arrays.stream(snippets)
             .map(path -> convertVideoTypes(ExtensionType.ts, path).toString())
             .collect(Collectors.toList());
-        String concatCommand = ImprovedFFMpegFunctions.ffmpegLocation() + " -i \"concat:"+String.join("|", convertedSnippets)+"\" -c copy " + resultingFile.toString();
+        String concatCommand = ImprovedFFMpegFunctions.ffmpegLocation() + " -y -i \"concat:"+String.join("|", convertedSnippets)+"\" -c copy " + resultingFile.toString();
         logger.info(performFFMPEG(concatCommand));
         return resultingFile;
     }
 
     static Path convertVideoTypes(ExtensionType extensionType, Path snippet) {
         try {
-            Path convertedTempFile = createKompostTempFile(extensionType);
+            Path convertedTempFile = createKompostTempFile("", extensionType);
             String concatCommand =
                 ImprovedFFMpegFunctions.ffmpegLocation() + " -i " + snippet.toString() + " -c copy "
                     + convertedTempFile;
@@ -168,8 +170,9 @@ public class FFmpegFunctions {
         return performFFMPEG(command).trim();
     }
 
-    public static Path createKompostTempFile(ExtensionType extensionType) throws IOException {
-        Path tempfile = Files.createTempFile(Path.of("/tmp"), "tmp", "." + extensionType.name());
+    public static Path createKompostTempFile(String prefixIfAny, ExtensionType extensionType) throws IOException {
+        Files.createDirectories(Path.of("/tmp/work"));
+        Path tempfile = Files.createTempFile(Path.of("/tmp/work"), prefixIfAny, "." + extensionType.name());
         Files.deleteIfExists(tempfile);
         tempfile.toFile().deleteOnExit();
         return tempfile;
