@@ -94,7 +94,7 @@
         <repository>
             <id>github</id>
             <name>GitHub StigLau Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/StigLau/vdvil</url>
+            <url>https://maven.pkg.github.com/StigLau/VideoRenderer</url>
         </repository>
     </distributionManagement>
 </project>
