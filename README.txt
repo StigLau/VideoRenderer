@@ -38,3 +38,4 @@ ffmpeg -i Flurries_on_roadside_einer_56222833___60477083.mp4 2>&1 | grep Duratio
 
 
 ffmpeg -i Flurries_on_roadside_einer_56222833___60477083.mp4 -filter:v "setpts=1.760563380*PTS" stretched.mp4
+
