@@ -4,9 +4,18 @@
 name: Deploying based on release
 on:
   pull_request:
-    branches: [ master ]
+    types:
+      - closed
+
 jobs:
+  if_merged:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo The PR was merged
   build:
+    needs: if_merged
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
