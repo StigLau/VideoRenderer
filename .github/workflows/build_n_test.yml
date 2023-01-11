@@ -10,8 +10,9 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-java@v3
         with:
-          java-version: '11'
+          java-version: 11
           distribution: 'corretto'
+          cache: 'maven'
       - run: mvn --batch-mode --update-snapshots verify -P ex-integration
       - run: mkdir staging && cp target/*.jar staging
       - uses: actions/upload-artifact@v2
