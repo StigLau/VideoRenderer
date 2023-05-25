@@ -78,14 +78,14 @@ public class BuildVideoFromStaticImagesAndVideoTest {
 
         fetchKompositionStillImages = new Komposition(128,
                 new StaticImagesSegment("Still Image Fun 1",
-                        getClass().getClassLoader().getResource("images/Cow_goes_moo.png").toString(),
-                        getClass().getClassLoader().getResource("images/What_the_fox_sed_-Mouse.png").toString(),
-                        getClass().getClassLoader().getResource("images/Slide_Blue_mountain_top_lake.png").toString(),
-                        getClass().getClassLoader().getResource("images/Slide_Blue_mountain_top_lake2.png").toString()
+                        ClassLoader.getSystemResource("images/Cow_goes_moo.png").toString(),
+                        ClassLoader.getSystemResource("images/What_the_fox_sed_-Mouse.png").toString(),
+                        ClassLoader.getSystemResource("images/Slide_Blue_mountain_top_lake.png").toString(),
+                        ClassLoader.getSystemResource("images/Slide_Blue_mountain_top_lake2.png").toString()
                 ));
         fetchKompositionStillImages2 = new Komposition(128,
                 new StaticImagesSegment("Still Image Fun 2",
-                        getClass().getClassLoader().getResource("images/Slide_Blue_mountain_top_lake2.png").toString()
+                        ClassLoader.getSystemResource("images/Slide_Blue_mountain_top_lake2.png").toString()
                 ));
         fetchKompositionStillImages.storageLocation = new MediaFile(new URL("file://tmp/kompost"), 0l, -1f, "abc");
 
@@ -127,7 +127,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new VideoStillImageSegment("Purple Mountains Clouds", 20, 12)
 
         );//.filter(16, 16);
-        MediaFile mf = new MediaFile(new URL(result1), 0l, 128f, "405e9e9771bc4bee519d1faa6f013cda");
+        MediaFile mf = new MediaFile(new URL(result1), 0l, 128f, "370b9b8ee872fe38342f1dd2e410ef0a");
         buildKomposition.storageLocation = mf;
 
 
@@ -234,7 +234,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 first,
                 second,
                 third);
-        MediaFile mf = new MediaFile(new URL(result3c), 0L, 128f, "1d8cb85c8d873a58fbcfcb6ef146cab5");
+        MediaFile mf = new MediaFile(new URL(result3c), 0L, 128f, "2a745683577324ee59421e6649f1a7de");
         buildKomposition.storageLocation = mf;
 
         PipeDream<BufferedImage> pipeDream = new PipeDream<>(30, 250, 500, 10);

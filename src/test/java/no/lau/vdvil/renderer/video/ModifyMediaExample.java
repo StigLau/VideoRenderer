@@ -10,9 +10,10 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.nio.ShortBuffer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import static no.lau.vdvil.domain.utils.KompositionUtils.fromMillis;
@@ -25,7 +26,7 @@ public class ModifyMediaExample {
 	private static final String outputFilename = "/tmp/rez2.mp4";
 
 	//Main functionality
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 
 		//String inputFile = ModifyMediaExample.class.getClassLoader().getResource("video/5sec-test.flv").getFile();
 		String inputFile = "/tmp/CLMD-The_Stockholm_Syndrome.mp4";
@@ -68,17 +69,17 @@ public class ModifyMediaExample {
 	private static class StaticImageMediaTool extends MediaToolAdapter {
 
 		//private List<BufferedImage> logoImages = new ArrayList<>();
-		Map<String, File> files = new HashMap<>();
+		Map<String, Path> files = new HashMap<>();
         Komposition komposition;
 
-		public StaticImageMediaTool(Komposition komposition) {
-            this.komposition = komposition;
-            File folder = new File(ModifyMediaExample.class.getClassLoader().getResource("img").getFile());
-			for (File file : folder.listFiles()) {
-				if (file.isFile() && file.getName().contains(".png")) {
-					files.put(file.getPath(), file);
-				}
-			}
+		public StaticImageMediaTool(Komposition komposition) throws IOException {
+			this.komposition = komposition;
+			Path folder = Path.of(ClassLoader.getSystemResource("images").getPath());
+			Files.list(folder)
+					.filter(Files::exists)
+					.filter(path -> path.getFileName().toString().contains(".png"))
+					.forEach(path -> files.put(path.toString(), path)
+					);
 		}
 
 
@@ -92,7 +93,7 @@ public class ModifyMediaExample {
 				}else {
 					try {
 						lastPic = id;
-						cached = ImageIO.read(files.get(id));
+						cached = ImageIO.read(Files.newInputStream(files.get(id)));
 						return cached;
 					} catch (IOException e) {
 						e.printStackTrace();
