@@ -7,7 +7,8 @@ import no.lau.vdvil.renderer.video.config.VideoConfig;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
 
@@ -16,14 +17,14 @@ import java.net.URL;
 public class CombineAudioAndVideoTest {
     @Test
     @Disabled //Download first
-    public void videoAudioCombinationTest() throws MalformedURLException {
+    public void videoAudioCombinationTest() throws MalformedURLException, URISyntaxException {
         //String inputVideoFilePath = "/Users/stiglau/Downloads/NORWAY-A_Time-Lapse_Adventure.mp4"; Does not works
         //String inputVideoFilePath = "/Users/stiglau/Downloads/JavaZone_2014_10.sept.mp4";
         String inputVideoFilePath = "/tmp/Olive-Youre_Not_Alone.webm";
         String inputAudioFilePath = "/tmp/The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix.mp3";
 
         Komposition komposition = new Komposition(128);
-        komposition.storageLocation = new MediaFile(new URL("file:///tmp/some-timelapse.mp4"), 0l, 128f, "checksuym");
-        AudioVideoConcatenator.concatenateAudioAndVideo(inputAudioFilePath, inputVideoFilePath, komposition.storageLocation.getFileName().getFile(), new VideoConfig(360, 480, 15));
+        komposition.storageLocation = new MediaFile(new URI("file:///tmp/some-timelapse.mp4"), 0l, 128f, "checksuym");
+        AudioVideoConcatenator.concatenateAudioAndVideo(inputAudioFilePath, inputVideoFilePath, komposition.storageLocation.toString(), new VideoConfig(360, 480, 15));
     }
 }

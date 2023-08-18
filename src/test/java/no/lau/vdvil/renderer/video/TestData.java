@@ -26,7 +26,7 @@ public class TestData {
         }
     }
 
-    public static Komposition fetchNorwayDVL() throws MalformedURLException {
+    public static Komposition fetchNorwayDVL() {
         return new Komposition(125,
                 new TimeStampFixedImageSampleSegment("Purple Mountains Clouds", 7541667, 19750000, 8),
                 new TimeStampFixedImageSampleSegment("Besseggen", 21250000, 27625000, 2),
@@ -43,7 +43,7 @@ public class TestData {
                 new TimeStampFixedImageSampleSegment("Seaside houses Panorama", 102000000, 107125000, 8),
                 new TimeStampFixedImageSampleSegment("Bergen movement", 107500000, 112750000, 8)
         )
-                .applyStorageLocation(new MediaFile(fetch(norwayRemoteUrl).toUri().toURL(), 0l, -1f, "abc"));
+                .applyStorageLocation(new MediaFile(fetch(norwayRemoteUrl).toUri(), 0L, -1f, "abc"));
     }
     /*
         fetchKompositionSwing = new Komposition(128,

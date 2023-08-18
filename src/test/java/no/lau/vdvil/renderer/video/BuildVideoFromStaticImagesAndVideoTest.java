@@ -23,6 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.*;
@@ -40,8 +42,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Tag("IntegrationTest")
 public class BuildVideoFromStaticImagesAndVideoTest {
 
-    URL downmixedOriginalVideo;
-    URL theSwingVideo;
+    URI downmixedOriginalVideo;
+    URI theSwingVideo;
     URL snapshotFileStorage;
 
     URL sobotaMp3;
@@ -64,13 +66,13 @@ public class BuildVideoFromStaticImagesAndVideoTest {
     Logger logger = LoggerFactory.getLogger(BuildVideoFromStaticImagesAndVideoTest.class);
 
     @BeforeEach
-    public void setUp() throws IOException {
+    public void setUp() throws IOException, URISyntaxException {
         //Low Rez
         //downmixedOriginalVideo = Paths.get("/tmp/320_NORWAY-A_Time-Lapse_Adventure.mp4").toUri().toURL();
         //theSwingVideo = Paths.get("/tmp/320_Worlds_Largest_Rope_Swing.mp4").toUri().toURL();
         //HighRez
-        downmixedOriginalVideo = fetch(norwayRemoteUrl).toUri().toURL();
-        theSwingVideo = Paths.get("/tmp/kompost/Worlds_Largest_Rope_Swing/Worlds_Largest_Rope_Swing.mp4").toUri().toURL();
+        downmixedOriginalVideo = fetch(norwayRemoteUrl).toUri();
+        theSwingVideo = Paths.get("/tmp/kompost/Worlds_Largest_Rope_Swing/Worlds_Largest_Rope_Swing.mp4").toUri();
 
         snapshotFileStorage = Paths.get("/tmp/snaps/CLMD-The_Stockholm_Syndrome_320/").toUri().toURL();
         sobotaMp3 = fetch(sobotaMp3RemoteUrl).toUri().toURL();
@@ -87,7 +89,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new StaticImagesSegment("Still Image Fun 2",
                         ClassLoader.getSystemResource("images/Slide_Blue_mountain_top_lake2.png").toString()
                 ));
-        fetchKompositionStillImages.storageLocation = new MediaFile(new URL("file://tmp/kompost"), 0l, -1f, "abc");
+        fetchKompositionStillImages.storageLocation = new MediaFile(new URI("file://tmp/kompost"), 0l, -1f, "abc");
 
         fetchKompositionNorway = new Komposition(128,
                 new TimeStampFixedImageSampleSegment("Purple Mountains Clouds", 7541667, 19750000, 8),
@@ -115,11 +117,11 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new TimeStampFixedImageSampleSegment("Smile girl, smile", 34034000, 34993292, 15),
                 new TimeStampFixedImageSampleSegment("Swing through bridge with mountain smile", 45128417, 46713333, 8)
         );
-        fetchKompositionSwing.storageLocation = new MediaFile(theSwingVideo, 0l, 120F, "abc123");
+        fetchKompositionSwing.storageLocation = new MediaFile(theSwingVideo, 0L, 120F, "abc123");
     }
 
     @Test
-    public void buildVideoFromStaticImagesAndVideo() throws IOException, InterruptedException {
+    public void buildVideoFromStaticImagesAndVideo() throws IOException, InterruptedException, URISyntaxException {
         Komposition buildKomposition =  new Komposition(124,
                 new VideoStillImageSegment("Still Image Fun 1", 0, 8),
                 new VideoStillImageSegment("Besseggen", 8, 8),
@@ -127,7 +129,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new VideoStillImageSegment("Purple Mountains Clouds", 20, 12)
 
         );//.filter(16, 16);
-        MediaFile mf = new MediaFile(new URL(result1), 0l, 128f, "370b9b8ee872fe38342f1dd2e410ef0a");
+        MediaFile mf = new MediaFile(new URI(result1), 0L, 128f, "370b9b8ee872fe38342f1dd2e410ef0a");
         buildKomposition.storageLocation = mf;
 
 
@@ -146,17 +148,17 @@ public class BuildVideoFromStaticImagesAndVideoTest {
         CreateVideoFromScratchImages.createVideo(planner.buildPlan(), pipeDream, config2);
 
         logger.info("Storing file at {}", mf.getFileName());
-        assertEquals(mf.getChecksums(), md5Checksum(mf.getFileName()));
+        assertEquals(mf.getChecksums(), md5Checksum(mf.getFileName().toURL()));
     }
 
     @Test
-    public void testStillImageCollection() throws IOException {
+    public void testStillImageCollection() throws URISyntaxException {
         Komposition buildKomposition =  new Komposition(124,
                 //new VideoStillImageSegment("Still Image Fun 1", 0, 8)
                 new VideoStillImageSegment("Besseggen", 0, 8)
                 , new VideoStillImageSegment("Purple Mountains Clouds", 8, 16)
         );
-        buildKomposition.storageLocation = new MediaFile(new URL(result3a), 0l, 128f, "7ea06f7a19fea1dfcefef1b6b30730b4");
+        buildKomposition.storageLocation = new MediaFile(new URI(result3a), 0l, 128f, "7ea06f7a19fea1dfcefef1b6b30730b4");
 
         List<Komposition> fetchKompositions = new ArrayList<>();
         fetchKompositions.add(fetchKompositionStillImages);
@@ -171,13 +173,13 @@ public class BuildVideoFromStaticImagesAndVideoTest {
 
 
     @Test
-    public void extractStillImagesFromVideoWriter() throws IOException, InterruptedException {
+    public void extractStillImagesFromVideoWriter() throws URISyntaxException {
         Komposition buildKomposition =  new Komposition(124,
                 //new VideoStillImageSegment("Still Image Fun 1", 0, 8)
                 new VideoStillImageSegment("Besseggen", 0, 8)
                 , new VideoStillImageSegment("Purple Mountains Clouds", 8, 16)
         );
-        buildKomposition.storageLocation = new MediaFile(new URL(result3b), 0l, 128f, "7ea06f7a19fea1dfcefef1b6b30730b4");
+        buildKomposition.storageLocation = new MediaFile(new URI(result3b), 0l, 128f, "7ea06f7a19fea1dfcefef1b6b30730b4");
 
         List<Komposition> fetchKompositions = new ArrayList<>();
         fetchKompositions.add(fetchKompositionStillImages);
@@ -195,7 +197,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
     }
 
     @Test
-    public void countPlanningResult() throws IOException, InterruptedException {
+    public void countPlanningResult() {
         VideoStillImageSegment first = new VideoStillImageSegment("Besseggen", 0, 12);
         VideoStillImageSegment second = new VideoStillImageSegment("Purple Mountains Clouds", 8, 12);
         Komposition buildKomposition = new Komposition(124,
@@ -224,7 +226,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
     }
 
     @Test
-    public void segmentTransitions() throws IOException, InterruptedException {
+    public void segmentTransitions() throws IOException, InterruptedException, URISyntaxException {
         VideoStillImageSegment first = new VideoStillImageSegment("Besseggen", 0, 12);
         VideoStillImageSegment second = new VideoStillImageSegment("Purple Mountains Clouds", 8, 12);
         VideoStillImageSegment third = new VideoStillImageSegment("Besseggen", 16, 12);
@@ -234,7 +236,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 first,
                 second,
                 third);
-        MediaFile mf = new MediaFile(new URL(result3c), 0L, 128f, "2a745683577324ee59421e6649f1a7de");
+        MediaFile mf = new MediaFile(new URI(result3c), 0L, 128f, "2a745683577324ee59421e6649f1a7de");
         buildKomposition.storageLocation = mf;
 
         PipeDream<BufferedImage> pipeDream = new PipeDream<>(30, 250, 500, 10);
@@ -257,7 +259,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
         CreateVideoFromScratchImages.createVideo(planner.buildPlan(), pipeDream, config2);
 
         logger.info("Storing file at {}", mf.getFileName());
-        assertEquals(mf.getChecksums(), md5Checksum(mf.getFileName()));
+        assertEquals(mf.getChecksums(), md5Checksum(mf.getFileName().toURL()));
     }
 
     String md5Checksum(URL url) throws IOException {

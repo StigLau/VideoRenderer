@@ -22,6 +22,8 @@ import org.junit.jupiter.api.Tag;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -67,9 +69,9 @@ class BuildVideoFromScratchImagesTest {
     }
 
     @Test
-    void extractImagesFromNorwayVideo() throws IOException, InterruptedException {
+    void extractImagesFromNorwayVideo() throws IOException, URISyntaxException {
         Komposition buildKomposition = norwayBaseKomposition().filter(24, 16);
-        buildKomposition.storageLocation = new MediaFile(new URL(result2), 0l, 125f, "7aa709f7caff0446a4a9aa2865f4efd2");
+        buildKomposition.storageLocation = new MediaFile(new URI(result2), 0l, 125f, "7aa709f7caff0446a4a9aa2865f4efd2");
 
         List<Komposition> fetchKompositions = new ArrayList<>();
         fetchKompositions.add(fetchNorwayDVL());
@@ -86,7 +88,7 @@ class BuildVideoFromScratchImagesTest {
 
     @Test
     //@Disabled
-    void testBuildingMinimally() throws IOException, InterruptedException {
+    void testBuildingMinimally() throws IOException {
         VideoConfig videoConfig = new VideoConfig(1280, 720, Math.round(1000000/24));
         URL muzik = sobotaMp3.toUri().toURL();
 
@@ -96,7 +98,7 @@ class BuildVideoFromScratchImagesTest {
         for (int i = 0; i < 1; i++) {
             Segment seg = norwayBaseKomposition().segments.get(i);
             Komposition buildKomposition1 = norwayBaseKomposition().filter(seg.start(), seg.duration());
-            buildKomposition1.storageLocation = new MediaFile(Files.createTempFile("testFile", ".mp4").toUri().toURL(), -1l, -1f, "");
+            buildKomposition1.storageLocation = new MediaFile(Files.createTempFile("testFile", ".mp4").toUri(), -1l, -1f, "");
             videoBuilder.createVideoPart(videoConfig, fetchKompositions, buildKomposition1, muzik, false);
         }
         //logger.info("Storing file at {}", mf.fileName);
@@ -111,7 +113,7 @@ class BuildVideoFromScratchImagesTest {
 
         Segment seg = baseKomposition.segments.get(5);
         Komposition buildKomposition1 = baseKomposition.filter(seg.start(), seg.duration());
-        buildKomposition1.storageLocation = new MediaFile(Paths.get("/tmp/norway10.mp4").toUri().toURL(), 0l, 125f, "7aa709f7caff0446a4a9aa2865f4efd2");
+        buildKomposition1.storageLocation = new MediaFile(Paths.get("/tmp/norway10.mp4").toUri(), 0l, 125f, "7aa709f7caff0446a4a9aa2865f4efd2");
         videoBuilder.createVideoPart(videoConfig, Collections.singletonList(fetchNorwayDVL()), buildKomposition1, muzik, false);
         assertEquals(10, countNumberOfFrames(Paths.get("/tmp/norway10.mp4"))); //TODO Test with 12 FRAMESSS!!!!!
 
@@ -172,7 +174,7 @@ class BuildVideoFromScratchImagesTest {
 
     @Test
     @Disabled //Not working yet
-    void specificVideoCompositionTest() throws IOException, InterruptedException {
+    void specificVideoCompositionTest() throws IOException, InterruptedException, URISyntaxException {
 
         int bpm = 124;
         Komposition buildKomposition =  new Komposition(bpm,
@@ -186,7 +188,7 @@ class BuildVideoFromScratchImagesTest {
                 new VideoStillImageSegment("Dark lake", 16, 8)
         );
 
-        MediaFile mf = new MediaFile(new URL(result3), 0l, 128f, "0362c495e294bac76458ca56cdee20ee");
+        MediaFile mf = new MediaFile(new URI(result3), 0l, 128f, "0362c495e294bac76458ca56cdee20ee");
         buildKomposition.storageLocation = mf;
         KompositionPlanner planner = new KompositionPlanner(Collections.singletonList(fetchNorwayDVL()), buildKomposition, sobotaMp3.toUri().toURL(), 15);
         PipeDream<BufferedImage> imageStore = new PipeDream<>();
@@ -194,7 +196,7 @@ class BuildVideoFromScratchImagesTest {
         new Thread(imageCollector).run();
         Thread.sleep(5000);
         CreateVideoFromScratchImages.createVideo(planner.buildPlan(), imageStore, config);
-        assertEquals(mf.getChecksums(), md5Checksum(mf.getFileName()));
+        assertEquals(mf.getChecksums(), md5Checksum(mf.getFileName().toURL()));
     }
 
     @Test

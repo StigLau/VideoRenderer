@@ -3,8 +3,7 @@ package no.lau.vdvil.domain;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.Files;
@@ -16,30 +15,30 @@ import java.security.NoSuchAlgorithmException;
  */
 public class MediaFile {
     public String id;
-    private URL fileName;
+    private URI fileName;
     public final Long startingOffset;
     private String checksums;
     public final Float bpm;
     public String extension;
 
 
-    public MediaFile(URL url, Long startingOffsetInMillis, Float bpm, String checksums) {
-        this.fileName = url;
+    public MediaFile(URI fileRef, Long startingOffsetInMillis, Float bpm, String checksums) {
+        this.fileName = fileRef;
         this.startingOffset = startingOffsetInMillis;
         this.bpm = bpm;
         this.checksums = checksums;
     }
 
-    public void setFileName(URL fileName) {
+    public void setFileName(URI fileName) {
         this.fileName = fileName;
     }
 
-    public URL getFileName() {
+    public URI getFileName() {
         if(fileName == null) {
             String tempFileId = id + "_"+ bpm;
             try {
                 Path file = Files.createTempFile(tempFileId, extension);
-                this.fileName = file.toUri().toURL();
+                this.fileName = file.toUri();
             } catch (IOException e) {
                 throw new RuntimeException("Error creating temp file ");
             }
@@ -50,7 +49,7 @@ public class MediaFile {
     public String getChecksums() {
         if(checksums == null || checksums.isEmpty()) {
             try {
-                String fileHash = md5Hex(Files.readAllBytes(Paths.get(fileName.toURI()))).toLowerCase();
+                String fileHash = md5Hex(Files.readAllBytes(Paths.get(fileName))).toLowerCase();
                 if (checksums != null && !checksums.isEmpty()) {
                     if (checksums.contains(fileHash)) {
                         // already contains fileHash
@@ -61,7 +60,7 @@ public class MediaFile {
                     checksums = fileHash;
                 }
 
-            } catch (IOException | URISyntaxException e) {
+            } catch (IOException e) {
                 LoggerFactory.getLogger(getClass()).error("Error when creating checksum for {}", id, e);
             }
         }
