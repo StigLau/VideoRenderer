@@ -3,10 +3,10 @@ package no.lau.vdvil.plan;
 import no.lau.vdvil.collector.FrameRepresentation;
 import no.lau.vdvil.collector.ImageCollector;
 import no.lau.vdvil.collector.WaitingVideoThumbnailsCollector;
-import no.lau.vdvil.domain.PathRef;
 import no.lau.vdvil.domain.Segment;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
 import java.awt.image.BufferedImage;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,14 +17,14 @@ public class TimestampPlan implements FrameRepresentationsPlan,  ImageCollectabl
     final String referenceId;
 
     List<FrameRepresentation> frameRepresentations = new ArrayList<>();
-    final PathRef ioFile;
+    final Path localFileRef;
 
-    public TimestampPlan(Segment segment, int framerate, PathRef ioFile) {
+    public TimestampPlan(Segment segment, int framerate, Path ioFile) {
         this.startTimeStamp = segment.start();
         this.endTimeStamp = segment.start() + segment.duration();
         this.referenceId = segment.id();
 
-        this.ioFile = ioFile;
+        this.localFileRef = ioFile;
         long frames = segment.duration() / framerate;
         for (int i = 0; i < frames; i++) {
             long iTimeStamp = startTimeStamp + i * framerate;
@@ -51,8 +51,8 @@ public class TimestampPlan implements FrameRepresentationsPlan,  ImageCollectabl
         return referenceId;
     }
 
-    public PathRef localStorage() {
-        return ioFile;
+    public Path localStorage() {
+        return localFileRef;
     }
 
     public ImageCollector collector(ImageStore<BufferedImage> imageStore, int framerateMillis) {

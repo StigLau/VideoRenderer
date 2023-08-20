@@ -1,7 +1,5 @@
 package no.lau.vdvil.domain;
 
-import java.util.List;
-
 /**
  * @author Stig@Lau.no 07/04/15.
  */

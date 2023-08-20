@@ -5,6 +5,7 @@ import no.lau.vdvil.collector.plan.*;
 import no.lau.vdvil.domain.*;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
 import java.awt.image.BufferedImage;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,7 +19,7 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan, ImageColl
     final FramePlan[] framePlans;
     List<FrameRepresentation> frameRepresentations = new ArrayList<>();
     final MediaFile storageLocation;
-    public PathRef audioLocation;
+    public Path audioLocation;
     int imageDownloadCacheSize = 10; //Just a default to allow for more than one cached image
 
     final Map<String, FramePlan> metaPlanLookup;
@@ -64,7 +65,7 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan, ImageColl
         return toString();
     }
 
-    public PathRef localStorage() {
+    public Path localStorage() {
         return storageLocation.getReference();
     }
 
@@ -134,11 +135,11 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan, ImageColl
         throw new RuntimeException("Should not happen!");
     }
 
-    public PathRef audioLocation() {
+    public Path audioLocation() {
         return audioLocation;
     }
 
-    public Plan withAudioLocation(PathRef audioLocation) {
+    public Plan withAudioLocation(Path audioLocation) {
         this.audioLocation = audioLocation;
         return this;
     }

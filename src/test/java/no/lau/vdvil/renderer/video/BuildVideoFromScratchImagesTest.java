@@ -1,5 +1,6 @@
 package no.lau.vdvil.renderer.video;
 
+import no.lau.CommonFunctions;
 import no.lau.vdvil.collector.*;
 import no.lau.vdvil.domain.*;
 import no.lau.vdvil.domain.out.Komposition;
@@ -44,11 +45,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class BuildVideoFromScratchImagesTest {
 
 
-    PathRef sobotaMp3;
+    Path sobotaMp3;
 
-    private PathRef result1 = new PathRef("file:///tmp/from_scratch_images_test_1.mp4");
-    private PathRef result2 = new PathRef("file:///tmp/from_scratch_images_test_2.mp4");
-    private PathRef result3 = new PathRef("file:///tmp/from_scratch_images_test_3.mp4");
+    private Path result1 = Path.of("file:///tmp/from_scratch_images_test_1.mp4");
+    private Path result2 = Path.of("file:///tmp/from_scratch_images_test_2.mp4");
+    private Path result3 = Path.of("file:///tmp/from_scratch_images_test_3.mp4");
 
     //HighRez
     VideoConfig config = new VideoConfig(1280, 720,DEFAULT_TIME_UNIT.convert(24, MILLISECONDS));
@@ -86,7 +87,7 @@ class BuildVideoFromScratchImagesTest {
     //@Disabled
     void testBuildingMinimally() throws IOException {
         VideoConfig videoConfig = new VideoConfig(1280, 720, Math.round(1000000/24));
-        PathRef muzik = sobotaMp3;
+        Path muzik = sobotaMp3;
 
         List<Komposition> fetchKompositions = new ArrayList<>();
         fetchKompositions.add(fetchNorwayDVL());
@@ -94,7 +95,7 @@ class BuildVideoFromScratchImagesTest {
         for (int i = 0; i < 1; i++) {
             Segment seg = norwayBaseKomposition().segments.get(i);
             Komposition buildKomposition1 = norwayBaseKomposition().filter(seg.start(), seg.duration());
-            buildKomposition1.storageLocation = new MediaFile(PathRef.createTempPath("testFile", ".mp4"), -1L, -1f, "");
+            buildKomposition1.storageLocation = new MediaFile(CommonFunctions.createTempPath("testFile", ".mp4"), -1L, -1f, "");
             videoBuilder.createVideoPart(videoConfig, fetchKompositions, buildKomposition1, muzik, false);
         }
         //logger.info("Storing file at {}", mf.fileName);
@@ -105,13 +106,13 @@ class BuildVideoFromScratchImagesTest {
     void testBuildingOnlyNorwayShowing12Frames() throws IOException, InterruptedException {
         VideoConfig videoConfig = new VideoConfig(1280, 720, Math.round(1000000 / 24));
         Komposition baseKomposition = norwayBaseKomposition();
-        PathRef muzik = sobotaMp3;
+        Path muzik = sobotaMp3;
 
         Segment seg = baseKomposition.segments.get(5);
         Komposition buildKomposition1 = baseKomposition.filter(seg.start(), seg.duration());
-        buildKomposition1.storageLocation = new MediaFile(new PathRef("/tmp/norway10.mp4"), 0L, 125f, "7aa709f7caff0446a4a9aa2865f4efd2");
+        buildKomposition1.storageLocation = new MediaFile(Path.of("/tmp/norway10.mp4"), 0L, 125f, "7aa709f7caff0446a4a9aa2865f4efd2");
         videoBuilder.createVideoPart(videoConfig, Collections.singletonList(fetchNorwayDVL()), buildKomposition1, muzik, false);
-        assertEquals(10, countNumberOfFrames(new PathRef("/tmp/norway10.mp4"))); //TODO Test with 12 FRAMESSS!!!!!
+        assertEquals(10, countNumberOfFrames(Path.of("/tmp/norway10.mp4"))); //TODO Test with 12 FRAMESSS!!!!!
 
         //logger.info("Storing file at {}", mf.fileName);
         //assertEquals(mf.checksums, md5Checksum(mf.fileName));
@@ -121,19 +122,19 @@ class BuildVideoFromScratchImagesTest {
     @Disabled
     void testCountNumberOfFrames() throws IOException {
 
-        assertEquals(182, countNumberOfFrames(new PathRef("/tmp/from_scratch_images_test_2.mp4")));
-        assertEquals(182, countNumberOfFrames(new PathRef("/tmp/from_scratch_images_with_sound.mp4")));
-        assertEquals(184, countNumberOfFrames(new PathRef("/tmp/endRez.mp4")));
+        assertEquals(182, countNumberOfFrames(Path.of("/tmp/from_scratch_images_test_2.mp4")));
+        assertEquals(182, countNumberOfFrames(Path.of("/tmp/from_scratch_images_with_sound.mp4")));
+        assertEquals(184, countNumberOfFrames(Path.of("/tmp/endRez.mp4")));
 
-        assertEquals(44, countNumberOfFrames(new PathRef("/tmp/as0.mp4")));
-        assertEquals(44, countNumberOfFrames(new PathRef("/tmp/as1.mp4")));
-        assertEquals(90, countNumberOfFrames(new PathRef("/tmp/as2.mp4")));
-        assertEquals(90, countNumberOfFrames(new PathRef("/tmp/as3.mp4")));
-        assertEquals(79, countNumberOfFrames(new PathRef("/tmp/as4.mp4")));
-        assertEquals(10, countNumberOfFrames(new PathRef("/tmp/as5.mp4")));
-        assertEquals(90, countNumberOfFrames(new PathRef("/tmp/as6.mp4")));
-        assertEquals(44, countNumberOfFrames(new PathRef("/tmp/as7.mp4")));
-        assertEquals(90, countNumberOfFrames(new PathRef("/tmp/as8.mp4")));
+        assertEquals(44, countNumberOfFrames(Path.of("/tmp/as0.mp4")));
+        assertEquals(44, countNumberOfFrames(Path.of("/tmp/as1.mp4")));
+        assertEquals(90, countNumberOfFrames(Path.of("/tmp/as2.mp4")));
+        assertEquals(90, countNumberOfFrames(Path.of("/tmp/as3.mp4")));
+        assertEquals(79, countNumberOfFrames(Path.of("/tmp/as4.mp4")));
+        assertEquals(10, countNumberOfFrames(Path.of("/tmp/as5.mp4")));
+        assertEquals(90, countNumberOfFrames(Path.of("/tmp/as6.mp4")));
+        assertEquals(44, countNumberOfFrames(Path.of("/tmp/as7.mp4")));
+        assertEquals(90, countNumberOfFrames(Path.of("/tmp/as8.mp4")));
 
     }
 
@@ -158,7 +159,7 @@ class BuildVideoFromScratchImagesTest {
     @Test
     //@Disabled
     void combiningVideoWithAudio() throws IOException {
-        Path target = combineAudioAndVideo(new PathRef("/tmp/endRez.mp4"), sobotaMp3);
+        Path target = combineAudioAndVideo(Path.of("/tmp/endRez.mp4"), sobotaMp3);
         System.out.println(target);
     }
 
@@ -191,17 +192,17 @@ class BuildVideoFromScratchImagesTest {
 
     @Test
     void testSnippingStuff() throws IOException {
-        PathRef testFile = new PathRef("/tmp/testur/myTestFile.mp4");
-        FFmpegFunctions.snippetSplitter(fetch(norwayRemoteUrl).toString(), 56222833, 60477083, testFile);
+        Path testFile = Path.of("/tmp/testur/myTestFile.mp4");
+        FFmpegFunctions.snippetSplitter(fetch(norwayRemoteUrl), 56222833, 60477083, testFile);
         assertEquals(103, countNumberOfFrames(testFile));
 
     }
 
     @Test
     void testSnippingStuffBergen() throws IOException {
-        PathRef origFile = fetch(bergenRemoteUrl);
-        PathRef testFile = new PathRef("/tmp/testur/myTestFile2.mp4");
-        FFmpegFunctions.snippetSplitter(origFile.toString(), 56222833, 60477083, testFile);
+        Path origFile = fetch(bergenRemoteUrl);
+        Path testFile = Path.of("/tmp/testur/myTestFile2.mp4");
+        FFmpegFunctions.snippetSplitter(origFile, 56222833, 60477083, testFile);
         assertEquals("144930000/6044789", FFmpegFunctions.fetchFrameInfo(origFile));
         assertEquals("24000/1001", FFmpegFunctions.fetchFrameInfo(testFile));
         assertEquals(102, countNumberOfFrames(testFile));

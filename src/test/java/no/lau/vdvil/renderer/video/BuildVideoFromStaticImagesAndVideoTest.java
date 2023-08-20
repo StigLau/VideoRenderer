@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.awt.image.BufferedImage;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -34,21 +35,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Tag("IntegrationTest")
 public class BuildVideoFromStaticImagesAndVideoTest {
 
-    PathRef downmixedOriginalVideo;
-    PathRef theSwingVideo;
-    PathRef snapshotFileStorage;
+    Path downmixedOriginalVideo;
+    Path theSwingVideo;
+    Path snapshotFileStorage;
 
-    PathRef sobotaMp3;
+    Path sobotaMp3;
 
     Komposition fetchKompositionNorway;
     Komposition fetchKompositionSwing;
     Komposition fetchKompositionStillImages;
     Komposition fetchKompositionStillImages2;
 
-    private PathRef result1 = new PathRef("file:///tmp/from_scratch_images_test_1.mp4");
-    private PathRef result3a = new PathRef("file:///tmp/from_scratch_images_test_3a.mp4");
-    private PathRef result3b = new PathRef("file:///tmp/from_scratch_images_test_3b.mp4");
-    private PathRef result3c = new PathRef("file:///tmp/from_scratch_images_test_3c.mp4");
+    private Path result1 = Path.of("file:///tmp/from_scratch_images_test_1.mp4");
+    private Path result3a = Path.of("file:///tmp/from_scratch_images_test_3a.mp4");
+    private Path result3b = Path.of("file:///tmp/from_scratch_images_test_3b.mp4");
+    private Path result3c = Path.of("file:///tmp/from_scratch_images_test_3c.mp4");
 
     //HighRez
     //VideoConfig config = new VideoConfig(1280, 720,DEFAULT_TIME_UNIT.convert(24, MILLISECONDS));
@@ -64,9 +65,9 @@ public class BuildVideoFromStaticImagesAndVideoTest {
         //theSwingVideo = Paths.get("/tmp/320_Worlds_Largest_Rope_Swing.mp4").toUri().toURL();
         //HighRez
         downmixedOriginalVideo = fetch(norwayRemoteUrl);
-        theSwingVideo = new PathRef("/tmp/kompost/Worlds_Largest_Rope_Swing/Worlds_Largest_Rope_Swing.mp4");
+        theSwingVideo = Path.of("/tmp/kompost/Worlds_Largest_Rope_Swing/Worlds_Largest_Rope_Swing.mp4");
 
-        snapshotFileStorage = new PathRef("/tmp/snaps/CLMD-The_Stockholm_Syndrome_320/");
+        snapshotFileStorage = Path.of("/tmp/snaps/CLMD-The_Stockholm_Syndrome_320/");
         sobotaMp3 = fetch(sobotaMp3RemoteUrl);
 
 
@@ -81,7 +82,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new StaticImagesSegment("Still Image Fun 2",
                         ClassLoader.getSystemResource("images/Slide_Blue_mountain_top_lake2.png").toString()
                 ));
-        fetchKompositionStillImages.storageLocation = new MediaFile(new PathRef("file://tmp/kompost"), 0L, -1f, "abc");
+        fetchKompositionStillImages.storageLocation = new MediaFile(Path.of("file://tmp/kompost"), 0L, -1f, "abc");
 
         fetchKompositionNorway = new Komposition(128,
                 new TimeStampFixedImageSampleSegment("Purple Mountains Clouds", 7541667, 19750000, 8),

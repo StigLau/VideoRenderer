@@ -2,8 +2,10 @@ package no.lau.vdvil.renderer.video;
 
 import com.xuggle.xuggler.IContainer;
 import com.xuggle.xuggler.IStreamCoder;
-import no.lau.vdvil.domain.PathRef;
 import org.junit.jupiter.api.Test;
+
+import java.nio.file.Path;
+
 import static no.lau.vdvil.renderer.video.TestData.fetch;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -11,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author Stig Lau 24/03/15.
  */
 public class VideoInfoTest {
-    PathRef norwayLocalStorage = fetch(TestData.norwayRemoteUrl);
+    Path norwayLocalStorage = fetch(TestData.norwayRemoteUrl);
 
     @Test
     public void findOutShit() {

@@ -13,30 +13,29 @@ import java.security.NoSuchAlgorithmException;
  */
 public class MediaFile {
     public String id;
-    private PathRef fileName;
+    private Path fileName;
     public final Long startingOffset;
     private String checksums;
     public final Float bpm;
     public String extension;
 
 
-    public MediaFile(PathRef fileRef, Long startingOffsetInMillis, Float bpm, String checksums) {
+    public MediaFile(Path fileRef, Long startingOffsetInMillis, Float bpm, String checksums) {
         this.fileName = fileRef;
         this.startingOffset = startingOffsetInMillis;
         this.bpm = bpm;
         this.checksums = checksums;
     }
 
-    public void setFileName(PathRef fileName) {
+    public void setFileName(Path fileName) {
         this.fileName = fileName;
     }
 
-    public PathRef getReference() {
+    public Path getReference() {
         if(fileName == null) {
             String tempFileId = id + "_"+ bpm;
             try {
-                Path file = Files.createTempFile(tempFileId, extension);
-                this.fileName = new PathRef(file);
+                this.fileName = Files.createTempFile(tempFileId, extension);
             } catch (IOException e) {
                 throw new RuntimeException("Error creating temp file ");
             }
@@ -67,8 +66,8 @@ public class MediaFile {
         return sb.toString();
     }
 
-    public static String md5Checksum(PathRef url) {
-        try (InputStream is = url.openStream()) {
+    public static String md5Checksum(Path path) {
+        try (InputStream is = Files.newInputStream(path)) {
             return md5Hex(is.readAllBytes());
         } catch (Exception e) {
             throw new RuntimeException("Shit didn't go all that well");

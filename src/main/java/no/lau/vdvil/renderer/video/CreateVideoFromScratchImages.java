@@ -7,7 +7,6 @@ import com.xuggle.xuggler.IContainer;
 import com.xuggle.xuggler.IPacket;
 import com.xuggle.xuggler.IStreamCoder;
 import no.lau.vdvil.collector.FrameRepresentation;
-import no.lau.vdvil.domain.PathRef;
 import no.lau.vdvil.plan.AudioPlan;
 import no.lau.vdvil.plan.Plan;
 import no.lau.vdvil.renderer.video.builder.GenericBuilder;
@@ -47,7 +46,7 @@ public class CreateVideoFromScratchImages {
     }
 
     public static void createVideo(Plan buildPlan, ImageStore<BufferedImage> imageStore, VideoConfig config, boolean allowAudio) {
-        Path parentDir = buildPlan.localStorage().path().getParent();
+        Path parentDir = buildPlan.localStorage().getParent();
         try {
             Files.createDirectories(parentDir); //Create non-existant mature parent folder
             Thread.sleep(5000);//Sleep to avoid hanging bug when audio is available in cache!
@@ -190,7 +189,7 @@ class AudioAdapter {
     public final IStreamCoder coderAudio;
     private final IMediaWriter writer;
 
-    public AudioAdapter(PathRef inputAudioFilePath, IMediaWriter writer) {
+    public AudioAdapter(Path inputAudioFilePath, IMediaWriter writer) {
         this.writer = writer;
         //Audio
         containerAudio = IContainer.make();

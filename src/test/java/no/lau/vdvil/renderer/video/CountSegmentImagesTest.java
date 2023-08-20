@@ -1,8 +1,10 @@
 package no.lau.vdvil.renderer.video;
 
 import no.lau.vdvil.collector.CountNumberOfEligableImagesBetweenTimestampsCollector;
-import no.lau.vdvil.domain.PathRef;
 import org.junit.jupiter.api.Test;
+
+import java.nio.file.Path;
+
 import static no.lau.vdvil.renderer.video.TestData.fetch;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -12,9 +14,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 //@Tag("IntegrationTest")
 public class CountSegmentImagesTest {
-    PathRef testVideoNorwayTimeLapseLocalStorage = fetch(TestData.norwayRemoteUrl);
-    PathRef norwayDarkLakeLocalStorage = fetch(TestData.norwayDarkLakeRemoteUrl);
-    PathRef norwayFlowerFjordLocalStorage = fetch(TestData.norwayFlowerFjordRemoteUrl);
+    Path testVideoNorwayTimeLapseLocalStorage = fetch(TestData.norwayRemoteUrl);
+    Path norwayDarkLakeLocalStorage = fetch(TestData.norwayDarkLakeRemoteUrl);
+    Path norwayFlowerFjordLocalStorage = fetch(TestData.norwayFlowerFjordRemoteUrl);
 
     @Test
     public void countNr2() {

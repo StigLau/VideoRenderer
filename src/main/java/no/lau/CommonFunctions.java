@@ -1,7 +1,12 @@
 package no.lau;
 
+import no.lau.vdvil.renderer.video.ExtensionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class CommonFunctions {
 
@@ -25,5 +30,20 @@ public class CommonFunctions {
             return defaultPath;
         else
             return envPath;
+    }
+
+    public static Path createTempPath(String prefix, ExtensionType extensionType) {
+        return createTempPath(prefix, extensionType.name());
+    }
+    public static Path createTempPath(String prefix, String suffix) {
+        try {
+            Path tempfile = Files.createTempFile(prefix, suffix);
+            if(Files.exists(tempfile)) {
+                Files.deleteIfExists(tempfile);
+            }
+            return tempfile;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

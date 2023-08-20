@@ -8,6 +8,7 @@ import no.lau.vdvil.plan.SuperPlan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.*;
 import static no.lau.vdvil.renderer.video.KompositionUtil.performIdUniquenessCheck;
 
@@ -25,7 +26,7 @@ public class KompositionPlanner {
     private final Map<String, Segment> segmentIdCollectSegmentMap;
 
 
-    public KompositionPlanner(List<Komposition> fetchKompositions, Komposition buildKomposition, PathRef audioLocation, long finalFramerate) {
+    public KompositionPlanner(List<Komposition> fetchKompositions, Komposition buildKomposition, Path audioLocation, long finalFramerate) {
         List<Segment> buildSegments = buildKomposition.segments;
         Collections.sort(buildSegments);
         //verifyNonOverlappingSegments(buildSegments); //TODO Open this again!!!!1

@@ -8,7 +8,7 @@ import net.bramp.ffmpeg.job.FFmpegJob;
 import net.bramp.ffmpeg.probe.FFmpegFormat;
 import net.bramp.ffmpeg.probe.FFmpegProbeResult;
 import net.bramp.ffmpeg.probe.FFmpegStream;
-import no.lau.vdvil.domain.PathRef;
+import no.lau.CommonFunctions;
 import no.lau.vdvil.renderer.video.ExtensionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,9 +47,9 @@ public class ImprovedFFMpegFunctions {
         }
     }
 
-    public static PathRef snippetSplitter(PathRef downloadUrl, long timestampStart, long timestampEnd) {
+    public static Path snippetSplitter(Path downloadUrl, long timestampStart, long timestampEnd) {
         ExtensionType extensionType = ExtensionType.typify(getFileExtension(downloadUrl));
-        PathRef destinationFile = PathRef.createTempPath("snippet", extensionType);
+        Path destinationFile = CommonFunctions.createTempPath("snippet", extensionType);
         FFmpegBuilder builder = new FFmpegBuilder()
                 .setInput(downloadUrl.toString())
                 .addExtraArgs("-ss", humanReadablePeriod(timestampStart))
@@ -62,7 +62,7 @@ public class ImprovedFFMpegFunctions {
     }
 
     @Deprecated //Doesnt work as intended. Use FFMpegFunctions
-    public static Path stretchSnippet(PathRef inputVideo, double targetDuration) throws IOException {
+    public static Path stretchSnippet(Path inputVideo, double targetDuration) throws IOException {
         ExtensionType extensionType = ExtensionType.typify(getFileExtension(inputVideo));
         Path destinationFile = createTempFile("stretched", extensionType);
 
@@ -79,7 +79,7 @@ public class ImprovedFFMpegFunctions {
         return destinationFile;
     }
 
-    public static FFmpegFormat ffmpegFormatInfo(PathRef target) throws IOException {
+    public static FFmpegFormat ffmpegFormatInfo(Path target) throws IOException {
         FFmpegProbeResult probeResult = ffprobe.probe(target.toString());
         FFmpegFormat format = probeResult.getFormat();
         System.out.format("%nFile: '%s' ; Format: '%s' ; Duration: %.3fs",
@@ -90,7 +90,7 @@ public class ImprovedFFMpegFunctions {
         return format;
     }
 
-    public static FFmpegStream ffmpegStreamInfo(PathRef target) throws IOException {
+    public static FFmpegStream ffmpegStreamInfo(Path target) throws IOException {
         FFmpegProbeResult probeResult = ffprobe.probe(target.toString());
         FFmpegStream stream = probeResult.getStreams().get(0);
         System.out.format("%nCodec: '%s' ; Width: %dpx ; Height: %dpx",
@@ -133,7 +133,7 @@ public class ImprovedFFMpegFunctions {
     }
 
     //Docker alternative: docker run --entrypoint='ffprobe' jrottenberg/ffmpeg
-    public static long countNumberOfFrames(PathRef destinationFile) throws IOException {
+    public static long countNumberOfFrames(Path destinationFile) throws IOException {
         FFmpegProbeResult probeResult = ffprobe.probe(destinationFile.toString());
 
         FFmpegFormat format = probeResult.getFormat();
@@ -153,12 +153,12 @@ public class ImprovedFFMpegFunctions {
         return stream.nb_frames;
     }
 
-    public static PathRef concatVideoSnippets(Path... snippets) throws IOException {
+    public static Path concatVideoSnippets(Path... snippets) throws IOException {
         if(snippets.length < 2) {
             logger.error("To few snippets as input to concatenation");
         }
-        ExtensionType extensionType = ExtensionType.typify(getFileExtension(new PathRef(snippets[0])));
-        PathRef target = PathRef.createTempPath("video_and_audio_combination", extensionType);
+        ExtensionType extensionType = ExtensionType.typify(getFileExtension(snippets[0]));
+        Path target = CommonFunctions.createTempPath("video_and_audio_combination", extensionType);
         Path fileList = createTempFiles(ExtensionType.txt, snippets);
         logger.info("Storing snippet list: {}", fileList);
 
@@ -174,7 +174,7 @@ public class ImprovedFFMpegFunctions {
     }
 
     @Deprecated //Not functional
-    public static Path combineAudioAndVideo(PathRef inputVideo, Path music) throws IOException {
+    public static Path combineAudioAndVideo(Path inputVideo, Path music) throws IOException {
         ExtensionType extensionType = ExtensionType.typify(getFileExtension(inputVideo));
         Path target = createTempFile("video_and_audio_combination", extensionType);
         FFmpegBuilder builder = new FFmpegBuilder()
@@ -195,8 +195,8 @@ public class ImprovedFFMpegFunctions {
         return target;
     }
 
-    public static String getFileExtension(PathRef pathref) {
-        String fileName = pathref.toString();
+    public static String getFileExtension(Path Path) {
+        String fileName = Path.toString();
         if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
             return fileName.substring(fileName.lastIndexOf(".")+1);
         else return "";

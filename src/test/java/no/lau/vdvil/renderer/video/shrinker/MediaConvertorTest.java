@@ -1,8 +1,9 @@
 package no.lau.vdvil.renderer.video.shrinker;
 
-import no.lau.vdvil.domain.PathRef;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+
+import java.nio.file.Path;
 
 /**
  * @author Stig@Lau.no 07/04/15.
@@ -15,7 +16,7 @@ public class MediaConvertorTest {
         int HEIGHT = 240;
         //String filename = "Onewheel_The_World_is_Your_Playground.mp4";
         String filename = "NORWAY-A_Time-Lapse_Adventure.mp4";
-        MediaConvertor.convert(new PathRef("/tmp/kompost/NORWAY-A_Time-Lapse_Adventure/" + filename), "/tmp/NORWAY-A_Time_Lapse_Adventure" + WIDTH + "_" + filename, WIDTH, HEIGHT);
+        MediaConvertor.convert(Path.of("/tmp/kompost/NORWAY-A_Time-Lapse_Adventure/" + filename), "/tmp/NORWAY-A_Time_Lapse_Adventure" + WIDTH + "_" + filename, WIDTH, HEIGHT);
     }
 }
 

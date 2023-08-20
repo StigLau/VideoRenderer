@@ -3,7 +3,6 @@ package no.lau.vdvil.renderer.video;
 import no.lau.vdvil.collector.*;
 import no.lau.vdvil.collector.plan.FramePlan;
 import no.lau.vdvil.domain.MediaFile;
-import no.lau.vdvil.domain.PathRef;
 import no.lau.vdvil.domain.VideoStillImageSegment;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.plan.Plan;
@@ -17,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
 import java.awt.image.BufferedImage;
 import java.net.MalformedURLException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,20 +33,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Tag("IntegrationTest")
 public class StreamingImageStoreTest {
 
-    PathRef downmixedOriginalVideo;
-    PathRef theSwingVideo;
-    PathRef result4;
-    PathRef strippedResult;
-    PathRef sobotaMp3;
+    Path downmixedOriginalVideo;
+    Path theSwingVideo;
+    Path result4;
+    Path strippedResult;
+    Path sobotaMp3;
     KompositionPlanner planner;
     MediaFile resultingMediaFile;
 
     @BeforeEach
     public void setUp() {
         downmixedOriginalVideo = fetch(norwayRemoteUrl);
-        theSwingVideo = new PathRef("/tmp/kompost/Worlds_Largest_Rope_Swing/Worlds_Largest_Rope_Swing.mp4");
-        result4 = new PathRef("/tmp/from_scratch_images_test_v4.mp4");
-        strippedResult = new PathRef("/tmp/streamingImagesStrippedResult.mp4");
+        theSwingVideo = Path.of("/tmp/kompost/Worlds_Largest_Rope_Swing/Worlds_Largest_Rope_Swing.mp4");
+        result4 = Path.of("/tmp/from_scratch_images_test_v4.mp4");
+        strippedResult = Path.of("/tmp/streamingImagesStrippedResult.mp4");
         sobotaMp3 = fetch(sobotaMp3RemoteUrl);
 
         Komposition fetchKompositionNorway = new Komposition(128,
