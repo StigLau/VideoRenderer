@@ -11,6 +11,7 @@ import net.bramp.ffmpeg.probe.FFmpegProbeResult;
 import net.bramp.ffmpeg.probe.FFmpegStream;
 import net.bramp.ffmpeg.progress.Progress;
 import net.bramp.ffmpeg.progress.ProgressListener;
+import no.lau.vdvil.domain.PathRef;
 import no.lau.vdvil.renderer.video.TestData;
 import no.lau.vdvil.snippets.FFmpegFunctions;
 import no.lau.vdvil.snippets.ImprovedFFMpegFunctions;
@@ -29,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class VideoConcatenationTest {
     FFprobe ffprobe = new FFprobe(ImprovedFFMpegFunctions.ffprobeLocation());
     FFmpeg ffmpeg = new FFmpeg(ImprovedFFMpegFunctions.ffmpegLocation());
-    Path norwayDarkLakeLocalStorage = fetch(TestData.norwayDarkLakeRemoteUrl);
+    PathRef norwayDarkLakeLocalStorage = fetch(TestData.norwayDarkLakeRemoteUrl);
 
     public VideoConcatenationTest() throws IOException {
     }
@@ -73,15 +74,15 @@ class VideoConcatenationTest {
                 double percentage = progress.out_time_ns / duration_ns;
 
                 // Print out interesting information about the progress
-                System.out.println(String.format(
-                        "OMFG [%.0f%%] status:%s frame:%d time:%s ms fps:%.0f speed:%.2fx",
+                System.out.printf(
+                        "OMFG [%.0f%%] status:%s frame:%d time:%s ms fps:%.0f speed:%.2fx%n",
                         percentage * 100,
                         progress.status,
                         progress.frame,
                         FFmpegUtils.toTimecode(progress.out_time_ns, TimeUnit.NANOSECONDS),
                         progress.fps.doubleValue(),
                         progress.speed
-                ));
+                );
             }
         });
 
@@ -90,26 +91,26 @@ class VideoConcatenationTest {
 
     @Test
     void testBuildingStuffWithImprovedFffmpegFunctions() throws IOException {
-        Path snippet = snippetSplitter(fetch(norwayRemoteUrl), 56222833, 60477083);
+        PathRef snippet = snippetSplitter(fetch(norwayRemoteUrl), 56222833, 60477083);
         assertEquals(104, countNumberOfFrames(snippet));
-        Path snippet2 = snippetSplitter(fetch(norwayRemoteUrl), 90477083, 90477083+5008300);
+        PathRef snippet2 = snippetSplitter(fetch(norwayRemoteUrl), 90477083, 90477083+5008300);
         assertEquals(141, countNumberOfFrames(snippet2));
 
         //TODO Implement
         //Path noSoundConcatenation  = FFmpegFunctions.protocolConcatVideoSnippets(ExtensionType.mp4, snippet, snippet2);
-        Path noSoundConcatenation  = concatVideoSnippets(snippet, snippet2);
+        PathRef noSoundConcatenation  = concatVideoSnippets(snippet.path(), snippet2.path());
         assertEquals(245, countNumberOfFrames(noSoundConcatenation));
         //Path combinedWithSound = Paths.get("/tmp/jalla.mp4");
-        Path combinedWithSound  = combineAudioAndVideo(noSoundConcatenation, fetch(sobotaMp3RemoteUrl).toAbsolutePath());
+        Path combinedWithSound  = combineAudioAndVideo(noSoundConcatenation, fetch(sobotaMp3RemoteUrl));
 
         System.out.println("Our result is at " + combinedWithSound);
-        assertEquals(245, countNumberOfFrames(combinedWithSound));
+        assertEquals(245, countNumberOfFrames(new PathRef(combinedWithSound)));
     }
 
     @Test
     void testSnippingStuffBergen() throws IOException {
-        Path origFile = fetch(bergenRemoteUrl);
-        Path snippet = snippetSplitter(origFile, 56222833, 60477083);
+        PathRef origFile = fetch(bergenRemoteUrl);
+        PathRef snippet = snippetSplitter(origFile, 56222833, 60477083);
         assertEquals(102, ffmpegStreamInfo(snippet).nb_frames);
         assertEquals("144930000/6044789", ffmpegStreamInfo(origFile).avg_frame_rate.toString());
         assertEquals("24000/1001", ffmpegStreamInfo(snippet).avg_frame_rate.toString());

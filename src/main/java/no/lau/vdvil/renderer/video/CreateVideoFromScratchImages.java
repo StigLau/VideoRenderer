@@ -7,6 +7,7 @@ import com.xuggle.xuggler.IContainer;
 import com.xuggle.xuggler.IPacket;
 import com.xuggle.xuggler.IStreamCoder;
 import no.lau.vdvil.collector.FrameRepresentation;
+import no.lau.vdvil.domain.PathRef;
 import no.lau.vdvil.plan.AudioPlan;
 import no.lau.vdvil.plan.Plan;
 import no.lau.vdvil.renderer.video.builder.GenericBuilder;
@@ -19,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
@@ -47,7 +47,7 @@ public class CreateVideoFromScratchImages {
     }
 
     public static void createVideo(Plan buildPlan, ImageStore<BufferedImage> imageStore, VideoConfig config, boolean allowAudio) {
-        Path parentDir = Paths.get(buildPlan.ioFile()).getParent();
+        Path parentDir = buildPlan.localStorage().path().getParent();
         try {
             Files.createDirectories(parentDir); //Create non-existant mature parent folder
             Thread.sleep(5000);//Sleep to avoid hanging bug when audio is available in cache!
@@ -56,7 +56,7 @@ public class CreateVideoFromScratchImages {
         } catch (IOException e) {
             log.error("Could not create directory {}", parentDir, e);
         }
-        createVideo(buildPlan, imageStore, config, ToolFactory.makeWriter(buildPlan.ioFile()), true, allowAudio);
+        createVideo(buildPlan, imageStore, config, ToolFactory.makeWriter(buildPlan.localStorage().toString()), true, allowAudio);
     }
 
     /**
@@ -84,7 +84,7 @@ public class CreateVideoFromScratchImages {
 
         AudioAdapter audioAdapter = null;
         if(buildPlan instanceof AudioPlan && allowAudio) {
-            audioAdapter = new AudioAdapter(((AudioPlan)buildPlan).audioLocation().getFile(), writer);
+            audioAdapter = new AudioAdapter(((AudioPlan)buildPlan).audioLocation(), writer);
         }
 
         try {
@@ -106,7 +106,7 @@ public class CreateVideoFromScratchImages {
             long now = System.currentTimeMillis();
             log.info("before - now {} - {}", startTime, now);
             long buildTime = (now - startTime) / 1000;
-            log.info("Finished writing video {} seconds - {}", buildTime, buildPlan.ioFile());
+            log.info("Finished writing video {} seconds - {}", buildTime, buildPlan.localStorage());
         }catch(Exception e) {
             log.error("Sometin happened :´(", e);
         }
@@ -152,7 +152,7 @@ class VideoAdapter {
         while (clock >= nextFrameTime) {
             logger.trace("Time to write packets at {}", clock);
             List<FrameRepresentation> frameRepresentations = buildPlan.whatToDoAt(nextFrameTime);
-            if(frameRepresentations.size() > 0) {
+            if(!frameRepresentations.isEmpty()) {
                 boolean frameSuccess = false;
                 for (ImageBuilder builder : builders) {
                     if (!frameSuccess) {
@@ -190,12 +190,12 @@ class AudioAdapter {
     public final IStreamCoder coderAudio;
     private final IMediaWriter writer;
 
-    public AudioAdapter(String inputAudioFilePath, IMediaWriter writer) {
+    public AudioAdapter(PathRef inputAudioFilePath, IMediaWriter writer) {
         this.writer = writer;
         //Audio
         containerAudio = IContainer.make();
         packetaudio = IPacket.make();
-        if (containerAudio.open(inputAudioFilePath, IContainer.Type.READ, null) < 0) {
+        if (containerAudio.open(inputAudioFilePath.toString(), IContainer.Type.READ, null) < 0) {
             throw new IllegalArgumentException("Cant find " + inputAudioFilePath);
         }
         coderAudio = containerAudio.getStream(0).getStreamCoder();

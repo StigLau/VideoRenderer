@@ -1,5 +1,6 @@
 package no.lau.vdvil.snippets;
 
+import no.lau.vdvil.domain.PathRef;
 import no.lau.vdvil.renderer.video.ExtensionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,9 +60,9 @@ public class FFmpegFunctions {
         return performFFMPEG(createCommand(paramList));
     }
 
-    public static String perform(List<List<String>> paramList, Path destinationFile) throws IOException {
-        Files.createDirectories((destinationFile.getParent()));
-        Files.deleteIfExists(destinationFile);
+    public static String perform(List<List<String>> paramList, PathRef destinationFile) throws IOException {
+        Files.createDirectories((destinationFile.path()).getParent());
+        Files.deleteIfExists(destinationFile.path());
         String command = createCommand(paramList) + " " + destinationFile;
         return performFFMPEG(command);
     }
@@ -123,13 +124,13 @@ public class FFmpegFunctions {
         }
     }
 
-    public static Path combineAudioAndVideo(Path inputVideo, Path music) throws IOException {
+    public static Path combineAudioAndVideo(PathRef inputVideo, PathRef music) throws IOException {
         Path target = createTempFile("videoAudioConcat", ExtensionType.mp4);
         logger.info(performFFMPEG(ImprovedFFMpegFunctions.ffmpegLocation() + " -i "+inputVideo.toString()+" -i "+music.toString()+" -c:v copy -c:a aac -strict experimental " + target.toString()));
         return target;
     }
 
-    public static void snippetSplitter(String downloadUrl, long timestampStart, long timestampEnd, Path destinationFile) throws IOException {
+    public static void snippetSplitter(String downloadUrl, long timestampStart, long timestampEnd, PathRef destinationFile) throws IOException {
         logger.info("Performing modifications on {}", destinationFile);
         List<List<String>> props = new ArrayList<>();
         props.add(Arrays.asList("-i", downloadUrl));
@@ -141,9 +142,9 @@ public class FFmpegFunctions {
         logger.info("Finished converting {}", destinationFile);
     }
 
-    public static Path stretchSnippet(Path inputVideo, double targetDuration) throws IOException {
+    public static PathRef stretchSnippet(PathRef inputVideo, double targetDuration) throws IOException {
         ExtensionType extensionType = ExtensionType.typify(ImprovedFFMpegFunctions.getFileExtension(inputVideo));
-        Path destinationFile = createTempFile("stretched", extensionType);
+        PathRef destinationFile = PathRef.createTempPath("stretched", extensionType);
 
         double snippetDuration = ImprovedFFMpegFunctions.ffmpegFormatInfo(inputVideo).duration;
         float percentageChange = (float) (targetDuration / snippetDuration);
@@ -158,13 +159,13 @@ public class FFmpegFunctions {
     }
 
     //Docker alternative: docker run --entrypoint='ffprobe' jrottenberg/ffmpeg
-    public static long countNumberOfFrames(Path destinationFile) throws IOException {
+    public static long countNumberOfFrames(PathRef destinationFile) throws IOException {
         String additionalCommands = "-show_entries stream=nb_read_frames -count_frames ";
         String command = ImprovedFFMpegFunctions.ffprobeLocation() + " -v error -select_streams v:0 -of default=noprint_wrappers=1:nokey=1 " + additionalCommands  + destinationFile.toString();
         return Long.parseLong(performFFMPEG(command).trim());
     }
 
-    public static String fetchFrameInfo(Path destinationFile) throws IOException {
+    public static String fetchFrameInfo(PathRef destinationFile) throws IOException {
         String additionalCommands = "-show_entries stream=avg_frame_rate ";
         String command = ImprovedFFMpegFunctions.ffprobeLocation() + " -v error -select_streams v:0 -of default=noprint_wrappers=1:nokey=1 " + additionalCommands + destinationFile.toString();
         return performFFMPEG(command).trim();

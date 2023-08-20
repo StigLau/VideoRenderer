@@ -3,6 +3,7 @@ package no.lau.vdvil.renderer.video;
 import no.lau.vdvil.collector.*;
 import no.lau.vdvil.collector.plan.FramePlan;
 import no.lau.vdvil.domain.MediaFile;
+import no.lau.vdvil.domain.PathRef;
 import no.lau.vdvil.domain.VideoStillImageSegment;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.plan.Plan;
@@ -15,15 +16,11 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import static no.lau.vdvil.domain.MediaFile.md5Hex;
+import static no.lau.vdvil.domain.MediaFile.md5Checksum;
 import static no.lau.vdvil.renderer.video.TestData.fetch;
 import static no.lau.vdvil.renderer.video.TestData.norwayRemoteUrl;
 import static no.lau.vdvil.renderer.video.TestData.sobotaMp3RemoteUrl;
@@ -36,21 +33,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Tag("IntegrationTest")
 public class StreamingImageStoreTest {
 
-    URI downmixedOriginalVideo;
-    URI theSwingVideo;
-    URI result4;
-    URI strippedResult;
-    URL sobotaMp3;
+    PathRef downmixedOriginalVideo;
+    PathRef theSwingVideo;
+    PathRef result4;
+    PathRef strippedResult;
+    PathRef sobotaMp3;
     KompositionPlanner planner;
     MediaFile resultingMediaFile;
 
     @BeforeEach
-    public void setUp() throws IOException {
-        downmixedOriginalVideo = fetch(norwayRemoteUrl).toUri();
-        theSwingVideo = Paths.get("/tmp/kompost/Worlds_Largest_Rope_Swing/Worlds_Largest_Rope_Swing.mp4").toUri();
-        result4 = Paths.get("/tmp/from_scratch_images_test_v4.mp4").toUri();
-        strippedResult = Paths.get("/tmp/streamingImagesStrippedResult.mp4").toUri();
-        sobotaMp3 = fetch(sobotaMp3RemoteUrl).toUri().toURL();
+    public void setUp() {
+        downmixedOriginalVideo = fetch(norwayRemoteUrl);
+        theSwingVideo = new PathRef("/tmp/kompost/Worlds_Largest_Rope_Swing/Worlds_Largest_Rope_Swing.mp4");
+        result4 = new PathRef("/tmp/from_scratch_images_test_v4.mp4");
+        strippedResult = new PathRef("/tmp/streamingImagesStrippedResult.mp4");
+        sobotaMp3 = fetch(sobotaMp3RemoteUrl);
 
         Komposition fetchKompositionNorway = new Komposition(128,
                 new TimeStampFixedImageSampleSegment("Purple Mountains Clouds", 7541667, 19750000, 8),
@@ -143,7 +140,7 @@ public class StreamingImageStoreTest {
         assertEquals(384, ((SuperPlan) planner.collectPlans().get(6)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
         assertEquals(96, ((SuperPlan) planner.collectPlans().get(7)).getFrameRepresentations().stream().filter(frame -> frame.used).count());
         */
-        assertEquals("74a7aedb2e450e1c38ff99a7f7bd5ad3", md5Checksum(resultingMediaFile.getFileName().toURL())); //Note something wrong with the result - it doesnt move!!?!
+        assertEquals("74a7aedb2e450e1c38ff99a7f7bd5ad3", md5Checksum(resultingMediaFile.getReference())); //Note something wrong with the result - it doesnt move!!?!
     }
 
     @Test
@@ -152,24 +149,16 @@ public class StreamingImageStoreTest {
         PipeDream<BufferedImage> imageStore = new PipeDream<>(200, 5000, 1000, 10);
         TimeStampFixedImageSampleSegment segment = new TimeStampFixedImageSampleSegment("Flower fjord", 35500000, 46250000, 24);
         new Thread(new ThreadedImageCollector(
-                new StrippedWaitingVideoThumbnailsCollector(segment,downmixedOriginalVideo.toURL(), imageStore))).start();
+                new StrippedWaitingVideoThumbnailsCollector(segment,downmixedOriginalVideo, imageStore))).start();
 
         System.out.println("Need to know how many pics to retrieve (Preferrably in a planner) before proceeding!");
-        Plan buildPlan = new TimeStampFixedSegmentPlan(segment, strippedResult.toURL().getFile());
+        Plan buildPlan = new TimeStampFixedSegmentPlan(segment, strippedResult);
         long framerate = Math.round((double) (1000000 / 24));
         System.out.println("Short wait to make sure collection thread starts before this (build).");
         Thread.sleep(2000);
         CreateVideoFromScratchImages.createVideo(buildPlan, imageStore, new VideoConfig(1280, 720, framerate));
         //assertEquals(111, ((SuperPlan)planner.buildPlan()).getFrameRepresentations().stream().filter(frame -> frame.used).count());
-        assertEquals("5156c7b907707065aa281e63065b4c37", md5Checksum(resultingMediaFile.getFileName().toURL()));
-    }
-
-    public String md5Checksum(URL url)  {
-        try {
-            return md5Hex(url.openStream().readAllBytes());
-        } catch (Exception e) {
-            throw new RuntimeException("Shit didn't go all that well");
-        }
+        assertEquals("5156c7b907707065aa281e63065b4c37", md5Checksum(resultingMediaFile.getReference()));
     }
 }
 

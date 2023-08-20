@@ -1,6 +1,7 @@
 package no.lau.vdvil.plan;
 
 import no.lau.vdvil.collector.FrameRepresentation;
+import no.lau.vdvil.domain.PathRef;
 import java.util.List;
 
 /**
@@ -14,5 +15,5 @@ public interface Plan {
 
     String id();
 
-    String ioFile();
+    PathRef localStorage();
 }

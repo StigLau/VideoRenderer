@@ -8,8 +8,8 @@ import com.xuggle.mediatool.event.IOpenCoderEvent;
 import com.xuggle.xuggler.ICodec;
 import com.xuggle.xuggler.IContainer;
 import com.xuggle.xuggler.IStreamCoder;
+import no.lau.vdvil.domain.PathRef;
 import java.io.IOException;
-import java.nio.file.Path;
 import static no.lau.vdvil.renderer.video.TestData.fetch;
 import static no.lau.vdvil.renderer.video.TestData.norwayRemoteUrl;
 
@@ -17,8 +17,8 @@ import static no.lau.vdvil.renderer.video.TestData.norwayRemoteUrl;
  * copied from the netz
  */
 public class ExtractAudioFromVideo {
-    public static void main(String[] args) throws IOException {
-        Path testVideoNorwayTimeLapseLocalStorage = fetch(norwayRemoteUrl);
+    public static void main(String[] args) {
+        PathRef testVideoNorwayTimeLapseLocalStorage = fetch(norwayRemoteUrl);
         IContainer props = VideoInfo.getVideoProperties(testVideoNorwayTimeLapseLocalStorage);
         VideoInfo.printProperties(props);
 
@@ -76,7 +76,7 @@ public class ExtractAudioFromVideo {
     }
 
     public static void whatIWantTheExtractorToLookLike(String filename, String to) {
-        IContainer props = VideoInfo.getVideoProperties(filename);
+        IContainer props = VideoInfo.getVideoProperties(new PathRef(filename));
         int channels = props.getNumStreams();
         IMediaReader reader = ToolFactory.makeReader(filename);
         IMediaWriter writer = ToolFactory.makeWriter(to, reader);

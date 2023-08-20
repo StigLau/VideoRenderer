@@ -40,7 +40,7 @@ public class WaitingVideoThumbnailsCollector implements ImageCollector{
 
 
         IContainer container = IContainer.make();
-        int result = container.open(collectPlan.ioFile(), IContainer.Type.READ, null);
+        int result = container.open(collectPlan.localStorage().toString(), IContainer.Type.READ, null);
         if (result<0)
             throw new RuntimeException("Failed to open media file");
 
@@ -90,7 +90,7 @@ public class WaitingVideoThumbnailsCollector implements ImageCollector{
             BufferedImage newestImage = event.getImage();
 
             List<FrameRepresentation> frames = collectPlan.whatToDoAt(timestamp);
-            if(frames.size() == 0) {
+            if(frames.isEmpty()) {
                 logger.debug("No frames found @{}. Throwing away img@{}", timestamp, Integer.toHexString(newestImage.hashCode()));
                 /* To look at the thrown away images
                 try {

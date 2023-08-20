@@ -1,11 +1,9 @@
 package no.lau.vdvil.domain;
 
-import org.slf4j.LoggerFactory;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
-import java.net.URI;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -15,30 +13,30 @@ import java.security.NoSuchAlgorithmException;
  */
 public class MediaFile {
     public String id;
-    private URI fileName;
+    private PathRef fileName;
     public final Long startingOffset;
     private String checksums;
     public final Float bpm;
     public String extension;
 
 
-    public MediaFile(URI fileRef, Long startingOffsetInMillis, Float bpm, String checksums) {
+    public MediaFile(PathRef fileRef, Long startingOffsetInMillis, Float bpm, String checksums) {
         this.fileName = fileRef;
         this.startingOffset = startingOffsetInMillis;
         this.bpm = bpm;
         this.checksums = checksums;
     }
 
-    public void setFileName(URI fileName) {
+    public void setFileName(PathRef fileName) {
         this.fileName = fileName;
     }
 
-    public URI getFileName() {
+    public PathRef getReference() {
         if(fileName == null) {
             String tempFileId = id + "_"+ bpm;
             try {
                 Path file = Files.createTempFile(tempFileId, extension);
-                this.fileName = file.toUri();
+                this.fileName = new PathRef(file);
             } catch (IOException e) {
                 throw new RuntimeException("Error creating temp file ");
             }
@@ -48,20 +46,15 @@ public class MediaFile {
 
     public String getChecksums() {
         if(checksums == null || checksums.isEmpty()) {
-            try {
-                String fileHash = md5Hex(Files.readAllBytes(Paths.get(fileName))).toLowerCase();
-                if (checksums != null && !checksums.isEmpty()) {
-                    if (checksums.contains(fileHash)) {
-                        // already contains fileHash
-                    } else {
-                        checksums += ", " + fileHash;
-                    }
+            String fileHash = md5Checksum(fileName).toLowerCase();
+            if (checksums != null && !checksums.isEmpty()) {
+                if (checksums.contains(fileHash)) {
+                    // already contains fileHash
                 } else {
-                    checksums = fileHash;
+                    checksums += ", " + fileHash;
                 }
-
-            } catch (IOException e) {
-                LoggerFactory.getLogger(getClass()).error("Error when creating checksum for {}", id, e);
+            } else {
+                checksums = fileHash;
             }
         }
         return checksums;
@@ -72,6 +65,14 @@ public class MediaFile {
         for(byte b: a)
             sb.append(String.format("%02x", b));
         return sb.toString();
+    }
+
+    public static String md5Checksum(PathRef url) {
+        try (InputStream is = url.openStream()) {
+            return md5Hex(is.readAllBytes());
+        } catch (Exception e) {
+            throw new RuntimeException("Shit didn't go all that well");
+        }
     }
 
     public static String md5Hex(byte[] input) {

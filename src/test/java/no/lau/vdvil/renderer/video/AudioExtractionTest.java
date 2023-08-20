@@ -5,6 +5,7 @@ import com.xuggle.mediatool.IMediaWriter;
 import com.xuggle.mediatool.ToolFactory;
 import com.xuggle.xuggler.ICodec;
 import com.xuggle.xuggler.IContainer;
+import no.lau.vdvil.domain.PathRef;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -20,9 +21,8 @@ public class AudioExtractionTest {
     @Test
     @Disabled //Download first
     public void testExtractingAudion() {
-        VideoInfo videoInfo = new VideoInfo();
-        IContainer container = videoInfo.getVideoProperties(inFile);
-        videoInfo.printProperties(container);
+        IContainer container = VideoInfo.getVideoProperties(new PathRef(inFile));
+        VideoInfo.printProperties(container);
 
         IMediaReader reader = ToolFactory.makeReader(inFile);
         IMediaWriter writer = ToolFactory.makeWriter(outfile, reader);

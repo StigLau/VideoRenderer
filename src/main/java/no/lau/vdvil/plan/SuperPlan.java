@@ -2,13 +2,9 @@ package no.lau.vdvil.plan;
 
 import no.lau.vdvil.collector.*;
 import no.lau.vdvil.collector.plan.*;
-import no.lau.vdvil.domain.MediaFile;
-import no.lau.vdvil.domain.MetaSegment;
-import no.lau.vdvil.domain.Segment;
-import no.lau.vdvil.domain.TransitionSegment;
+import no.lau.vdvil.domain.*;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
 import java.awt.image.BufferedImage;
-import java.net.URL;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,7 +18,7 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan, ImageColl
     final FramePlan[] framePlans;
     List<FrameRepresentation> frameRepresentations = new ArrayList<>();
     final MediaFile storageLocation;
-    public URL audioLocation;
+    public PathRef audioLocation;
     int imageDownloadCacheSize = 10; //Just a default to allow for more than one cached image
 
     final Map<String, FramePlan> metaPlanLookup;
@@ -68,8 +64,8 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan, ImageColl
         return toString();
     }
 
-    public String ioFile() {
-        return storageLocation.getFileName().toString();
+    public PathRef localStorage() {
+        return storageLocation.getReference();
     }
 
     public static long calculateLastTimeStamp(float bpm, List<Segment> segments) {
@@ -138,11 +134,11 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan, ImageColl
         throw new RuntimeException("Should not happen!");
     }
 
-    public URL audioLocation() {
+    public PathRef audioLocation() {
         return audioLocation;
     }
 
-    public Plan withAudioLocation(URL audioLocation) {
+    public Plan withAudioLocation(PathRef audioLocation) {
         this.audioLocation = audioLocation;
         return this;
     }

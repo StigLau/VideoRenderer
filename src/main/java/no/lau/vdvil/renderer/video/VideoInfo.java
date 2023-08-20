@@ -4,6 +4,7 @@ import com.xuggle.xuggler.ICodec;
 import com.xuggle.xuggler.IContainer;
 import com.xuggle.xuggler.IStream;
 import com.xuggle.xuggler.IStreamCoder;
+import no.lau.vdvil.domain.PathRef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.nio.file.Path;
@@ -11,24 +12,20 @@ import java.nio.file.Path;
 public class VideoInfo {
 	
 	//private static final String filename = "/Users/stiglau/Downloads/JavaZone_2014_10.sept.mp4";
-    
+    private VideoInfo() {}
     private static Logger logger = LoggerFactory.getLogger(VideoInfo.class);
 
-	public static IContainer getVideoProperties(Path asFilePath) {
-	    return getVideoProperties(asFilePath.toString());
-    }
-
-	public static IContainer getVideoProperties(String filename) {
+	public static IContainer getVideoProperties(PathRef pathRef) {
 
 		// first we create a Xuggler container object
 		IContainer container = IContainer.make();
 		
 		// we attempt to open up the container
-		int result = container.open(filename, IContainer.Type.READ, null);
+		int result = container.open(pathRef.toString(), IContainer.Type.READ, null);
 		
 		// check if the operation was successful
 		if (result<0)
-			throw new RuntimeException("Failed to open media file " + filename);
+			throw new RuntimeException("Failed to open media file " + pathRef);
         return container;
 	}
 
@@ -90,9 +87,6 @@ public class VideoInfo {
 
             logger.info("");
             logger.info("*** End of Stream Info ***");
-
         }
-
     }
-
 }

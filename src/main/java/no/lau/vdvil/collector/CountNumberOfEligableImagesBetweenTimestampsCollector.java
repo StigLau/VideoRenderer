@@ -5,10 +5,10 @@ import com.xuggle.mediatool.MediaListenerAdapter;
 import com.xuggle.mediatool.ToolFactory;
 import com.xuggle.mediatool.event.IVideoPictureEvent;
 import com.xuggle.xuggler.IContainer;
+import no.lau.vdvil.domain.PathRef;
 import no.lau.vdvil.renderer.video.VideoExtractionFinished;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.nio.file.Path;
 
 public class CountNumberOfEligableImagesBetweenTimestampsCollector implements ImageCollector {
 
@@ -16,7 +16,7 @@ public class CountNumberOfEligableImagesBetweenTimestampsCollector implements Im
     private final String mediaFile;
     ImageCounter counter;
 
-    public CountNumberOfEligableImagesBetweenTimestampsCollector(long startMs, long endMs, Path mediaFile) {
+    public CountNumberOfEligableImagesBetweenTimestampsCollector(long startMs, long endMs, PathRef mediaFile) {
         this(startMs, endMs, mediaFile.toString());
     }
 

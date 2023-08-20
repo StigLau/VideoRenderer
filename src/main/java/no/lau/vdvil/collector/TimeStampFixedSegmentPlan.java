@@ -1,6 +1,6 @@
 package no.lau.vdvil.collector;
 
-import no.lau.vdvil.plan.FrameRepresentationsPlan;
+import no.lau.vdvil.domain.PathRef;
 import no.lau.vdvil.plan.Plan;
 import no.lau.vdvil.renderer.video.stigs.TimeStampFixedImageSampleSegment;
 import java.util.Collections;
@@ -12,12 +12,12 @@ import java.util.List;
  * Responsible for finding the start end points of a built video
  */
 public class TimeStampFixedSegmentPlan implements Plan {
-    private final String mediaFile;
+    private final PathRef mediaFile;
     private TimeStampFixedImageSampleSegment segment;
     private final long length;
     private transient int frameNrLopenr = 0;
 
-    public TimeStampFixedSegmentPlan(TimeStampFixedImageSampleSegment segment, String resultingMediaFile) {
+    public TimeStampFixedSegmentPlan(TimeStampFixedImageSampleSegment segment, PathRef resultingMediaFile) {
         this.segment = segment;
         this.mediaFile = resultingMediaFile;
         length = segment.timestampEnd - segment.timestampStart;
@@ -42,8 +42,7 @@ public class TimeStampFixedSegmentPlan implements Plan {
         return segment.id();
     }
 
-    public String ioFile() {
+    public PathRef localStorage() {
         return mediaFile;
     }
-
 }

@@ -1,13 +1,12 @@
 package no.lau.vdvil.renderer.video;
 
 import no.lau.vdvil.domain.MediaFile;
+import no.lau.vdvil.domain.PathRef;
 import no.lau.vdvil.domain.VideoStillImageSegment;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.renderer.video.stigs.TimeStampFixedImageSampleSegment;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.nio.file.Path;
 import static no.lau.vdvil.domain.utils.KompositionUtils.fetchRemoteFile;
 
 public class TestData {
@@ -18,9 +17,9 @@ public class TestData {
     public static String norwayDarkLakeRemoteUrl = "https://s3.amazonaws.com/dvl-test-music/test-data/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time-Lapse_Adventure_Dark_lake_69375000___74000000.mp4";
     public static String norwayFlowerFjordRemoteUrl = "https://s3.amazonaws.com/dvl-test-music/test-data/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time-Lapse_Adventure_Flower_fjord_35500000___46250000.mp4";
 
-    public static Path fetch(String remoteUrl) {
+    public static PathRef fetch(String remoteUrl) {
         try {
-            return fetchRemoteFile("/tmp/komposttest/", remoteUrl);
+            return new PathRef(fetchRemoteFile("/tmp/komposttest/", remoteUrl));
         } catch (IOException e) {
             throw new RuntimeException("Could not fetch " + remoteUrl, e);
         }
@@ -43,7 +42,7 @@ public class TestData {
                 new TimeStampFixedImageSampleSegment("Seaside houses Panorama", 102000000, 107125000, 8),
                 new TimeStampFixedImageSampleSegment("Bergen movement", 107500000, 112750000, 8)
         )
-                .applyStorageLocation(new MediaFile(fetch(norwayRemoteUrl).toUri(), 0L, -1f, "abc"));
+                .applyStorageLocation(new MediaFile(fetch(norwayRemoteUrl), 0L, -1f, "abc"));
     }
     /*
         fetchKompositionSwing = new Komposition(128,
