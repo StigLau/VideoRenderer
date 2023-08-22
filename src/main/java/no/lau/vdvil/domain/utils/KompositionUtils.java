@@ -128,7 +128,7 @@ public class KompositionUtils {
     }
 
     public static Path fetchRemoteFile(String basePathLocalStorage, URL remoteUrl, boolean force) throws IOException {
-        String fileName = remoteUrl.getFile().toString();
+        String fileName = Paths.get(remoteUrl.toString()).getFileName().toString();
         Path resultingLocalPath = Paths.get(basePathLocalStorage + fileName);
 
         if (!Files.exists(resultingLocalPath) || force) {
@@ -148,6 +148,8 @@ public class KompositionUtils {
                 } catch (Exception e) {
                     logger.error("Fetching remote file failed. Deleting local cached copy", resultingLocalPath, e);
                     Files.delete(resultingLocalPath);
+                } finally {
+                    outputStream.flush();
                 }
             }
         }
