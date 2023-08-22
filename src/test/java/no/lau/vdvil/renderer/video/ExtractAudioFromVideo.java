@@ -10,7 +10,6 @@ import com.xuggle.xuggler.IContainer;
 import com.xuggle.xuggler.IStreamCoder;
 
 import java.nio.file.Path;
-
 import static no.lau.vdvil.renderer.video.TestData.fetch;
 import static no.lau.vdvil.renderer.video.TestData.norwayRemoteUrl;
 

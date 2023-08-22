@@ -123,12 +123,12 @@ public class KompositionUtils {
         }
     }
 
-    public static Path fetchRemoteFile(String basePathLocalStorage, String remoteUrl) throws IOException {
+    public static Path fetchRemoteFile(String basePathLocalStorage, URL remoteUrl) throws IOException {
         return fetchRemoteFile(basePathLocalStorage, remoteUrl, false);
     }
 
-    public static Path fetchRemoteFile(String basePathLocalStorage, String remoteUrl, boolean force) throws IOException {
-        String fileName = Paths.get(remoteUrl).getFileName().toString();
+    public static Path fetchRemoteFile(String basePathLocalStorage, URL remoteUrl, boolean force) throws IOException {
+        String fileName = remoteUrl.getFile().toString();
         Path resultingLocalPath = Paths.get(basePathLocalStorage + fileName);
 
         if (!Files.exists(resultingLocalPath) || force) {
@@ -139,7 +139,7 @@ public class KompositionUtils {
             logger.info("Downloading {} to {}", remoteUrl, resultingLocalPath);
 
             File asFile = new File(resultingLocalPath.toString());
-            try (InputStream inputStream = new URL(remoteUrl).openStream()) {
+            try (InputStream inputStream = remoteUrl.openStream()) {
                 outputStream = new FileOutputStream(asFile);
 
                 byte[] bytes = new byte[1024];

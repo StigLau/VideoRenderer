@@ -2,6 +2,7 @@ package no.lau.vdvil.renderer.video;
 
 import no.lau.vdvil.collector.*;
 import no.lau.vdvil.collector.plan.FramePlan;
+import no.lau.vdvil.domain.LocalMediaFile;
 import no.lau.vdvil.domain.MediaFile;
 import no.lau.vdvil.domain.VideoStillImageSegment;
 import no.lau.vdvil.domain.out.Komposition;
@@ -15,12 +16,11 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
 import java.awt.image.BufferedImage;
-import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import static no.lau.vdvil.domain.MediaFile.md5Checksum;
+import static no.lau.CommonFunctions.md5Checksum;
 import static no.lau.vdvil.renderer.video.TestData.fetch;
 import static no.lau.vdvil.renderer.video.TestData.norwayRemoteUrl;
 import static no.lau.vdvil.renderer.video.TestData.sobotaMp3RemoteUrl;
@@ -54,7 +54,7 @@ public class StreamingImageStoreTest {
                 new TimeStampFixedImageSampleSegment("Flower fjord", 35500000, 46250000, 24),
                 new TimeStampFixedImageSampleSegment("Dark lake", 69375000, 74000000, 100)
         );
-        fetchKompositionNorway.storageLocation = new MediaFile(downmixedOriginalVideo, 0L, 120F, "abc");
+        fetchKompositionNorway.storageLocation = new LocalMediaFile(downmixedOriginalVideo, 0L, 120F, "abc");
 
         Komposition fetchKompositionSwing = new Komposition(128,
                 new TimeStampFixedImageSampleSegment("Red bridge", 2919583, 6047708, 8),
@@ -64,7 +64,7 @@ public class StreamingImageStoreTest {
                 new TimeStampFixedImageSampleSegment("Smile girl, smile", 34200833, 34993292, 8),
                 new TimeStampFixedImageSampleSegment("Swing through bridge with mountain smile", 45128417, 46713333, 8)
         );
-        fetchKompositionSwing.storageLocation = new MediaFile(theSwingVideo, 0L, 120F, "abc");
+        fetchKompositionSwing.storageLocation = new LocalMediaFile(theSwingVideo, 0L, 120F, "abc");
         //fetchKompositionSwing.framerate=60;
 
         List<Komposition> fetchKompositions = new ArrayList<>();
@@ -76,7 +76,7 @@ public class StreamingImageStoreTest {
                 new VideoStillImageSegment("Flower fjord", 0, 32)
         );
         buildKomposition.framerate = 24;
-        buildKomposition.storageLocation = new MediaFile(result4, 0L, 128f, "0e7d51d26f573386c229b772d126754a");
+        buildKomposition.storageLocation = new LocalMediaFile(result4, 0L, 128f, "0e7d51d26f573386c229b772d126754a");
         this.resultingMediaFile = buildKomposition.storageLocation;
         planner = new KompositionPlanner(fetchKompositions, buildKomposition, sobotaMp3, 24);//<!-- Here is the key!
     }
@@ -120,7 +120,7 @@ public class StreamingImageStoreTest {
 
     @Test
     @Disabled //Test often fails!!
-    public void testStreamingFromInVideoSource() throws InterruptedException, MalformedURLException {
+    public void testStreamingFromInVideoSource() throws InterruptedException {
         PipeDream<BufferedImage> imageStore = new PipeDream<>(200, 5000, 1000, 10);
         ThreadedImageCollector collector = new ThreadedImageCollector(planner.collectPlans(), plan -> new WaitingVideoThumbnailsCollector(plan, imageStore));
         new Thread(collector).start();
@@ -145,7 +145,7 @@ public class StreamingImageStoreTest {
 
     @Test
     @Disabled //Segment strip doesnt stop
-    public void testSegmentStrip() throws InterruptedException, MalformedURLException {
+    public void testSegmentStrip() throws InterruptedException {
         PipeDream<BufferedImage> imageStore = new PipeDream<>(200, 5000, 1000, 10);
         TimeStampFixedImageSampleSegment segment = new TimeStampFixedImageSampleSegment("Flower fjord", 35500000, 46250000, 24);
         new Thread(new ThreadedImageCollector(

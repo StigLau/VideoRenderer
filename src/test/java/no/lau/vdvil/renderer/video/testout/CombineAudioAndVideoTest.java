@@ -1,6 +1,6 @@
 package no.lau.vdvil.renderer.video.testout;
 
-import no.lau.vdvil.domain.MediaFile;
+import no.lau.vdvil.domain.LocalMediaFile;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.renderer.video.concatenator.AudioVideoConcatenator;
 import no.lau.vdvil.renderer.video.config.VideoConfig;
@@ -23,7 +23,7 @@ public class CombineAudioAndVideoTest {
         String inputAudioFilePath = "/tmp/The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix.mp3";
 
         Komposition komposition = new Komposition(128);
-        komposition.storageLocation = new MediaFile(Path.of("file:///tmp/some-timelapse.mp4"), 0L, 128f, "checksuym");
+        komposition.storageLocation = new LocalMediaFile(Path.of("file:///tmp/some-timelapse.mp4"), 0L, 128f, "checksuym");
         AudioVideoConcatenator.concatenateAudioAndVideo(inputAudioFilePath, inputVideoFilePath, komposition.storageLocation.toString(), new VideoConfig(360, 480, 15));
     }
 }
