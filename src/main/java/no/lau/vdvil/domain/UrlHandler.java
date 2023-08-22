@@ -1,7 +1,6 @@
 package no.lau.vdvil.domain;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
@@ -19,8 +18,22 @@ public class UrlHandler extends URLStreamHandler {
             }
 
             @Override
-            public InputStream getInputStream() {
-                return new ByteArrayInputStream(new byte[]{});
+            public InputStream getInputStream() throws IOException {
+                URLConnection connection = url.openConnection();
+                connection.setDoOutput(true);
+                return connection.getInputStream();
+
+                //BufferedReader in = new BufferedReader(
+                        //return new InputStreamReader(connection.getInputStream());
+
+/*
+                String decodedString;
+                while ((decodedString = in.readLine()) != null) {
+                    logger.info(decodedString);
+                }
+                return
+                //in.close();
+                return new ByteArrayInputStream(new byte[]{});*/
             }
 
             @Override
@@ -28,19 +41,6 @@ public class UrlHandler extends URLStreamHandler {
                 return "content/notnull";
             }
         };
-
-        /*
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url.toURI())
-                .version(HttpClient.Version.HTTP_2)
-                .GET()
-                .build();
-        HttpClient client = HttpClient.newBuilder()
-                .followRedirects(HttpClient.Redirect.ALWAYS)
-                .build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-         response.body();
-*/
     }
 
     public static URL urlCreator(Path pathUrl) {
