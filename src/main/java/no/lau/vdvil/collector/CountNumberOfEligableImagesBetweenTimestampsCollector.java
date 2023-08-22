@@ -8,19 +8,16 @@ import com.xuggle.xuggler.IContainer;
 import no.lau.vdvil.renderer.video.VideoExtractionFinished;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.nio.file.Path;
 
 public class CountNumberOfEligableImagesBetweenTimestampsCollector implements ImageCollector {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
-    private final String mediaFile;
+    private final Path mediaFile;
     ImageCounter counter;
 
     public CountNumberOfEligableImagesBetweenTimestampsCollector(long startMs, long endMs, Path mediaFile) {
-        this(startMs, endMs, mediaFile.toString());
-    }
-
-    public CountNumberOfEligableImagesBetweenTimestampsCollector(long startMs, long endMs, String mediaFile) {
         this.mediaFile = mediaFile;
         this.counter = new ImageCounter(startMs, endMs);
     }
@@ -28,7 +25,7 @@ public class CountNumberOfEligableImagesBetweenTimestampsCollector implements Im
     public void run() {
         long start = System.currentTimeMillis();
         IContainer container = IContainer.make();
-        int result = container.open(mediaFile, IContainer.Type.READ, null);
+        int result = container.open(mediaFile.toString(), IContainer.Type.READ, null);
         if (result < 0)
             throw new RuntimeException("Failed to open media file " + mediaFile);
 

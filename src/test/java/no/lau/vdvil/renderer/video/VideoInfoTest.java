@@ -3,10 +3,8 @@ package no.lau.vdvil.renderer.video;
 import com.xuggle.xuggler.IContainer;
 import com.xuggle.xuggler.IStreamCoder;
 import org.junit.jupiter.api.Test;
-
-
-import java.io.IOException;
 import java.nio.file.Path;
+
 import static no.lau.vdvil.renderer.video.TestData.fetch;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -17,9 +15,8 @@ public class VideoInfoTest {
     Path norwayLocalStorage = fetch(TestData.norwayRemoteUrl);
 
     @Test
-    public void findOutShit() throws IOException {
-        VideoInfo videoInfo = new VideoInfo();
-        IContainer container = videoInfo.getVideoProperties(norwayLocalStorage);
+    public void findOutShit() {
+        IContainer container = VideoInfo.getVideoProperties(norwayLocalStorage.toString());
 
         IStreamCoder asd = container.getStream(0).getStreamCoder();
         assertEquals(1280, asd.getWidth());
@@ -27,9 +24,8 @@ public class VideoInfoTest {
     }
 
     @Test
-    public void printProperties() throws IOException {
-        VideoInfo videoInfo = new VideoInfo();
-        IContainer container = videoInfo.getVideoProperties(norwayLocalStorage);
-        videoInfo.printProperties(container);
+    public void printProperties() {
+        IContainer container = VideoInfo.getVideoProperties(norwayLocalStorage.toString());
+        VideoInfo.printProperties(container);
     }
 }

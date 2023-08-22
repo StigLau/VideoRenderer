@@ -8,6 +8,8 @@ import com.xuggle.xuggler.IContainer;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import java.nio.file.Path;
+
 /**
  * @author Stig@Lau.no 18/01/15.
  */
@@ -20,9 +22,8 @@ public class AudioExtractionTest {
     @Test
     @Disabled //Download first
     public void testExtractingAudion() {
-        VideoInfo videoInfo = new VideoInfo();
-        IContainer container = videoInfo.getVideoProperties(inFile);
-        videoInfo.printProperties(container);
+        IContainer container = VideoInfo.getVideoProperties(inFile);
+        VideoInfo.printProperties(container);
 
         IMediaReader reader = ToolFactory.makeReader(inFile);
         IMediaWriter writer = ToolFactory.makeWriter(outfile, reader);

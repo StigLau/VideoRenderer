@@ -12,18 +12,20 @@ import no.lau.vdvil.renderer.video.VideoInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.file.Path;
+
 /**
  * http://www.jochus.be/site/2010-10-12/java/converting-resizing-videos-in-java-xuggler
  */
 public class MediaConvertor {
     static Logger log = LoggerFactory.getLogger(MediaConvertor.class);
 
-    public static void convert(String input, String output, int width, int height) {
+    public static void convert(Path pathRef, String output, int width, int height) {
         long startTime = System.currentTimeMillis();
-        printWidthAndHeight(input);
+        printWidthAndHeight(pathRef);
 
         // reader
-        IMediaReader reader = ToolFactory.makeReader(input);
+        IMediaReader reader = ToolFactory.makeReader(pathRef.toString());
 
         // writer
         IMediaWriter writer = ToolFactory.makeWriter(output, reader);
@@ -46,8 +48,8 @@ public class MediaConvertor {
         log.info("Time used: " + (System.currentTimeMillis() - startTime)/1000 + " seconds" );
     }
 
-    private static void printWidthAndHeight(String input) {
-        IContainer container = VideoInfo.getVideoProperties(input);
+    private static void printWidthAndHeight(Path input) {
+        IContainer container = VideoInfo.getVideoProperties(input.toString());
         IStreamCoder stream = container.getStream(0).getStreamCoder();
         log.info("Width: " + stream.getWidth());
         log.info("Height: " + stream.getHeight());

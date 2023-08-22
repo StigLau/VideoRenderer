@@ -9,7 +9,7 @@ import no.lau.vdvil.plan.Plan;
 import no.lau.vdvil.renderer.video.CreateVideoFromScratchImages;
 import no.lau.vdvil.renderer.video.config.VideoConfig;
 import java.awt.image.BufferedImage;
-import java.net.URL;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -21,7 +21,7 @@ public class VideoBuilderWrapper {
         this.imageStore = imageStore;
     }
 
-    public void createVideoPart(VideoConfig videoConfig, List<Komposition> fetchKompositions, Komposition buildKomposition, URL musicUrl, boolean useAudio) {
+    public void createVideoPart(VideoConfig videoConfig, List<Komposition> fetchKompositions, Komposition buildKomposition, Path musicUrl, boolean useAudio) {
         KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition, musicUrl, 24);
         CollectorWrapper callback = plan -> new WaitingVideoThumbnailsCollector(plan, imageStore);
         ExecutorService collector = Executors.newFixedThreadPool(1);

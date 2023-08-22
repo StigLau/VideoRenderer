@@ -14,23 +14,23 @@ import no.lau.vdvil.renderer.video.stigs.TimeStampFixedImageSampleSegment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.awt.image.BufferedImage;
-import java.net.URL;
+import java.nio.file.Path;
 
 public class StrippedWaitingVideoThumbnailsCollector implements ImageCollector{
 
     private static Logger logger = LoggerFactory.getLogger(StrippedWaitingVideoThumbnailsCollector.class);
     private TimeStampFixedImageSampleSegment segment;
-    private URL originalMediaFile;
+    private Path originalMediaFile;
     private final ImageStore<BufferedImage> imageStore;
     //Testfeature for enabling scanning forward in large source-videos before starting collection of a snippet
     private final boolean skipFramesAhead;
 
 
-    public StrippedWaitingVideoThumbnailsCollector(TimeStampFixedImageSampleSegment segment, URL originalMediaFile, ImageStore<BufferedImage> imageStore) {
+    public StrippedWaitingVideoThumbnailsCollector(TimeStampFixedImageSampleSegment segment, Path originalMediaFile, ImageStore<BufferedImage> imageStore) {
         this(segment, originalMediaFile,   imageStore, false);
     }
 
-    public StrippedWaitingVideoThumbnailsCollector(TimeStampFixedImageSampleSegment segment, URL originalMediaFile, ImageStore<BufferedImage> imageStore, boolean skipFramesAhead) {
+    public StrippedWaitingVideoThumbnailsCollector(TimeStampFixedImageSampleSegment segment, Path originalMediaFile, ImageStore<BufferedImage> imageStore, boolean skipFramesAhead) {
         this.segment = segment;
         this.originalMediaFile = originalMediaFile;
         this.imageStore = imageStore;
@@ -43,7 +43,7 @@ public class StrippedWaitingVideoThumbnailsCollector implements ImageCollector{
 
 
         IContainer container = IContainer.make();
-        int result = container.open(originalMediaFile.getFile(), IContainer.Type.READ, null);
+        int result = container.open(originalMediaFile.toString(), IContainer.Type.READ, null);
         if (result<0)
             throw new RuntimeException("Failed to open media file");
 

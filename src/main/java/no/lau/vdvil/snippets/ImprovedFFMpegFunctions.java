@@ -8,6 +8,7 @@ import net.bramp.ffmpeg.job.FFmpegJob;
 import net.bramp.ffmpeg.probe.FFmpegFormat;
 import net.bramp.ffmpeg.probe.FFmpegProbeResult;
 import net.bramp.ffmpeg.probe.FFmpegStream;
+import no.lau.CommonFunctions;
 import no.lau.vdvil.renderer.video.ExtensionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,9 +47,9 @@ public class ImprovedFFMpegFunctions {
         }
     }
 
-    public static Path snippetSplitter(Path downloadUrl, long timestampStart, long timestampEnd) throws IOException {
+    public static Path snippetSplitter(Path downloadUrl, long timestampStart, long timestampEnd) {
         ExtensionType extensionType = ExtensionType.typify(getFileExtension(downloadUrl));
-        Path destinationFile = createTempFile("snippet", extensionType);
+        Path destinationFile = CommonFunctions.createTempPath("snippet", extensionType);
         FFmpegBuilder builder = new FFmpegBuilder()
                 .setInput(downloadUrl.toString())
                 .addExtraArgs("-ss", humanReadablePeriod(timestampStart))
@@ -100,7 +101,7 @@ public class ImprovedFFMpegFunctions {
         return stream;
     }
 
-    public static String detectSceneChanges(Path target, double ratio) throws IOException {
+    public static String detectSceneChanges(Path target, double ratio) {
         FFmpegBuilder builder = (new FFmpegBuilder()).setInput(target.toString()).addExtraArgs(new String[]{"-filter:v ", "\"select='gt(scene,0.1)',showinfo\""}).addOutput("/tmp/heia.txt").done();
         FFmpegJob job = executor.createJob(builder);
         job.run();
@@ -157,7 +158,7 @@ public class ImprovedFFMpegFunctions {
             logger.error("To few snippets as input to concatenation");
         }
         ExtensionType extensionType = ExtensionType.typify(getFileExtension(snippets[0]));
-        Path target = createTempFile("video_and_audio_combination", extensionType);
+        Path target = CommonFunctions.createTempPath("video_and_audio_combination", extensionType);
         Path fileList = createTempFiles(ExtensionType.txt, snippets);
         logger.info("Storing snippet list: {}", fileList);
 
@@ -178,7 +179,7 @@ public class ImprovedFFMpegFunctions {
         Path target = createTempFile("video_and_audio_combination", extensionType);
         FFmpegBuilder builder = new FFmpegBuilder()
                 .addExtraArgs("-c:v copy -c:a aac -strict experimental")
-                .setInput(inputVideo.toString() + " -i " + music.toString())
+                .setInput(inputVideo + " -i " + music.toString())
                 //.addInput()
 
 
@@ -194,8 +195,8 @@ public class ImprovedFFMpegFunctions {
         return target;
     }
 
-    public static String getFileExtension(Path path) {
-        String fileName = path.toFile().getName();
+    public static String getFileExtension(Path Path) {
+        String fileName = Path.toString();
         if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
             return fileName.substring(fileName.lastIndexOf(".")+1);
         else return "";

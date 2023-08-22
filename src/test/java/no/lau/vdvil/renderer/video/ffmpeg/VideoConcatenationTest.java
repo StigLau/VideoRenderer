@@ -73,15 +73,15 @@ class VideoConcatenationTest {
                 double percentage = progress.out_time_ns / duration_ns;
 
                 // Print out interesting information about the progress
-                System.out.println(String.format(
-                        "OMFG [%.0f%%] status:%s frame:%d time:%s ms fps:%.0f speed:%.2fx",
+                System.out.printf(
+                        "OMFG [%.0f%%] status:%s frame:%d time:%s ms fps:%.0f speed:%.2fx%n",
                         percentage * 100,
                         progress.status,
                         progress.frame,
                         FFmpegUtils.toTimecode(progress.out_time_ns, TimeUnit.NANOSECONDS),
                         progress.fps.doubleValue(),
                         progress.speed
-                ));
+                );
             }
         });
 
@@ -100,7 +100,7 @@ class VideoConcatenationTest {
         Path noSoundConcatenation  = concatVideoSnippets(snippet, snippet2);
         assertEquals(245, countNumberOfFrames(noSoundConcatenation));
         //Path combinedWithSound = Paths.get("/tmp/jalla.mp4");
-        Path combinedWithSound  = combineAudioAndVideo(noSoundConcatenation, fetch(sobotaMp3RemoteUrl).toAbsolutePath());
+        Path combinedWithSound  = combineAudioAndVideo(noSoundConcatenation, fetch(sobotaMp3RemoteUrl));
 
         System.out.println("Our result is at " + combinedWithSound);
         assertEquals(245, countNumberOfFrames(combinedWithSound));

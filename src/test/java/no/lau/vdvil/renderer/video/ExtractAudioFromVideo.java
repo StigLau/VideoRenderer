@@ -8,7 +8,7 @@ import com.xuggle.mediatool.event.IOpenCoderEvent;
 import com.xuggle.xuggler.ICodec;
 import com.xuggle.xuggler.IContainer;
 import com.xuggle.xuggler.IStreamCoder;
-import java.io.IOException;
+
 import java.nio.file.Path;
 import static no.lau.vdvil.renderer.video.TestData.fetch;
 import static no.lau.vdvil.renderer.video.TestData.norwayRemoteUrl;
@@ -17,9 +17,9 @@ import static no.lau.vdvil.renderer.video.TestData.norwayRemoteUrl;
  * copied from the netz
  */
 public class ExtractAudioFromVideo {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         Path testVideoNorwayTimeLapseLocalStorage = fetch(norwayRemoteUrl);
-        IContainer props = VideoInfo.getVideoProperties(testVideoNorwayTimeLapseLocalStorage);
+        IContainer props = VideoInfo.getVideoProperties(testVideoNorwayTimeLapseLocalStorage.toString());
         VideoInfo.printProperties(props);
 
         convert(testVideoNorwayTimeLapseLocalStorage.toString(), "/tmp/jalla.mp3");

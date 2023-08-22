@@ -1,10 +1,10 @@
 package no.lau.vdvil.plan;
 
-import java.net.URL;
+import java.nio.file.Path;
 
 /**
  * @author Stig@Lau.no
  */
 public interface AudioPlan {
-    URL audioLocation();
+    Path audioLocation();
 }

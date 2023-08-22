@@ -1,24 +1,25 @@
 package no.lau.vdvil.renderer.video;
 
-import no.lau.vdvil.domain.MediaFile;
+import no.lau.vdvil.domain.LocalMediaFile;
 import no.lau.vdvil.domain.VideoStillImageSegment;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.renderer.video.stigs.TimeStampFixedImageSampleSegment;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Path;
+import static no.lau.vdvil.domain.UrlHandler.urlCreator;
 import static no.lau.vdvil.domain.utils.KompositionUtils.fetchRemoteFile;
 
 public class TestData {
 
-    public static String norwayRemoteUrl = "https://s3.amazonaws.com/dvl-test-music/test-data/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time-Lapse_Adventure.mp4";
-    public static String bergenRemoteUrl = "https://s3.amazonaws.com/dvl-test-music/test-data/Bergen_In_Motion-Sigurd_Svidal_Randal/Bergen_In_Motion-Sigurd_Svidal_Randal.mp4";
-    public static String sobotaMp3RemoteUrl = "https://s3.amazonaws.com/dvl-test-music/music/The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix.mp3";
-    public static String norwayDarkLakeRemoteUrl = "https://s3.amazonaws.com/dvl-test-music/test-data/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time-Lapse_Adventure_Dark_lake_69375000___74000000.mp4";
-    public static String norwayFlowerFjordRemoteUrl = "https://s3.amazonaws.com/dvl-test-music/test-data/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time-Lapse_Adventure_Flower_fjord_35500000___46250000.mp4";
+    public static URL norwayRemoteUrl = urlCreator("https://s3.amazonaws.com/dvl-test-music/test-data/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time-Lapse_Adventure.mp4");
+    public static URL bergenRemoteUrl = urlCreator("https://s3.amazonaws.com/dvl-test-music/test-data/Bergen_In_Motion-Sigurd_Svidal_Randal/Bergen_In_Motion-Sigurd_Svidal_Randal.mp4");
+    public static URL sobotaMp3RemoteUrl = urlCreator("https://s3.amazonaws.com/dvl-test-music/music/The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix.mp3");
+    public static URL norwayDarkLakeRemoteUrl = urlCreator("https://s3.amazonaws.com/dvl-test-music/test-data/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time-Lapse_Adventure_Dark_lake_69375000___74000000.mp4");
+    public static URL norwayFlowerFjordRemoteUrl = urlCreator("https://s3.amazonaws.com/dvl-test-music/test-data/NORWAY-A_Time-Lapse_Adventure/NORWAY-A_Time-Lapse_Adventure_Flower_fjord_35500000___46250000.mp4");
 
-    public static Path fetch(String remoteUrl) {
+    public static Path fetch(URL remoteUrl) {
         try {
             return fetchRemoteFile("/tmp/komposttest/", remoteUrl);
         } catch (IOException e) {
@@ -43,7 +44,7 @@ public class TestData {
                 new TimeStampFixedImageSampleSegment("Seaside houses Panorama", 102000000, 107125000, 8),
                 new TimeStampFixedImageSampleSegment("Bergen movement", 107500000, 112750000, 8)
         )
-                .applyStorageLocation(new MediaFile(fetch(norwayRemoteUrl).toUri(), 0L, -1f, "abc"));
+                .applyStorageLocation(new LocalMediaFile(fetch(norwayRemoteUrl), 0L, -1f, "abc"));
     }
     /*
         fetchKompositionSwing = new Komposition(128,

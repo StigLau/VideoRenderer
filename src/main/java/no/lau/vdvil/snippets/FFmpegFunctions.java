@@ -1,5 +1,6 @@
 package no.lau.vdvil.snippets;
 
+import no.lau.CommonFunctions;
 import no.lau.vdvil.renderer.video.ExtensionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +61,7 @@ public class FFmpegFunctions {
     }
 
     public static String perform(List<List<String>> paramList, Path destinationFile) throws IOException {
-        Files.createDirectories((destinationFile.getParent()));
+        Files.createDirectories(destinationFile.getParent());
         Files.deleteIfExists(destinationFile);
         String command = createCommand(paramList) + " " + destinationFile;
         return performFFMPEG(command);
@@ -129,10 +130,10 @@ public class FFmpegFunctions {
         return target;
     }
 
-    public static void snippetSplitter(String downloadUrl, long timestampStart, long timestampEnd, Path destinationFile) throws IOException {
+    public static void snippetSplitter(Path downloadUrl, long timestampStart, long timestampEnd, Path destinationFile) throws IOException {
         logger.info("Performing modifications on {}", destinationFile);
         List<List<String>> props = new ArrayList<>();
-        props.add(Arrays.asList("-i", downloadUrl));
+        props.add(Arrays.asList("-i", downloadUrl.toString()));
         props.add(Arrays.asList("-ss", humanReadablePeriod(timestampStart)));
         props.add(Arrays.asList("-t", humanReadablePeriod(timestampEnd - timestampStart)));
         //props.add(Arrays.asList("-r", "24")); //24 frames per second
@@ -143,7 +144,7 @@ public class FFmpegFunctions {
 
     public static Path stretchSnippet(Path inputVideo, double targetDuration) throws IOException {
         ExtensionType extensionType = ExtensionType.typify(ImprovedFFMpegFunctions.getFileExtension(inputVideo));
-        Path destinationFile = createTempFile("stretched", extensionType);
+        Path destinationFile = CommonFunctions.createTempPath("stretched", extensionType);
 
         double snippetDuration = ImprovedFFMpegFunctions.ffmpegFormatInfo(inputVideo).duration;
         float percentageChange = (float) (targetDuration / snippetDuration);

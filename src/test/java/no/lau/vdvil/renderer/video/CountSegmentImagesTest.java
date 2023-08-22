@@ -2,7 +2,9 @@ package no.lau.vdvil.renderer.video;
 
 import no.lau.vdvil.collector.CountNumberOfEligableImagesBetweenTimestampsCollector;
 import org.junit.jupiter.api.Test;
+
 import java.nio.file.Path;
+
 import static no.lau.vdvil.renderer.video.TestData.fetch;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -18,10 +20,10 @@ public class CountSegmentImagesTest {
 
     @Test
     public void countNr2() {
-        VideoInfo.printProperties(VideoInfo.getVideoProperties(testVideoNorwayTimeLapseLocalStorage));
-        long estimatedAmountOfImages = VideoInfo.getVideoProperties(testVideoNorwayTimeLapseLocalStorage).getDuration() / 46667;
+        VideoInfo.printProperties(VideoInfo.getVideoProperties(testVideoNorwayTimeLapseLocalStorage.toString()));
+        long estimatedAmountOfImages = VideoInfo.getVideoProperties(testVideoNorwayTimeLapseLocalStorage.toString()).getDuration() / 46667;
         System.out.println("NOTE - Counting number of pics in video can take some time!");
-        CountNumberOfEligableImagesBetweenTimestampsCollector collector = new CountNumberOfEligableImagesBetweenTimestampsCollector(0, VideoInfo.getVideoProperties(testVideoNorwayTimeLapseLocalStorage).getDuration(), testVideoNorwayTimeLapseLocalStorage);
+        CountNumberOfEligableImagesBetweenTimestampsCollector collector = new CountNumberOfEligableImagesBetweenTimestampsCollector(0, VideoInfo.getVideoProperties(testVideoNorwayTimeLapseLocalStorage.toString()).getDuration(), testVideoNorwayTimeLapseLocalStorage);
 
         collector.run();
         long imagesFound = collector.imagesCollected();
@@ -32,7 +34,7 @@ public class CountSegmentImagesTest {
 
     @Test
     public void countDarkLakeForYourself() {
-        VideoInfo.printProperties(VideoInfo.getVideoProperties(testVideoNorwayTimeLapseLocalStorage));
+        VideoInfo.printProperties(VideoInfo.getVideoProperties(testVideoNorwayTimeLapseLocalStorage.toString()));
         CountNumberOfEligableImagesBetweenTimestampsCollector collector = new CountNumberOfEligableImagesBetweenTimestampsCollector(69375000, 74000000, testVideoNorwayTimeLapseLocalStorage);
         try {
             collector.run();
@@ -46,8 +48,8 @@ public class CountSegmentImagesTest {
 
     @Test
     public void countDarkLakeSnippet() {
-        VideoInfo.printProperties(VideoInfo.getVideoProperties(norwayDarkLakeLocalStorage));
-        CountNumberOfEligableImagesBetweenTimestampsCollector collector = new CountNumberOfEligableImagesBetweenTimestampsCollector(0, VideoInfo.getVideoProperties(norwayDarkLakeLocalStorage).getDuration(), norwayDarkLakeLocalStorage);
+        VideoInfo.printProperties(VideoInfo.getVideoProperties(norwayDarkLakeLocalStorage.toString()));
+        CountNumberOfEligableImagesBetweenTimestampsCollector collector = new CountNumberOfEligableImagesBetweenTimestampsCollector(0, VideoInfo.getVideoProperties(norwayDarkLakeLocalStorage.toString()).getDuration(), norwayDarkLakeLocalStorage);
         collector.run();
         //This is the amount of images actually extractable from the snippet!!!! Compare 101 to the original expectation 113!
         long imagesFound = collector.imagesCollected();
@@ -57,8 +59,8 @@ public class CountSegmentImagesTest {
 
     @Test
     public void countFlowerFjordSnippet() {
-        VideoInfo.printProperties(VideoInfo.getVideoProperties(norwayFlowerFjordLocalStorage));
-        CountNumberOfEligableImagesBetweenTimestampsCollector collector = new CountNumberOfEligableImagesBetweenTimestampsCollector(0, VideoInfo.getVideoProperties(norwayFlowerFjordLocalStorage).getDuration(), norwayFlowerFjordLocalStorage);
+        VideoInfo.printProperties(VideoInfo.getVideoProperties(norwayFlowerFjordLocalStorage.toString()));
+        CountNumberOfEligableImagesBetweenTimestampsCollector collector = new CountNumberOfEligableImagesBetweenTimestampsCollector(0, VideoInfo.getVideoProperties(norwayFlowerFjordLocalStorage.toString()).getDuration(), norwayFlowerFjordLocalStorage);
         collector.run();
         //This is the amount of images actually extractable from the snippet!!!! Compare 101 to the original expectation 113!
         long imagesFound = collector.imagesCollected();
