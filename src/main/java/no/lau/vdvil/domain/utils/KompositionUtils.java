@@ -135,23 +135,20 @@ public class KompositionUtils {
             if (!Files.exists(resultingLocalPath.getParent())) {
                 Files.createDirectories(resultingLocalPath.getParent());
             }
-            OutputStream outputStream = null;
             logger.info("Downloading {} to {}", remoteUrl, resultingLocalPath);
 
             File asFile = new File(resultingLocalPath.toString());
-            try (InputStream inputStream = remoteUrl.openStream()) {
-                outputStream = new FileOutputStream(asFile);
-
-                byte[] bytes = new byte[1024];
-                int read;
-                while ((read = inputStream.read(bytes)) != -1) {
-                    outputStream.write(bytes, 0, read);
+            try (OutputStream outputStream = new FileOutputStream(asFile)) {
+                try (InputStream inputStream = remoteUrl.openStream()) {
+                    byte[] bytes = new byte[1024];
+                    int read;
+                    while ((read = inputStream.read(bytes)) != -1) {
+                        outputStream.write(bytes, 0, read);
+                    }
+                } catch (Exception e) {
+                    logger.error("Fetching remote file failed. Deleting local cached copy", resultingLocalPath, e);
+                    Files.delete(resultingLocalPath);
                 }
-            } catch (Exception e) {
-                logger.error("Fetching remote file failed. Deleting local cached copy", resultingLocalPath, e);
-                Files.delete(resultingLocalPath);
-            } finally {
-                outputStream.flush();
             }
         }
         return resultingLocalPath;
