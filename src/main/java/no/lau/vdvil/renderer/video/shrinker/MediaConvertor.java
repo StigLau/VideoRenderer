@@ -49,7 +49,7 @@ public class MediaConvertor {
     }
 
     private static void printWidthAndHeight(Path input) {
-        IContainer container = VideoInfo.getVideoProperties(input);
+        IContainer container = VideoInfo.getVideoProperties(input.toString());
         IStreamCoder stream = container.getStream(0).getStreamCoder();
         log.info("Width: " + stream.getWidth());
         log.info("Height: " + stream.getHeight());

@@ -3,7 +3,6 @@ package no.lau.vdvil.renderer.video;
 import com.xuggle.xuggler.IContainer;
 import com.xuggle.xuggler.IStreamCoder;
 import org.junit.jupiter.api.Test;
-
 import java.nio.file.Path;
 
 import static no.lau.vdvil.renderer.video.TestData.fetch;
@@ -17,7 +16,7 @@ public class VideoInfoTest {
 
     @Test
     public void findOutShit() {
-        IContainer container = VideoInfo.getVideoProperties(norwayLocalStorage);
+        IContainer container = VideoInfo.getVideoProperties(norwayLocalStorage.toString());
 
         IStreamCoder asd = container.getStream(0).getStreamCoder();
         assertEquals(1280, asd.getWidth());
@@ -26,7 +25,7 @@ public class VideoInfoTest {
 
     @Test
     public void printProperties() {
-        IContainer container = VideoInfo.getVideoProperties(norwayLocalStorage);
+        IContainer container = VideoInfo.getVideoProperties(norwayLocalStorage.toString());
         VideoInfo.printProperties(container);
     }
 }

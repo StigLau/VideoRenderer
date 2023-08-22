@@ -22,7 +22,7 @@ public class AudioExtractionTest {
     @Test
     @Disabled //Download first
     public void testExtractingAudion() {
-        IContainer container = VideoInfo.getVideoProperties(Path.of(inFile));
+        IContainer container = VideoInfo.getVideoProperties(inFile);
         VideoInfo.printProperties(container);
 
         IMediaReader reader = ToolFactory.makeReader(inFile);

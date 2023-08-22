@@ -19,7 +19,7 @@ import static no.lau.vdvil.renderer.video.TestData.norwayRemoteUrl;
 public class ExtractAudioFromVideo {
     public static void main(String[] args) {
         Path testVideoNorwayTimeLapseLocalStorage = fetch(norwayRemoteUrl);
-        IContainer props = VideoInfo.getVideoProperties(testVideoNorwayTimeLapseLocalStorage);
+        IContainer props = VideoInfo.getVideoProperties(testVideoNorwayTimeLapseLocalStorage.toString());
         VideoInfo.printProperties(props);
 
         convert(testVideoNorwayTimeLapseLocalStorage.toString(), "/tmp/jalla.mp3");
@@ -76,7 +76,7 @@ public class ExtractAudioFromVideo {
     }
 
     public static void whatIWantTheExtractorToLookLike(String filename, String to) {
-        IContainer props = VideoInfo.getVideoProperties(Path.of(filename));
+        IContainer props = VideoInfo.getVideoProperties(filename);
         int channels = props.getNumStreams();
         IMediaReader reader = ToolFactory.makeReader(filename);
         IMediaWriter writer = ToolFactory.makeWriter(to, reader);

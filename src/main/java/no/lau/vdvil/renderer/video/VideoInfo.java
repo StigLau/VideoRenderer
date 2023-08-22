@@ -6,7 +6,6 @@ import com.xuggle.xuggler.IStream;
 import com.xuggle.xuggler.IStreamCoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.nio.file.Path;
 
 public class VideoInfo {
 	
@@ -14,17 +13,17 @@ public class VideoInfo {
     private VideoInfo() {}
     private static Logger logger = LoggerFactory.getLogger(VideoInfo.class);
 
-	public static IContainer getVideoProperties(Path path) {
+	public static IContainer getVideoProperties(String urlString) {
 
 		// first we create a Xuggler container object
 		IContainer container = IContainer.make();
 		
 		// we attempt to open up the container
-		int result = container.open(path.toString(), IContainer.Type.READ, null);
+		int result = container.open(urlString, IContainer.Type.READ, null);
 		
 		// check if the operation was successful
 		if (result<0)
-			throw new RuntimeException("Failed to open media file " + path);
+			throw new RuntimeException("Failed to open media file " + urlString);
         return container;
 	}
 
