@@ -43,6 +43,11 @@ public class RemoteMediaFile implements MediaFile {
         return fileName;
     }
 
+    @Override
+    public URL getOriginalUrl() {
+        return fileName;
+    }
+
     public String getChecksums() {
         return checksums;
     }

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
+import static no.lau.vdvil.domain.UrlHandler.urlCreator;
 
 /**
 
@@ -23,7 +24,8 @@ public class CombineAudioAndVideoTest {
         String inputAudioFilePath = "/tmp/The_Hurt_feat__Sam_Mollison_Andre_Sobota_Remix.mp3";
 
         Komposition komposition = new Komposition(128);
-        komposition.storageLocation = new LocalMediaFile(Path.of("file:///tmp/some-timelapse.mp4"), 0L, 128f, "checksuym");
+        Path loc = Path.of("file:///tmp/some-timelapse.mp4");
+        komposition.storageLocation = new LocalMediaFile(urlCreator(loc), loc, 0L, 128f, "checksuym");
         AudioVideoConcatenator.concatenateAudioAndVideo(inputAudioFilePath, inputVideoFilePath, komposition.storageLocation.toString(), new VideoConfig(360, 480, 15));
     }
 }

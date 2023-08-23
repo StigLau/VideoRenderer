@@ -51,7 +51,7 @@ public class UrlHandler extends URLStreamHandler {
         try {
             //URL.of(URI.create(url), new MyUrlHandler() );
             URI uri = new URI(finalURI);
-            String protocol = uri.getScheme();
+            String protocol = null==uri.getScheme() ? "" : uri.getScheme();
 
             String query = uri.getRawQuery();
             String path = uri.getRawPath();

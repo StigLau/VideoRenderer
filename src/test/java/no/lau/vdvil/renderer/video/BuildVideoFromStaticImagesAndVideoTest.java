@@ -24,6 +24,7 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import static no.lau.CommonFunctions.md5Checksum;
+import static no.lau.vdvil.domain.UrlHandler.urlCreator;
 import static no.lau.vdvil.renderer.video.TestData.fetch;
 import static no.lau.vdvil.renderer.video.TestData.norwayRemoteUrl;
 import static no.lau.vdvil.renderer.video.TestData.sobotaMp3RemoteUrl;
@@ -46,10 +47,10 @@ public class BuildVideoFromStaticImagesAndVideoTest {
     Komposition fetchKompositionStillImages;
     Komposition fetchKompositionStillImages2;
 
-    private Path result1 = Path.of("file:///tmp/from_scratch_images_test_1.mp4");
-    private Path result3a = Path.of("file:///tmp/from_scratch_images_test_3a.mp4");
-    private Path result3b = Path.of("file:///tmp/from_scratch_images_test_3b.mp4");
-    private Path result3c = Path.of("file:///tmp/from_scratch_images_test_3c.mp4");
+    private Path result1 = Path.of("/tmp/from_scratch_images_test_1.mp4");
+    private Path result3a = Path.of("/tmp/from_scratch_images_test_3a.mp4");
+    private Path result3b = Path.of("/tmp/from_scratch_images_test_3b.mp4");
+    private Path result3c = Path.of("/tmp/from_scratch_images_test_3c.mp4");
 
     //HighRez
     //VideoConfig config = new VideoConfig(1280, 720,DEFAULT_TIME_UNIT.convert(24, MILLISECONDS));
@@ -82,7 +83,8 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new StaticImagesSegment("Still Image Fun 2",
                         ClassLoader.getSystemResource("images/Slide_Blue_mountain_top_lake2.png").toString()
                 ));
-        fetchKompositionStillImages.storageLocation = new LocalMediaFile(Path.of("file://tmp/kompost"), 0L, -1f, "abc");
+        Path orgPath = Path.of("file://tmp/kompost");
+        fetchKompositionStillImages.storageLocation = new LocalMediaFile(urlCreator(orgPath), orgPath, 0L, -1f, "abc");
 
         fetchKompositionNorway = new Komposition(128,
                 new TimeStampFixedImageSampleSegment("Purple Mountains Clouds", 7541667, 19750000, 8),
@@ -100,7 +102,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new TimeStampFixedImageSampleSegment("Seaside houses Panorama", 102000000, 107125000, 8),
                 new TimeStampFixedImageSampleSegment("Bergen movement", 107500000, 112750000, 8)
         );
-        fetchKompositionNorway.storageLocation= new LocalMediaFile(downmixedOriginalVideo, 0L, -1f, "abc");
+        fetchKompositionNorway.storageLocation= new LocalMediaFile(urlCreator(downmixedOriginalVideo), downmixedOriginalVideo, 0L, -1f, "abc");
 
         fetchKompositionSwing = new Komposition(128,
                 new TimeStampFixedImageSampleSegment("Red bridge", 2919583, 6047708, 8),
@@ -110,7 +112,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new TimeStampFixedImageSampleSegment("Smile girl, smile", 34034000, 34993292, 15),
                 new TimeStampFixedImageSampleSegment("Swing through bridge with mountain smile", 45128417, 46713333, 8)
         );
-        fetchKompositionSwing.storageLocation = new LocalMediaFile(theSwingVideo, 0L, 120F, "abc123");
+        fetchKompositionSwing.storageLocation = new LocalMediaFile(urlCreator(theSwingVideo), theSwingVideo, 0L, 120F, "abc123");
     }
 
     @Test
@@ -122,7 +124,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new VideoStillImageSegment("Purple Mountains Clouds", 20, 12)
 
         );//.filter(16, 16);
-        LocalMediaFile mf = new LocalMediaFile(result1, 0L, 128f, "370b9b8ee872fe38342f1dd2e410ef0a");
+        LocalMediaFile mf = new LocalMediaFile(urlCreator(result1), result1, 0L, 128f, "370b9b8ee872fe38342f1dd2e410ef0a");
         buildKomposition.storageLocation = mf;
 
 
@@ -151,7 +153,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new VideoStillImageSegment("Besseggen", 0, 8)
                 , new VideoStillImageSegment("Purple Mountains Clouds", 8, 16)
         );
-        buildKomposition.storageLocation = new LocalMediaFile(result3a, 0L, 128f, "7ea06f7a19fea1dfcefef1b6b30730b4");
+        buildKomposition.storageLocation = new LocalMediaFile(urlCreator(result3a), result3a, 0L, 128f, "7ea06f7a19fea1dfcefef1b6b30730b4");
 
         List<Komposition> fetchKompositions = new ArrayList<>();
         fetchKompositions.add(fetchKompositionStillImages);
@@ -172,7 +174,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 new VideoStillImageSegment("Besseggen", 0, 8)
                 , new VideoStillImageSegment("Purple Mountains Clouds", 8, 16)
         );
-        buildKomposition.storageLocation = new LocalMediaFile(result3b, 0L, 128f, "7ea06f7a19fea1dfcefef1b6b30730b4");
+        buildKomposition.storageLocation = new LocalMediaFile(urlCreator(result3b), result3b, 0L, 128f, "7ea06f7a19fea1dfcefef1b6b30730b4");
 
         List<Komposition> fetchKompositions = new ArrayList<>();
         fetchKompositions.add(fetchKompositionStillImages);
@@ -229,7 +231,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
                 first,
                 second,
                 third);
-        LocalMediaFile mf = new LocalMediaFile(result3c, 0L, 128f, "2a745683577324ee59421e6649f1a7de");
+        LocalMediaFile mf = new LocalMediaFile(urlCreator(result3c), result3c, 0L, 128f, "2a745683577324ee59421e6649f1a7de");
         buildKomposition.storageLocation = mf;
 
         PipeDream<BufferedImage> pipeDream = new PipeDream<>(30, 250, 500, 10);

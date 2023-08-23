@@ -7,4 +7,6 @@ public interface MediaFile {
     Path getReference();
 
     URL getFileName();
+
+    URL getOriginalUrl();
 }

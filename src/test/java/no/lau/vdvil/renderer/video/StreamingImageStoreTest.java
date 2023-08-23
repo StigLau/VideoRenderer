@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static no.lau.CommonFunctions.md5Checksum;
+import static no.lau.vdvil.domain.UrlHandler.urlCreator;
 import static no.lau.vdvil.renderer.video.TestData.fetch;
 import static no.lau.vdvil.renderer.video.TestData.norwayRemoteUrl;
 import static no.lau.vdvil.renderer.video.TestData.sobotaMp3RemoteUrl;
@@ -54,7 +55,7 @@ public class StreamingImageStoreTest {
                 new TimeStampFixedImageSampleSegment("Flower fjord", 35500000, 46250000, 24),
                 new TimeStampFixedImageSampleSegment("Dark lake", 69375000, 74000000, 100)
         );
-        fetchKompositionNorway.storageLocation = new LocalMediaFile(downmixedOriginalVideo, 0L, 120F, "abc");
+        fetchKompositionNorway.storageLocation = new LocalMediaFile(urlCreator(downmixedOriginalVideo), downmixedOriginalVideo, 0L, 120F, "abc");
 
         Komposition fetchKompositionSwing = new Komposition(128,
                 new TimeStampFixedImageSampleSegment("Red bridge", 2919583, 6047708, 8),
@@ -64,7 +65,7 @@ public class StreamingImageStoreTest {
                 new TimeStampFixedImageSampleSegment("Smile girl, smile", 34200833, 34993292, 8),
                 new TimeStampFixedImageSampleSegment("Swing through bridge with mountain smile", 45128417, 46713333, 8)
         );
-        fetchKompositionSwing.storageLocation = new LocalMediaFile(theSwingVideo, 0L, 120F, "abc");
+        fetchKompositionSwing.storageLocation = new LocalMediaFile(urlCreator(theSwingVideo), theSwingVideo, 0L, 120F, "abc");
         //fetchKompositionSwing.framerate=60;
 
         List<Komposition> fetchKompositions = new ArrayList<>();
@@ -76,7 +77,7 @@ public class StreamingImageStoreTest {
                 new VideoStillImageSegment("Flower fjord", 0, 32)
         );
         buildKomposition.framerate = 24;
-        buildKomposition.storageLocation = new LocalMediaFile(result4, 0L, 128f, "0e7d51d26f573386c229b772d126754a");
+        buildKomposition.storageLocation = new LocalMediaFile(urlCreator(result4), result4, 0L, 128f, "0e7d51d26f573386c229b772d126754a");
         this.resultingMediaFile = buildKomposition.storageLocation;
         planner = new KompositionPlanner(fetchKompositions, buildKomposition, sobotaMp3, 24);//<!-- Here is the key!
     }

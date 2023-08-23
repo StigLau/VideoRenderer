@@ -12,6 +12,7 @@ import static no.lau.CommonFunctions.md5Checksum;
  */
 public class LocalMediaFile implements MediaFile {
     public String id;
+    private final URL originalUrl;
     private Path fileName;
     public final Long startingOffset;
     private String checksums;
@@ -19,7 +20,8 @@ public class LocalMediaFile implements MediaFile {
     public String extension;
 
 
-    public LocalMediaFile(Path fileRef, Long startingOffsetInMillis, Float bpm, String checksums) {
+    public LocalMediaFile(URL originalUrl, Path fileRef, Long startingOffsetInMillis, Float bpm, String checksums) {
+        this.originalUrl = originalUrl;
         this.fileName = fileRef;
         this.startingOffset = startingOffsetInMillis;
         this.bpm = bpm;
@@ -66,5 +68,9 @@ public class LocalMediaFile implements MediaFile {
             }
         }
         return checksums;
+    }
+
+    public URL getOriginalUrl() {
+        return originalUrl;
     }
 }

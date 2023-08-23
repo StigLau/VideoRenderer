@@ -33,6 +33,7 @@ import java.util.concurrent.Executors;
 import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static no.lau.CommonFunctions.md5Checksum;
+import static no.lau.vdvil.domain.UrlHandler.urlCreator;
 import static no.lau.vdvil.renderer.video.TestData.*;
 import static no.lau.vdvil.renderer.video.TestData.norwayBaseKomposition;
 import static no.lau.vdvil.snippets.FFmpegFunctions.*;
@@ -47,9 +48,9 @@ class BuildVideoFromScratchImagesTest {
 
     Path sobotaMp3;
 
-    private Path result1 = Path.of("file:///tmp/from_scratch_images_test_1.mp4");
-    private Path result2 = Path.of("file:///tmp/from_scratch_images_test_2.mp4");
-    private Path result3 = Path.of("file:///tmp/from_scratch_images_test_3.mp4");
+    private final Path result1 = Path.of("file:///tmp/from_scratch_images_test_1.mp4");
+    private final Path result2 = Path.of("file:///tmp/from_scratch_images_test_2.mp4");
+    private final Path result3 = Path.of("file:///tmp/from_scratch_images_test_3.mp4");
 
     //HighRez
     VideoConfig config = new VideoConfig(1280, 720,DEFAULT_TIME_UNIT.convert(24, MILLISECONDS));
@@ -68,7 +69,7 @@ class BuildVideoFromScratchImagesTest {
     @Test
     void extractImagesFromNorwayVideo() throws IOException, URISyntaxException {
         Komposition buildKomposition = norwayBaseKomposition().filter(24, 16);
-        buildKomposition.storageLocation = new LocalMediaFile(result2, 0L, 125f, "7aa709f7caff0446a4a9aa2865f4efd2");
+        buildKomposition.storageLocation = new LocalMediaFile(urlCreator(result2), result2, 0L, 125f, "7aa709f7caff0446a4a9aa2865f4efd2");
 
         List<Komposition> fetchKompositions = new ArrayList<>();
         fetchKompositions.add(fetchNorwayDVL());
@@ -95,7 +96,8 @@ class BuildVideoFromScratchImagesTest {
         for (int i = 0; i < 1; i++) {
             Segment seg = norwayBaseKomposition().segments.get(i);
             Komposition buildKomposition1 = norwayBaseKomposition().filter(seg.start(), seg.duration());
-            buildKomposition1.storageLocation = new LocalMediaFile(CommonFunctions.createTempPath("testFile", ".mp4"), -1L, -1f, "");
+            Path tempFile = CommonFunctions.createTempPath("testFile", ".mp4");
+            buildKomposition1.storageLocation = new LocalMediaFile(urlCreator(tempFile), tempFile, -1L, -1f, "");
             videoBuilder.createVideoPart(videoConfig, fetchKompositions, buildKomposition1, muzik, false);
         }
         //logger.info("Storing file at {}", mf.fileName);
@@ -110,7 +112,8 @@ class BuildVideoFromScratchImagesTest {
 
         Segment seg = baseKomposition.segments.get(5);
         Komposition buildKomposition1 = baseKomposition.filter(seg.start(), seg.duration());
-        buildKomposition1.storageLocation = new LocalMediaFile(Path.of("/tmp/norway10.mp4"), 0L, 125f, "7aa709f7caff0446a4a9aa2865f4efd2");
+        Path tempFile = Path.of("/tmp/norway10.mp4");
+        buildKomposition1.storageLocation = new LocalMediaFile(urlCreator(tempFile), tempFile, 0L, 125f, "7aa709f7caff0446a4a9aa2865f4efd2");
         videoBuilder.createVideoPart(videoConfig, Collections.singletonList(fetchNorwayDVL()), buildKomposition1, muzik, false);
         assertEquals(10, countNumberOfFrames(Path.of("/tmp/norway10.mp4"))); //TODO Test with 12 FRAMESSS!!!!!
 
@@ -179,7 +182,7 @@ class BuildVideoFromScratchImagesTest {
                 new VideoStillImageSegment("Dark lake", 16, 8)
         );
 
-        LocalMediaFile mf = new LocalMediaFile(result3, 0L, 128f, "0362c495e294bac76458ca56cdee20ee");
+        LocalMediaFile mf = new LocalMediaFile(urlCreator(result3), result3, 0L, 128f, "0362c495e294bac76458ca56cdee20ee");
         buildKomposition.storageLocation = mf;
         KompositionPlanner planner = new KompositionPlanner(Collections.singletonList(fetchNorwayDVL()), buildKomposition, sobotaMp3, 15);
         PipeDream<BufferedImage> imageStore = new PipeDream<>();
