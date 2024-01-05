@@ -10,6 +10,7 @@ public enum ExtensionType {
     mp3 ("mp3"),
     mp4 ("mp4"),
     m4a ("m4a"),
+    vp09 ("vp09"),
     ts ("ts"),
     webm ("webm"),
     flac ("flac"),
