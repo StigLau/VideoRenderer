@@ -2,21 +2,49 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>no.lau.vdvil</groupId>
-    <artifactId>video-renderer-base</artifactId>
-    <version>v10</version>
-    <packaging>pom</packaging>
+    <artifactId>video-renderer-core</artifactId>
+    <version>v1</version>
+    <packaging>jar</packaging>
+
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <test.exlusion />
     </properties>
-    <modules>
-        <module>video-renderer-core</module>
-        <module>video-renderer</module>
-    </modules>
+
     <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.10.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.36</version>
+        </dependency>
+
     </dependencies>
+    <profiles>
+        <profile>
+            <id>ex-integration</id>
+            <properties>
+                <test.exlusion>IntegrationTest</test.exlusion>
+            </properties>
+        </profile>
+    </profiles>
     <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <release>17</release>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
     <repositories>
         <repository>
