@@ -3,14 +3,15 @@ package no.lau.vdvil.collector;
 import no.lau.vdvil.collector.plan.FramePlan;
 import no.lau.vdvil.domain.*;
 import no.lau.vdvil.domain.out.Komposition;
+import no.lau.vdvil.plan.ImageCollectShimInterface;
 import no.lau.vdvil.plan.Plan;
+import no.lau.vdvil.plan.SegmentFramePlan;
 import no.lau.vdvil.plan.SuperPlan;
+import no.lau.vdvil.renderer.video.KompositionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.net.URL;
 import java.nio.file.Path;
 import java.util.*;
-import static no.lau.vdvil.renderer.video.KompositionUtil.performIdUniquenessCheck;
 
 /**
  * @author Stig@Lau.no 10/05/15.
@@ -26,7 +27,7 @@ public class KompositionPlanner {
     private final Map<String, Segment> segmentIdCollectSegmentMap;
 
 
-    public KompositionPlanner(List<Komposition> fetchKompositions, Komposition buildKomposition, Path audioLocation, long finalFramerate) {
+    public KompositionPlanner(List<Komposition> fetchKompositions, Komposition buildKomposition, Path audioLocation, long finalFramerate, SegmentFramePlan framePlanFactory, ImageCollectShimInterface imageCollectorShim) {
         List<Segment> buildSegments = buildKomposition.segments;
         Collections.sort(buildSegments);
         //verifyNonOverlappingSegments(buildSegments); //TODO Open this again!!!!1
@@ -34,7 +35,7 @@ public class KompositionPlanner {
 
         //Verify that all fetchSegments are unique
         for (Komposition fetchKomposition : fetchKompositions) {
-            performIdUniquenessCheck(fetchKomposition.segments);
+            KompositionUtil.performIdUniquenessCheck(fetchKomposition.segments);
         }
 
         //Conveniencemap Segment <--> komposition
@@ -52,8 +53,8 @@ public class KompositionPlanner {
         {
             long lastTimeStamp = SuperPlan.calculateLastTimeStamp(buildKomposition.bpm, buildSegments);
             this.buildPlan = new SuperPlan(lastTimeStamp, buildKomposition.storageLocation,
-                    SuperPlan.createBuildPlan(buildSegments, buildKomposition.bpm, finalFramerate, segmentIdCollectSegmentMap)).
-                    withAudioLocation(audioLocation);
+                    SuperPlan.createBuildPlan(buildSegments, buildKomposition.bpm, finalFramerate, segmentIdCollectSegmentMap, framePlanFactory))
+                    .withAudioLocation(audioLocation);
         }
 
         for (FramePlan buildFramePlan : ((SuperPlan) this.buildPlan).getFramePlans()) {
@@ -69,10 +70,12 @@ public class KompositionPlanner {
             } else {
                 lastTimeStamp = SuperPlan.calculateEnd(fetchKomposition.bpm, collectSegment);
             }
-            collectPlans.add(new SuperPlan(lastTimeStamp, fetchKomposition.storageLocation,
-                    SuperPlan.createCollectPlan(collectSegment, buildFramePlan, finalFramerate, fetchKomposition.bpm)));
+            FramePlan framePlan = framePlanFactory.createCollectPlan(collectSegment, buildFramePlan, finalFramerate, fetchKomposition.bpm);
+            collectPlans.add(new SuperPlan(lastTimeStamp, fetchKomposition.storageLocation, framePlan)
+                    .withImageCollector(imageCollectorShim)
+            );
         }
-        no.lau.vdvil.collector.plan.Common.printStatus(buildPlan(), collectPlans());
+        printStatus(buildPlan(), collectPlans());
     }
 
     private void verifyNonOverlappingSegments(List<Segment> segments) {
@@ -111,6 +114,20 @@ public class KompositionPlanner {
 
     public Map<String, Segment> getSegmentIdCollectSegmentMap() {
      return segmentIdCollectSegmentMap;
+    }
+
+    void printStatus(Plan buildPlan, List<Plan> collectPlans) {
+        SuperPlan build = (SuperPlan) buildPlan;
+        logger.debug("Build frameplans size: " + build.getFramePlans().size());
+        logger.debug("Build plan frame reps size: " + build.getFrameRepresentations().size());
+        logger.debug("Last timestamp {}", build.lastTimeStamp());
+        logger.debug("Collect plans frames: ");
+
+        for (Plan plan : collectPlans) {
+            SuperPlan collectPlan = (SuperPlan) plan;
+            logger.debug("{} Collect FramePlans: {}", collectPlan.id(), collectPlan.getFramePlans().size());
+            logger.debug("Collect FrameReps {}", collectPlan.getFrameRepresentations().size());
+        }
     }
 }
 

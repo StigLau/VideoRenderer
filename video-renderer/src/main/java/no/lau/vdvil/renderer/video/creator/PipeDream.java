@@ -13,7 +13,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import static no.lau.vdvil.domain.utils.KompositionUtils.calc;
+import static no.lau.CommonFunctions.calc;
 
 /**
  * Storage for images in memory between extractor and video creator

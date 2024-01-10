@@ -2,10 +2,12 @@ package no.lau.vdvil.renderer.video;
 
 import no.lau.CommonFunctions;
 import no.lau.vdvil.collector.*;
+import no.lau.vdvil.collector.plan.SegmentFramePlanFactory;
 import no.lau.vdvil.domain.*;
 import no.lau.vdvil.domain.out.Komposition;
 
 import no.lau.vdvil.plan.ImageCollectable;
+import no.lau.vdvil.plan.ImageCollectableShim;
 import no.lau.vdvil.plan.Plan;
 import no.lau.vdvil.renderer.video.config.VideoConfig;
 import no.lau.vdvil.renderer.video.creator.PipeDream;
@@ -63,7 +65,7 @@ class BuildVideoFromScratchImagesTest {
     public void setUp() {
         sobotaMp3 = fetch(sobotaMp3RemoteUrl);
         imageStore = new PipeDream(250, 1000, 5000, 10);
-        videoBuilder = new VideoBuilderWrapper(imageStore);
+        videoBuilder = new VideoBuilderWrapper(imageStore, new ImageCollectableShim());
     }
 
     @Test
@@ -74,7 +76,7 @@ class BuildVideoFromScratchImagesTest {
         List<Komposition> fetchKompositions = new ArrayList<>();
         fetchKompositions.add(fetchNorwayDVL());
 
-        KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition, sobotaMp3, 24);
+        KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition, sobotaMp3, 24, new SegmentFramePlanFactory(), new ImageCollectableShim());
 
         CollectorWrapper callback = plan -> new WaitingVideoThumbnailsCollector(plan, imageStore);
         ExecutorService collector = Executors.newFixedThreadPool(1);
@@ -184,7 +186,7 @@ class BuildVideoFromScratchImagesTest {
 
         LocalMediaFile mf = new LocalMediaFile(urlCreator(result3), result3, 0L, 128f, "0362c495e294bac76458ca56cdee20ee");
         buildKomposition.storageLocation = mf;
-        KompositionPlanner planner = new KompositionPlanner(Collections.singletonList(fetchNorwayDVL()), buildKomposition, sobotaMp3, 15);
+        KompositionPlanner planner = new KompositionPlanner(Collections.singletonList(fetchNorwayDVL()), buildKomposition, sobotaMp3, 15, new SegmentFramePlanFactory(), new ImageCollectableShim());
         PipeDream<BufferedImage> imageStore = new PipeDream<>();
         ThreadedImageCollector imageCollector = new ThreadedImageCollector(planner.collectPlans(), item -> new WaitingVideoThumbnailsCollector(item, imageStore));
         new Thread(imageCollector).run();

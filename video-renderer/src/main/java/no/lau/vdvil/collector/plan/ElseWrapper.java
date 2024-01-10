@@ -23,7 +23,7 @@ class ElseWrapper implements FramePlan{
     }
 
     public List<FrameRepresentation> calculateFramesFromSegment() {
-        return Common.calculateFramesFromSegment(wrapper.segment.id(), wrapper.segment, wrapper.start, wrapper.frameRateMillis, numberOfAvailableFrames, wrapper.frameCalculator, logger);
+        return FrameRepresentation.calculateFramesFromSegment(wrapper.segment.id(), wrapper.segment, wrapper.start, wrapper.frameRateMillis, numberOfAvailableFrames, wrapper.frameCalculator, logger);
     }
 
 

@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import static no.lau.CommonFunctions.calc;
 
 /**
  * @author Stig@Lau.no 08/04/15.
@@ -45,10 +46,6 @@ public class KompositionUtils {
     }
     public static long durationMillis(Segment segment, Komposition komposition) {
         return calc(segment.duration(), komposition.bpm);
-    }
-
-    public static long calc(double time, double bpm) {
-        return (long) (time * 60 * 1000 * 1000 / bpm);
     }
 
     public static long lastSegment(List<Segment> segments, float bpm) {

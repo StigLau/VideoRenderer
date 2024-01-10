@@ -4,13 +4,12 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import static no.lau.vdvil.domain.UrlHandler.urlCreator;
 
 public class RemoteMediaFile implements MediaFile {
     public String id;
     private URL fileName;
     public final Long startingOffset;
-    private String checksums;
+    private final String checksums;
     public final Float bpm;
     public String extension;
 
@@ -30,7 +29,7 @@ public class RemoteMediaFile implements MediaFile {
         if(fileName == null) {
             String tempFileId = id + "_"+ bpm;
             try {
-                this.fileName = urlCreator(Files.createTempFile(tempFileId, extension));
+                this.fileName = UrlHandler.urlCreator(Files.createTempFile(tempFileId, extension));
             } catch (IOException e) {
                 throw new RuntimeException("Error creating temp file ");
             }

@@ -48,7 +48,7 @@ public class StaticImagesFramePlan implements FramePlan {
 
             for (int i = 0;i < thisBucketSize ; i++, imageNr++) {
                 long thisDuration = wrapper.frameRateMillis * imageNr  ;
-                FrameRepresentation frame = Common.createFrameRepresentation(collectId, segment, framezz, wrapper.start, imageNr, thisDuration);
+                FrameRepresentation frame = FrameRepresentation.createFrameRepresentation(collectId, segment, framezz, wrapper.start, imageNr, thisDuration);
                 frame.setImageUrl(image);
                 logger.trace("Adding image #{}, {}", imageNr, frame);
                 plans.add(frame);

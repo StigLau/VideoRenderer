@@ -1,6 +1,6 @@
 package no.lau.vdvil.domain;
 
-import static no.lau.vdvil.domain.utils.KompositionUtils.calc;
+import static no.lau.CommonFunctions.calc;
 
 /**
  * An simple implementation of Segment to avoid some duplication

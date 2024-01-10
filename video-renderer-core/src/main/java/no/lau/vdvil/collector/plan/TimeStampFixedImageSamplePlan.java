@@ -23,7 +23,7 @@ public class TimeStampFixedImageSamplePlan implements FramePlan{
     }
 
     public List<FrameRepresentation> calculateFramesFromSegment() {
-        return Common.calculateFramesFromSegment(collectId, segment, wrapper.start, wrapper.frameRateMillis, numberOfAvailableFrames(), wrapper.frameCalculator, logger);
+        return FrameRepresentation.calculateFramesFromSegment(collectId, segment, wrapper.start, wrapper.frameRateMillis, numberOfAvailableFrames(), wrapper.frameCalculator, logger);
     }
 
     private long numberOfAvailableFrames() {

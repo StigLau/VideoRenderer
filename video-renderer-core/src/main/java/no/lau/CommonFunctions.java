@@ -88,4 +88,8 @@ public class CommonFunctions {
             throw new RuntimeException(e);
         }
     }
+
+    public static long calc(double time, double bpm) {
+        return (long) (time * 60 * 1000 * 1000 / bpm);
+    }
 }

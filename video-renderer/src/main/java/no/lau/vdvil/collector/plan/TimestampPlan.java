@@ -1,16 +1,18 @@
-package no.lau.vdvil.plan;
+package no.lau.vdvil.collector.plan;
 
 import no.lau.vdvil.collector.FrameRepresentation;
 import no.lau.vdvil.collector.ImageCollector;
 import no.lau.vdvil.collector.WaitingVideoThumbnailsCollector;
 import no.lau.vdvil.domain.Segment;
+import no.lau.vdvil.plan.FrameRepresentationsPlan;
+import no.lau.vdvil.plan.ImageCollectable;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
 import java.awt.image.BufferedImage;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TimestampPlan implements FrameRepresentationsPlan,  ImageCollectable{
+public class TimestampPlan implements FrameRepresentationsPlan, ImageCollectable {
 
     final long startTimeStamp;
     final long endTimeStamp;

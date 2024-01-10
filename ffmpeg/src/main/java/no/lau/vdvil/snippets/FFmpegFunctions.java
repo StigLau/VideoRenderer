@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import static no.lau.vdvil.domain.utils.KompositionUtils.createTempFile;
-import static no.lau.vdvil.domain.utils.KompositionUtils.createTempFiles;
+import static no.lau.vdvil.snippets.KompositionUtils.createTempFile;
+import static no.lau.vdvil.snippets.KompositionUtils.createTempFiles;
 
 public class FFmpegFunctions {
     //References

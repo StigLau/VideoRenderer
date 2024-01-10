@@ -15,12 +15,12 @@ import java.util.stream.Collectors;
  */
 public class SuperPlan implements FrameRepresentationsPlan, AudioPlan, ImageCollectable {
 
+    ImageCollectShimInterface imageCollectorShim = null;
     final long lastTimeStamp;
     final FramePlan[] framePlans;
     List<FrameRepresentation> frameRepresentations = new ArrayList<>();
     final MediaFile storageLocation;
     public Path audioLocation;
-    int imageDownloadCacheSize = 10; //Just a default to allow for more than one cached image
 
     final Map<String, FramePlan> metaPlanLookup;
 
@@ -84,14 +84,14 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan, ImageColl
         return segment.startCalculated(bpm) + segment.durationCalculated(bpm);
     }
 
-    public static FramePlan createCollectPlan(Segment originalSegment, FramePlan buildFramePlan, long finalFramerate, float collectBpm) {
+    public FramePlan createCollectPlan(Segment originalSegment, FramePlan buildFramePlan, long finalFramerate, float collectBpm, SegmentFramePlan framePlanFactory) {
         Segment buildSegment = buildFramePlan.wrapper().segment;
         float buildBpm = buildFramePlan.wrapper().bpm;
         long buildCalculatedBpm = buildSegment.durationCalculated(buildBpm);
-        return SegmentFramePlanFactory.createInstance(buildSegment.id(), new SegmentWrapper(originalSegment, collectBpm, finalFramerate, new SimpleCalculator(originalSegment.durationCalculated(collectBpm), buildCalculatedBpm)));
+        return framePlanFactory.createInstance(buildSegment.id(), new SegmentWrapper(originalSegment, collectBpm, finalFramerate, new SimpleCalculator(originalSegment.durationCalculated(collectBpm), buildCalculatedBpm)));
     }
 
-    public static FramePlan[] createBuildPlan(List<Segment> buildSegments, float buildBpm, long finalFramerate, Map<String, Segment> segmentIdCollectSegmentMap) {
+    public static FramePlan[] createBuildPlan(List<Segment> buildSegments, float buildBpm, long finalFramerate, Map<String, Segment> segmentIdCollectSegmentMap, SegmentFramePlan segmentFramePlanFactory) {
         List<FramePlan> framePlans = new ArrayList<>();
         for (Segment buildSegment : buildSegments) {
             SimpleCalculator frameCalculator;
@@ -108,7 +108,7 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan, ImageColl
                     frameCalculator = new SimpleCalculator(collectDuration, buildDuration);
                 }
             }
-            framePlans.add(SegmentFramePlanFactory.createInstance(buildSegment.id(), new SegmentWrapper(buildSegment, buildBpm, finalFramerate, frameCalculator)));
+            framePlans.add(segmentFramePlanFactory.createInstance(buildSegment.id(), new SegmentWrapper(buildSegment, buildBpm, finalFramerate, frameCalculator)));
         }
         return framePlans.toArray(new FramePlan[framePlans.size()]);
     }
@@ -123,14 +123,7 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan, ImageColl
 
     public ImageCollector collector(ImageStore<BufferedImage> imageStore, int framerateMillis) {
         for (FramePlan framePlan : framePlans) {
-            if(framePlan instanceof KnownNumberOfFramesPlan || framePlan instanceof TimeStampFixedImageSamplePlan) {
-                return new WaitingVideoThumbnailsCollector(this, imageStore, true);
-            } else if(framePlan instanceof StaticImagesFramePlan) {
-                return new FromImageFileCollector(this, imageStore, framerateMillis, imageDownloadCacheSize);
-            } else {
-                //TODO Simplify the different possibilities and maby move it out
-                throw new RuntimeException("Not implemented collection type for " + framePlan.getClass());
-            }
+            return imageCollectorShim.extractShim(this, imageStore, framerateMillis, framePlan);
         }
         throw new RuntimeException("Should not happen!");
     }
@@ -164,5 +157,10 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan, ImageColl
             }
         }
         return planRef;
+    }
+
+    public SuperPlan withImageCollector(ImageCollectShimInterface imageCollectorShim) {
+        this.imageCollectorShim = imageCollectorShim;
+        return this;
     }
 }

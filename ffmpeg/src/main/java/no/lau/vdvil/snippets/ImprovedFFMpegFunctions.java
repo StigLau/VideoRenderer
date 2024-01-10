@@ -16,8 +16,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Path;
 import static no.lau.CommonFunctions.envOrDefault;
-import static no.lau.vdvil.domain.utils.KompositionUtils.createTempFile;
-import static no.lau.vdvil.domain.utils.KompositionUtils.createTempFiles;
+import static no.lau.vdvil.snippets.KompositionUtils.createTempFile;
+import static no.lau.vdvil.snippets.KompositionUtils.createTempFiles;
 import static no.lau.vdvil.snippets.FFmpegFunctions.humanReadablePeriod;
 
 public class ImprovedFFMpegFunctions {

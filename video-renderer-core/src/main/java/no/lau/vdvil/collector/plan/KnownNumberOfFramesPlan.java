@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
+import static no.lau.vdvil.collector.FrameRepresentation.createFrameRepresentation;
 
 /**
  * @author stig@lau.no on 30/06/16.
@@ -45,7 +46,7 @@ public class KnownNumberOfFramesPlan implements FramePlan {
                 if (Math.round(i * (numberOfAvailableFrames - wrapper.numberOfNeededBuildFrames) / numberOfAvailableFrames) > manipulatedFrames) {
                     manipulatedFrames++;
                 } else {
-                    plans.add(Common.createFrameRepresentation(collectId, segment, numberOfAvailableFrames, wrapper.start, i, thisDuration));
+                    plans.add(createFrameRepresentation(collectId, segment, numberOfAvailableFrames, wrapper.start, i, thisDuration));
                 }
             }
         } else if (numberOfAvailableFrames < wrapper.numberOfNeededBuildFrames) { //(b-a)/a
@@ -68,17 +69,17 @@ public class KnownNumberOfFramesPlan implements FramePlan {
                     manipulatedFrames++;
                     thisDuration = wrapper.frameRateMillis * manipulatedFrames;
 
-                    plans.add(Common.createFrameRepresentation(collectId, segment, wrapper.numberOfNeededBuildFrames, wrapper.start, manipulatedFrames, thisDuration));
+                    plans.add(createFrameRepresentation(collectId, segment, wrapper.numberOfNeededBuildFrames, wrapper.start, manipulatedFrames, thisDuration));
                     status = " main";
                 } else if (frameNr > usedLeftovers * leftoverPartitions) { //Evenly divide the rest frames
                     manipulatedFrames++;
                     thisDuration = wrapper.frameRateMillis * manipulatedFrames;
 
                     usedLeftovers++;
-                    plans.add(Common.createFrameRepresentation(collectId, segment, wrapper.numberOfNeededBuildFrames, wrapper.start, manipulatedFrames, thisDuration));
+                    plans.add(createFrameRepresentation(collectId, segment, wrapper.numberOfNeededBuildFrames, wrapper.start, manipulatedFrames, thisDuration));
                     status = " leftover";
                 } else {
-                    plans.add(Common.createFrameRepresentation(collectId, segment, wrapper.numberOfNeededBuildFrames, wrapper.start, frameNr, thisDuration));
+                    plans.add(createFrameRepresentation(collectId, segment, wrapper.numberOfNeededBuildFrames, wrapper.start, frameNr, thisDuration));
                     status = " copy";
                 }
                 logger.debug("frame: " + frameNr + " duration: " + "thisDuration = " + thisDuration + status);

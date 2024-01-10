@@ -8,11 +8,14 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.release>17</maven.compiler.release>
         <test.exlusion />
     </properties>
     <modules>
         <module>video-renderer-core</module>
+        <module>image-core</module>
         <module>video-renderer</module>
+        <module>ffmpeg</module>
     </modules>
     <dependencies>
     </dependencies>
