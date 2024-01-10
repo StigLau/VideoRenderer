@@ -3,10 +3,7 @@ package no.lau.vdvil.collector;
 import no.lau.vdvil.collector.plan.FramePlan;
 import no.lau.vdvil.domain.*;
 import no.lau.vdvil.domain.out.Komposition;
-import no.lau.vdvil.plan.ImageCollectShimInterface;
-import no.lau.vdvil.plan.Plan;
-import no.lau.vdvil.plan.SegmentFramePlan;
-import no.lau.vdvil.plan.SuperPlan;
+import no.lau.vdvil.plan.*;
 import no.lau.vdvil.renderer.video.KompositionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +24,7 @@ public class KompositionPlanner {
     private final Map<String, Segment> segmentIdCollectSegmentMap;
 
 
-    public KompositionPlanner(List<Komposition> fetchKompositions, Komposition buildKomposition, Path audioLocation, long finalFramerate, SegmentFramePlan framePlanFactory, ImageCollectShimInterface imageCollectorShim) {
+    public KompositionPlanner(List<Komposition> fetchKompositions, Komposition buildKomposition, Path audioLocation, long finalFramerate, VideoSegmentPlanFactory videoShim) {
         List<Segment> buildSegments = buildKomposition.segments;
         Collections.sort(buildSegments);
         //verifyNonOverlappingSegments(buildSegments); //TODO Open this again!!!!1
@@ -53,7 +50,8 @@ public class KompositionPlanner {
         {
             long lastTimeStamp = SuperPlan.calculateLastTimeStamp(buildKomposition.bpm, buildSegments);
             this.buildPlan = new SuperPlan(lastTimeStamp, buildKomposition.storageLocation,
-                    SuperPlan.createBuildPlan(buildSegments, buildKomposition.bpm, finalFramerate, segmentIdCollectSegmentMap, framePlanFactory))
+                    SuperPlan.createBuildPlan(buildSegments, buildKomposition.bpm, finalFramerate, segmentIdCollectSegmentMap, videoShim))
+                    .withImageCollector(videoShim) //Not in use!
                     .withAudioLocation(audioLocation);
         }
 
@@ -70,9 +68,9 @@ public class KompositionPlanner {
             } else {
                 lastTimeStamp = SuperPlan.calculateEnd(fetchKomposition.bpm, collectSegment);
             }
-            FramePlan framePlan = framePlanFactory.createCollectPlan(collectSegment, buildFramePlan, finalFramerate, fetchKomposition.bpm);
+            FramePlan framePlan = videoShim.createCollectPlan(collectSegment, buildFramePlan, finalFramerate, fetchKomposition.bpm);
             collectPlans.add(new SuperPlan(lastTimeStamp, fetchKomposition.storageLocation, framePlan)
-                    .withImageCollector(imageCollectorShim)
+                    .withImageCollector(videoShim)
             );
         }
         printStatus(buildPlan(), collectPlans());

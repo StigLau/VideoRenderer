@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
  */
 public class SuperPlan implements FrameRepresentationsPlan, AudioPlan, ImageCollectable {
 
-    ImageCollectShimInterface imageCollectorShim = null;
     final long lastTimeStamp;
     final FramePlan[] framePlans;
     List<FrameRepresentation> frameRepresentations = new ArrayList<>();
@@ -23,6 +22,7 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan, ImageColl
     public Path audioLocation;
 
     final Map<String, FramePlan> metaPlanLookup;
+    private VideoSegmentPlanFactory segmentFramePlanFactory;
 
     public SuperPlan(long lastTimeStamp, MediaFile storageLocation, FramePlan... framePlans) {
         this.lastTimeStamp = lastTimeStamp;
@@ -84,14 +84,15 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan, ImageColl
         return segment.startCalculated(bpm) + segment.durationCalculated(bpm);
     }
 
-    public FramePlan createCollectPlan(Segment originalSegment, FramePlan buildFramePlan, long finalFramerate, float collectBpm, SegmentFramePlan framePlanFactory) {
+    @Deprecated // Not in use(?)
+    public FramePlan createCollectPlan(Segment originalSegment, FramePlan buildFramePlan, long finalFramerate, float collectBpm) {
         Segment buildSegment = buildFramePlan.wrapper().segment;
         float buildBpm = buildFramePlan.wrapper().bpm;
         long buildCalculatedBpm = buildSegment.durationCalculated(buildBpm);
-        return framePlanFactory.createInstance(buildSegment.id(), new SegmentWrapper(originalSegment, collectBpm, finalFramerate, new SimpleCalculator(originalSegment.durationCalculated(collectBpm), buildCalculatedBpm)));
+        return segmentFramePlanFactory.createInstance(buildSegment.id(), new SegmentWrapper(originalSegment, collectBpm, finalFramerate, new SimpleCalculator(originalSegment.durationCalculated(collectBpm), buildCalculatedBpm)));
     }
 
-    public static FramePlan[] createBuildPlan(List<Segment> buildSegments, float buildBpm, long finalFramerate, Map<String, Segment> segmentIdCollectSegmentMap, SegmentFramePlan segmentFramePlanFactory) {
+    public static FramePlan[] createBuildPlan(List<Segment> buildSegments, float buildBpm, long finalFramerate, Map<String, Segment> segmentIdCollectSegmentMap, VideoSegmentPlanFactory segmentFramePlanFactory) {
         List<FramePlan> framePlans = new ArrayList<>();
         for (Segment buildSegment : buildSegments) {
             SimpleCalculator frameCalculator;
@@ -123,7 +124,7 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan, ImageColl
 
     public ImageCollector collector(ImageStore<BufferedImage> imageStore, int framerateMillis) {
         for (FramePlan framePlan : framePlans) {
-            return imageCollectorShim.extractShim(this, imageStore, framerateMillis, framePlan);
+            return segmentFramePlanFactory.extractShim(this, imageStore, framerateMillis, framePlan);
         }
         throw new RuntimeException("Should not happen!");
     }
@@ -159,8 +160,8 @@ public class SuperPlan implements FrameRepresentationsPlan, AudioPlan, ImageColl
         return planRef;
     }
 
-    public SuperPlan withImageCollector(ImageCollectShimInterface imageCollectorShim) {
-        this.imageCollectorShim = imageCollectorShim;
+    public SuperPlan withImageCollector(VideoSegmentPlanFactory segmentFramePlanFactory) {
+        this.segmentFramePlanFactory = segmentFramePlanFactory;
         return this;
     }
 }

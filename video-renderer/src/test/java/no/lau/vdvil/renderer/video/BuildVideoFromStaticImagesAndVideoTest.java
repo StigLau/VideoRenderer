@@ -6,11 +6,7 @@ import no.lau.vdvil.collector.plan.*;
 import no.lau.vdvil.domain.*;
 import no.lau.vdvil.domain.out.Komposition;
 import no.lau.vdvil.domain.utils.KompositionUtils;
-import no.lau.vdvil.plan.ImageCollectable;
-import no.lau.vdvil.plan.Plan;
-import no.lau.vdvil.plan.SuperPlan;
-import no.lau.vdvil.plan.SegmentFramePlan;
-import no.lau.vdvil.plan.ImageCollectShimInterface;
+import no.lau.vdvil.plan.*;
 import no.lau.vdvil.renderer.video.config.VideoConfig;
 import no.lau.vdvil.renderer.video.creator.ImageFileStore;
 import no.lau.vdvil.renderer.video.creator.ImageStore;
@@ -39,9 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Tag("IntegrationTest")
 public class BuildVideoFromStaticImagesAndVideoTest {
 
-    private SegmentFramePlan framePlanFactory = new SegmentFramePlanFactory();
-    private ImageCollectShimInterface imageCollectableShim = new ImageCollectableShim();
-
+    private VideoSegmentPlanFactory framePlanFactory = new VideoSegmentPlanFactoryImpl();
     Path downmixedOriginalVideo;
     Path theSwingVideo;
     Path snapshotFileStorage;
@@ -141,7 +135,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
         fetchKompositions.add(fetchKompositionStillImages2);
         fetchKompositions.add(fetchKompositionNorway);
 
-        KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition, sobotaMp3, 24, framePlanFactory, imageCollectableShim);
+        KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition, sobotaMp3, 24, framePlanFactory);
 
         new Thread(new ThreadedImageCollector(planner.collectPlans(),
                 plan -> plan.collector(pipeDream, 41666))).start();
@@ -165,7 +159,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
         fetchKompositions.add(fetchKompositionStillImages);
         fetchKompositions.add(fetchKompositionNorway);
 
-        KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition, sobotaMp3, 24, framePlanFactory, imageCollectableShim);
+        KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition, sobotaMp3, 24, framePlanFactory);
 
         ImageStore<BufferedImage> pipeDream = new ImageFileStore<>(buildKomposition, "/tmp/snaps");
         new ThreadedImageCollector(planner.collectPlans(),
@@ -186,7 +180,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
         fetchKompositions.add(fetchKompositionStillImages);
         fetchKompositions.add(fetchKompositionNorway);
 
-        KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition, sobotaMp3, 24, framePlanFactory, imageCollectableShim);
+        KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition, sobotaMp3, 24, framePlanFactory);
 
         PipeDream<BufferedImage> pipeDream = new PipeDream<>(1000, 5000, 1000, 1);
         for (Plan planIter : planner.collectPlans()) {
@@ -208,7 +202,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
         fetchKompositions.add(fetchKompositionStillImages2);
         fetchKompositions.add(fetchKompositionNorway);
 
-        KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition, sobotaMp3, 24, framePlanFactory, imageCollectableShim);
+        KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition, sobotaMp3, 24, framePlanFactory);
         Map<Long, List<FrameRepresentation>> representations = new TreeMap<>();
         for (FrameRepresentation rep : ((SuperPlan) planner.buildPlan()).getFrameRepresentations()) {
             if(representations.containsKey(rep.timestamp)) {
@@ -246,7 +240,7 @@ public class BuildVideoFromStaticImagesAndVideoTest {
         fetchKompositions.add(fetchKompositionStillImages2);
         fetchKompositions.add(fetchKompositionNorway);
 
-        KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition, sobotaMp3, 24, framePlanFactory, imageCollectableShim);
+        KompositionPlanner planner = new KompositionPlanner(fetchKompositions, buildKomposition, sobotaMp3, 24, framePlanFactory);
 
 
         KompositionUtils.printImageRepresentationImages(planner);

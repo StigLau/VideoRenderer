@@ -2,12 +2,11 @@ package no.lau.vdvil.renderer.video;
 
 import no.lau.vdvil.collector.*;
 import no.lau.vdvil.collector.plan.FramePlan;
-import no.lau.vdvil.collector.plan.SegmentFramePlanFactory;
+import no.lau.vdvil.collector.plan.VideoSegmentPlanFactoryImpl;
 import no.lau.vdvil.domain.LocalMediaFile;
 import no.lau.vdvil.domain.MediaFile;
 import no.lau.vdvil.domain.VideoStillImageSegment;
 import no.lau.vdvil.domain.out.Komposition;
-import no.lau.vdvil.plan.ImageCollectableShim;
 import no.lau.vdvil.plan.Plan;
 import no.lau.vdvil.plan.SuperPlan;
 import no.lau.vdvil.renderer.video.config.VideoConfig;
@@ -81,7 +80,7 @@ public class StreamingImageStoreTest {
         buildKomposition.framerate = 24;
         buildKomposition.storageLocation = new LocalMediaFile(urlCreator(result4), result4, 0L, 128f, "0e7d51d26f573386c229b772d126754a");
         this.resultingMediaFile = buildKomposition.storageLocation;
-        planner = new KompositionPlanner(fetchKompositions, buildKomposition, sobotaMp3, 24, new SegmentFramePlanFactory(), new ImageCollectableShim());//<!-- Here is the key!
+        planner = new KompositionPlanner(fetchKompositions, buildKomposition, sobotaMp3, 24, new VideoSegmentPlanFactoryImpl());//<!-- Here is the key!
     }
 
     @Test
