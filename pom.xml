@@ -32,6 +32,25 @@
             <version>1.7.36</version>
         </dependency>
     </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>no.lau.vdvil</groupId>
+                <artifactId>image-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.lau.vdvil</groupId>
+                <artifactId>video-renderer-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.lau.vdvil</groupId>
+                <artifactId>ffmpeg</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <build>
         <plugins>
             <plugin>

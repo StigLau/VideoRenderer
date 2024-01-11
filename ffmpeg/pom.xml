@@ -10,12 +10,10 @@
         <version>v12</version>
     </parent>
 
-
     <dependencies>
         <dependency>
             <groupId>no.lau.vdvil</groupId>
             <artifactId>video-renderer-core</artifactId>
-            <version>v1</version>
         </dependency>
         <dependency>
             <groupId>net.bramp.ffmpeg</groupId>
