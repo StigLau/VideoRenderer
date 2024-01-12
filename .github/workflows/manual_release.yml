@@ -18,6 +18,6 @@ jobs:
           distribution: 'corretto'
           cache: 'maven'
       - name: Publish package
-        run: mvn --batch-mode deploy
+        run: mvn --batch-mode deploy -P ex-integration
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
