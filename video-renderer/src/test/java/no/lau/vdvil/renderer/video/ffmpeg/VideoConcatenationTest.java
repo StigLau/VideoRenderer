@@ -11,6 +11,7 @@ import net.bramp.ffmpeg.probe.FFmpegProbeResult;
 import net.bramp.ffmpeg.probe.FFmpegStream;
 import net.bramp.ffmpeg.progress.Progress;
 import net.bramp.ffmpeg.progress.ProgressListener;
+import no.lau.vdvil.renderer.video.ExtensionType;
 import no.lau.vdvil.renderer.video.TestData;
 import no.lau.vdvil.snippets.FFmpegFunctions;
 import no.lau.vdvil.snippets.ImprovedFFMpegFunctions;
@@ -90,9 +91,9 @@ class VideoConcatenationTest {
 
     @Test
     void testBuildingStuffWithImprovedFffmpegFunctions() throws IOException {
-        Path snippet = snippetSplitter(fetch(norwayRemoteUrl), 56222833, 60477083);
+        Path snippet = snippetSplitter(fetch(norwayRemoteUrl), ExtensionType.mp4, 56222833, 60477083);
         assertEquals(104, countNumberOfFrames(snippet));
-        Path snippet2 = snippetSplitter(fetch(norwayRemoteUrl), 90477083, 90477083+5008300);
+        Path snippet2 = snippetSplitter(fetch(norwayRemoteUrl), ExtensionType.mp4, 90477083, 90477083+5008300);
         assertEquals(141, countNumberOfFrames(snippet2));
 
         //TODO Implement
@@ -109,7 +110,7 @@ class VideoConcatenationTest {
     @Test
     void testSnippingStuffBergen() throws IOException {
         Path origFile = fetch(bergenRemoteUrl);
-        Path snippet = snippetSplitter(origFile, 56222833, 60477083);
+        Path snippet = snippetSplitter(origFile, ExtensionType.mp4, 56222833, 60477083);
         assertEquals(102, ffmpegStreamInfo(snippet).nb_frames);
         assertEquals("144930000/6044789", ffmpegStreamInfo(origFile).avg_frame_rate.toString());
         assertEquals("24000/1001", ffmpegStreamInfo(snippet).avg_frame_rate.toString());
