@@ -47,8 +47,7 @@ public class ImprovedFFMpegFunctions {
         }
     }
 
-    public static Path snippetSplitter(Path downloadUrl, long timestampStart, long timestampEnd) {
-        ExtensionType extensionType = ExtensionType.typify(getFileExtension(downloadUrl));
+    public static Path snippetSplitter(Path downloadUrl, ExtensionType extensionType, long timestampStart, long timestampEnd) {
         Path destinationFile = CommonFunctions.createTempPath("snippet", extensionType);
         FFmpegBuilder builder = new FFmpegBuilder()
                 .setInput(downloadUrl.toString())
