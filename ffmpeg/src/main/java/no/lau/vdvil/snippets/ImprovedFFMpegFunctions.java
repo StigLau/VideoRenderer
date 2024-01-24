@@ -30,11 +30,11 @@ public class ImprovedFFMpegFunctions {
 
 
     public static String ffmpegLocation() {
-        return envOrDefault("ffmpeg", "/usr/local/bin/ffmpeg");
+        return envOrDefault("ffmpeg", "/usr/bin/ffmpeg");
     }
 
     public static String ffprobeLocation() {
-        return envOrDefault("ffprobe", "/usr/local/bin/ffprobe");
+        return envOrDefault("ffprobe", "/usr/bin/ffprobe");
     }
 
     static {

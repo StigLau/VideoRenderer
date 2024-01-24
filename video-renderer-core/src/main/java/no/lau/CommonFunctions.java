@@ -24,7 +24,7 @@ public class CommonFunctions {
             }
         }
         String kz = String.join(",", keys);
-        logger.error("Could not find System env for: {}", kz);
+        logger.info("Could not find System env for: {}", kz);
         throw new RuntimeException("No environment keys for " + String.join(",", kz));
     }
 
