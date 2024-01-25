@@ -14,7 +14,7 @@ import net.bramp.ffmpeg.progress.ProgressListener;
 import no.lau.vdvil.renderer.video.ExtensionType;
 import no.lau.vdvil.renderer.video.TestData;
 import no.lau.vdvil.snippets.FFmpegFunctions;
-import no.lau.vdvil.snippets.ImprovedFFMpegFunctions;
+import no.lau.ffmpeg.ImprovedFFMpegFunctions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
 
@@ -23,7 +23,7 @@ import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 import static no.lau.vdvil.renderer.video.TestData.*;
 import static no.lau.vdvil.snippets.FFmpegFunctions.combineAudioAndVideo;
-import static no.lau.vdvil.snippets.ImprovedFFMpegFunctions.*;
+import static no.lau.ffmpeg.ImprovedFFMpegFunctions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Tag("IntegrationTest")
