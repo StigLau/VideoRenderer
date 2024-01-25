@@ -1,4 +1,4 @@
-package no.lau.vdvil.snippets;
+package no.lau.ffmpeg;
 
 import net.bramp.ffmpeg.FFmpeg;
 import net.bramp.ffmpeg.FFmpegExecutor;
@@ -24,11 +24,6 @@ public class ImprovedFFMpegFunctions {
 
     static Logger logger = LoggerFactory.getLogger(ImprovedFFMpegFunctions.class);
 
-    static FFprobe ffprobe;
-    static FFmpeg ffmpeg;
-    static FFmpegExecutor executor;
-
-
     public static String ffmpegLocation() {
         return envOrDefault("ffmpeg", "/usr/bin/ffmpeg");
     }
@@ -37,15 +32,16 @@ public class ImprovedFFMpegFunctions {
         return envOrDefault("ffprobe", "/usr/bin/ffprobe");
     }
 
-    static {
+    static FFmpegExecutor createExecutor() {
         try {
-            ffmpeg = new FFmpeg(ffmpegLocation());
-            ffprobe = new FFprobe(ffprobeLocation());
-            executor = new FFmpegExecutor(ffmpeg, ffprobe);
+            FFmpeg ffmpeg = new FFmpeg(ffmpegLocation());
+            FFprobe ffprobe = new FFprobe(ffprobeLocation());
+            return new FFmpegExecutor(ffmpeg, ffprobe);
         } catch (IOException e) {
             throw new RuntimeException("Could not start FFMPEG or FFProbe", e);
         }
     }
+
 
     public static Path snippetSplitter(Path downloadUrl, ExtensionType extensionType, long timestampStart, long timestampEnd) {
         Path destinationFile = CommonFunctions.createTempPath("snippet", extensionType);
@@ -56,7 +52,7 @@ public class ImprovedFFMpegFunctions {
                 .addOutput(destinationFile.toString())
                 .addExtraArgs("-an")
                 .done();
-        executor.createJob(builder).run();
+        createExecutor().createJob(builder).run();
         return destinationFile;
     }
 
@@ -74,12 +70,12 @@ public class ImprovedFFMpegFunctions {
                 .addExtraArgs("-filter:v setpts="+percentageChange+"*PTS")
                 .addOutput(destinationFile.toString())
                 .done();
-        executor.createJob(builder).run();
+        createExecutor().createJob(builder).run();
         return destinationFile;
     }
 
     public static FFmpegFormat ffmpegFormatInfo(Path target) throws IOException {
-        FFmpegProbeResult probeResult = ffprobe.probe(target.toString());
+        FFmpegProbeResult probeResult = new FFprobe(ffprobeLocation()).probe(target.toString());
         FFmpegFormat format = probeResult.getFormat();
         System.out.format("%nFile: '%s' ; Format: '%s' ; Duration: %.3fs",
                 format.filename,
@@ -90,7 +86,7 @@ public class ImprovedFFMpegFunctions {
     }
 
     public static FFmpegStream ffmpegStreamInfo(Path target) throws IOException {
-        FFmpegProbeResult probeResult = ffprobe.probe(target.toString());
+        FFmpegProbeResult probeResult = new FFprobe(ffprobeLocation()).probe(target.toString());
         FFmpegStream stream = probeResult.getStreams().get(0);
         System.out.format("%nCodec: '%s' ; Width: %dpx ; Height: %dpx",
                 stream.codec_long_name,
@@ -102,7 +98,7 @@ public class ImprovedFFMpegFunctions {
 
     public static String detectSceneChanges(Path target, double ratio) {
         FFmpegBuilder builder = (new FFmpegBuilder()).setInput(target.toString()).addExtraArgs(new String[]{"-filter:v ", "\"select='gt(scene,0.1)',showinfo\""}).addOutput("/tmp/heia.txt").done();
-        FFmpegJob job = executor.createJob(builder);
+        FFmpegJob job = createExecutor().createJob(builder);
         job.run();
         return "some results";
     }
@@ -133,7 +129,7 @@ public class ImprovedFFMpegFunctions {
 
     //Docker alternative: docker run --entrypoint='ffprobe' jrottenberg/ffmpeg
     public static long countNumberOfFrames(Path destinationFile) throws IOException {
-        FFmpegProbeResult probeResult = ffprobe.probe(destinationFile.toString());
+        FFmpegProbeResult probeResult = new FFprobe(ffprobeLocation()).probe(destinationFile.toString());
 
         FFmpegFormat format = probeResult.getFormat();
         System.out.format("%nFile: '%s' ; Format: '%s' ; Duration: %.3fs",
@@ -168,7 +164,7 @@ public class ImprovedFFMpegFunctions {
                 .addOutput(target.toString())
                 .addExtraArgs("-c", "copy")
                 .done();
-        executor.createJob(builder).run();
+        createExecutor().createJob(builder).run();
         return target;
     }
 
@@ -190,7 +186,7 @@ public class ImprovedFFMpegFunctions {
                 .addOutput(target.toString())
 
                 .done();
-        executor.createJob(builder).run();
+        createExecutor().createJob(builder).run();
         return target;
     }
 

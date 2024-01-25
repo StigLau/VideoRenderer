@@ -1,6 +1,7 @@
 package no.lau.vdvil.snippets;
 
 import no.lau.CommonFunctions;
+import no.lau.ffmpeg.ImprovedFFMpegFunctions;
 import no.lau.vdvil.renderer.video.ExtensionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,7 +107,7 @@ public class FFmpegFunctions {
         List<String> convertedSnippets = Arrays.stream(snippets)
             .map(path -> convertVideoTypes(ExtensionType.ts, path).toString())
             .collect(Collectors.toList());
-        String concatCommand = ImprovedFFMpegFunctions.ffmpegLocation() + " -y -i \"concat:"+String.join("|", convertedSnippets)+"\" -c copy " + resultingFile.toString();
+        String concatCommand = ImprovedFFMpegFunctions.ffmpegLocation() + " -y -i \"concat:"+String.join("|", convertedSnippets)+"\" -c copy " + resultingFile;
         logger.info(performFFMPEG(concatCommand));
         return resultingFile;
     }
@@ -133,11 +134,11 @@ public class FFmpegFunctions {
     public static void snippetSplitter(Path downloadUrl, long timestampStart, long timestampEnd, Path destinationFile) throws IOException {
         logger.info("Performing modifications on {}", destinationFile);
         List<List<String>> props = new ArrayList<>();
-        props.add(Arrays.asList("-i", downloadUrl.toString()));
-        props.add(Arrays.asList("-ss", humanReadablePeriod(timestampStart)));
-        props.add(Arrays.asList("-t", humanReadablePeriod(timestampEnd - timestampStart)));
-        //props.add(Arrays.asList("-r", "24")); //24 frames per second
-        props.add(Arrays.asList("-an")); //No Audio
+        props.add(List.of("-i", downloadUrl.toString()));
+        props.add(List.of("-ss", humanReadablePeriod(timestampStart)));
+        props.add(List.of("-t", humanReadablePeriod(timestampEnd - timestampStart)));
+        //props.add(List.of("-r", "24")); //24 frames per second
+        props.add(List.of("-an")); //No Audio
         FFmpegFunctions.perform(props, destinationFile);
         logger.info("Finished converting {}", destinationFile);
     }
@@ -150,9 +151,9 @@ public class FFmpegFunctions {
         float percentageChange = (float) (targetDuration / snippetDuration);
 
         List<List<String>> props = new ArrayList<>();
-        props.add(Arrays.asList("-i", inputVideo.toString()));
-        props.add(Arrays.asList("-filter:v setpts="+percentageChange+"*PTS"));
-        //        props.add(Arrays.asList("-filter:v \"setpts="+percentageChange+"*PTS\" -vcodec copy -acodec copy -movflags " ));
+        props.add(List.of("-i", inputVideo.toString()));
+        props.add(List.of("-filter:v setpts=" + percentageChange + "*PTS"));
+        //        props.add(List.of("-filter:v \"setpts="+percentageChange+"*PTS\" -vcodec copy -acodec copy -movflags " ));
 
         logger.info(perform(props, destinationFile));
         return destinationFile;
