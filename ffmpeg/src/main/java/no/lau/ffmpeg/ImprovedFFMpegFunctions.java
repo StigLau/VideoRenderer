@@ -1,4 +1,4 @@
-package no.lau.vdvil.snippets;
+package no.lau.ffmpeg;
 
 import net.bramp.ffmpeg.FFmpeg;
 import net.bramp.ffmpeg.FFmpegExecutor;
@@ -40,11 +40,15 @@ public class ImprovedFFMpegFunctions {
     static {
         try {
             ffmpeg = new FFmpeg(ffmpegLocation());
-            ffprobe = new FFprobe(ffprobeLocation());
+            ffprobe = createFFProbe();
             executor = new FFmpegExecutor(ffmpeg, ffprobe);
         } catch (IOException e) {
             throw new RuntimeException("Could not start FFMPEG or FFProbe", e);
         }
+    }
+
+    private static FFprobe createFFProbe() throws IOException {
+        return new FFprobe(ffprobeLocation());
     }
 
     public static Path snippetSplitter(Path downloadUrl, ExtensionType extensionType, long timestampStart, long timestampEnd) {
