@@ -32,7 +32,7 @@ public class StaticImagesFramePlan implements FramePlan {
         List<FrameRepresentation> plans = new ArrayList<>();
 
         int nrOfImages = segment.images.length;
-        int framezz = new Long(wrapper.frameCalculator.buildRatio / wrapper.frameRateMillis).intValue();
+        int framezz = Long.valueOf(wrapper.frameCalculator.buildRatio / wrapper.frameRateMillis).intValue();
         int bucketSize = framezz / nrOfImages;
         int modulusRest = framezz % nrOfImages;
 

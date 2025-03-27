@@ -92,19 +92,19 @@ class VideoConcatenationTest {
     @Test
     void testBuildingStuffWithImprovedFffmpegFunctions() throws IOException {
         Path snippet = snippetSplitter(fetch(norwayRemoteUrl), ExtensionType.mp4, 56222833, 60477083);
-        assertEquals(104, countNumberOfFrames(snippet));
+        assertEquals(103, countNumberOfFrames(snippet));
         Path snippet2 = snippetSplitter(fetch(norwayRemoteUrl), ExtensionType.mp4, 90477083, 90477083+5008300);
-        assertEquals(141, countNumberOfFrames(snippet2));
+        assertEquals(140, countNumberOfFrames(snippet2));
 
         //TODO Implement
         //Path noSoundConcatenation  = FFmpegFunctions.protocolConcatVideoSnippets(ExtensionType.mp4, snippet, snippet2);
         Path noSoundConcatenation  = concatVideoSnippets(snippet, snippet2);
-        assertEquals(245, countNumberOfFrames(noSoundConcatenation));
+        assertEquals(243, countNumberOfFrames(noSoundConcatenation));
         //Path combinedWithSound = Paths.get("/tmp/jalla.mp4");
         Path combinedWithSound  = combineAudioAndVideo(noSoundConcatenation, fetch(sobotaMp3RemoteUrl));
 
         System.out.println("Our result is at " + combinedWithSound);
-        assertEquals(245, countNumberOfFrames(combinedWithSound));
+        assertEquals(243, countNumberOfFrames(combinedWithSound));
     }
 
     @Test

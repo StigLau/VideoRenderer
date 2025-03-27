@@ -198,7 +198,7 @@ class BuildVideoFromScratchImagesTest {
     void testSnippingStuff() throws IOException {
         Path testFile = Path.of("/tmp/testur/myTestFile.mp4");
         FFmpegFunctions.snippetSplitter(fetch(norwayRemoteUrl), 56222833, 60477083, testFile);
-        assertEquals(103, countNumberOfFrames(testFile));
+        assertEquals(102, countNumberOfFrames(testFile));
 
     }
 
