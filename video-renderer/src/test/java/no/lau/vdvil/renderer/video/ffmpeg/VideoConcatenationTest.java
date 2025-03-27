@@ -28,8 +28,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Tag("IntegrationTest")
 class VideoConcatenationTest {
-    FFprobe ffprobe = new FFprobe(ImprovedFFMpegFunctions.ffprobeLocation());
-    FFmpeg ffmpeg = new FFmpeg(ImprovedFFMpegFunctions.ffmpegLocation());
+    FFprobe ffprobe = new FFprobe(ImprovedFFMpegFunctions.ffprobeLocation);
+    FFmpeg ffmpeg = new FFmpeg(ImprovedFFMpegFunctions.ffmpegLocation);
     Path norwayDarkLakeLocalStorage = fetch(TestData.norwayDarkLakeRemoteUrl);
 
     public VideoConcatenationTest() throws IOException {

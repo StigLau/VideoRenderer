@@ -11,15 +11,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 
-import static no.lau.CommonFunctions.envOrDefault;
-
 public class YtDlFunctions {
 
     static Logger log = LoggerFactory.getLogger(YtDlFunctions.class);
-
-    public static String youtubeDl() {
-        return envOrDefault("youtubedl", "/usr/local/bin/yt-dlp");
-    }
 
     public static String performYoutubeDL(String command, File targetDir) throws IOException {
         //Make sure destination folder has been created!
