@@ -24,18 +24,17 @@ public class ImprovedFFMpegFunctions {
 
     static Logger logger = LoggerFactory.getLogger(ImprovedFFMpegFunctions.class);
 
-    public static String ffmpegLocation() {
-        return envOrDefault("ffmpeg", "/usr/bin/ffmpeg");
-    }
+    public static String ffmpegLocation = envOrDefault("ffmpeg", "/usr/bin/ffmpeg");
 
-    public static String ffprobeLocation() {
-        return envOrDefault("ffprobe", "/usr/bin/ffprobe");
-    }
+    public static String ffprobeLocation = envOrDefault("ffprobe", "/usr/bin/ffprobe");
+
+    public static String youtubedl = envOrDefault("yt-dlp", "/usr/local/bin/yt-dlp");
+
 
     static FFmpegExecutor createExecutor() {
         try {
-            FFmpeg ffmpeg = new FFmpeg(ffmpegLocation());
-            FFprobe ffprobe = new FFprobe(ffprobeLocation());
+            FFmpeg ffmpeg = new FFmpeg(ffmpegLocation);
+            FFprobe ffprobe = new FFprobe(ffprobeLocation);
             return new FFmpegExecutor(ffmpeg, ffprobe);
         } catch (IOException e) {
             throw new RuntimeException("Could not start FFMPEG or FFProbe", e);
@@ -75,7 +74,7 @@ public class ImprovedFFMpegFunctions {
     }
 
     public static FFmpegFormat ffmpegFormatInfo(Path target) throws IOException {
-        FFmpegProbeResult probeResult = new FFprobe(ffprobeLocation()).probe(target.toString());
+        FFmpegProbeResult probeResult = new FFprobe(ffprobeLocation).probe(target.toString());
         FFmpegFormat format = probeResult.getFormat();
         System.out.format("%nFile: '%s' ; Format: '%s' ; Duration: %.3fs",
                 format.filename,
@@ -86,7 +85,7 @@ public class ImprovedFFMpegFunctions {
     }
 
     public static FFmpegStream ffmpegStreamInfo(Path target) throws IOException {
-        FFmpegProbeResult probeResult = new FFprobe(ffprobeLocation()).probe(target.toString());
+        FFmpegProbeResult probeResult = new FFprobe(ffprobeLocation).probe(target.toString());
         FFmpegStream stream = probeResult.getStreams().get(0);
         System.out.format("%nCodec: '%s' ; Width: %dpx ; Height: %dpx",
                 stream.codec_long_name,
@@ -129,7 +128,7 @@ public class ImprovedFFMpegFunctions {
 
     //Docker alternative: docker run --entrypoint='ffprobe' jrottenberg/ffmpeg
     public static long countNumberOfFrames(Path destinationFile) throws IOException {
-        FFmpegProbeResult probeResult = new FFprobe(ffprobeLocation()).probe(destinationFile.toString());
+        FFmpegProbeResult probeResult = new FFprobe(ffprobeLocation).probe(destinationFile.toString());
 
         FFmpegFormat format = probeResult.getFormat();
         System.out.format("%nFile: '%s' ; Format: '%s' ; Duration: %.3fs",
