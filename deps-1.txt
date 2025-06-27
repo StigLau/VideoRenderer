@@ -1,0 +1,134 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] video-renderer-base                                                [pom]
+[INFO] image-core                                                         [jar]
+[INFO] video-renderer-core                                                [jar]
+[INFO] ffmpeg                                                             [jar]
+[INFO] video-renderer                                                     [jar]
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-assembly-plugin/3.7.1/maven-assembly-plugin-3.7.1.pom
+Progress (1): 1.4/15 kBProgress (1): 2.8/15 kBProgress (1): 4.1/15 kBProgress (1): 5.5/15 kBProgress (1): 6.9/15 kBProgress (1): 8.3/15 kBProgress (1): 9.7/15 kBProgress (1): 11/15 kB Progress (1): 12/15 kBProgress (1): 14/15 kBProgress (1): 15/15 kBProgress (1): 15 kB                      Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-assembly-plugin/3.7.1/maven-assembly-plugin-3.7.1.pom (15 kB at 20 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-assembly-plugin/3.7.1/maven-assembly-plugin-3.7.1.jar
+Progress (1): 16/240 kBProgress (1): 33/240 kBProgress (1): 49/240 kBProgress (1): 66/240 kBProgress (1): 82/240 kBProgress (1): 98/240 kBProgress (1): 115/240 kBProgress (1): 131/240 kBProgress (1): 147/240 kBProgress (1): 164/240 kBProgress (1): 180/240 kBProgress (1): 197/240 kBProgress (1): 213/240 kBProgress (1): 229/240 kBProgress (1): 240 kB                        Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-assembly-plugin/3.7.1/maven-assembly-plugin-3.7.1.jar (240 kB at 2.4 MB/s)
+[INFO] 
+[INFO] ------------------< no.lau.vdvil:video-renderer-base >------------------
+[INFO] Building video-renderer-base 1.1.2                                 [1/5]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- dependency:3.7.0:tree (default-cli) @ video-renderer-base ---
+[INFO] no.lau.vdvil:video-renderer-base:pom:1.1.2
+[INFO] +- org.junit.jupiter:junit-jupiter:jar:5.10.0:test
+[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.10.0:test
+[INFO] |  |  +- org.opentest4j:opentest4j:jar:1.3.0:test
+[INFO] |  |  +- org.junit.platform:junit-platform-commons:jar:1.10.0:test
+[INFO] |  |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] |  +- org.junit.jupiter:junit-jupiter-params:jar:5.10.0:test
+[INFO] |  \- org.junit.jupiter:junit-jupiter-engine:jar:5.10.0:test
+[INFO] |     \- org.junit.platform:junit-platform-engine:jar:1.10.0:test
+[INFO] \- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] 
+[INFO] ----------------------< no.lau.vdvil:image-core >-----------------------
+[INFO] Building image-core 1.1.2                                          [2/5]
+[INFO]   from image-core/pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- dependency:3.7.0:tree (default-cli) @ image-core ---
+[INFO] no.lau.vdvil:image-core:jar:1.1.2
+[INFO] +- org.junit.jupiter:junit-jupiter:jar:5.10.0:test
+[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.10.0:test
+[INFO] |  |  +- org.opentest4j:opentest4j:jar:1.3.0:test
+[INFO] |  |  +- org.junit.platform:junit-platform-commons:jar:1.10.0:test
+[INFO] |  |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] |  +- org.junit.jupiter:junit-jupiter-params:jar:5.10.0:test
+[INFO] |  \- org.junit.jupiter:junit-jupiter-engine:jar:5.10.0:test
+[INFO] |     \- org.junit.platform:junit-platform-engine:jar:1.10.0:test
+[INFO] \- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] 
+[INFO] ------------------< no.lau.vdvil:video-renderer-core >------------------
+[INFO] Building video-renderer-core 1.1.2                                 [3/5]
+[INFO]   from video-renderer-core/pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- dependency:3.7.0:tree (default-cli) @ video-renderer-core ---
+[INFO] no.lau.vdvil:video-renderer-core:jar:1.1.2
+[INFO] +- no.lau.vdvil:image-core:jar:1.1.2:compile
+[INFO] +- org.junit.jupiter:junit-jupiter:jar:5.10.0:test
+[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.10.0:test
+[INFO] |  |  +- org.opentest4j:opentest4j:jar:1.3.0:test
+[INFO] |  |  +- org.junit.platform:junit-platform-commons:jar:1.10.0:test
+[INFO] |  |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] |  +- org.junit.jupiter:junit-jupiter-params:jar:5.10.0:test
+[INFO] |  \- org.junit.jupiter:junit-jupiter-engine:jar:5.10.0:test
+[INFO] |     \- org.junit.platform:junit-platform-engine:jar:1.10.0:test
+[INFO] \- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] 
+[INFO] ------------------------< no.lau.vdvil:ffmpeg >-------------------------
+[INFO] Building ffmpeg 1.1.2                                              [4/5]
+[INFO]   from ffmpeg/pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- dependency:3.7.0:tree (default-cli) @ ffmpeg ---
+[INFO] no.lau.vdvil:ffmpeg:jar:1.1.2
+[INFO] +- no.lau.vdvil:video-renderer-core:jar:1.1.2:compile
+[INFO] |  \- no.lau.vdvil:image-core:jar:1.1.2:compile
+[INFO] +- net.bramp.ffmpeg:ffmpeg:jar:0.6.2:compile
+[INFO] |  +- com.google.guava:guava:jar:20.0:compile
+[INFO] |  +- commons-io:commons-io:jar:2.5:compile
+[INFO] |  +- org.apache.commons:commons-lang3:jar:3.5:compile
+[INFO] |  +- com.google.code.gson:gson:jar:2.8.0:compile
+[INFO] |  \- org.modelmapper:modelmapper:jar:0.7.7:compile
+[INFO] +- org.junit.jupiter:junit-jupiter:jar:5.10.0:test
+[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.10.0:test
+[INFO] |  |  +- org.opentest4j:opentest4j:jar:1.3.0:test
+[INFO] |  |  +- org.junit.platform:junit-platform-commons:jar:1.10.0:test
+[INFO] |  |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] |  +- org.junit.jupiter:junit-jupiter-params:jar:5.10.0:test
+[INFO] |  \- org.junit.jupiter:junit-jupiter-engine:jar:5.10.0:test
+[INFO] |     \- org.junit.platform:junit-platform-engine:jar:1.10.0:test
+[INFO] \- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] 
+[INFO] --------------------< no.lau.vdvil:video-renderer >---------------------
+[INFO] Building video-renderer 1.1.2                                      [5/5]
+[INFO]   from video-renderer/pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- dependency:3.7.0:tree (default-cli) @ video-renderer ---
+[INFO] no.lau.vdvil:video-renderer:jar:1.1.2
+[INFO] +- no.lau.vdvil:video-renderer-core:jar:1.1.2:compile
+[INFO] |  \- no.lau.vdvil:image-core:jar:1.1.2:compile
+[INFO] +- no.lau.vdvil:ffmpeg:jar:1.1.2:compile
+[INFO] |  \- net.bramp.ffmpeg:ffmpeg:jar:0.6.2:compile
+[INFO] |     +- com.google.guava:guava:jar:20.0:compile
+[INFO] |     +- commons-io:commons-io:jar:2.5:compile
+[INFO] |     +- org.apache.commons:commons-lang3:jar:3.5:compile
+[INFO] |     +- com.google.code.gson:gson:jar:2.8.0:compile
+[INFO] |     \- org.modelmapper:modelmapper:jar:0.7.7:compile
+[INFO] +- xuggle:xuggle-xuggler:jar:5.4:compile
+[INFO] |  +- commons-cli:commons-cli:jar:1.1:compile
+[INFO] |  +- ch.qos.logback:logback-core:jar:1.0.0:runtime
+[INFO] |  \- ch.qos.logback:logback-classic:jar:1.0.0:runtime
+[INFO] +- org.junit.jupiter:junit-jupiter:jar:5.10.0:test
+[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.10.0:test
+[INFO] |  |  +- org.opentest4j:opentest4j:jar:1.3.0:test
+[INFO] |  |  +- org.junit.platform:junit-platform-commons:jar:1.10.0:test
+[INFO] |  |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] |  +- org.junit.jupiter:junit-jupiter-params:jar:5.10.0:test
+[INFO] |  \- org.junit.jupiter:junit-jupiter-engine:jar:5.10.0:test
+[INFO] |     \- org.junit.platform:junit-platform-engine:jar:1.10.0:test
+[INFO] \- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for video-renderer-base 1.1.2:
+[INFO] 
+[INFO] video-renderer-base ................................ SUCCESS [  1.639 s]
+[INFO] image-core ......................................... SUCCESS [  0.074 s]
+[INFO] video-renderer-core ................................ SUCCESS [  0.015 s]
+[INFO] ffmpeg ............................................. SUCCESS [  0.073 s]
+[INFO] video-renderer ..................................... SUCCESS [  0.051 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  3.989 s
+[INFO] Finished at: 2025-03-27T11:28:35+01:00
+[INFO] ------------------------------------------------------------------------
