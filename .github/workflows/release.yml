@@ -1,0 +1,170 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., 1.2.0)'
+        required: true
+        type: string
+      next_snapshot:
+        description: 'Next SNAPSHOT version (e.g., 1.2.1-SNAPSHOT)'
+        required: true
+        type: string
+
+env:
+  JAVA_VERSION: '17'
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+      packages: write
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+          
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: maven
+          
+      - name: Configure Git
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          
+      - name: Validate version format
+        run: |
+          if [[ ! "${{ inputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "❌ Invalid version format. Expected: X.Y.Z (e.g., 1.2.0)"
+            exit 1
+          fi
+          if [[ ! "${{ inputs.next_snapshot }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+-SNAPSHOT$ ]]; then
+            echo "❌ Invalid next snapshot format. Expected: X.Y.Z-SNAPSHOT (e.g., 1.2.1-SNAPSHOT)"
+            exit 1
+          fi
+          echo "✅ Version formats validated"
+          
+      - name: Check if tag already exists
+        run: |
+          if git tag --list | grep -q "^v${{ inputs.version }}$"; then
+            echo "❌ Tag v${{ inputs.version }} already exists"
+            exit 1
+          fi
+          echo "✅ Tag v${{ inputs.version }} is available"
+          
+      - name: Update POM to release version
+        run: |
+          echo "📝 Updating POM version to ${{ inputs.version }}"
+          mvn versions:set -DnewVersion=${{ inputs.version }} -DgenerateBackupPoms=false
+          
+      - name: Verify version was set correctly
+        run: |
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          if [ "$VERSION" != "${{ inputs.version }}" ]; then
+            echo "❌ Version mismatch. Expected: ${{ inputs.version }}, Got: $VERSION"
+            exit 1
+          fi
+          echo "✅ POM version verified: $VERSION"
+          
+      - name: Build and test
+        run: |
+          echo "🔨 Building and testing release version ${{ inputs.version }}"
+          mvn clean verify -P ex-integration -DskipITs=false
+          
+      - name: Commit and tag release
+        run: |
+          echo "📝 Committing release version ${{ inputs.version }}"
+          git add pom.xml */pom.xml
+          git commit -m "Release version ${{ inputs.version }}"
+          
+          echo "🏷️ Creating tag v${{ inputs.version }}"
+          git tag -a "v${{ inputs.version }}" -m "Release ${{ inputs.version }}"
+          
+      - name: Deploy to GitHub Packages
+        run: |
+          echo "📦 Deploying to GitHub Packages"
+          mvn deploy -P ex-integration -DskipTests=true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Create GitHub release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ inputs.version }}
+          release_name: Video Renderer ${{ inputs.version }}
+          body: |
+            ## Video Renderer ${{ inputs.version }}
+            
+            ### Features
+            - Core video processing with FFMPEG integration
+            - Frame-level video composition capabilities
+            - YouTube content processing support
+            - Music-video synchronization tools
+            
+            ### Maven Dependency
+            ```xml
+            <dependency>
+                <groupId>no.lau.vdvil</groupId>
+                <artifactId>video-renderer</artifactId>
+                <version>${{ inputs.version }}</version>
+            </dependency>
+            ```
+            
+            ### GitHub Packages
+            This release is available from GitHub Packages. Add the repository to your `pom.xml`:
+            ```xml
+            <repositories>
+                <repository>
+                    <id>github</id>
+                    <url>https://maven.pkg.github.com/StigLau/VideoRenderer</url>
+                </repository>
+            </repositories>
+            ```
+            
+            🤖 **Auto-generated release via GitHub Actions**
+          draft: false
+          prerelease: false
+          
+      - name: Update to next SNAPSHOT version
+        run: |
+          echo "📝 Updating to next SNAPSHOT version ${{ inputs.next_snapshot }}"
+          mvn versions:set -DnewVersion=${{ inputs.next_snapshot }} -DgenerateBackupPoms=false
+          
+          git add pom.xml */pom.xml
+          git commit -m "Prepare for next development iteration ${{ inputs.next_snapshot }}"
+          
+      - name: Push changes and tags
+        run: |
+          echo "🚀 Pushing changes and tags to repository"
+          git push origin HEAD
+          git push origin v${{ inputs.version }}
+          
+      - name: Summary
+        run: |
+          echo "## 🎉 Release Complete!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Item | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| **Released Version** | \`${{ inputs.version }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Git Tag** | \`v${{ inputs.version }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Next Development** | \`${{ inputs.next_snapshot }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **GitHub Packages** | ✅ Published |" >> $GITHUB_STEP_SUMMARY
+          echo "| **GitHub Release** | ✅ Created |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Next Steps" >> $GITHUB_STEP_SUMMARY
+          echo "- Update dependent projects to use version \`${{ inputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Verify GitHub Packages deployment" >> $GITHUB_STEP_SUMMARY
+          echo "- Continue development on \`${{ inputs.next_snapshot }}\`" >> $GITHUB_STEP_SUMMARY
