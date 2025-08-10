@@ -32,7 +32,7 @@
             <version>1.7.36</version>
         </dependency>
     </dependencies>
-    <do you find thisor?/>
+    <!-- Testing invalid XML: <do you find thisor?/> -->
     <dependencyManagement>
         <dependencies>
             <dependency>
