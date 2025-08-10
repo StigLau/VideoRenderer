@@ -195,4 +195,84 @@ public class ImprovedFFMpegFunctions {
             return fileName.substring(fileName.lastIndexOf(".")+1);
         else return "";
     }
+
+    // FRAME ALIGNMENT SOLUTIONS - Option 2: Source Normalization
+
+    /**
+     * Option 2: Normalize video to Komposteur Master Format
+     * Pre-processes all sources to consistent format for frame-perfect timing
+     */
+    public static Path normalizeToMasterFormat(Path sourceVideo) throws IOException {
+        logger.info("Normalizing {} to Komposteur master format", sourceVideo);
+        
+        ExtensionType outputType = ExtensionType.mp4;
+        Path normalizedFile = CommonFunctions.createTempPath("normalized_master", outputType);
+        
+        FFmpegBuilder builder = new FFmpegBuilder()
+            .setInput(sourceVideo.toString())
+            .addOutput(normalizedFile.toString())
+            // Video normalization
+            .setVideoFrameRate(30.0)          // Force 30fps CFR
+            .addExtraArgs("-vsync", "cfr")    // Constant frame rate
+            .addExtraArgs("-r", "30")         // Ensure 30fps output
+            .setVideoCodec("libx264")         // Standard H.264
+            .addExtraArgs("-preset", "medium") // Balance quality/speed
+            .addExtraArgs("-crf", "23")       // Good quality
+            .addExtraArgs("-pix_fmt", "yuv420p") // Universal compatibility
+            // Audio normalization
+            .setAudioCodec("aac")             // Standard AAC
+            .setAudioSampleRate(48000)        // 48kHz standard
+            .addExtraArgs("-ac", "2")         // Stereo
+            .addExtraArgs("-b:a", "128k")     // Good quality bitrate
+            // Timing precision
+            .addExtraArgs("-avoid_negative_ts", "make_zero") // Normalize timestamps
+            .addExtraArgs("-fflags", "+genpts") // Generate presentation timestamps
+            .done();
+            
+        createExecutor().createJob(builder).run();
+        logger.info("Normalized master format: {}", normalizedFile);
+        return normalizedFile;
+    }
+
+    /**
+     * Detect video frame rate for frame-accurate processing
+     */
+    public static double detectFrameRate(Path videoFile) throws IOException {
+        FFmpegProbeResult probeResult = new FFprobe(ffprobeLocation).probe(videoFile.toString());
+        FFmpegStream videoStream = probeResult.getStreams().stream()
+            .filter(stream -> "video".equals(stream.codec_type))
+            .findFirst()
+            .orElseThrow(() -> new IOException("No video stream found in " + videoFile));
+            
+        // Parse frame rate (avg_frame_rate is a Fraction object)
+        if (videoStream.avg_frame_rate != null) {
+            return videoStream.avg_frame_rate.doubleValue();
+        }
+        
+        logger.warn("Could not detect frame rate for {}, using 30fps default", videoFile);
+        return 30.0; // Default fallback
+    }
+
+    /**
+     * Validate if video is already in master format
+     */
+    public static boolean isMasterFormat(Path videoFile) throws IOException {
+        FFmpegProbeResult probeResult = new FFprobe(ffprobeLocation).probe(videoFile.toString());
+        FFmpegStream videoStream = probeResult.getStreams().stream()
+            .filter(stream -> "video".equals(stream.codec_type))
+            .findFirst()
+            .orElse(null);
+            
+        if (videoStream == null) return false;
+        
+        double frameRate = detectFrameRate(videoFile);
+        boolean is30fps = Math.abs(frameRate - 30.0) < 0.1;
+        boolean isH264 = "h264".equals(videoStream.codec_name);
+        boolean isYuv420p = "yuv420p".equals(videoStream.pix_fmt);
+        
+        logger.debug("Master format check for {}: fps={} (is30fps={}), codec={} (isH264={}), pix_fmt={} (isYuv420p={})", 
+            videoFile, frameRate, is30fps, videoStream.codec_name, isH264, videoStream.pix_fmt, isYuv420p);
+            
+        return is30fps && isH264 && isYuv420p;
+    }
 }

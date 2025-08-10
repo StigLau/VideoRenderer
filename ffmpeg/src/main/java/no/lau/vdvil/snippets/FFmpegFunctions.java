@@ -179,4 +179,122 @@ public class FFmpegFunctions {
         tempfile.toFile().deleteOnExit();
         return tempfile;
     }
+
+    // FRAME ALIGNMENT SOLUTIONS - Three implementation options
+
+    /**
+     * Option 3: Crossfade Transitions (TESTING FIRST)
+     * Adds short crossfade transitions between segments to mask timing mismatches
+     */
+    public static Path concatVideoSnippetsWithCrossfade(ExtensionType extensionType, double crossfadeDuration, Path... snippets) throws IOException {
+        if (snippets.length < 2) {
+            // Fall back to regular concat for single video
+            return concatVideoSnippets(extensionType, snippets);
+        }
+
+        Path resultingFile = createKompostTempFile("crossfade_concat", extensionType);
+        logger.info("Concatenating {} files with {}s crossfades into {}", snippets.length, crossfadeDuration, resultingFile);
+
+        if (snippets.length == 2) {
+            // Simple two-video crossfade
+            // MUSIC VIDEOS: Video crossfade only - audio comes from separate source
+            String crossfadeCommand = ImprovedFFMpegFunctions.ffmpegLocation + 
+                " -i " + snippets[0] + 
+                " -i " + snippets[1] + 
+                " -filter_complex \"[0:v][1:v]xfade=transition=fade:duration=" + crossfadeDuration + ":offset=" + (getTotalDuration(snippets[0]) - crossfadeDuration) + "[outv]\" " +
+                "-map \"[outv]\" -an " + // -an removes audio - music videos use separate audio track
+                resultingFile;
+            logger.info(performFFMPEG(crossfadeCommand));
+        } else {
+            // Multiple video crossfade (complex filter)
+            StringBuilder filterComplex = new StringBuilder();
+            StringBuilder inputs = new StringBuilder(ImprovedFFMpegFunctions.ffmpegLocation);
+            
+            // Add all input files
+            for (Path snippet : snippets) {
+                inputs.append(" -i ").append(snippet);
+            }
+            
+            // Build complex filter for crossfading between all segments
+            for (int i = 0; i < snippets.length - 1; i++) {
+                double offset = getTotalDuration(snippets[i]) - crossfadeDuration;
+                if (i == 0) {
+                    filterComplex.append(String.format("[0:v][1:v]xfade=transition=fade:duration=%.3f:offset=%.3f[v01];", crossfadeDuration, offset));
+                } else if (i == snippets.length - 2) {
+                    filterComplex.append(String.format("[v0%d][%d:v]xfade=transition=fade:duration=%.3f:offset=%.3f[outv];", i, i + 1, crossfadeDuration, offset));
+                } else {
+                    filterComplex.append(String.format("[v0%d][%d:v]xfade=transition=fade:duration=%.3f:offset=%.3f[v0%d];", i, i + 1, crossfadeDuration, offset, i + 1));
+                }
+            }
+            
+            // MUSIC VIDEOS: Video-only crossfade - audio comes from separate source
+            // (Audio crossfade implementation preserved in AUDIO_CROSSFADE_IMPLEMENTATION.md)
+            
+            String command = inputs + " -filter_complex \"" + filterComplex + "\" -map \"[outv]\" -an " + resultingFile;
+            logger.info(performFFMPEG(command));
+        }
+        
+        return resultingFile;
+    }
+
+    /**
+     * Helper method to get video duration in seconds
+     */
+    private static double getTotalDuration(Path videoFile) {
+        try {
+            return ImprovedFFMpegFunctions.ffmpegFormatInfo(videoFile).duration;
+        } catch (IOException e) {
+            logger.warn("Could not determine duration for {}, using default", videoFile);
+            return 10.0; // Default fallback
+        }
+    }
+
+    /**
+     * Option 1: Frame-Accurate Seeking (Highest Precision)
+     * Uses exact frame calculations instead of time-based seeking
+     */
+    public static void frameAccurateSnippetSplitter(Path downloadUrl, long startFrame, long frameCount, double fps, Path destinationFile) throws IOException {
+        logger.info("Frame-accurate splitting: {} frames starting at frame {} ({}fps)", frameCount, startFrame, fps);
+        
+        double startSeconds = startFrame / fps;
+        double durationSeconds = frameCount / fps;
+        
+        List<List<String>> props = new ArrayList<>();
+        props.add(List.of("-i", downloadUrl.toString()));
+        props.add(List.of("-ss", String.valueOf(startSeconds)));
+        props.add(List.of("-frames:v", String.valueOf(frameCount))); // Exact frame count
+        props.add(List.of("-vsync", "cfr")); // Constant frame rate
+        props.add(List.of("-an")); // No audio for now
+        
+        FFmpegFunctions.perform(props, destinationFile);
+        logger.info("Frame-accurate conversion completed: {}", destinationFile);
+    }
+
+    /**
+     * Convert beat timing to frame-accurate parameters
+     */
+    public static FrameTimingParams beatToFrameTiming(long beatStart, long beatDuration, double bpm, double videoFps) {
+        double secondsStart = (beatStart * 60.0) / bpm;
+        double secondsDuration = (beatDuration * 60.0) / bpm;
+        
+        long startFrame = Math.round(secondsStart * videoFps);
+        long frameCount = Math.round(secondsDuration * videoFps);
+        
+        return new FrameTimingParams(startFrame, frameCount, videoFps);
+    }
+
+    /**
+     * Data class for frame timing parameters
+     */
+    public static class FrameTimingParams {
+        public final long startFrame;
+        public final long frameCount;
+        public final double fps;
+        
+        public FrameTimingParams(long startFrame, long frameCount, double fps) {
+            this.startFrame = startFrame;
+            this.frameCount = frameCount;
+            this.fps = fps;
+        }
+    }
 }
