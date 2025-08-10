@@ -6,3 +6,7 @@
 target
 *.iml
 secrets.txt
+
+# AI tools - may contain secrets
+.aider*
+.claude*
