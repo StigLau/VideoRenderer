@@ -42,12 +42,31 @@ jobs:
         run: |
           CURRENT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+<<<<<<< HEAD
+=======
           echo "📍 Current version: $CURRENT_VERSION"
+>>>>>>> origin/master
           
       - name: Calculate next version
         id: next_version
         run: |
           CURRENT_VERSION="${{ steps.current_version.outputs.current_version }}"
+<<<<<<< HEAD
+          BASE_VERSION=$(echo $CURRENT_VERSION | sed 's/-SNAPSHOT//')
+          IFS='.' read -r major minor patch <<< "$BASE_VERSION"
+          NEW_PATCH=$((patch + 1))
+          RELEASE_VERSION="${major}.${minor}.${NEW_PATCH}"
+          NEXT_SNAPSHOT="${major}.${minor}.$((NEW_PATCH + 1))-SNAPSHOT"
+          echo "release_version=$RELEASE_VERSION" >> $GITHUB_OUTPUT
+          echo "next_snapshot=$NEXT_SNAPSHOT" >> $GITHUB_OUTPUT
+          
+      - name: Update POM to release version
+        run: |
+          mvn versions:set -DnewVersion=${{ steps.next_version.outputs.release_version }} -DgenerateBackupPoms=false
+          
+      - name: Build and test
+        run: |
+=======
           # Remove -SNAPSHOT suffix
           BASE_VERSION=$(echo $CURRENT_VERSION | sed 's/-SNAPSHOT//')
           
@@ -94,10 +113,19 @@ jobs:
         run: |
           RELEASE_VERSION="${{ steps.next_version.outputs.release_version }}"
           echo "🔨 Building and testing release version $RELEASE_VERSION"
+>>>>>>> origin/master
           mvn clean verify -P ex-integration -DskipITs=false
           
       - name: Commit and tag release
         run: |
+<<<<<<< HEAD
+          git add pom.xml */pom.xml
+          git commit -m "Auto-release version ${{ steps.next_version.outputs.release_version }}"
+          git tag -a "v${{ steps.next_version.outputs.release_version }}" -m "Auto-release ${{ steps.next_version.outputs.release_version }}"
+          
+      - name: Deploy to GitHub Packages
+        run: |
+=======
           RELEASE_VERSION="${{ steps.next_version.outputs.release_version }}"
           echo "📝 Committing release version $RELEASE_VERSION"
           git add pom.xml */pom.xml
@@ -109,6 +137,7 @@ jobs:
       - name: Deploy to GitHub Packages
         run: |
           echo "📦 Deploying to GitHub Packages"
+>>>>>>> origin/master
           mvn deploy -P ex-integration -DskipTests=true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -121,6 +150,11 @@ jobs:
           tag_name: v${{ steps.next_version.outputs.release_version }}
           release_name: Video Renderer ${{ steps.next_version.outputs.release_version }}
           body: |
+<<<<<<< HEAD
+            🤖 **Automatically released** after PR #${{ github.event.pull_request.number }} merge
+            
+            **PR**: #${{ github.event.pull_request.number }} - ${{ github.event.pull_request.title }}
+=======
             ## Video Renderer ${{ steps.next_version.outputs.release_version }}
             
             🤖 **Automatically released** after PR #${{ github.event.pull_request.number }} merge
@@ -157,11 +191,27 @@ jobs:
             
             **PR**: #${{ github.event.pull_request.number }} - ${{ github.event.pull_request.title }}  
             **Author**: @${{ github.event.pull_request.user.login }}
+>>>>>>> origin/master
           draft: false
           prerelease: false
           
       - name: Update to next SNAPSHOT version
         run: |
+<<<<<<< HEAD
+          mvn versions:set -DnewVersion=${{ steps.next_version.outputs.next_snapshot }} -DgenerateBackupPoms=false
+          git add pom.xml */pom.xml
+          git commit -m "Prepare for next development iteration ${{ steps.next_version.outputs.next_snapshot }}"
+          
+      - name: Push changes and tags
+        run: |
+          git push origin HEAD
+          git push origin v${{ steps.next_version.outputs.release_version }}
+          
+      - name: Delete merged branch
+        run: |
+          git push origin --delete ${{ github.event.pull_request.head.ref }}
+        continue-on-error: true
+=======
           NEXT_SNAPSHOT="${{ steps.next_version.outputs.next_snapshot }}"
           echo "📝 Updating to next SNAPSHOT version $NEXT_SNAPSHOT"
           mvn versions:set -DnewVersion=$NEXT_SNAPSHOT -DgenerateBackupPoms=false
@@ -197,3 +247,4 @@ jobs:
           echo "- Update dependent projects (Komposteur) to use version \`$RELEASE_VERSION\`" >> $GITHUB_STEP_SUMMARY
           echo "- Verify GitHub Packages deployment" >> $GITHUB_STEP_SUMMARY
           echo "- Continue development on \`$NEXT_SNAPSHOT\`" >> $GITHUB_STEP_SUMMARY
+>>>>>>> origin/master
