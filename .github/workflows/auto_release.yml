@@ -1,0 +1,199 @@
+name: Auto Release on PR Merge
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [master]
+
+env:
+  JAVA_VERSION: '17'
+
+jobs:
+  auto_release:
+    name: Automatic Release
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    
+    permissions:
+      contents: write
+      packages: write
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+          
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: maven
+          
+      - name: Configure Git
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          
+      - name: Get current version
+        id: current_version
+        run: |
+          CURRENT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          echo "📍 Current version: $CURRENT_VERSION"
+          
+      - name: Calculate next version
+        id: next_version
+        run: |
+          CURRENT_VERSION="${{ steps.current_version.outputs.current_version }}"
+          # Remove -SNAPSHOT suffix
+          BASE_VERSION=$(echo $CURRENT_VERSION | sed 's/-SNAPSHOT//')
+          
+          # Parse semantic version (MAJOR.MINOR.PATCH)
+          IFS='.' read -r major minor patch <<< "$BASE_VERSION"
+          
+          # Auto-increment PATCH version for PR merges
+          NEW_PATCH=$((patch + 1))
+          RELEASE_VERSION="${major}.${minor}.${NEW_PATCH}"
+          NEXT_SNAPSHOT="${major}.${minor}.$((NEW_PATCH + 1))-SNAPSHOT"
+          
+          echo "release_version=$RELEASE_VERSION" >> $GITHUB_OUTPUT
+          echo "next_snapshot=$NEXT_SNAPSHOT" >> $GITHUB_OUTPUT
+          echo "🎯 Release version: $RELEASE_VERSION"
+          echo "📝 Next snapshot: $NEXT_SNAPSHOT"
+          
+      - name: Check if tag already exists
+        run: |
+          RELEASE_VERSION="${{ steps.next_version.outputs.release_version }}"
+          if git tag --list | grep -q "^v${RELEASE_VERSION}$"; then
+            echo "❌ Tag v${RELEASE_VERSION} already exists"
+            echo "This might indicate a version calculation issue or manual release conflict"
+            exit 1
+          fi
+          echo "✅ Tag v${RELEASE_VERSION} is available"
+          
+      - name: Update POM to release version
+        run: |
+          RELEASE_VERSION="${{ steps.next_version.outputs.release_version }}"
+          echo "📝 Updating POM version to $RELEASE_VERSION"
+          mvn versions:set -DnewVersion=$RELEASE_VERSION -DgenerateBackupPoms=false
+          
+      - name: Verify version was set correctly
+        run: |
+          RELEASE_VERSION="${{ steps.next_version.outputs.release_version }}"
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          if [ "$VERSION" != "$RELEASE_VERSION" ]; then
+            echo "❌ Version mismatch. Expected: $RELEASE_VERSION, Got: $VERSION"
+            exit 1
+          fi
+          echo "✅ POM version verified: $VERSION"
+          
+      - name: Build and test
+        run: |
+          RELEASE_VERSION="${{ steps.next_version.outputs.release_version }}"
+          echo "🔨 Building and testing release version $RELEASE_VERSION"
+          mvn clean verify -P ex-integration -DskipITs=false
+          
+      - name: Commit and tag release
+        run: |
+          RELEASE_VERSION="${{ steps.next_version.outputs.release_version }}"
+          echo "📝 Committing release version $RELEASE_VERSION"
+          git add pom.xml */pom.xml
+          git commit -m "Auto-release version $RELEASE_VERSION"
+          
+          echo "🏷️ Creating tag v$RELEASE_VERSION"
+          git tag -a "v$RELEASE_VERSION" -m "Auto-release $RELEASE_VERSION"
+          
+      - name: Deploy to GitHub Packages
+        run: |
+          echo "📦 Deploying to GitHub Packages"
+          mvn deploy -P ex-integration -DskipTests=true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Create GitHub release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.next_version.outputs.release_version }}
+          release_name: Video Renderer ${{ steps.next_version.outputs.release_version }}
+          body: |
+            ## Video Renderer ${{ steps.next_version.outputs.release_version }}
+            
+            🤖 **Automatically released** after PR #${{ github.event.pull_request.number }} merge
+            
+            ### Changes
+            ${{ github.event.pull_request.title }}
+            
+            ### Features
+            - Core video processing with FFMPEG integration
+            - Frame-accurate video composition capabilities
+            - YouTube content processing support
+            - Music-video synchronization tools
+            - Master format normalization for consistent timing
+            
+            ### Maven Dependency
+            ```xml
+            <dependency>
+                <groupId>no.lau.vdvil</groupId>
+                <artifactId>video-renderer</artifactId>
+                <version>${{ steps.next_version.outputs.release_version }}</version>
+            </dependency>
+            ```
+            
+            ### GitHub Packages
+            This release is available from GitHub Packages. Add the repository to your `pom.xml`:
+            ```xml
+            <repositories>
+                <repository>
+                    <id>github</id>
+                    <url>https://maven.pkg.github.com/StigLau/VideoRenderer</url>
+                </repository>
+            </repositories>
+            ```
+            
+            **PR**: #${{ github.event.pull_request.number }} - ${{ github.event.pull_request.title }}  
+            **Author**: @${{ github.event.pull_request.user.login }}
+          draft: false
+          prerelease: false
+          
+      - name: Update to next SNAPSHOT version
+        run: |
+          NEXT_SNAPSHOT="${{ steps.next_version.outputs.next_snapshot }}"
+          echo "📝 Updating to next SNAPSHOT version $NEXT_SNAPSHOT"
+          mvn versions:set -DnewVersion=$NEXT_SNAPSHOT -DgenerateBackupPoms=false
+          
+          git add pom.xml */pom.xml
+          git commit -m "Prepare for next development iteration $NEXT_SNAPSHOT"
+          
+      - name: Push changes and tags
+        run: |
+          RELEASE_VERSION="${{ steps.next_version.outputs.release_version }}"
+          echo "🚀 Pushing changes and tags to repository"
+          git push origin HEAD
+          git push origin v$RELEASE_VERSION
+          
+      - name: Summary
+        run: |
+          RELEASE_VERSION="${{ steps.next_version.outputs.release_version }}"
+          NEXT_SNAPSHOT="${{ steps.next_version.outputs.next_snapshot }}"
+          echo "## 🎉 Auto-Release Complete!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Item | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| **Released Version** | \`$RELEASE_VERSION\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Trigger** | PR #${{ github.event.pull_request.number }} merge |" >> $GITHUB_STEP_SUMMARY
+          echo "| **PR Title** | ${{ github.event.pull_request.title }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Author** | @${{ github.event.pull_request.user.login }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Git Tag** | \`v$RELEASE_VERSION\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Next Development** | \`$NEXT_SNAPSHOT\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **GitHub Packages** | ✅ Published |" >> $GITHUB_STEP_SUMMARY
+          echo "| **GitHub Release** | ✅ Created |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Next Steps" >> $GITHUB_STEP_SUMMARY
+          echo "- Update dependent projects (Komposteur) to use version \`$RELEASE_VERSION\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Verify GitHub Packages deployment" >> $GITHUB_STEP_SUMMARY
+          echo "- Continue development on \`$NEXT_SNAPSHOT\`" >> $GITHUB_STEP_SUMMARY
