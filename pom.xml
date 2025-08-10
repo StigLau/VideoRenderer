@@ -32,7 +32,6 @@
             <version>1.7.36</version>
         </dependency>
     </dependencies>
-    <!-- Testing invalid XML: <do you find thisor?/> -->
     <dependencyManagement>
         <dependencies>
             <dependency>
