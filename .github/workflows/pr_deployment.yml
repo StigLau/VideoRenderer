@@ -1,11 +1,8 @@
-# This workflow will build a Java project with Maven
-
-# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
-name: Deploying based on release
+# DISABLED: This workflow conflicts with proper semantic versioning
+# Use the manual release.yml workflow for proper releases instead
+name: Deploying based on release (DISABLED)
 on:
-  pull_request:
-    types:
-      - closed
+  workflow_dispatch: # Changed from pull_request to manual trigger only
 
 jobs:
   if_merged:

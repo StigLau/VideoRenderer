@@ -1,0 +1,51 @@
+
+# 2025-08-10 12:26:09.626086
++there are merge issues in this branch. Take the changes from this branch and add them to a new branch based on upstream master
+
+# 2025-08-10 12:27:52.927453
++report says: This branch has conflicts that must be resolved
+
+# 2025-08-10 12:27:52.945579
++Use the web editor or the command line to resolve conflicts before continuing.
+
+# 2025-08-10 12:27:52.955826
++/run git diff --name-only --diff-filter=U
+
+# 2025-08-10 12:27:52.955901
++/run git diff --name-only --diff-filter=U
+
+# 2025-08-10 12:27:53.159255
++.github/workflows/auto_release.yml
+
+# 2025-08-10 12:27:53.175040
++docs/release/RELEASE_PROCESS.md
+
+# 2025-08-10 12:29:22.611009
++continue
+
+# 2025-08-10 12:32:18.599831
++/run scripts/recreate_branch_from_upstream_master.sh 
+
+# 2025-08-10 12:32:26.773597
++What's wrong? Fix
+
+# 2025-08-10 12:33:13.743520
++/run chmod +x scripts/recreate_branch_from_upstream_master.sh
+
+# 2025-08-10 12:33:13.743839
++/run chmod +x scripts/recreate_branch_from_upstream_master.sh
+
+# 2025-08-10 12:33:13.909582
++/run scripts/recreate_branch_from_upstream_master.sh
+
+# 2025-08-10 12:33:13.909734
++/run scripts/recreate_branch_from_upstream_master.sh
+
+# 2025-08-10 12:33:14.383211
++/run bash scripts/recreate_branch_from_upstream_master.sh
+
+# 2025-08-10 12:33:14.383379
++/run bash scripts/recreate_branch_from_upstream_master.sh
+
+# 2025-08-10 12:34:53.865115
++What's wrong? Fix
