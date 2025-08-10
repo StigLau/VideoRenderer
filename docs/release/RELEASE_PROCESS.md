@@ -27,11 +27,14 @@ Automatic releases trigger when PRs are merged to `master`:
 2. **Automatic trigger**: `auto_release.yml` workflow runs automatically
 3. **Version calculation**: Auto-increments PATCH version (1.2.0 → 1.2.1)
 4. **Standard process**: Same validation, build, test, and deployment steps as manual
+5. **Cleanup**: Creates release tag and automatically deletes merged feature branch
 
 **Benefits**:
 - Zero-friction releases for continuous delivery
 - Consistent versioning without manual input
 - Immediate availability of changes
+- Automatic branch cleanup keeps repository tidy
+- Release tags created for every merged PR
 
 ### Option 2: Manual Release (For major/minor versions or specific control)
 

@@ -176,6 +176,13 @@ jobs:
           git push origin HEAD
           git push origin v$RELEASE_VERSION
           
+      - name: Delete merged branch
+        run: |
+          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          echo "🗑️ Deleting merged feature branch: $BRANCH_NAME"
+          git push origin --delete $BRANCH_NAME
+        continue-on-error: true
+          
       - name: Summary
         run: |
           RELEASE_VERSION="${{ steps.next_version.outputs.release_version }}"
@@ -190,6 +197,7 @@ jobs:
           echo "| **Author** | @${{ github.event.pull_request.user.login }} |" >> $GITHUB_STEP_SUMMARY
           echo "| **Git Tag** | \`v$RELEASE_VERSION\` |" >> $GITHUB_STEP_SUMMARY
           echo "| **Next Development** | \`$NEXT_SNAPSHOT\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Feature Branch** | 🗑️ Deleted |" >> $GITHUB_STEP_SUMMARY
           echo "| **GitHub Packages** | ✅ Published |" >> $GITHUB_STEP_SUMMARY
           echo "| **GitHub Release** | ✅ Created |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
