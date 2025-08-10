@@ -9,21 +9,21 @@ set -e
 echo "🔗 Installing VideoRenderer git hooks..."
 
 # Create symlinks to our custom hooks
-if [ -f .githooks/pre-commit ]; then
-    ln -sf ../../.githooks/pre-commit .git/hooks/pre-commit
+if [ -f scripts/git-hooks/pre-commit ]; then
+    ln -sf ../../scripts/git-hooks/pre-commit .git/hooks/pre-commit
     chmod +x .git/hooks/pre-commit
     echo "✅ Pre-commit hook installed"
 else
-    echo "❌ .githooks/pre-commit not found"
+    echo "❌ scripts/git-hooks/pre-commit not found"
     exit 1
 fi
 
 # Make sure Python script is executable
-if [ -f scripts/pre-commit-sanity-check.py ]; then
-    chmod +x scripts/pre-commit-sanity-check.py
+if [ -f scripts/git-hooks/pre-commit-sanity-check.py ]; then
+    chmod +x scripts/git-hooks/pre-commit-sanity-check.py
     echo "✅ Sanity check script made executable"
 else
-    echo "❌ scripts/pre-commit-sanity-check.py not found"
+    echo "❌ scripts/git-hooks/pre-commit-sanity-check.py not found"
     exit 1
 fi
 

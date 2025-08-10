@@ -4,7 +4,7 @@
 
 ```bash
 # Install pre-commit hooks
-./scripts/install-git-hooks.sh
+./scripts/git-hooks/install-git-hooks.sh
 ```
 
 ## What It Does

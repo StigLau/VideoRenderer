@@ -1,13 +1,13 @@
 #!/bin/bash
 #
 # Pre-commit hook that runs sanity check using Claude Haiku subagent
-# Install: ln -sf ../../.githooks/pre-commit .git/hooks/pre-commit
+# Install: ln -sf ../../scripts/git-hooks/pre-commit .git/hooks/pre-commit
 #
 
 echo "🔍 Running pre-commit sanity check..."
 
 # Run the Python sanity check script
-python3 scripts/pre-commit-sanity-check.py
+python3 scripts/git-hooks/pre-commit-sanity-check.py
 
 exit_code=$?
 
