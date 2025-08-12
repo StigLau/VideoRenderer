@@ -62,20 +62,25 @@ class FilterSyntaxTest {
     
     @Test
     void testCommandStructure() {
-        // Test that commands don't have outer quotes around filter_complex
+        // Test that commands don't have outer quotes around filter_complex or map parameters
         String filterContent = "[0:v][1:v]xfade=transition=fade:duration=0.500:offset=9.500[outv]";
         
         // Correct syntax (the fix)
-        String correctCommand = "ffmpeg -i input1.mp4 -i input2.mp4 -filter_complex " + filterContent + " -map \"[outv]\" -an output.mp4";
+        String correctCommand = "ffmpeg -i input1.mp4 -i input2.mp4 -filter_complex " + filterContent + " -map [outv] -an output.mp4";
         
-        // Wrong syntax (the original bug)  
-        String wrongCommand = "ffmpeg -i input1.mp4 -i input2.mp4 -filter_complex \"" + filterContent + "\" -map \"[outv]\" -an output.mp4";
+        // Wrong syntax (the original bugs)  
+        String wrongFilterCommand = "ffmpeg -i input1.mp4 -i input2.mp4 -filter_complex \"" + filterContent + "\" -map [outv] -an output.mp4";
+        String wrongMapCommand = "ffmpeg -i input1.mp4 -i input2.mp4 -filter_complex " + filterContent + " -map \"[outv]\" -an output.mp4";
         
-        // Verify the fix
+        // Verify the fixes
         assertFalse(correctCommand.contains("-filter_complex \"[0:v][1:v]xfade"), "Correct command should not have outer quotes around filter_complex");
-        assertTrue(wrongCommand.contains("-filter_complex \"[0:v][1:v]xfade"), "Wrong command would have outer quotes (demonstrating the bug)");
+        assertFalse(correctCommand.contains("-map \"[outv]\""), "Correct command should not have quotes around map parameter");
         
-        // The correct command should have the filter directly after -filter_complex
+        assertTrue(wrongFilterCommand.contains("-filter_complex \"[0:v][1:v]xfade"), "Wrong filter command would have outer quotes (demonstrating the bug)");
+        assertTrue(wrongMapCommand.contains("-map \"[outv]\""), "Wrong map command would have quotes around map parameter (demonstrating the bug)");
+        
+        // The correct command should have clean syntax
         assertTrue(correctCommand.contains("-filter_complex [0:v][1:v]xfade"), "Correct command should have filter_complex without outer quotes");
+        assertTrue(correctCommand.contains("-map [outv]"), "Correct command should have map parameter without quotes");
     }
 }

@@ -202,7 +202,7 @@ public class FFmpegFunctions {
                 " -i " + snippets[0] + 
                 " -i " + snippets[1] + 
                 " -filter_complex [0:v][1:v]xfade=transition=fade:duration=" + crossfadeDuration + ":offset=" + (getTotalDuration(snippets[0]) - crossfadeDuration) + "[outv] " +
-                "-map \"[outv]\" -an " + // -an removes audio - music videos use separate audio track
+                "-map [outv] -an " + // -an removes audio - music videos use separate audio track
                 resultingFile;
             logger.info(performFFMPEG(crossfadeCommand));
         } else {
@@ -230,7 +230,7 @@ public class FFmpegFunctions {
             // MUSIC VIDEOS: Video-only crossfade - audio comes from separate source
             // (Audio crossfade implementation preserved in AUDIO_CROSSFADE_IMPLEMENTATION.md)
             
-            String command = inputs + " -filter_complex " + filterComplex + " -map \"[outv]\" -an " + resultingFile;
+            String command = inputs + " -filter_complex " + filterComplex + " -map [outv] -an " + resultingFile;
             logger.info(performFFMPEG(command));
         }
         
