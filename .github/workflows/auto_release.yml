@@ -65,24 +65,54 @@ jobs:
           echo "📝 Next snapshot: $NEXT_SNAPSHOT"
           
       - name: Check if tag already exists
+        id: check_tag
         run: |
           RELEASE_VERSION="${{ steps.next_version.outputs.release_version }}"
-          if git tag --list | grep -q "^v${RELEASE_VERSION}$"; then
-            echo "❌ Tag v${RELEASE_VERSION} already exists"
-            echo "This might indicate a version calculation issue or manual release conflict"
-            exit 1
+          # Check both local and remote tags
+          if git tag --list | grep -q "^v${RELEASE_VERSION}$" || git ls-remote --tags origin | grep -q "refs/tags/v${RELEASE_VERSION}$"; then
+            echo "❌ Tag v${RELEASE_VERSION} already exists (locally or on remote)"
+            echo "tag_exists=true" >> $GITHUB_OUTPUT
+            echo "::warning::Release v${RELEASE_VERSION} already exists, will increment patch version"
+          else
+            echo "✅ Tag v${RELEASE_VERSION} is available"
+            echo "tag_exists=false" >> $GITHUB_OUTPUT
           fi
-          echo "✅ Tag v${RELEASE_VERSION} is available"
+          
+      - name: Recalculate version if tag exists
+        if: steps.check_tag.outputs.tag_exists == 'true'
+        id: recalc_version
+        run: |
+          CURRENT_VERSION="${{ steps.current_version.outputs.current_version }}"
+          BASE_VERSION=$(echo $CURRENT_VERSION | sed 's/-SNAPSHOT//')
+          IFS='.' read -r major minor patch <<< "$BASE_VERSION"
+          
+          # Keep incrementing patch until we find an available version
+          while true; do
+            NEW_PATCH=$((patch + 1))
+            RELEASE_VERSION="${major}.${minor}.${NEW_PATCH}"
+            
+            if ! (git tag --list | grep -q "^v${RELEASE_VERSION}$" || git ls-remote --tags origin | grep -q "refs/tags/v${RELEASE_VERSION}$"); then
+              break
+            fi
+            patch=$NEW_PATCH
+          done
+          
+          NEXT_SNAPSHOT="${major}.${minor}.$((NEW_PATCH + 1))-SNAPSHOT"
+          
+          echo "release_version=$RELEASE_VERSION" >> $GITHUB_OUTPUT
+          echo "next_snapshot=$NEXT_SNAPSHOT" >> $GITHUB_OUTPUT
+          echo "🎯 Recalculated release version: $RELEASE_VERSION"
+          echo "📝 Recalculated next snapshot: $NEXT_SNAPSHOT"
           
       - name: Update POM to release version
         run: |
-          RELEASE_VERSION="${{ steps.next_version.outputs.release_version }}"
+          RELEASE_VERSION="${{ steps.recalc_version.outputs.release_version || steps.next_version.outputs.release_version }}"
           echo "📝 Updating POM version to $RELEASE_VERSION"
           mvn versions:set -DnewVersion=$RELEASE_VERSION -DgenerateBackupPoms=false
           
       - name: Verify version was set correctly
         run: |
-          RELEASE_VERSION="${{ steps.next_version.outputs.release_version }}"
+          RELEASE_VERSION="${{ steps.recalc_version.outputs.release_version || steps.next_version.outputs.release_version }}"
           VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           if [ "$VERSION" != "$RELEASE_VERSION" ]; then
             echo "❌ Version mismatch. Expected: $RELEASE_VERSION, Got: $VERSION"
@@ -92,13 +122,13 @@ jobs:
           
       - name: Build and test
         run: |
-          RELEASE_VERSION="${{ steps.next_version.outputs.release_version }}"
+          RELEASE_VERSION="${{ steps.recalc_version.outputs.release_version || steps.next_version.outputs.release_version }}"
           echo "🔨 Building and testing release version $RELEASE_VERSION"
           mvn clean verify -P ex-integration -DskipITs=false
           
       - name: Commit and tag release
         run: |
-          RELEASE_VERSION="${{ steps.next_version.outputs.release_version }}"
+          RELEASE_VERSION="${{ steps.recalc_version.outputs.release_version || steps.next_version.outputs.release_version }}"
           echo "📝 Committing release version $RELEASE_VERSION"
           git add pom.xml */pom.xml
           git commit -m "Auto-release version $RELEASE_VERSION"
@@ -118,10 +148,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ steps.next_version.outputs.release_version }}
-          release_name: Video Renderer ${{ steps.next_version.outputs.release_version }}
+          tag_name: v${{ steps.recalc_version.outputs.release_version || steps.next_version.outputs.release_version }}
+          release_name: Video Renderer ${{ steps.recalc_version.outputs.release_version || steps.next_version.outputs.release_version }}
           body: |
-            ## Video Renderer ${{ steps.next_version.outputs.release_version }}
+            ## Video Renderer ${{ steps.recalc_version.outputs.release_version || steps.next_version.outputs.release_version }}
             
             🤖 **Automatically released** after PR #${{ github.event.pull_request.number }} merge
             
@@ -140,7 +170,7 @@ jobs:
             <dependency>
                 <groupId>no.lau.vdvil</groupId>
                 <artifactId>video-renderer</artifactId>
-                <version>${{ steps.next_version.outputs.release_version }}</version>
+                <version>${{ steps.recalc_version.outputs.release_version || steps.next_version.outputs.release_version }}</version>
             </dependency>
             ```
             
@@ -162,7 +192,7 @@ jobs:
           
       - name: Update to next SNAPSHOT version
         run: |
-          NEXT_SNAPSHOT="${{ steps.next_version.outputs.next_snapshot }}"
+          NEXT_SNAPSHOT="${{ steps.recalc_version.outputs.next_snapshot || steps.next_version.outputs.next_snapshot }}"
           echo "📝 Updating to next SNAPSHOT version $NEXT_SNAPSHOT"
           mvn versions:set -DnewVersion=$NEXT_SNAPSHOT -DgenerateBackupPoms=false
           
@@ -171,7 +201,7 @@ jobs:
           
       - name: Push changes and tags
         run: |
-          RELEASE_VERSION="${{ steps.next_version.outputs.release_version }}"
+          RELEASE_VERSION="${{ steps.recalc_version.outputs.release_version || steps.next_version.outputs.release_version }}"
           echo "🚀 Pushing changes and tags to repository"
           git push origin HEAD
           git push origin v$RELEASE_VERSION
@@ -183,8 +213,8 @@ jobs:
           
       - name: Summary
         run: |
-          RELEASE_VERSION="${{ steps.next_version.outputs.release_version }}"
-          NEXT_SNAPSHOT="${{ steps.next_version.outputs.next_snapshot }}"
+          RELEASE_VERSION="${{ steps.recalc_version.outputs.release_version || steps.next_version.outputs.release_version }}"
+          NEXT_SNAPSHOT="${{ steps.recalc_version.outputs.next_snapshot || steps.next_version.outputs.next_snapshot }}"
           echo "## 🎉 Auto-Release Complete!" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Item | Value |" >> $GITHUB_STEP_SUMMARY
