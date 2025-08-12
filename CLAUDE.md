@@ -138,6 +138,27 @@ mvn deploy -P ex-integration -DskipTests=true       # Deploy to GitHub Packages
 - Frame-accurate operations use new normalization and seeking capabilities
 - Audio/video separation for music video workflows
 
+## Komposteur Integration Context
+
+### Project Relationship
+- **Komposteur**: Production-grade music video platform with 7,266 LOC, microsecond-precise beat synchronization
+- **VideoRenderer Role**: Core dependency providing FFMPEG primitives for Komposteur's video processing workflows
+- **Architecture**: VideoRenderer → video primitives, Komposteur → music video assembly and orchestration
+- **Integration Points**: Frame-accurate processing enables Komposteur's beat-synchronized content creation
+
+### Komposteur Technical Context
+- **Current Branch**: `feature/videobean-service-decomposition` (major service decomposition work)
+- **AWS Infrastructure**: S3 multi-tiered caching, Lambda/ECS processing, SQS job queuing
+- **Production Status**: Real customers, sophisticated cloud deployment with monitoring
+- **Quality**: Production-ready core with 30+ TODO items for modernization
+
+### Known Issues (Critical)
+- **FFmpeg 7.1+ Compatibility**: VideoRenderer 1.2.3 generates malformed crossfade filter syntax
+- **Symptom**: Outer quotes and trailing semicolons in filter_complex parameters cause parsing failures
+- **Impact**: 100% crossfade operation failure rate, blocking all video processing in Komposteur
+- **Affected**: CrossfadeFrameAlignmentContinuousTest, VideoRenderer123FrameAlignmentTest
+- **Fix Required**: Remove outer quotes/trailing semicolons from filter string generation
+
 ---
 
 **Domain Focus**: VideoRenderer is the video processing engine that enables Komposteur's music video creation. Every enhancement should consider frame accuracy, performance at scale, and integration with music-driven workflows.
