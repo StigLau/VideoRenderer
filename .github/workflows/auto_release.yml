@@ -204,7 +204,20 @@ jobs:
           RELEASE_VERSION="${{ steps.recalc_version.outputs.release_version || steps.next_version.outputs.release_version }}"
           echo "🚀 Pushing changes and tags to repository"
           git push origin HEAD
-          git push origin v$RELEASE_VERSION
+          
+          # Check if tag exists and points to current commit
+          CURRENT_COMMIT=$(git rev-parse HEAD)
+          EXISTING_TAG_COMMIT=$(git ls-remote --tags origin | grep "refs/tags/v${RELEASE_VERSION}$" | cut -f1 || echo "")
+          
+          if [ "$EXISTING_TAG_COMMIT" = "$CURRENT_COMMIT" ]; then
+            echo "✅ Tag v${RELEASE_VERSION} already exists and points to current commit, skipping tag push"
+          elif [ -n "$EXISTING_TAG_COMMIT" ]; then
+            echo "🔄 Tag v${RELEASE_VERSION} exists but points to different commit, force pushing"
+            git push origin v$RELEASE_VERSION --force
+          else
+            echo "🏷️ Creating new tag v${RELEASE_VERSION}"
+            git push origin v$RELEASE_VERSION
+          fi
           
       - name: Delete merged branch
         run: |
