@@ -57,8 +57,10 @@ jobs:
           
       - name: Check if tag already exists
         run: |
-          if git tag --list | grep -q "^v${{ inputs.version }}$"; then
-            echo "❌ Tag v${{ inputs.version }} already exists"
+          # Check both local and remote tags
+          if git tag --list | grep -q "^v${{ inputs.version }}$" || git ls-remote --tags origin | grep -q "refs/tags/v${{ inputs.version }}$"; then
+            echo "❌ Tag v${{ inputs.version }} already exists (locally or on remote)"
+            echo "Please use a different version number or delete the existing tag first"
             exit 1
           fi
           echo "✅ Tag v${{ inputs.version }} is available"
@@ -150,7 +152,20 @@ jobs:
         run: |
           echo "🚀 Pushing changes and tags to repository"
           git push origin HEAD
-          git push origin v${{ inputs.version }}
+          
+          # Check if tag exists and points to current commit  
+          CURRENT_COMMIT=$(git rev-parse HEAD)
+          EXISTING_TAG_COMMIT=$(git ls-remote --tags origin | grep "refs/tags/v${{ inputs.version }}$" | cut -f1 || echo "")
+          
+          if [ "$EXISTING_TAG_COMMIT" = "$CURRENT_COMMIT" ]; then
+            echo "✅ Tag v${{ inputs.version }} already exists and points to current commit, skipping tag push"
+          elif [ -n "$EXISTING_TAG_COMMIT" ]; then
+            echo "🔄 Tag v${{ inputs.version }} exists but points to different commit, force pushing"
+            git push origin v${{ inputs.version }} --force
+          else
+            echo "🏷️ Creating new tag v${{ inputs.version }}"
+            git push origin v${{ inputs.version }}
+          fi
           
       - name: Summary
         run: |
