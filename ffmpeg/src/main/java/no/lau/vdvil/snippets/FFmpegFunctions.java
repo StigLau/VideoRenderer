@@ -201,7 +201,7 @@ public class FFmpegFunctions {
             String crossfadeCommand = ImprovedFFMpegFunctions.ffmpegLocation + 
                 " -i " + snippets[0] + 
                 " -i " + snippets[1] + 
-                " -filter_complex \"[0:v][1:v]xfade=transition=fade:duration=" + crossfadeDuration + ":offset=" + (getTotalDuration(snippets[0]) - crossfadeDuration) + "\" " +
+                " -filter_complex [0:v]fps=24[v0];[1:v]fps=24[v1];[v0][v1]xfade=transition=fade:duration=" + crossfadeDuration + ":offset=" + (getTotalDuration(snippets[0]) - crossfadeDuration) + " " +
                 "-c:v libx264 -pix_fmt yuv420p " + // Video codec and pixel format for compatibility
                 resultingFile;
             logger.info(performFFMPEG(crossfadeCommand));
@@ -219,18 +219,24 @@ public class FFmpegFunctions {
             for (int i = 0; i < snippets.length - 1; i++) {
                 double offset = getTotalDuration(snippets[i]) - crossfadeDuration;
                 if (i == 0) {
-                    filterComplex.append(String.format("[0:v][1:v]xfade=transition=fade:duration=%.3f:offset=%.3f[v01]", crossfadeDuration, offset));
+                    // Add fps normalization for all inputs first
+                for (int j = 0; j < snippets.length; j++) {
+                    if (j > 0) filterComplex.append(";");
+                    filterComplex.append(String.format("[%d:v]fps=24[v%d]", j, j));
+                }
+                filterComplex.append(";");
+                filterComplex.append(String.format("[v0][v1]xfade=transition=fade:duration=%.3f:offset=%.3f[v01]", crossfadeDuration, offset));
                 } else if (i == snippets.length - 2) {
-                    filterComplex.append(String.format(";[v0%d][%d:v]xfade=transition=fade:duration=%.3f:offset=%.3f", i, i + 1, crossfadeDuration, offset));
+                    filterComplex.append(String.format(";[v0%d][v%d]xfade=transition=fade:duration=%.3f:offset=%.3f", i, i + 1, crossfadeDuration, offset));
                 } else {
-                    filterComplex.append(String.format(";[v0%d][%d:v]xfade=transition=fade:duration=%.3f:offset=%.3f[v0%d]", i, i + 1, crossfadeDuration, offset, i + 1));
+                    filterComplex.append(String.format(";[v0%d][v%d]xfade=transition=fade:duration=%.3f:offset=%.3f[v0%d]", i, i + 1, crossfadeDuration, offset, i + 1));
                 }
             }
             
             // MUSIC VIDEOS: Video-only crossfade - audio comes from separate source
             // (Audio crossfade implementation preserved in AUDIO_CROSSFADE_IMPLEMENTATION.md)
             
-            String command = inputs + " -filter_complex \"" + filterComplex + "\" -c:v libx264 -pix_fmt yuv420p " + resultingFile;
+            String command = inputs + " -filter_complex " + filterComplex + " -c:v libx264 -pix_fmt yuv420p " + resultingFile;
             logger.info(performFFMPEG(command));
         }
         
