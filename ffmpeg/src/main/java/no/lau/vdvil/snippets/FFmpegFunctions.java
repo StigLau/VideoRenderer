@@ -201,8 +201,8 @@ public class FFmpegFunctions {
             String crossfadeCommand = ImprovedFFMpegFunctions.ffmpegLocation + 
                 " -i " + snippets[0] + 
                 " -i " + snippets[1] + 
-                " -filter_complex [0:v][1:v]xfade=transition=fade:duration=" + crossfadeDuration + ":offset=" + (getTotalDuration(snippets[0]) - crossfadeDuration) + "[outv] " +
-                "-map [outv] -an " + // -an removes audio - music videos use separate audio track
+                " -filter_complex \"[0:v][1:v]xfade=transition=fade:duration=" + crossfadeDuration + ":offset=" + (getTotalDuration(snippets[0]) - crossfadeDuration) + "\" " +
+                "-c:v libx264 -pix_fmt yuv420p " + // Video codec and pixel format for compatibility
                 resultingFile;
             logger.info(performFFMPEG(crossfadeCommand));
         } else {
@@ -221,7 +221,7 @@ public class FFmpegFunctions {
                 if (i == 0) {
                     filterComplex.append(String.format("[0:v][1:v]xfade=transition=fade:duration=%.3f:offset=%.3f[v01]", crossfadeDuration, offset));
                 } else if (i == snippets.length - 2) {
-                    filterComplex.append(String.format(";[v0%d][%d:v]xfade=transition=fade:duration=%.3f:offset=%.3f[outv]", i, i + 1, crossfadeDuration, offset));
+                    filterComplex.append(String.format(";[v0%d][%d:v]xfade=transition=fade:duration=%.3f:offset=%.3f", i, i + 1, crossfadeDuration, offset));
                 } else {
                     filterComplex.append(String.format(";[v0%d][%d:v]xfade=transition=fade:duration=%.3f:offset=%.3f[v0%d]", i, i + 1, crossfadeDuration, offset, i + 1));
                 }
@@ -230,7 +230,7 @@ public class FFmpegFunctions {
             // MUSIC VIDEOS: Video-only crossfade - audio comes from separate source
             // (Audio crossfade implementation preserved in AUDIO_CROSSFADE_IMPLEMENTATION.md)
             
-            String command = inputs + " -filter_complex " + filterComplex + " -map [outv] -an " + resultingFile;
+            String command = inputs + " -filter_complex \"" + filterComplex + "\" -c:v libx264 -pix_fmt yuv420p " + resultingFile;
             logger.info(performFFMPEG(command));
         }
         
