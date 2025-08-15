@@ -162,3 +162,4 @@ mvn deploy -P ex-integration -DskipTests=true       # Deploy to GitHub Packages
 ---
 
 **Domain Focus**: VideoRenderer is the video processing engine that enables Komposteur's music video creation. Every enhancement should consider frame accuracy, performance at scale, and integration with music-driven workflows.
+- When PRs have been closed, and claude is to work on new tasks, check if main has been changed, with new pom versioning etc
