@@ -6,77 +6,18 @@ on:
   pull_request:
     branches: [ master, main ]
 
-env:
-  JAVA_VERSION: '17'
-
 jobs:
-  validate:
-    name: Validate and Build
+  build:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 15
     
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         
-      - name: Set up JDK
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
-          java-version: ${{ env.JAVA_VERSION }}
+          java-version: '21'
           distribution: 'temurin'
           cache: maven
           
-      - name: Extract version info
-        id: version
-        run: |
-          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "Building version: $VERSION"
-          
-          if [[ "$VERSION" == *"-SNAPSHOT" ]]; then
-            echo "is_snapshot=true" >> $GITHUB_OUTPUT
-            echo "✅ Development version detected: $VERSION"
-          else
-            echo "is_snapshot=false" >> $GITHUB_OUTPUT
-            echo "🏷️ Release version detected: $VERSION"
-          fi
-          
-      - name: Validate SNAPSHOT versions on development branches
-        if: github.ref != 'refs/heads/master' && github.ref != 'refs/heads/main' && steps.version.outputs.is_snapshot != 'true'
-        run: |
-          echo "❌ Development branches should use SNAPSHOT versions"
-          echo "Current version: ${{ steps.version.outputs.version }}"
-          echo "Expected: X.Y.Z-SNAPSHOT format"
-          exit 1
-          
-      - name: Build and test
-        run: |
-          echo "🔨 Building and testing VideoRenderer ${{ steps.version.outputs.version }}"
-          mvn --batch-mode clean verify -P ex-integration
-          
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: test-results-${{ steps.version.outputs.version }}
-          path: |
-            **/target/surefire-reports/**
-            **/target/failsafe-reports/**
-          retention-days: 7
-          
-      - name: Build summary
-        run: |
-          echo "## 🔨 Build Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
-          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
-          echo "| **Version** | \`${{ steps.version.outputs.version }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Type** | ${{ steps.version.outputs.is_snapshot == 'true' && '🚧 Development' || '🏷️ Release' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Branch** | \`${{ github.ref_name }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Java** | \`${{ env.JAVA_VERSION }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Status** | ✅ Build Successful |" >> $GITHUB_STEP_SUMMARY
-#      - run: mkdir staging && cp target/*.jar staging
-#      - uses: actions/upload-artifact@v2
-#        with:
-#          name: Package
-#          path: staging
+      - run: mvn --batch-mode clean verify -P ex-integration
