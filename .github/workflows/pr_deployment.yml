@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
-          java-version: 17
+          java-version: 21
           distribution: 'corretto'
       - name: Building the app
         run: mvn --batch-mode --file pom.xml --update-snapshots package -P ex-integration
@@ -38,7 +38,7 @@ jobs:
       - name: Set up corretto JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: 17
+          java-version: 21
           distribution: 'corretto'
       - name: Create GitHub Release
         uses: actions/create-release@v1
