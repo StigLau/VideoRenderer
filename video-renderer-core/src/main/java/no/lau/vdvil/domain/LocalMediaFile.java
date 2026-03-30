@@ -56,16 +56,7 @@ public class LocalMediaFile implements MediaFile {
 
     public String getChecksums() {
         if(checksums == null || checksums.isEmpty()) {
-            String fileHash = md5Checksum(fileName).toLowerCase();
-            if (checksums != null && !checksums.isEmpty()) {
-                if (checksums.contains(fileHash)) {
-                    // already contains fileHash
-                } else {
-                    checksums += ", " + fileHash;
-                }
-            } else {
-                checksums = fileHash;
-            }
+            checksums = md5Checksum(fileName).toLowerCase();
         }
         return checksums;
     }

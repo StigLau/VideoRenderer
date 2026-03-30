@@ -6,6 +6,7 @@ import no.lau.vdvil.renderer.video.concatenator.AudioVideoConcatenator;
 import no.lau.vdvil.renderer.video.config.VideoConfig;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.nio.file.Path;
 import static no.lau.vdvil.domain.UrlHandler.urlCreator;
@@ -14,6 +15,7 @@ import static no.lau.vdvil.domain.UrlHandler.urlCreator;
 
  * Created by stiglau on 03/04/15.
  */
+@Tag("IntegrationTest")
 public class CombineAudioAndVideoTest {
     @Test
     @Disabled //Download first

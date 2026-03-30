@@ -7,12 +7,14 @@ import com.xuggle.xuggler.ICodec;
 import com.xuggle.xuggler.IContainer;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.nio.file.Path;
 
 /**
  * @author Stig@Lau.no 18/01/15.
  */
+@Tag("IntegrationTest")
 public class AudioExtractionTest {
     //May need multiplexing first
     String inFile = "/tmp/320_CLMD-The_Stockholm_Syndrome.mp4";

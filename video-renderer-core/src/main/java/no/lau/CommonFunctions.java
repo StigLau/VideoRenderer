@@ -23,9 +23,9 @@ public class CommonFunctions {
                 return returnedResult;
             }
         }
-        String kz = String.join(",", keys);
-        logger.info("Could not find System env for: {}", kz);
-        throw new RuntimeException("No environment keys for " + String.join(",", kz));
+        String keyList = String.join(", ", keys);
+        logger.info("Could not find System env for: {}", keyList);
+        throw new RuntimeException("No environment keys for " + keyList);
     }
 
     public static String envOrDefault(String envName, String defaultPath) {
@@ -62,7 +62,7 @@ public class CommonFunctions {
         try (InputStream is = Files.newInputStream(path)) {
             return md5Hex(is.readAllBytes());
         } catch (Exception e) {
-            throw new RuntimeException("Shit didn't go all that well");
+            throw new RuntimeException("Failed to compute MD5 checksum for " + path, e);
         }
     }
 

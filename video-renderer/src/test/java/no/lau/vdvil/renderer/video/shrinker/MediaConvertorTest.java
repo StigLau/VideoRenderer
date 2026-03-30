@@ -2,12 +2,14 @@ package no.lau.vdvil.renderer.video.shrinker;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.nio.file.Path;
 
 /**
  * @author Stig@Lau.no 07/04/15.
  */
+@Tag("IntegrationTest")
 public class MediaConvertorTest {
     @Test
     @Disabled //Download first

@@ -7,6 +7,7 @@ import no.lau.vdvil.renderer.video.creator.ImageStore;
 import no.lau.vdvil.renderer.video.stigs.ImageSampleInstruction;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Stig Lau 16/03/15.
  */
+@Tag("IntegrationTest")
 public class ImageCapturingFromVideoTest {
 
     private Logger logger = LoggerFactory.getLogger(ImageCapturingFromVideoTest.class);

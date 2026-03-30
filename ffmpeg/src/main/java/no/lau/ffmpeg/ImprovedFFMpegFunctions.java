@@ -77,7 +77,7 @@ public class ImprovedFFMpegFunctions {
     public static FFmpegFormat ffmpegFormatInfo(Path target) throws IOException {
         FFmpegProbeResult probeResult = new FFprobe(ffprobeLocation()).probe(target.toString());
         FFmpegFormat format = probeResult.getFormat();
-        System.out.format("%nFile: '%s' ; Format: '%s' ; Duration: %.3fs",
+        logger.info("File: '{}' ; Format: '{}' ; Duration: {}s",
                 format.filename,
                 format.format_long_name,
                 format.duration
@@ -88,7 +88,7 @@ public class ImprovedFFMpegFunctions {
     public static FFmpegStream ffmpegStreamInfo(Path target) throws IOException {
         FFmpegProbeResult probeResult = new FFprobe(ffprobeLocation()).probe(target.toString());
         FFmpegStream stream = probeResult.getStreams().get(0);
-        System.out.format("%nCodec: '%s' ; Width: %dpx ; Height: %dpx",
+        logger.info("Codec: '{}' ; Width: {}px ; Height: {}px",
                 stream.codec_long_name,
                 stream.width,
                 stream.height
@@ -132,14 +132,14 @@ public class ImprovedFFMpegFunctions {
         FFmpegProbeResult probeResult = new FFprobe(ffprobeLocation()).probe(destinationFile.toString());
 
         FFmpegFormat format = probeResult.getFormat();
-        System.out.format("%nFile: '%s' ; Format: '%s' ; Duration: %.3fs",
+        logger.info("File: '{}' ; Format: '{}' ; Duration: {}s",
                 format.filename,
                 format.format_long_name,
                 format.duration
         );
 
         FFmpegStream stream = probeResult.getStreams().get(0);
-        System.out.format("%nCodec: '%s' ; Width: %dpx ; Height: %dpx",
+        logger.info("Codec: '{}' ; Width: {}px ; Height: {}px",
                 stream.codec_long_name,
                 stream.width,
                 stream.height
@@ -150,7 +150,7 @@ public class ImprovedFFMpegFunctions {
 
     public static Path concatVideoSnippets(Path... snippets) throws IOException {
         if(snippets.length < 2) {
-            logger.error("To few snippets as input to concatenation");
+            throw new IllegalArgumentException("Need at least 2 snippets for concatenation, got " + snippets.length);
         }
         ExtensionType extensionType = ExtensionType.typify(getFileExtension(snippets[0]));
         Path target = CommonFunctions.createTempPath("video_and_audio_combination", extensionType);

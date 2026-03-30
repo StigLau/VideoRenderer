@@ -21,7 +21,7 @@ public class VideoStillImageSegment<TYPE> extends SuperSegment implements Filter
     }
 
     public VideoStillImageSegment revert() {
-        reverted = false;
+        reverted = true;
         return this;
     }
 

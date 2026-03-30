@@ -46,7 +46,7 @@ public abstract class SuperSegment implements Segment {
 
     public int compareTo(Object otherSegment) {
         //ascending order
-        return new Long(this.start()).compareTo(((Segment)otherSegment).start());
+        return Long.compare(this.start(), ((Segment) otherSegment).start());
     }
 
     public String toString() {
