@@ -1,0 +1,59 @@
+version: "1.0"
+service:
+  name: VideoRenderer
+  description: Java library for programmatic video rendering in the VDVIL/Komposteur ecosystem
+  repository: https://github.com/StigLau/VideoRenderer
+  tech_stack:
+    - java-17
+    - maven
+    - xuggle-5.4
+    - ffmpeg-bramp-0.6.2
+    - junit-5
+
+units:
+  - id: service-overview
+    name: Service Overview
+    description: Multi-module video rendering library. Extracts frames from source videos, plans compositions via BPM-based timing, and assembles new videos from segments.
+    paths:
+      - CLAUDE.md
+      - pom.xml
+      - README.md
+
+  - id: frame-calculation
+    name: Frame Calculation
+    description: Frame extraction and BPM-to-timestamp conversion. FrameCalculator interface with SimpleCalculator ratio-based implementation.
+    paths:
+      - video-renderer-core/src/main/java/no/lau/vdvil/collector/FrameCalculator.java
+      - video-renderer-core/src/main/java/no/lau/vdvil/collector/SimpleCalculator.java
+      - video-renderer-core/src/main/java/no/lau/vdvil/collector/FrameRepresentation.java
+      - video-renderer-core/src/main/java/no/lau/vdvil/collector/plan/FramePlan.java
+      - video-renderer-core/src/main/java/no/lau/CommonFunctions.java
+
+  - id: video-composition
+    name: Video Composition
+    description: Komposition planning and segment assembly. KompositionPlanner orchestrates collect and build plans.
+    paths:
+      - video-renderer-core/src/main/java/no/lau/vdvil/domain/out/Komposition.java
+      - video-renderer-core/src/main/java/no/lau/vdvil/collector/KompositionPlanner.java
+      - video-renderer-core/src/main/java/no/lau/vdvil/plan/SuperPlan.java
+      - video-renderer-core/src/main/java/no/lau/vdvil/domain/Segment.java
+      - video-renderer-core/src/main/java/no/lau/vdvil/domain/VideoStillImageSegment.java
+      - video-renderer/src/main/java/no/lau/vdvil/renderer/video/CreateVideoFromScratchImages.java
+
+  - id: ffmpeg-integration
+    name: FFmpeg Integration
+    description: FFmpeg wrapper with two implementations - bramp Java wrapper and raw CLI execution.
+    paths:
+      - ffmpeg/src/main/java/no/lau/ffmpeg/ImprovedFFMpegFunctions.java
+      - ffmpeg/src/main/java/no/lau/vdvil/snippets/FFmpegFunctions.java
+      - ffmpeg/src/main/java/no/lau/vdvil/snippets/KompositionUtils.java
+
+  - id: build-system
+    name: Build System
+    description: Maven multi-module build with integration test profile and GitHub Actions CI/CD.
+    paths:
+      - pom.xml
+      - video-renderer-core/pom.xml
+      - video-renderer/pom.xml
+      - ffmpeg/pom.xml
+      - .github/workflows/build_n_test.yml
