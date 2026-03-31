@@ -77,18 +77,15 @@ public class FFmpegFunctions {
         return command;
     }
 
-    //Hours // Minutes // Seconds // Millis
-    //X // 60 // 60 // 1000
-    public static  String humanReadablePeriod(long totalMillis) {
+    //Hours : Minutes : Seconds . Millis
+    public static String humanReadablePeriod(long totalMillis) {
+        long millis = totalMillis % 1000;
         long rest = totalMillis / 1000;
-        long millis = rest % 1000;
-        rest = (rest - millis)/1000;
-        long seconds = rest % 60 ;
-        rest = rest-seconds;
-        long minutes = rest = rest / 60;
-        rest = rest - minutes;
+        long seconds = rest % 60;
+        rest = rest / 60;
+        long minutes = rest % 60;
         long hours = rest / 60;
-        return hours + ":" + minutes + ":" + seconds + "." + millis;
+        return String.format("%d:%02d:%02d.%03d", hours, minutes, seconds, millis);
     }
 
     public static Path concatVideoSnippets(ExtensionType extensionType, Path... snippets) throws IOException {
